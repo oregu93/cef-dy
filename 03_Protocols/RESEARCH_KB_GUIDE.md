@@ -302,3 +302,53 @@ QR-коды не следует использовать:
 Предпочтительно кодировать в QR только устойчивый URL. Научные данные непосредственно в QR не помещать.
 
 Генерация QR должна выполняться только по необходимости и не является обязательной частью базового workflow.
+
+## 17. ## Git commit convention
+
+Для истории проекта используется формат, основанный на Conventional Commits:
+
+`type(scope): short description`
+
+Заголовок commit пишется по-английски, поскольку является технической
+машинно-ориентированной меткой. Научное объяснение при необходимости
+помещается в расширенное тело commit.
+
+Основные типы:
+
+| Type | Назначение |
+|---|---|
+| `docs` | документация и knowledge base |
+| `feat` | новая программная функциональность |
+| `fix` | исправление ошибки |
+| `refactor` | изменение структуры кода без изменения физического результата |
+| `test` | тесты и проверки |
+| `perf` | оптимизация производительности |
+| `chore` | инфраструктура, конфигурация и служебные изменения |
+| `build` | зависимости и build environment |
+| `ci` | CI/CD и GitHub Actions |
+| `revert` | отмена предыдущего изменения |
+
+Дополнительные типы проекта:
+
+| Type | Назначение |
+|---|---|
+| `data` | добавление или изменение отслеживаемых experimental/derived data |
+| `analysis` | reviewed scientific analysis |
+| `checkpoint` | фиксация Work checkpoint |
+
+Рекомендуемые scopes:
+
+`repo`, `obsidian`, `state`, `control`, `logbook`, `taipan`,
+`cef`, `stage03d`, `conventions`, `pcm`, `mcphase`.
+
+Примеры:
+
+`docs(state): update current CEF project state`
+
+`analysis(stage03d): review M0 and M1 fit results`
+
+`checkpoint(w03): add W03-03D-A-001`
+
+`fix(conventions): correct direct-to-canonical metadata`
+
+`chore(obsidian): add shared vault configuration`
