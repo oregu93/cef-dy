@@ -1,0 +1,132 @@
+- id: R-001
+  title: Численное соответствие direct PCF и direct CFE для benchmark-набора
+  type: numerical_crosscheck
+  status: reviewed
+  scope:
+  - operator_convention
+  - direct_basis
+  statement: В предыдущем benchmark соглашений гамильтонианы direct PCF и direct CFE
+    совпали с точностью, близкой к машинной; сообщалось max|ΔH| порядка 8.9e-16 meV.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/KnowledgeBase_v2.0/00_Project/PROJECT_STATE.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Повторный запуск benchmark из сохранённого кода и входных данных.
+  - Связать результат с отдельным checkpoint/artifact.
+  notes: 'Статус intentionally reviewed, а не validated: в текущем пакете нет привязанного
+    воспроизводимого benchmark artifact.'
+- id: R-002
+  title: Недоопределённость energy-only 15-параметрического CEF-фита
+  type: inverse_problem_result
+  status: reviewed
+  scope:
+  - identifiability
+  - global_search
+  statement: Глобальные поиски дали существенно различные CEF-схемы с близкими значениями
+    функции потерь, построенной только по энергиям; один энергетический минимум не
+    выбирает уникальные волновые функции.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/DyFeO3_PROJECT_STATE_v1.1.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Связать с таблицами полного ансамбля решений/логами глобального поиска.
+- id: R-003
+  title: Устойчивый кандидат CEF-перехода около 18.25 meV
+  type: experimental_result
+  status: reviewed
+  scope:
+  - TAIPAN
+  - CEF_energy
+  statement: В текущем состоянии проекта используется оценка E_CEF = 18.247178 ± 0.119021
+    meV как наиболее устойчивый энергетический кандидат CEF-перехода.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/KnowledgeBase_v2.0/00_Project/PROJECT_STATE.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Связать с исходными fit-таблицами/scan IDs и отдельным checkpoint экспериментального
+    извлечения.
+- id: R-004
+  title: Эмпирическая энергетическая ширина упругой линии TAIPAN
+  type: instrument_result
+  status: reviewed
+  scope:
+  - TAIPAN
+  - resolution
+  statement: Для elastic scan 104062 сообщена FWHM = 0.894 ± 0.025 meV при Q≈2.26
+    Å^-1; это эффективная эмпирическая ширина, а не полная TAS resolution function.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/DyFeO3_PROJECT_STATE_v1.1.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Связать с fit artifact scan 104062.
+- id: R-005
+  title: Широкая почти бездисперсионная структура около 44.4 meV
+  type: experimental_result
+  status: reviewed
+  scope:
+  - TAIPAN
+  - F004
+  statement: Наблюдается структура около 44.39 ± 0.05 meV; её назначение остаётся
+    открытым, а Q-зависимость не поддерживает использование как обязательной чистой
+    Dy CEF-линии.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/DyFeO3_PROJECT_STATE_v1.1.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Связать с таблицей profile fits и Q-dependence artifact.
+- id: R-006
+  title: 'Stage 03C: screened PCM воспроизводит сильный первый переход, но не поддерживает
+    обязательные 6.45/27.90 meV'
+  type: model_diagnostic
+  status: reviewed
+  scope:
+  - Stage03C
+  - PCM
+  - selection_rules
+  statement: Для равномерно экранированного PCM полного кластера первый переход настроен
+    к 18.247 meV и остаётся доминирующим; переход около 6.45 meV отсутствует, а рассчитанная
+    сила около 27.90 meV остаётся крайне малой относительно главной линии.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/KnowledgeBase_v2.0/00_Project/PROJECT_STATE.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Привязать Stage 03C outputs и скрипт как checkpoint/source artifact.
+- id: R-007
+  title: 'Stage 03C: нормировка только по обнаруженным профилям создаёт selection
+    bias'
+  type: statistical_diagnostic
+  status: reviewed
+  scope:
+  - Stage03C
+  - F002
+  - normalization
+  statement: Оценка масштаба только по обнаруженным профилям переоценивает предсказанный
+    сигнал в профилях без обнаружения; данные поддерживают общий масштаб на физически
+    согласованный instrument_block_id и явный учёт необнаруженных линий.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/KnowledgeBase_v2.0/00_Project/PROJECT_STATE.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Привязать profile-area table и Stage 03C audit outputs.
+- id: R-008
+  title: Согласованные рабочие системы координат direct и canonical для Stage 03C
+  type: convention_result
+  status: reviewed
+  scope:
+  - axes
+  - Stage03C
+  statement: В предыдущем аудите использовались direct PCF axes (b,c,a) и canonical
+    axes (b,-a,c), связанные активным поворотом +90° вокруг x||b в принятом соглашении.
+  evidence:
+  - kind: legacy_summary
+    source: Archive/legacy/KnowledgeBase_v2.0/00_Project/PROJECT_STATE.md
+  review_date: '2026-08-28'
+  validation_criteria:
+  - Повторить regression test Hamiltonian + transition tensors с явной rotation matrix.

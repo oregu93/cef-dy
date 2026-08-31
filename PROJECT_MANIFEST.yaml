@@ -1,0 +1,26 @@
+project_id: CEF-Dy
+schema_version: '2.1'
+updated: '2026-08-31'
+content_language: ru
+metadata_language: en
+authoritative:
+  project_state: 00_Project/PROJECT_STATE.md
+  project_control: 00_Project/PROJECT_CONTROL.md
+  project_metadata: 00_Project/PROJECT_METADATA.yaml
+  results: 00_Project/RESULT_REGISTER.yaml
+  hypotheses: 00_Project/HYPOTHESIS_REGISTER.yaml
+  decisions: 00_Project/DECISION_REGISTER.yaml
+  logbook: 01_Logbook/RESEARCH_LOGBOOK.md
+  checkpoints: 02_Work_Checkpoints/
+automation:
+  refresh: scripts/kb_refresh.py
+  validate: scripts/kb_validate.py
+policy:
+  validated_requires_reproducible_evidence: true
+  reentry_blocks_generated: true
+  git_is_version_control_source: true
+  raw_data_external_to_git: true
+  machine_specific_paths_not_tracked: true
+  multi_machine_workflow_supported: true
+  qr_codes_optional: true
+

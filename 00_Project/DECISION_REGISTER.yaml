@@ -1,0 +1,61 @@
+- id: D-001
+  status: active
+  decision: Не считать energy-only fit финальным критерием CEF-модели.
+  rationale: Свободная 15-параметрическая обратная задача демонстрирует сильную неоднозначность.
+  date: 2026-08
+- id: D-002
+  status: active
+  decision: Связывать direct PCF/CFE и canonical Hutchings параметры явным преобразованием,
+    а не переименованием индексов.
+  rationale: Предотвращает ошибку convention/frame при переносе параметров.
+  date: '2026-08-21'
+- id: D-003
+  status: active
+  decision: Использовать один общий параметр нормировки на физически обоснованный
+    instrument_block_id.
+  rationale: Независимый свободный масштаб на каждый single-peak scan уничтожает значительную
+    часть информации об интенсивностях.
+  date: '2026-08-21'
+- id: D-004
+  status: active
+  decision: Необнаруженные, но доступные переходы учитывать как цензурированные наблюдения
+    / upper limits.
+  rationale: Отсутствие предсказанной сильной линии является информативным наблюдением.
+  date: '2026-08-21'
+- id: D-005
+  status: active
+  decision: Не использовать F004 / 44.4 meV как обязательный CEF-уровень Stage 03D.
+  rationale: Назначение остаётся открытым и возможно смешанным.
+  date: '2026-08-27'
+- id: D-006
+  status: active
+  decision: Не включать обменное поле в Stage 03D.
+  rationale: Сначала проверяется идентифицируемость структурной/effective-charge модели;
+    exchange рассматривается отдельным последующим уровнем.
+  date: '2026-08-27'
+- id: D-007
+  status: active
+  decision: Stage 03D начинать с вложенных низкоразмерных M0/M1, а не с финального
+    свободного 15D CEF-фита.
+  rationale: Текущий набор наблюдаемых не обеспечивает достаточную идентифицируемость
+    полного Hamiltonian.
+  date: '2026-08-27'
+- id: D-008
+  status: active
+  decision: Work-задачи дробить на автономные jobs с явным STOP CONDITION и review
+    checkpoint.
+  rationale: Экономит Work/Codex budget и отделяет вычисление от научного решения.
+  date: '2026-08-27'
+- id: D-009
+  status: active
+  decision: Использовать архитектуру PROJECT_STATE / PROJECT_CONTROL / WORK_CHECKPOINTS
+    + RESEARCH_LOGBOOK и реестры.
+  rationale: Ускоряет повторное погружение, сохраняет provenance и уменьшает зависимость
+    от контекста ChatGPT.
+  date: '2026-08-28'
+- id: D-010
+  status: active
+  decision: Содержательный текст вести преимущественно на русском; английский оставлять
+    для machine-facing metadata и случаев крайней неоднозначности.
+  rationale: Обеспечивает читаемость исследователем при сохранении машинной обработки.
+  date: '2026-08-28'

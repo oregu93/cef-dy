@@ -1,0 +1,70 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Obsidian transient state
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# IDE transient
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*~
+~$*
+
+# Archives / large binary outputs
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Local/private data
+CEF_Dy_Data/
+data/
+local_data/
+private/
+secrets/
+credentials/
+.env
+.env.*
+
+# Machine-specific paths
+configs/local_paths.yaml
+
+# Large/intermediate result areas
+04_Results/raw/
+04_Results/intermediate/
+04_Results/cache/
+
+# Local backup/sync areas
+CEF_Dy_Backup/
+backup/
+backups/
+
+# Logs generated locally
+*.log

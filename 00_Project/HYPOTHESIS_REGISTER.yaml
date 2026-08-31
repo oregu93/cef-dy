@@ -1,0 +1,49 @@
+- id: H-001
+  title: Линия около 18.25 meV относится к CEF-переходу Dy3+
+  status: working
+  statement: Энергетическая линия около 18.25 meV рассматривается как основной CEF-кандидат
+    проекта.
+  supporting_results:
+  - R-003
+  - R-006
+  conflicting_results: []
+  tests_required:
+  - Совместимость относительных INS-интенсивностей.
+  - Проверка Q-зависимости и возможных смешанных вкладов.
+- id: H-002
+  title: Двухмасштабная нейтральная модель M1 улучшит описание F002 относительно M0
+  status: candidate
+  statement: Раздельные масштабы эффективных зарядов для O1/O2 при условии нейтральности
+    могут улучшить совместимость энергий и F002 без перехода к свободному 15D CEF-фиту.
+  supporting_results:
+  - R-006
+  - R-007
+  conflicting_results: []
+  tests_required:
+  - Вложенный likelihood comparison M0/M1.
+  - Профили параметров и boundary diagnostics.
+- id: H-003
+  title: Существуют скрытые CEF-уровни около 6.45 и 27.90 meV
+  status: disfavored
+  statement: Историческое B2-многообразие использовало эти энергетические ориентиры,
+    однако screened PCM Stage 03C не поддерживает их как обязательные уровни.
+  supporting_results:
+  - R-002
+  conflicting_results:
+  - R-006
+  tests_required:
+  - Цензурированные upper limits.
+  - Независимые INS-данные/полный совместный fit.
+- id: H-004
+  title: Структура около 44.4 meV является чистым локализованным Dy CEF-переходом
+  status: disfavored
+  statement: Такое назначение возможно только как проверяемая гипотеза и не используется
+    как обязательное ограничение Stage 03D.
+  supporting_results: []
+  conflicting_results:
+  - R-005
+  - R-006
+  tests_required:
+  - Q dependence.
+  - Температурная зависимость.
+  - Проверка смешанного/Fe вклада и background.

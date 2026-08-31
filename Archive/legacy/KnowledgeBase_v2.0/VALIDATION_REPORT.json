@@ -1,0 +1,6 @@
+{
+  "root": "/mnt/data/CEF-Dy_KnowledgeBase_v2",
+  "markdown_files_current": 19,
+  "validation_issues": [],
+  "validation_scope": "current non-legacy Markdown; fenced and inline code excluded from LaTeX syntax checks"
+}
