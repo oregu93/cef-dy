@@ -304,7 +304,8 @@ git commit -m "..."
 - `labels`;
 - `model_id`, `dataset_id`, `checkpoint_id`;
 - имён функций, команд, программ и API;
-- терминов, перевод которых создаёт реальную неоднозначность.
+- терминов, перевод которых создаёт реальную неоднозначность;
+- machine-facing LLM bootstrap prompts и executable instruction contracts.
 
 ## 13. Принцип переносимости
 
