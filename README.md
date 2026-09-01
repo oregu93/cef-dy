@@ -48,11 +48,11 @@ CEF-гамильтониан содержит 15 независимых пара
 <!-- AUTO:README_STATUS:START -->
 ## Текущий статус проекта
 
-**Stage:** `M00C` — Stage 00C — scientific re-baselining and provenance audit (`active`).
+**Stage:** `M02R` — Stage 02R — independent TAIPAN re-analysis (`active`).
 
-**Current focus:** Stage 00C — научный re-baselining проекта. Разделяются экспериментальные observations, результаты обработки, литературные target energies, физические assignments, model calculations и methodological decisions. Уже сформированы scientific terminology, evidence register, model register и новая семантическая версия PROJECT_STATE.
+**Current focus:** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Next:** Завершить управляющий re-baseline Knowledge Base: синхронизировать PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation с новой evidence/model semantics, после чего выполнить consistency review, kb_refresh и kb_validate.
+**Next:** В 00 - Project Control зафиксировать Stage 02R analysis contract, затем создать отдельный чат "02 - TAIPAN Data Reduction" и начать независимый raw-to-observation re-analysis без использования historical CEF target energies при model-independent feature discovery.
 
 **Metadata updated:** `2026-09-01`.
 <!-- AUTO:README_STATUS:END -->

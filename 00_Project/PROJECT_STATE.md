@@ -58,9 +58,9 @@ review_status: working
 - Не определены окончательные systematic uncertainty энергетической шкалы и TAS resolution model.
 - Не установлена достаточность CEF-only описания низкотемпературных данных.
 
-**Текущий этап.** `M00C` (`active`): Stage 00C — scientific re-baselining and provenance audit
+**Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `T-00C-06`: Завершить управляющий re-baseline Knowledge Base: синхронизировать PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation с новой evidence/model semantics, после чего выполнить consistency review, kb_refresh и kb_validate.
+**Следующий шаг.** `T-02R-01`: В 00 - Project Control зафиксировать Stage 02R analysis contract, затем создать отдельный чат "02 - TAIPAN Data Reduction" и начать независимый raw-to-observation re-analysis без использования historical CEF target energies при model-independent feature discovery.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.

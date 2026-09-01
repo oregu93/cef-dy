@@ -25,19 +25,20 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Stage 00C — научный re-baselining проекта. Разделяются экспериментальные observations, результаты обработки, литературные target energies, физические assignments, model calculations и methodological decisions. Уже сформированы scientific terminology, evidence register, model register и новая семантическая версия PROJECT_STATE.
+**Сейчас.** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Почему.** Предыдущая Knowledge Base была технически структурирована, но часть historical exploratory results и внутренних labels попала в центральное состояние проекта без достаточного provenance и без чёткого различия между наблюдением и интерпретацией. Перед следующими вычислениями необходимо восстановить независимую и воспроизводимую цепочку evidence.
+**Почему.** Stage 00C завершил научный re-baselining: экспериментальные свидетельства, physical assignments, model calculations и methodological decisions теперь разделены; введены EVIDENCE_REGISTER и MODEL_REGISTER; центральные project documents и automation синхронизированы и прошли strict validation. Следующий источник научного прогресса должен быть независимым повторным анализом экспериментальных данных.
 
-**Следующий шаг.** Завершить Stage 00C governance/automation update, проверить согласованность реестров и центральных документов и подготовить один reviewable commit. После Stage 00C сформировать specification для независимого Stage 02R TAIPAN re-analysis.
+**Следующий шаг.** Сначала зафиксировать Stage 02R analysis contract в 00 - Project Control. После review создать чат "02 - TAIPAN Data Reduction" и начать с raw scan inventory и acquisition/instrument metadata. Blind feature discovery не должен использовать historical energies 6.45, 18.2, 27.9 или 44.4 meV как targets.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
-- W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 00C и Stage 02R.
-- Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и нового анализа.
+- W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
+- Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
 - Использование F004 около 44.4 meV как обязательного CEF-перехода.
 - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
+- Production CEF fitting внутри Stage 02R.
 
 **Отложено.**
 - Production Stage 03D M0/M1 inference.
@@ -47,14 +48,14 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Stage 00C audit of TAIPAN feature provenance, CEF terminology and model hierarchy based on current Knowledge Base, legacy analysis artifacts and reviewed methodological literature.
+**Последний научный источник.** Completed Stage 00C scientific re-baselining and provenance audit, including evidence/model separation, register normalization, updated project governance and validated Knowledge Base schema 2.2.
 
 **Последний Work checkpoint.** Для текущего Stage 00C вычислительный checkpoint не требуется.
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
 
-**Ключевые риски.** `RSK-001`, `RSK-003`, `RSK-004`, `RSK-005`.
+**Ключевые риски.** `RSK-003`, `RSK-004`, `RSK-005`.
 <!-- AUTO:CONTROL_REENTRY:END -->
 
 
@@ -63,8 +64,8 @@ control_chat: "00 - Project Control"
 | Milestone | Status | Назначение |
 |---|---|---|
 | `M00B` | completed | Развёртывание автономной Knowledge Base, Obsidian/Git workflow и базовой automation. |
-| `M00C` | active | Scientific re-baselining: терминология, provenance, evidence/model semantics и очистка центрального project state. |
-| `M02R` | planned | Независимый повторный анализ TAIPAN от raw/instrument data до model-independent observation tables. |
+| `M00C` | completed | Scientific re-baselining: терминология, provenance, evidence/model semantics и очистка центрального project state. |
+| `M02R` | active | Независимый повторный анализ TAIPAN от raw/instrument data до model-independent observation tables. |
 | `M03R` | planned | Повторный анализ CEF landscape и идентифицируемости на очищенном experimental observation set. |
 | `M03D` | suspended | Joint constrained M0/M1 energy + intensity inference; существующий design сохранён, но execution приостановлен. |
 | `M05` | planned | Независимая магнитная validation и, при необходимости, CEF + magnetic exchange. |
@@ -72,18 +73,17 @@ control_chat: "00 - Project Control"
 | `M07` | ongoing | Накопление результатов, пригодных для статьи и диссертации, с явным provenance. |
 
 
-# 2. Stage 00C — текущая очередь
+# 2. Текущая очередь
 
 | Task ID | Status | Задача |
 |---|---|---|
-| `T-00C-01` | completed | Зафиксировать каноническую научную терминологию и границы понятий observation / fit result / assignment / model. |
-| `T-00C-02` | completed | Ввести provenance schema и отделить evidence от вычислительных results и hypotheses. |
-| `T-00C-03` | completed | Провести audit experimental landmarks и labels: F002/F004, 18.25, 6.45, 27.90 и 44.4 meV. |
-| `T-00C-04` | completed | Провести model-purpose audit и сформировать model hierarchy. |
-| `T-00C-05` | completed | Семантически переписать PROJECT_STATE вокруг evidence, interpretation и model hierarchy. |
-| `T-00C-06` | active | Обновить PROJECT_METADATA, PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation. |
-| `T-00C-07` | next | Провести consistency review, refresh, strict validation, проверить diff и выполнить Stage 00C commit. |
-
+| `T-00C-06` | completed | Обновить PROJECT_METADATA, PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation. |
+| `T-00C-07` | completed | Провести consistency review, refresh, strict validation, проверить diff и выполнить Stage 00C commit. |
+| `T-02R-01` | active | Зафиксировать analysis contract Stage 02R до начала повторной обработки данных. |
+| `T-02R-02` | next | Создать чат `02 - TAIPAN Data Reduction` и выполнить re-entry из canonical GitHub state. |
+| `T-02R-03` | queued | Построить независимый raw scan inventory и классификацию acquisition/instrument blocks. |
+| `T-02R-04` | queued | Выполнить model-independent feature discovery без historical energy targets. |
+| `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical observation contract. |
 
 # 3. Roadmap после Stage 00C
 
@@ -275,7 +275,6 @@ MOD-ECM-MALKIN
 | `00 - Project Control` | Scientific governance, roadmap, review and promotion. |
 | `Orthoferrite CF Watch` | Broad literature discovery and triage. |
 | `01 - Literature & Physics` | Curated deep literature analysis and physics integration. |
-| `02 - TAIPAN Data Reduction` | Independent experimental reduction and observation contract. |
 | `03 - CEF Modelling & Fit Design` | CEF inference/model design before Work execution. |
 | `W03 - CEF Compute` | Approved numerical execution only. |
 | `04 - Structure & Conventions` | Structure, frames and operator conventions. |
@@ -322,15 +321,15 @@ Stage 00C завершён, когда:
 - [x] F002/F004 получили однозначную семантику feature IDs;
 - [x] проведён model-purpose audit;
 - [x] PROJECT_STATE переписан на evidence-first основе;
-- [ ] PROJECT_METADATA и PROJECT_CONTROL синхронизированы;
-- [ ] PROJECT_MANIFEST отражает новые authoritative registers;
-- [ ] protocols отражают GitHub canonical-state policy и новую chat architecture;
-- [ ] kb_refresh поддерживает новый metadata contract;
-- [ ] kb_validate проверяет новые registers;
-- [ ] generated re-entry blocks синхронизированы;
-- [ ] `kb_validate.py --strict` проходит без ошибок и предупреждений;
-- [ ] review Git diff не показывает accidental/legacy contamination;
-- [ ] выполнен Stage 00C commit и push.
+- [x] PROJECT_METADATA и PROJECT_CONTROL синхронизированы;
+- [x] PROJECT_MANIFEST отражает новые authoritative registers;
+- [x] protocols отражают GitHub canonical-state policy и новую chat architecture;
+- [x] kb_refresh поддерживает новый metadata contract;
+- [x] kb_validate проверяет новые registers;
+- [x] generated re-entry blocks синхронизированы;
+- [x] `kb_validate.py --strict` проходит без ошибок и предупреждений;
+- [x] review Git diff не показывает accidental/legacy contamination;
+- [x] выполнен Stage 00C commit и push.
 
 
 # 13. Канонические управляющие объекты

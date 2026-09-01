@@ -39,17 +39,17 @@ main_uncertainties:
   - Не установлена достаточность CEF-only описания низкотемпературных данных.
 
 current_milestone:
-  id: M00C
-  title: Stage 00C — scientific re-baselining and provenance audit
+  id: M02R
+  title: Stage 02R — independent TAIPAN re-analysis
   status: active
 
 immediate_next_step:
-  id: T-00C-06
+  id: T-02R-01
   text: >
-    Завершить управляющий re-baseline Knowledge Base: синхронизировать
-    PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation с новой
-    evidence/model semantics, после чего выполнить consistency review,
-    kb_refresh и kb_validate.
+    В 00 - Project Control зафиксировать Stage 02R analysis contract,
+    затем создать отдельный чат "02 - TAIPAN Data Reduction" и начать
+    независимый raw-to-observation re-analysis без использования historical
+    CEF target energies при model-independent feature discovery.
 
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -63,32 +63,34 @@ do_not_assume:
 
 control:
   now: >
-    Stage 00C — научный re-baselining проекта. Разделяются экспериментальные
-    observations, результаты обработки, литературные target energies,
-    физические assignments, model calculations и methodological decisions.
-    Уже сформированы scientific terminology, evidence register, model register
-    и новая семантическая версия PROJECT_STATE.
+    Stage 02R — независимый повторный анализ TAIPAN. Цель этапа —
+    построить воспроизводимую цепочку от raw instrument data до
+    model-independent spectral features и canonical experimental observation
+    contract до использования CEF assignments и microscopic models.
 
   why: >
-    Предыдущая Knowledge Base была технически структурирована, но часть
-    historical exploratory results и внутренних labels попала в центральное
-    состояние проекта без достаточного provenance и без чёткого различия
-    между наблюдением и интерпретацией. Перед следующими вычислениями необходимо
-    восстановить независимую и воспроизводимую цепочку evidence.
+    Stage 00C завершил научный re-baselining: экспериментальные свидетельства,
+    physical assignments, model calculations и methodological decisions
+    теперь разделены; введены EVIDENCE_REGISTER и MODEL_REGISTER;
+    центральные project documents и automation синхронизированы и прошли
+    strict validation. Следующий источник научного прогресса должен быть
+    независимым повторным анализом экспериментальных данных.
 
   next: >
-    Завершить Stage 00C governance/automation update, проверить согласованность
-    реестров и центральных документов и подготовить один reviewable commit.
-    После Stage 00C сформировать specification для независимого Stage 02R
-    TAIPAN re-analysis.
+    Сначала зафиксировать Stage 02R analysis contract в 00 - Project Control.
+    После review создать чат "02 - TAIPAN Data Reduction" и начать с
+    raw scan inventory и acquisition/instrument metadata. Blind feature
+    discovery не должен использовать historical energies 6.45, 18.2,
+    27.9 или 44.4 meV как targets.
 
   next_work_job: null
 
   blocked:
-    - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 00C и Stage 02R.
-    - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и нового анализа.
+    - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
+    - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
     - Использование F004 около 44.4 meV как обязательного CEF-перехода.
     - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
+    - Production CEF fitting внутри Stage 02R.
 
   deferred:
     - Production Stage 03D M0/M1 inference.
@@ -99,9 +101,9 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >
-    Stage 00C audit of TAIPAN feature provenance, CEF terminology and
-    model hierarchy based on current Knowledge Base, legacy analysis
-    artifacts and reviewed methodological literature.
+    Completed Stage 00C scientific re-baselining and provenance audit,
+    including evidence/model separation, register normalization,
+    updated project governance and validated Knowledge Base schema 2.2.
 
   last_work_checkpoint: null
 
@@ -109,7 +111,6 @@ control:
     - H-001
 
   key_risk_ids:
-    - RSK-001
     - RSK-003
     - RSK-004
     - RSK-005
