@@ -29,6 +29,8 @@ authoritative:
   logbook: 01_Logbook/RESEARCH_LOGBOOK.md
   checkpoints: 02_Work_Checkpoints/
 
+  stage02r_contract: 03_Protocols/STAGE02R_TAIPAN_ANALYSIS_CONTRACT.md
+
 automation:
   refresh: scripts/kb_refresh.py
   validate: scripts/kb_validate.py

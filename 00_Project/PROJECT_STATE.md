@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `T-02R-01`: В 00 - Project Control зафиксировать Stage 02R analysis contract, затем создать отдельный чат "02 - TAIPAN Data Reduction" и начать независимый raw-to-observation re-analysis без использования historical CEF target energies при model-independent feature discovery.
+**Следующий шаг.** `T-02R-02`: Создать отдельный чат "02 - TAIPAN Data Reduction", выполнить re-entry из canonical GitHub state и Stage 02R analysis contract, затем начать T-02R-03 с независимого raw scan inventory.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.

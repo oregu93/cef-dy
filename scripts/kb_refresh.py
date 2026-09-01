@@ -129,8 +129,8 @@ def control_block(meta, hyps):
         ]
     else:
         lines += [
-            "**Последний Work checkpoint.** Для текущего Stage 00C "
-            "вычислительный checkpoint не требуется.",
+            "**Последний Work checkpoint.** Для текущего этапа "
+            "вычислительный checkpoint ещё не зафиксирован.",
             "",
         ]
 

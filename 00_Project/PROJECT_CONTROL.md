@@ -29,7 +29,7 @@ control_chat: "00 - Project Control"
 
 **Почему.** Stage 00C завершил научный re-baselining: экспериментальные свидетельства, physical assignments, model calculations и methodological decisions теперь разделены; введены EVIDENCE_REGISTER и MODEL_REGISTER; центральные project documents и automation синхронизированы и прошли strict validation. Следующий источник научного прогресса должен быть независимым повторным анализом экспериментальных данных.
 
-**Следующий шаг.** Сначала зафиксировать Stage 02R analysis contract в 00 - Project Control. После review создать чат "02 - TAIPAN Data Reduction" и начать с raw scan inventory и acquisition/instrument metadata. Blind feature discovery не должен использовать historical energies 6.45, 18.2, 27.9 или 44.4 meV как targets.
+**Следующий шаг.** Создать чат "02 - TAIPAN Data Reduction" и передать ему canonical Stage 02R analysis contract. Первой experimental task является воспроизводимый raw scan inventory и acquisition/instrument classification; historical CEF targets при этом не используются.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
@@ -50,7 +50,7 @@ control_chat: "00 - Project Control"
 
 **Последний научный источник.** Completed Stage 00C scientific re-baselining and provenance audit, including evidence/model separation, register normalization, updated project governance and validated Knowledge Base schema 2.2.
 
-**Последний Work checkpoint.** Для текущего Stage 00C вычислительный checkpoint не требуется.
+**Последний Work checkpoint.** Для текущего этапа вычислительный checkpoint ещё не зафиксирован.
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -79,8 +79,8 @@ control_chat: "00 - Project Control"
 |---|---|---|
 | `T-00C-06` | completed | Обновить PROJECT_METADATA, PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation. |
 | `T-00C-07` | completed | Провести consistency review, refresh, strict validation, проверить diff и выполнить Stage 00C commit. |
-| `T-02R-01` | active | Зафиксировать analysis contract Stage 02R до начала повторной обработки данных. |
-| `T-02R-02` | next | Создать чат `02 - TAIPAN Data Reduction` и выполнить re-entry из canonical GitHub state. |
+| `T-02R-01` | completed | Зафиксировать analysis contract Stage 02R до начала повторной обработки данных. |
+| `T-02R-02` | active | Создать чат `02 - TAIPAN Data Reduction` и выполнить re-entry из canonical GitHub state. |
 | `T-02R-03` | queued | Построить независимый raw scan inventory и классификацию acquisition/instrument blocks. |
 | `T-02R-04` | queued | Выполнить model-independent feature discovery без historical energy targets. |
 | `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical observation contract. |
@@ -275,14 +275,12 @@ MOD-ECM-MALKIN
 | `00 - Project Control` | Scientific governance, roadmap, review and promotion. |
 | `Orthoferrite CF Watch` | Broad literature discovery and triage. |
 | `01 - Literature & Physics` | Curated deep literature analysis and physics integration. |
+| `02 - TAIPAN Data Reduction` | Independent TAIPAN reduction, blind feature discovery and experimental observation contract. |
 | `03 - CEF Modelling & Fit Design` | CEF inference/model design before Work execution. |
 | `W03 - CEF Compute` | Approved numerical execution only. |
 | `04 - Structure & Conventions` | Structure, frames and operator conventions. |
 | `05 - Validation & McPhase` | Independent magnetic validation and exchange-aware modelling. |
 | `06 - Paper & Dissertation` | Publication/dissertation layer using reviewed provenance. |
-
-`02 - TAIPAN Data Reduction` создаётся после завершения Stage 00C и
-утверждения Stage 02R contract.
 
 
 # 11. Правила перехода между этапами

@@ -44,12 +44,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: T-02R-01
+  id: T-02R-02
   text: >
-    В 00 - Project Control зафиксировать Stage 02R analysis contract,
-    затем создать отдельный чат "02 - TAIPAN Data Reduction" и начать
-    независимый raw-to-observation re-analysis без использования historical
-    CEF target energies при model-independent feature discovery.
+    Создать отдельный чат "02 - TAIPAN Data Reduction", выполнить re-entry
+    из canonical GitHub state и Stage 02R analysis contract, затем начать
+    T-02R-03 с независимого raw scan inventory.
 
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -77,11 +76,10 @@ control:
     независимым повторным анализом экспериментальных данных.
 
   next: >
-    Сначала зафиксировать Stage 02R analysis contract в 00 - Project Control.
-    После review создать чат "02 - TAIPAN Data Reduction" и начать с
-    raw scan inventory и acquisition/instrument metadata. Blind feature
-    discovery не должен использовать historical energies 6.45, 18.2,
-    27.9 или 44.4 meV как targets.
+    Создать чат "02 - TAIPAN Data Reduction" и передать ему canonical
+    Stage 02R analysis contract. Первой experimental task является
+    воспроизводимый raw scan inventory и acquisition/instrument
+    classification; historical CEF targets при этом не используются.
 
   next_work_job: null
 

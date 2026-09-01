@@ -52,7 +52,7 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Current focus:** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Next:** В 00 - Project Control зафиксировать Stage 02R analysis contract, затем создать отдельный чат "02 - TAIPAN Data Reduction" и начать независимый raw-to-observation re-analysis без использования historical CEF target energies при model-independent feature discovery.
+**Next:** Создать отдельный чат "02 - TAIPAN Data Reduction", выполнить re-entry из canonical GitHub state и Stage 02R analysis contract, затем начать T-02R-03 с независимого raw scan inventory.
 
 **Metadata updated:** `2026-09-01`.
 <!-- AUTO:README_STATUS:END -->
