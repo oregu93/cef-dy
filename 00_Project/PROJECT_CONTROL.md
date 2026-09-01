@@ -3,154 +3,307 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "1.1"
-updated: 2026-08-28
+version: "2.0"
+updated: 2026-09-01
 control_chat: "00 - Project Control"
 ---
 
 # CEF Dy — Project Control
 
 > [!abstract] Назначение
-> Этот документ управляет дорожной картой, очередью задач, решениями, рисками, Work-задачи и критериями завершения этапов. Он обновляется чаще, чем `PROJECT_STATE`.
+> Этот документ управляет научной дорожной картой, очередью задач,
+> зависимостями между этапами, решениями, рисками, Work-задачами
+> и критериями завершения.
+>
+> Текущее научное знание находится в
+> [PROJECT_STATE](PROJECT_STATE.md).
+> Экспериментальные свидетельства находятся в
+> [EVIDENCE_REGISTER](EVIDENCE_REGISTER.yaml),
+> а модельная иерархия — в
+> [MODEL_REGISTER](MODEL_REGISTER.yaml).
 
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Stage 03D — формальная ревизия статистической и вычислительной постановки вложенных моделей M0/M1 PCM с эффективными зарядами по энергиям и данным F002, включая детектированные и цензурированные наблюдения и один вспомогательный коэффициент нормировки на каждый instrument block.
+**Сейчас.** Stage 00C — научный re-baselining проекта. Разделяются экспериментальные observations, результаты обработки, литературные target energies, физические assignments, model calculations и methodological decisions. Уже сформированы scientific terminology, evidence register, model register и новая семантическая версия PROJECT_STATE.
 
+**Почему.** Предыдущая Knowledge Base была технически структурирована, но часть historical exploratory results и внутренних labels попала в центральное состояние проекта без достаточного provenance и без чёткого различия между наблюдением и интерпретацией. Перед следующими вычислениями необходимо восстановить независимую и воспроизводимую цепочку evidence.
 
-**Почему.** Инфраструктурный Stage 00B завершён: Knowledge Base v2.1 развёрнута локально, Obsidian vault настроен, Git/GitHub используется как система версионирования и синхронизации, а внешние данные отделены от Git. Следующий научный шаг — до запуска Work полностью определить модели, функцию правдоподобия, вспомогательные параметры, профильный анализ неопределённостей и критерии формирования ансамбля принятых решений для Stage 03D.
+**Следующий шаг.** Завершить Stage 00C governance/automation update, проверить согласованность реестров и центральных документов и подготовить один reviewable commit. После Stage 00C сформировать specification для независимого Stage 02R TAIPAN re-analysis.
 
-
-**Следующий шаг.** Провести design review Stage 03D в чате "03 - CEF Modelling & Fit Design", сформировать однозначную implementation specification и передать её на review в "00 - Project Control".
-
-
-**Следующий Work job.** `W03-03D-A-001 — реализация утверждённой архитектуры Stage 03D и только минимальные проверочные тесты. Production optimization, profile scans и accepted-solution ensemble запрещены до отдельного review checkpoint.
-`
+**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
-- Производственная оптимизация Stage 03D до утверждения формальной спецификации.
-- Переход от проверочных тестов к производственным расчётам без проверки checkpoint.
+- W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 00C и Stage 02R.
+- Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и нового анализа.
+- Использование F004 около 44.4 meV как обязательного CEF-перехода.
+- Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
 
 **Отложено.**
-- Обменное поле.
-- Обязательное назначение F004.
-- Свободный 15-параметрический CEF-фит как финальная модель.
-- Полная магнитная валидация.
+- Production Stage 03D M0/M1 inference.
+- Magnetic exchange modelling.
+- Свободный 15-параметрический CEF fit как production inference.
+- Superposition model.
+- Exchange-charge model Малкина.
+- Полная магнитная validation.
 
-**Последний научный источник.** Аудит интенсивностей Stage 03C, отражённый в предыдущих Project State / Knowledge Base v2.0.
+**Последний научный источник.** Stage 00C audit of TAIPAN feature provenance, CEF terminology and model hierarchy based on current Knowledge Base, legacy analysis artifacts and reviewed methodological literature.
 
-
-**Последний Work checkpoint.** Пока не зарегистрирован в новой схеме.
+**Последний Work checkpoint.** Для текущего Stage 00C вычислительный checkpoint не требуется.
 
 **Активные гипотезы.**
-- `H-001` (`working`): Энергетическая линия около 18.25 meV рассматривается как основной CEF-кандидат проекта.
-- `H-002` (`candidate`): Раздельные масштабы эффективных зарядов для O1/O2 при условии нейтральности могут улучшить совместимость энергий и F002 без перехода к свободному 15D CEF-фиту.
+- `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
 
-**Ключевые риски.** `RSK-001`, `RSK-002`, `RSK-003`.
+**Ключевые риски.** `RSK-001`, `RSK-003`, `RSK-004`, `RSK-005`.
 <!-- AUTO:CONTROL_REENTRY:END -->
+
 
 # 1. Карта этапов
 
 | Milestone | Status | Назначение |
 |---|---|---|
-| `M00` | active | Завершить переход на автономную базу знаний v2.1 и подготовить локальный рабочий процесс Obsidian/Git. |
-| `M03` | active | Stage 03D: вложенная подгонка `M0/M1` к энергии + обнаруженные/цензурированные `F002`. |
-| `M04` | planned | Более общий уточнение CEF-модели только при достаточной идентифицируемости наблюдаемыми. |
-| `M05` | planned | Независимая магнитная проверка: McPhase, $g$, $M(H)$, восприимчивость, exchange. |
-| `M06` | later | Структурные мультиполи $A_l^m$ и перенос по ряду Dy/Ho/Tb/Tm. |
-| `M07` | ongoing | Накопление готовых для статьи/диссертации результатов с provenance. |
+| `M00B` | completed | Развёртывание автономной Knowledge Base, Obsidian/Git workflow и базовой automation. |
+| `M00C` | active | Scientific re-baselining: терминология, provenance, evidence/model semantics и очистка центрального project state. |
+| `M02R` | planned | Независимый повторный анализ TAIPAN от raw/instrument data до model-independent observation tables. |
+| `M03R` | planned | Повторный анализ CEF landscape и идентифицируемости на очищенном experimental observation set. |
+| `M03D` | suspended | Joint constrained M0/M1 energy + intensity inference; существующий design сохранён, но execution приостановлен. |
+| `M05` | planned | Независимая магнитная validation и, при необходимости, CEF + magnetic exchange. |
+| `M06` | later | Более глубокая structural/microscopic interpretation и перенос по ряду RFeO$_3$. |
+| `M07` | ongoing | Накопление результатов, пригодных для статьи и диссертации, с явным provenance. |
 
-# 2. Активная очередь задач
 
-| Task ID | Type | Status | Задача | Контекст |
-|---|---|---|---|---|
-| `T-00A-02` | knowledge | active | Утвердить Knowledge Base v2.1 и затем разложить локальную директорию Obsidian/Git. | `00 - Project Control` |
-| `T-03D-01` | design | next | Формально определить `M0/M1` и доказать вложенность. | `03 - CEF Modelling & Fit Design` |
-| `T-03D-02` | design | next | Выбрать правдоподобие для обнаруженные/цензурированные `F002`. | `03 - CEF Modelling & Fit Design` |
-| `T-03D-03` | design | next | Определить профилирование масштаба по `instrument_block_id`. | `03 - CEF Modelling & Fit Design` |
-| `T-03D-04` | design | queued | Зафиксировать границы/приоры и стратегию оптимизации. | `03 - CEF Modelling & Fit Design` |
-| `T-03D-05` | design | queued | Зафиксировать сравнение моделей, профили неопределённости и критерий ансамбля. | `03 - CEF Modelling & Fit Design` |
-| `W03-03D-A-001` | work | blocked | Реализовать архитектуру Stage 03D и smoke-тесты. | `W03 - CEF Compute` |
-| `W03-03D-B-001` | work | blocked | Производственная оптимизация `M0/M1` после проверки A. | `W03 - CEF Compute` |
-| `W03-03D-C-001` | work | blocked | Грубые профили параметров после проверки B. | `W03 - CEF Compute` |
-| `W03-03D-D-001` | work | blocked | Адаптивное уточнение профилей. | `W03 - CEF Compute` |
-| `W03-03D-E-001` | work | blocked | Ансамбль принятых решений и diagnostics. | `W03 - CEF Compute` |
+# 2. Stage 00C — текущая очередь
 
-# 3. Ключевые решения
+| Task ID | Status | Задача |
+|---|---|---|
+| `T-00C-01` | completed | Зафиксировать каноническую научную терминологию и границы понятий observation / fit result / assignment / model. |
+| `T-00C-02` | completed | Ввести provenance schema и отделить evidence от вычислительных results и hypotheses. |
+| `T-00C-03` | completed | Провести audit experimental landmarks и labels: F002/F004, 18.25, 6.45, 27.90 и 44.4 meV. |
+| `T-00C-04` | completed | Провести model-purpose audit и сформировать model hierarchy. |
+| `T-00C-05` | completed | Семантически переписать PROJECT_STATE вокруг evidence, interpretation и model hierarchy. |
+| `T-00C-06` | active | Обновить PROJECT_METADATA, PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation. |
+| `T-00C-07` | next | Провести consistency review, refresh, strict validation, проверить diff и выполнить Stage 00C commit. |
 
-Основной machine-readable реестр: [DECISION_REGISTER](DECISION_REGISTER.yaml).
 
-На текущем этапе особенно важны:
-
-- `D-001`: подгонка только по энергиям не является финальным критерием.
-- `D-003`: один общий scale на физически обоснованный `instrument_block_id`.
-- `D-004`: необнаруженные линии входят как цензурированные наблюдения / верхние пределы.
-- `D-005`: `F004` не является обязательным CEF-уровнем Stage 03D.
-- `D-006`: exchange не входит в Stage 03D.
-- `D-008`: Work-задачи останавливаются на явных границах checkpoint.
-
-# 4. Активные гипотезы
-
-Основной реестр: [HYPOTHESIS_REGISTER](HYPOTHESIS_REGISTER.yaml).
-
-- `H-001` — working: линия около 18.25 meV относится к Dy CEF.
-- `H-002` — candidate: `M1` улучшит совместное описание энергии и `F002` относительно `M0`.
-- `H-003` — disfavored: обязательные hidden levels около 6.45/27.90 meV.
-- `H-004` — disfavored: чистое локализованное Dy CEF назначение 44.4 meV.
-
-# 5. Открытые вопросы
-
-| ID | Status | Вопрос | Следующий контекст |
-|---|---|---|---|
-| `Q-001` | active | Какой вид цензурированного правдоподобия использовать для `F002`? | Fit Design |
-| `Q-002` | active | Можно ли профилировать параметр нормировкиs аналитически? | Fit Design |
-| `Q-003` | active | Какие физические границы/приоры задать для `M0/M1`? | Fit Design |
-| `Q-004` | active | Как сравнивать `M0/M1` при вложенности и возможных boundary effects? | Fit Design |
-| `Q-005` | active | Какие пороги использовать для профилей и ансамбля принятых решений? | Fit Design |
-| `Q-006` | open | Какова природа `F004` / 44.4 meV? | TAIPAN / Physics |
-| `Q-007` | deferred | Какой минимальный расширение с обменным полем вводить после Stage 03D? | Validation |
-| `Q-008` | deferred | Как переносить uncertainty структурных координат в CEF? | Structure |
-
-# 6. Реестр рисков
-
-| Risk ID | Level | Риск | Мера |
-|---|---|---|---|
-| `RSK-001` | high | Оптимизатор создаёт иллюзию идентифицируемости. | Вложенные модели, профили, ансамбли, цензурированные данные. |
-| `RSK-002` | high | Нормировка поглощает физическую информацию об интенсивности. | Shared scale по `instrument_block_id`, явные diagnostics. |
-| `RSK-003` | high | Ошибка системы координат/convention незаметна по энергиям, но портит интенсивности. | Регрессионные тесты гамильтониана и тензоров переходов. |
-| `RSK-004` | medium | Ошибочное назначение 44.4 meV искажает CEF fit. | `F004` только diagnostic на Stage 03D. |
-| `RSK-005` | medium | Эффект обменного поля принимается за решёточный CEF. | Явная иерархия моделей; exchange позже. |
-| `RSK-006` | medium | Work/Codex budget расходуется на обсуждение постановки и повторные пробные циклы. | Научная постановка заранее; возобновляемые jobs; STOP CONDITIONS. |
-| `RSK-007` | medium | Публичный Git раскрывает raw/private data. | Отдельный `CEF_Dy_Data/`, `.gitignore`, pre-commit audit. |
-
-# 7. План Work для Stage 03D
+# 3. Roadmap после Stage 00C
 
 ```text
-Разбор постановки               [обычный чат]
-       ↓
-03D-A: implementation + smoke
-       ↓ checkpoint/review
-03D-B: производственная оптимизация M0/M1
-       ↓ checkpoint/review
-03D-C: грубые профили
-       ↓ checkpoint/review
-03D-D: адаптивные профили
-       ↓ checkpoint/review
-03D-E: ансамбль принятых решений + diagnostics
-       ↓ checkpoint/review
-03D-F: финальная проверка + package + state update
+Stage 00C
+scientific re-baselining
+        ↓
+Stage 02R
+independent TAIPAN re-analysis
+        ↓
+Stage 03R
+CEF landscape / identifiability re-analysis
+        ↓
+Stage 03D
+joint constrained energy + intensity inference
+        ↓
+Stage 05
+independent magnetic validation
+        ↓
+later structural / microscopic interpretation
 ```
 
-Каждый Work job получает заранее:
+Ключевой принцип:
+
+> Новый experimental pipeline не должен начинаться с требования найти
+> historical energies 6.45, 18.2, 27.9 или 44.4 meV.
+
+Сначала выполняется model-independent feature discovery.
+Historical energies могут использоваться только после этого как отдельные
+hypotheses или targeted tests.
+
+
+# 4. Граница Stage 02R
+
+Stage 02R должен начинаться с raw TAIPAN data и instrument metadata.
+
+Минимальная последовательность:
+
+```text
+raw TAIPAN
+    ↓
+scan inventory
+    ↓
+instrument / geometry classification
+    ↓
+model-independent feature discovery
+    ↓
+candidate feature table
+    ↓
+global/shared line-shape analysis
+    ↓
+experimental observation contract
+    ↓
+physical assignments
+```
+
+Stage 02R не выполняет production CEF fit.
+
+Основные outputs:
+
+- воспроизводимый scan inventory;
+- acquisition / instrument block classification;
+- canonical observation tables;
+- peak centroids / areas / widths с uncertainty semantics;
+- non-detections и upper limits;
+- явный provenance каждого observation;
+- independent verification семантики F002/F004;
+- оценка instrument-energy uncertainty;
+- specification данных для Stage 03R/03D.
+
+
+# 5. Граница Stage 03R
+
+Stage 03R должен ответить на вопрос:
+
+> Какие свойства CEF Hamiltonian реально ограничиваются очищенным
+> experimental observation set до введения production structural fit?
+
+Разрешены:
+
+- energy-only landscape как diagnostic;
+- joint energy/intensity landscape exploration;
+- comparison assignment families;
+- identifiability diagnostics;
+- convention/frame regression tests;
+- проверка, какие наблюдаемые действительно различают wavefunctions.
+
+Не является целью:
+
+- выбрать один minimum как финальную модель;
+- автоматически возобновить старую Stage 03D objective;
+- вводить magnetic exchange без отдельного решения.
+
+
+# 6. Статус Stage 03D
+
+Существующая Stage 03D specification сохраняется как результат design work.
+
+Текущий статус:
+
+```yaml
+design_status: preserved
+execution_status: suspended_pending_rebaseline
+```
+
+Модельная ветвь:
+
+- `MOD-PCM-M0`;
+- `MOD-PCM-M1`.
+
+Она может быть возобновлена только после:
+
+1. завершения Stage 00C;
+2. формирования нового experimental observation contract в Stage 02R;
+3. Stage 03R review идентифицируемости;
+4. проверки того, что assumptions прежней Stage 03D specification всё ещё применимы.
+
+Ни один старый experimental label не должен автоматически переноситься
+в новый likelihood только потому, что он использовался в Stage 03C/03D.
+
+
+# 7. Модельная стратегия
+
+Канонический реестр:
+
+[MODEL_REGISTER](MODEL_REGISTER.yaml).
+
+Текущая иерархия:
+
+```text
+MOD-PCM-FORMAL
+    structural electrostatic baseline
+        ↓
+MOD-PCM-M0
+    uniform scale / fingerprint test
+        ↓
+MOD-PCM-M1
+    minimal structured effective-charge deformation
+
+MOD-CEF-CS15
+    general phenomenological effective Hamiltonian
+
+MOD-CEF-EXCHANGE
+    CEF + magnetic exchange
+    deferred
+
+MOD-SUPERPOSITION
+    deferred
+
+MOD-ECM-MALKIN
+    conceptual reference only / deferred
+```
+
+Модели не образуют простую последовательность «чем больше параметров,
+тем лучше». Каждая отвечает на отдельный физический вопрос.
+
+
+# 8. Основные научные риски
+
+| Risk ID | Level | Риск | Контроль |
+|---|---|---|---|
+| `RSK-001` | high | Numerical optimizer создаёт иллюзию идентифицируемости. | Landscape analysis, profile diagnostics, ensembles и независимые observables. |
+| `RSK-002` | high | Нормировка поглощает физическую информацию об интенсивности. | Физически обоснованные shared normalization groups и explicit nuisance treatment. |
+| `RSK-003` | high | Ошибка convention/frame незаметна по энергиям, но портит интенсивности. | Regression tests Hamiltonian + transition tensors. |
+| `RSK-004` | high | Historical target energies или assignments загрязняют blind experimental analysis. | Raw-to-observation Stage 02R без CEF targets. |
+| `RSK-005` | high | Magnetic exchange или microscopic effects ошибочно поглощаются effective-charge PCM. | Явная model hierarchy и независимая validation. |
+| `RSK-006` | medium | Структурная uncertainty смешивается с statistical fit uncertainty. | Отдельные uncertainty layers / ensembles. |
+| `RSK-007` | medium | Публичный Git содержит raw/private data. | External data directory, `.gitignore`, pre-commit audit. |
+
+
+# 9. Open questions
+
+| ID | Priority | Вопрос | Контекст |
+|---|---|---|---|
+| `Q-001` | high | Каков первичный литературный источник historical targets 6.45 и 27.90 meV? | `01 - Literature & Physics` |
+| `Q-002` | high | Какие spectral features воспроизводимо возникают в независимом blind Stage 02R? | `02 - TAIPAN Data Reduction` |
+| `Q-003` | high | Какова полная uncertainty энергии особенности около 18.25 meV с учётом calibration systematic? | Stage 02R |
+| `Q-004` | high | Какие относительные INS-интенсивности могут использоваться как независимые CEF constraints? | Stage 02R / 03R |
+| `Q-005` | high | Требуют ли очищенные данные изменения CEF wavefunctions относительно M0? | Stage 03R |
+| `Q-006` | medium | Какова физическая природа особенности около 44.4 meV? | TAIPAN / Physics |
+| `Q-007` | deferred | Когда данные требуют введения magnetic exchange? | Stage 05 |
+| `Q-008` | deferred | Как переносить structural uncertainty в CEF inference? | Structure / Modelling |
+
+
+# 10. Контексты чатов
+
+| Chat | Role |
+|---|---|
+| `00 - Project Control` | Scientific governance, roadmap, review and promotion. |
+| `Orthoferrite CF Watch` | Broad literature discovery and triage. |
+| `01 - Literature & Physics` | Curated deep literature analysis and physics integration. |
+| `02 - TAIPAN Data Reduction` | Independent experimental reduction and observation contract. |
+| `03 - CEF Modelling & Fit Design` | CEF inference/model design before Work execution. |
+| `W03 - CEF Compute` | Approved numerical execution only. |
+| `04 - Structure & Conventions` | Structure, frames and operator conventions. |
+| `05 - Validation & McPhase` | Independent magnetic validation and exchange-aware modelling. |
+| `06 - Paper & Dissertation` | Publication/dissertation layer using reviewed provenance. |
+
+`02 - TAIPAN Data Reduction` создаётся после завершения Stage 00C и
+утверждения Stage 02R contract.
+
+
+# 11. Правила перехода между этапами
+
+Новый stage начинается только после явного review предыдущего.
+
+Production Work не должен самостоятельно:
+
+- менять scientific question;
+- добавлять observables;
+- изменять physical model;
+- повышать статус result;
+- переходить к следующему вычислительному этапу.
+
+Каждый Work job должен иметь:
 
 ```text
 GOAL
 INPUTS
 MODEL
-LIKELIHOOD
-PARAMETERS
-BOUNDS
 ALGORITHM
 TESTS
 OUTPUTS
@@ -158,31 +311,36 @@ PASS_CRITERIA
 STOP_CONDITION
 ```
 
-# 8. Критерии завершения — Stage 03D
 
-Stage 03D считается завершённым только если:
+# 12. Definition of Done — Stage 00C
 
-- [ ] `M0` и `M1` математически определены и действительно вложены.
-- [ ] Обнаруженные и цензурированные `F002` входят в единую статистическую модель.
-- [ ] Нормировки идентифицируемы и сохраняются на уровне `instrument_block_id`.
-- [ ] Экспортируется decomposition функции правдоподобия / objective.
-- [ ] Оптимумы `M0/M1` воспроизводятся из фиксированных входов.
-- [ ] Сравнение моделей учитывает возможные оговорки для граничных случаев.
-- [ ] Неопределённости получены профилированием либо явно обоснован иной метод.
-- [ ] Сохранён ансамбль принятых решений с параметрами и производными CEF-наблюдаемыми.
-- [ ] Структурная uncertainty не смешана неявно с неопределённостью подгонки.
-- [ ] `F004` остаётся diagnostic, пока новое решение не supersede `D-005`.
-- [ ] Exchange отсутствует, пока новое решение не supersede `D-006`.
-- [ ] В `PROJECT_STATE` попадают только выводы, прошедшие научный review.
+Stage 00C завершён, когда:
 
-# 9. Правила обновления
+- [x] определена каноническая scientific terminology;
+- [x] введено явное разделение evidence / result / hypothesis / decision;
+- [x] проведён provenance audit основных experimental landmarks;
+- [x] F002/F004 получили однозначную семантику feature IDs;
+- [x] проведён model-purpose audit;
+- [x] PROJECT_STATE переписан на evidence-first основе;
+- [ ] PROJECT_METADATA и PROJECT_CONTROL синхронизированы;
+- [ ] PROJECT_MANIFEST отражает новые authoritative registers;
+- [ ] protocols отражают GitHub canonical-state policy и новую chat architecture;
+- [ ] kb_refresh поддерживает новый metadata contract;
+- [ ] kb_validate проверяет новые registers;
+- [ ] generated re-entry blocks синхронизированы;
+- [ ] `kb_validate.py --strict` проходит без ошибок и предупреждений;
+- [ ] review Git diff не показывает accidental/legacy contamination;
+- [ ] выполнен Stage 00C commit и push.
 
-Подробно: [RESEARCH_KB_GUIDE](../03_Protocols/RESEARCH_KB_GUIDE.md).
 
-Кратко:
+# 13. Канонические управляющие объекты
 
-- `PROJECT_CONTROL` обновляется после существенного решения, изменения roadmap, blocker или проверка checkpoint.
-- `PROJECT_STATE` обновляется только при изменении текущего научного знания.
-- Work checkpoint после review не переписывается, кроме явного metadata исправления.
-- Logbook фиксирует, почему изменилось направление и какие альтернативы были отклонены/отложены.
-- Краткие re-entry blocks редактируются только через `PROJECT_METADATA.yaml` + `kb_refresh.py`.
+- [PROJECT_STATE](PROJECT_STATE.md)
+- [PROJECT_METADATA](PROJECT_METADATA.yaml)
+- [EVIDENCE_REGISTER](EVIDENCE_REGISTER.yaml)
+- [RESULT_REGISTER](RESULT_REGISTER.yaml)
+- [HYPOTHESIS_REGISTER](HYPOTHESIS_REGISTER.yaml)
+- [MODEL_REGISTER](MODEL_REGISTER.yaml)
+- [DECISION_REGISTER](DECISION_REGISTER.yaml)
+- [RESEARCH_LOGBOOK](../01_Logbook/RESEARCH_LOGBOOK.md)
+- [SCIENTIFIC_TERMINOLOGY](../03_Protocols/SCIENTIFIC_TERMINOLOGY.md)

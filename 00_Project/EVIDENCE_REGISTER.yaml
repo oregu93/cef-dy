@@ -1,0 +1,134 @@
+- id: EV-001
+  type: experimental_feature
+  title: TAIPAN blind feature F002 near 18.25 meV
+  origin_type: experiment_derived
+  review_status: reviewed
+  provenance_status: partial
+  dataset_id: EXP-TAIPAN-001
+
+  source_labels:
+    stage02_feature_id: F002
+    feature_id_semantics: sequential_blind_global_feature_id
+
+  statement: >
+    Stage 02 blind feature discovery identified global feature F002 near
+    18.26 meV. F002 is an automatically assigned sequential feature ID and
+    is not a Miller-index or reflection label.
+
+  evidence:
+    - kind: analysis_script
+      source: 19_taipan_background_peak_discovery_colab.py
+    - kind: manifest
+      source: DyFeO3_TAIPAN_stage02_manifest.json
+    - kind: analysis_script
+      source: 20_taipan_confirmatory_profiles_colab.py
+
+  interpretation:
+    cef_assignment: working_hypothesis
+    hypothesis_id: H-001
+
+
+- id: EV-002
+  type: spectral_parameter
+  title: Stage 03A centroid of TAIPAN feature F002
+  origin_type: experiment_derived
+  review_status: reviewed
+  provenance_status: partial
+
+  value:
+    quantity: peak_centroid
+    reported_value_meV: 18.25
+    reported_sigma_meV: 0.12
+    legacy_raw_value_meV: 18.247178
+    legacy_raw_sigma_meV: 0.119021
+
+  uncertainty_scope: >
+    Includes profile-fit statistical uncertainty and spread among tested local
+    background families; does not include final absolute instrument-energy
+    calibration systematic.
+
+  validation_required:
+    - independent TAIPAN re-analysis
+    - explicit source scan IDs
+    - archived Stage 03A physical-line-summary artifact
+
+
+- id: EV-003
+  type: experimental_feature
+  title: TAIPAN blind feature F004 near 44.4 meV
+  origin_type: experiment_derived
+  review_status: reviewed
+  provenance_status: partial
+
+  source_labels:
+    stage02_feature_id: F004
+    feature_id_semantics: sequential_blind_global_feature_id
+
+  statement: >
+    Stage 02 blind analysis identified global feature F004 near 44.4 meV.
+    The feature is experimentally supported, but its microscopic assignment
+    remains open.
+
+  interpretation:
+    cef_assignment: not_established
+
+
+- id: EV-004
+  type: historical_energy_target
+  title: Historical 6.45 meV B1/B2 landmark
+  origin_type: literature
+  review_status: candidate
+  provenance_status: missing
+
+  statement: >
+    The 6.45 meV energy was used in legacy B1/B2 energy-only assignment
+    tracks and was labelled in legacy code as a literature prior. The primary
+    bibliographic source has not yet been recovered.
+
+  experimental_role:
+    blind_detection: false
+    targeted_upper_limit_available: true
+
+
+- id: EV-005
+  type: historical_energy_target
+  title: Historical 27.90 meV B2 landmark
+  origin_type: literature
+  review_status: candidate
+  provenance_status: missing
+
+  statement: >
+    The 27.90 meV energy was used in the legacy B2 energy-only assignment
+    track and was labelled in legacy code as a literature prior. The primary
+    bibliographic source has not yet been recovered.
+
+  experimental_role:
+    blind_detection: false
+    targeted_upper_limit_available: true
+
+- id: EV-006
+  type: instrument_spectral_parameter
+  title: Historical empirical elastic width from TAIPAN scan 104062
+  origin_type: experiment_derived
+  review_status: reviewed
+  provenance_status: partial
+
+  value:
+    quantity: elastic_fwhm
+    reported_value_meV: 0.894
+    reported_sigma_meV: 0.025
+    Q_Ainv: 2.26
+
+  dataset_id: EXP-TAIPAN-001
+  scan_ids:
+    - "104062"
+
+  statement: >
+    Historical analysis of elastic scan 104062 reported an empirical
+    effective energy width FWHM = 0.894 ± 0.025 meV near Q ≈ 2.26 A^-1.
+    This quantity is not a complete TAS resolution function.
+
+  validation_required:
+    - recover the original scan 104062 analysis artifact
+    - reproduce the elastic-line fit
+    - document the line-shape and uncertainty model

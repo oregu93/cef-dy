@@ -68,3 +68,6 @@ backups/
 
 # Logs generated locally
 *.log
+
+# Generated local validation output
+VALIDATION_REPORT.json

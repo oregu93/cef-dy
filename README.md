@@ -1,58 +1,154 @@
 ---
-title: "CEF Dy / DyFeO3 — база знаний исследования"
+title: "CEF DFO -- база знаний исследования"
 type: project_index
 project_id: CEF-Dy
 status: active
-schema_version: "2.1"
-updated: 2026-08-31
+schema_version: "2.2"
+version: "3.0"
+updated: 2026-09-01
 language_content: ru
 language_metadata: en
 ---
 
-# CEF Dy / DyFeO$_3$ — база знаний исследования
+# CEF DFO
 
-> [!abstract] Назначение
-> Эта папка — автономная база знаний проекта по кристаллическому электрическому полю Dy$^{3+}$ в DyFeO$_3$. Она рассчитана на Obsidian, Git/GitHub и обычные Markdown-редакторы. ChatGPT используется как рабочий интерфейс, но не является единственным хранилищем состояния исследования.
+Исследовательская база знаний (*knowledge base, KB*) проекта по кристаллическому полю
+Dy$^{3+}$ в ортоферрите DyFeO$_3$.
+
+Проект объединяет анализ INS-данных трехосного спектрометра [TAIPAN](https://www.ansto.gov.au/facilities/australian-centre-for-neutron-scattering/neutron-scattering-instruments/taipan), моделирование эффективного
+CEF-гамильтониана, структурно обусловленные модели кристаллического поля,
+проверку соглашений между вычислительными пакетами и последующую
+независимую верификацию по данным макроскопических измерений ($ M(H), M(T), \chi(T), \dots $).
+
+*KB* рассчитана на обычный Markdown/YAML, Git/GitHub и Obsidian.
+ChatGPT используется как рабочий научный интерфейс, но не является
+единственным хранилищем состояния проекта.
+
+
+## Научная задача
+
+Основная цель — определить воспроизводимый и физически интерпретируемый
+эффективный гамильтониан кристаллического поля Dy$^{3+}$ в DyFeO$_3$,
+который одновременно согласуется с:
+
+- энергиями наблюдаемых INS-возбуждений;
+- относительными INS-интенсивностями и их зависимостью от $\mathbf Q$;
+- температурной зависимостью спектров;
+- физически корректными правилами отбора и волновыми функциями;
+- последующей независимой проверкой по $M(H)$.
+
+Для позиции Dy с локальной симметрией $C_s$ общий феноменологический
+CEF-гамильтониан содержит 15 независимых параметров в принятом
+операторном соглашении (формализм Стивенса).
+
+Одна из центральных проблем проекта — идентифицируемость такой
+низкосимметричной обратной задачи.
+
+
+<!-- AUTO:README_STATUS:START -->
+## Текущий статус проекта
+
+**Stage:** `M00C` — Stage 00C — scientific re-baselining and provenance audit (`active`).
+
+**Current focus:** Stage 00C — научный re-baselining проекта. Разделяются экспериментальные observations, результаты обработки, литературные target energies, физические assignments, model calculations и methodological decisions. Уже сформированы scientific terminology, evidence register, model register и новая семантическая версия PROJECT_STATE.
+
+**Next:** Завершить управляющий re-baseline Knowledge Base: синхронизировать PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation с новой evidence/model semantics, после чего выполнить consistency review, kb_refresh и kb_validate.
+
+**Metadata updated:** `2026-09-01`.
+<!-- AUTO:README_STATUS:END -->
+
+
+## Экспериментальная основа
+
+Основной собственный experimental dataset — INS измерения монокристалла
+DyFeO$_3$ на трёхосном спектрометре TAIPAN.
+
+Текущий evidence audit различает:
+
+| Объект | Текущий смысл |
+|---|---|
+| `F002` | sequential feature ID Stage 02 blind analysis около 18.2–18.3 meV |
+| $\approx18.25\pm0.12$ meV | experiment-derived peak centroid; CEF assignment остаётся гипотезой |
+| `F004` | sequential feature ID broad structure около 44.4 meV |
+| 6.45 meV | historical target energy, не blind detection |
+| 27.90 meV | historical target energy, не blind detection |
+
+`F002` и `F004` не являются индексами кристаллографических отражений.
+
+Подробное текущее научное состояние:
+[PROJECT_STATE](00_Project/PROJECT_STATE.md).
+
+
+## Модельная стратегия
+
+Проект не использует принцип «чем больше параметров, тем лучше».
+
+Каждая модель должна отвечать на отдельный физический вопрос.
+
+| Model ID | Назначение |
+|---|---|
+| `MOD-PCM-FORMAL` | простейший structural electrostatic baseline |
+| `MOD-PCM-M0` | проверка достаточности одного общего scale и исходного intensity fingerprint |
+| `MOD-PCM-M1` | минимальное структурированное различение O1/O2 contributions |
+| `MOD-CEF-CS15` | общий phenomenological $C_s$ CEF Hamiltonian и анализ identifiability |
+| `MOD-CEF-EXCHANGE` | CEF в magnetic environment; deferred |
+| `MOD-SUPERPOSITION` | более общая ligand-based structural model; deferred |
+| `MOD-ECM-MALKIN` | microscopic short-range exchange-charge model; conceptual reference only |
+
+Полный model-purpose contract находится в
+[MODEL_REGISTER](00_Project/MODEL_REGISTER.yaml).
+
+
+## Knowledge architecture
+
+Проект разделяет разные уровни знания:
+
+```text
+measurement
+    ↓
+experimental / external evidence
+    ↓
+physical hypothesis / assignment
+    ↓
+model test or calculation
+    ↓
+reviewed result
+    ↓
+current scientific state
+```
+
+Это реализовано отдельными объектами:
+
+```text
+EVIDENCE_REGISTER
+RESULT_REGISTER
+HYPOTHESIS_REGISTER
+MODEL_REGISTER
+DECISION_REGISTER
+```
+
+Экспериментальная особенность, fitted parameter и physical assignment
+не должны храниться как одна сущность.
+
 
 ## Быстрая навигация
 
-| Что требуется | Файл |
+| Задача | Файл |
 |---|---|
-| За минуту восстановить научное состояние | [PROJECT_STATE](00_Project/PROJECT_STATE.md) |
-| За несколько минут понять, что делаем сейчас и почему | [PROJECT_CONTROL](00_Project/PROJECT_CONTROL.md) |
-| Проверить реестр существенных результатов | [RESULT_REGISTER](00_Project/RESULT_REGISTER.yaml) |
-| Проверить рабочие гипотезы | [HYPOTHESIS_REGISTER](00_Project/HYPOTHESIS_REGISTER.yaml) |
-| Проверить принятые решения | [DECISION_REGISTER](00_Project/DECISION_REGISTER.yaml) |
+| За минуту восстановить scientific state | [PROJECT_STATE](00_Project/PROJECT_STATE.md) |
+| Понять текущий roadmap и blockers | [PROJECT_CONTROL](00_Project/PROJECT_CONTROL.md) |
+| Проверить experimental/external evidence | [EVIDENCE_REGISTER](00_Project/EVIDENCE_REGISTER.yaml) |
+| Проверить analysis/model results | [RESULT_REGISTER](00_Project/RESULT_REGISTER.yaml) |
+| Проверить physical hypotheses | [HYPOTHESIS_REGISTER](00_Project/HYPOTHESIS_REGISTER.yaml) |
+| Проверить model hierarchy | [MODEL_REGISTER](00_Project/MODEL_REGISTER.yaml) |
+| Проверить methodological decisions | [DECISION_REGISTER](00_Project/DECISION_REGISTER.yaml) |
 | Восстановить историю исследования | [RESEARCH_LOGBOOK](01_Logbook/RESEARCH_LOGBOOK.md) |
-| Проверить конкретный вычислительный запуск | `02_Work_Checkpoints/` |
-| Проверить правила ведения базы знаний | [RESEARCH_KB_GUIDE](03_Protocols/RESEARCH_KB_GUIDE.md) |
-| Проверить правила Markdown/LaTeX | [MARKDOWN_LATEX_STYLE](03_Protocols/MARKDOWN_LATEX_STYLE.md) |
-| Восстановить роли чатов ChatGPT | [CHAT_BOOTSTRAPS](03_Protocols/CHAT_BOOTSTRAPS.md) |
+| Проверить execution checkpoint | `02_Work_Checkpoints/` |
+| Проверить scientific terminology | [SCIENTIFIC_TERMINOLOGY](03_Protocols/SCIENTIFIC_TERMINOLOGY.md) |
+| Проверить Knowledge Base rules | [RESEARCH_KB_GUIDE](03_Protocols/RESEARCH_KB_GUIDE.md) |
+| Проверить data contracts | [DATA_CONTRACTS](03_Protocols/DATA_CONTRACTS.md) |
+| Восстановить роли project chats | [CHAT_BOOTSTRAPS](03_Protocols/CHAT_BOOTSTRAPS.md) |
 
-## Текущая ветка исследования
-
-`Stage 03D` — вложенный фит низкоразмерных моделей эффективных зарядов `M0/M1` к энергии CEF-перехода и к обнаруженным/цензурированным данным `F002`, с одним общим параметром нормировки на `instrument_block_id`.
-
-`F004` остаётся диагностическим наблюдением и не используется как обязательный CEF-уровень. Обменное поле на Stage 03D не включается.
-
-## Архитектура знания
-
-```text
-наблюдение / расчёт
-        ↓
-WORK_CHECKPOINT
-        ↓
-научная проверка
-        ↓
-RESULT_REGISTER / HYPOTHESIS_REGISTER
-        ↓
-RESEARCH_LOGBOOK
-        ↓
-решение → PROJECT_CONTROL
-текущее знание → PROJECT_STATE
-```
-
-Численный вывод программы не становится научным фактом автоматически.
 
 ## Структура репозитория
 
@@ -60,24 +156,30 @@ RESEARCH_LOGBOOK
 CEF_Dy/
 ├── README.md
 ├── PROJECT_MANIFEST.yaml
+├── requirements.txt
+│
 ├── 00_Project/
 │   ├── PROJECT_STATE.md
 │   ├── PROJECT_CONTROL.md
 │   ├── PROJECT_METADATA.yaml
+│   ├── EVIDENCE_REGISTER.yaml
 │   ├── RESULT_REGISTER.yaml
 │   ├── HYPOTHESIS_REGISTER.yaml
+│   ├── MODEL_REGISTER.yaml
 │   ├── DECISION_REGISTER.yaml
 │   └── MIGRATION_NOTES.md
+│
 ├── 01_Logbook/
-│   ├── RESEARCH_LOGBOOK.md
-│   └── entries/2026/
 ├── 02_Work_Checkpoints/
+│
 ├── 03_Protocols/
-│   ├── RESEARCH_KB_GUIDE.md
+│   ├── SCIENTIFIC_TERMINOLOGY.md
 │   ├── KNOWLEDGE_RULES.md
-│   ├── MARKDOWN_LATEX_STYLE.md
+│   ├── RESEARCH_KB_GUIDE.md
 │   ├── DATA_CONTRACTS.md
+│   ├── MARKDOWN_LATEX_STYLE.md
 │   └── CHAT_BOOTSTRAPS.md
+│
 ├── 04_Results/
 ├── 05_References/
 ├── Templates/
@@ -86,48 +188,176 @@ CEF_Dy/
 └── Archive/legacy/
 ```
 
-## Источник истины и версионирование
 
-1. Текущее научное состояние — `00_Project/PROJECT_STATE.md`.
-2. Управление исследованием — `00_Project/PROJECT_CONTROL.md`.
-3. Существенные результаты и их статус — `RESULT_REGISTER.yaml`.
-4. Рабочие гипотезы — `HYPOTHESIS_REGISTER.yaml`.
-5. Воспроизводимость вычислений — `02_Work_Checkpoints/`.
-6. Хронология и логика изменения направления — `01_Logbook/`.
-7. Git — основной механизм истории версий текстового слоя проекта.
-8. Yandex.Disk — резервное копирование и перенос больших/локальных данных.
+## Source of truth
 
-## Работа на нескольких компьютерах
-
-Репозиторий может быть клонирован на рабочий компьютер и ноутбук. Каждая
-машина имеет собственную локальную копию и собственный
-`configs/local_paths.yaml`.
-
-Основное правило:
+Для Git-tracked project layer каноническим текущим состоянием является:
 
 ```text
-начало работы → git pull
-конец существенной сессии → validate → commit → git push
+GitHub repository: oregu93/cef-dy
+branch: main
 ```
 
-Продробно: [RESEARCH_KB_GUIDE](03_Protocols/RESEARCH_KB_GUIDE.md) 
+после успешной validation и `git push`.
 
-## Автоматическое обновление кратких блоков
+Старые версии `PROJECT_STATE`, registers и protocols в ChatGPT File Library
+считаются historical snapshots.
 
-Блоки `60-second re-entry` и `5-minute re-entry` не следует редактировать вручную. Они формируются из `PROJECT_METADATA.yaml` и реестров:
+`Archive/legacy/` также сохраняется как неизменяемый исторический слой.
+
+Raw и крупные experimental/computational data не хранятся в Git.
+
+
+## Воспроизводимость
+
+Python dependency bootstrap:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Обновление generated re-entry blocks:
 
 ```powershell
 python scripts/kb_refresh.py
-python scripts/kb_validate.py
 ```
 
-Перед существенным Git-коммитом рекомендуется:
+Проверка:
 
 ```powershell
 python scripts/kb_refresh.py --check
 python scripts/kb_validate.py --strict
 ```
 
-## Безопасность публичного GitHub
+Перед существенным commit:
 
-В Git по умолчанию не следует помещать необработанные экспериментальные архивы, большие бинарные выходы оптимизаторов, приватную переписку, материалы с ограничениями, токены и локальные конфигурации путей. Для таких данных используйте отдельную директорию рядом с репозиторием, например `CEF_Dy_Data/`, а внутри базы знаний ссылайтесь на устойчивые `dataset_id`.
+```text
+refresh
+→ validate
+→ git diff --check
+→ scientific diff review
+→ commit
+→ push
+```
+
+
+## Работа на нескольких компьютерах
+
+Каждая машина использует собственный clone репозитория и собственный
+ignored:
+
+```text
+configs/local_paths.yaml
+```
+
+Machine-specific absolute paths не входят в каноническую Knowledge Base.
+
+Типичный цикл:
+
+```text
+git pull
+    ↓
+research / analysis
+    ↓
+refresh
+    ↓
+validate
+    ↓
+review
+    ↓
+commit
+    ↓
+git push
+```
+
+
+## External data
+
+Raw TAIPAN data, крупные optimizer outputs, промежуточные массивы,
+приватные материалы и другие большие binary artifacts хранятся отдельно
+от Git repository.
+
+В Knowledge Base они идентифицируются устойчивыми `dataset_id`,
+`artifact_id` или checkpoint references вместо абсолютных локальных путей.
+
+
+## Literature workflow
+
+Literature layer разделён на две роли:
+
+```text
+Orthoferrite CF Watch
+    discovery / triage
+            ↓
+01 - Literature & Physics
+    curated deep analysis
+            ↓
+00 - Project Control
+    scientific review / promotion
+            ↓
+Knowledge Base
+```
+
+Основные приоритеты:
+
+- энергетические схемы CEF-уровней и $B_l^m$;
+- интенсивности INS-возбуждений и правила отбора;
+- low-symmetry inverse-problem methodology;
+- magnetic exchange;
+- structure–CEF relations;
+- используемые программные пакеты.
+
+
+## Текущий roadmap
+
+```text
+Stage 00C
+scientific re-baselining
+        ↓
+Stage 02R
+independent TAIPAN re-analysis
+        ↓
+Stage 03R
+CEF landscape / identifiability
+        ↓
+Stage 03D
+joint constrained inference
+        ↓
+Stage 05
+independent magnetic validation
+        ↓
+later microscopic interpretation
+```
+
+Stage 03D M0/M1 design сохранён, но production execution не возобновляется
+автоматически после Stage 00C.
+
+
+## Научные ограничения текущего состояния
+
+В настоящее время не установлены:
+
+- уникальный полный набор $B_l^m$;
+- уникальные CEF wavefunctions;
+- окончательный CEF assignment особенности около 18.25 meV;
+- существование CEF transitions около 6.45 и 27.90 meV;
+- чистый Dy CEF origin структуры около 44.4 meV;
+- величину magnetic Dy–Fe exchange field;
+- microscopic exchange-charge description.
+
+Актуальный список ограничений и открытых вопросов находится в
+[PROJECT_STATE](00_Project/PROJECT_STATE.md).
+
+
+## Методологические правила проекта
+
+Численный output программы не становится научным фактом автоматически.
+
+`reviewed` не означает `validated`.
+
+Совпадение energies не доказывает правильность wavefunctions.
+
+Любая таблица $B_l^m$ без operator convention, normalization, units и
+coordinate frame считается неполной.
+
+Любое существенное утверждение должно иметь поддающееся восстановлению происхождение.

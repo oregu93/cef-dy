@@ -1,61 +1,161 @@
 - id: D-001
   status: active
   decision: Не считать energy-only fit финальным критерием CEF-модели.
-  rationale: Свободная 15-параметрическая обратная задача демонстрирует сильную неоднозначность.
+  rationale: >
+    Низкосимметричная 15-параметрическая обратная задача показывает
+    существенную неоднозначность по одним энергиям.
   date: 2026-08
+
+
 - id: D-002
   status: active
-  decision: Связывать direct PCF/CFE и canonical Hutchings параметры явным преобразованием,
-    а не переименованием индексов.
-  rationale: Предотвращает ошибку convention/frame при переносе параметров.
+  decision: >
+    Связывать direct PCF/CFE и canonical project parameters явным
+    операторным/координатным преобразованием, а не переименованием индексов.
+  rationale: >
+    Предотвращает скрытые convention/frame errors при переносе параметров
+    и расчёте интенсивностей.
   date: '2026-08-21'
+
+
 - id: D-003
   status: active
-  decision: Использовать один общий параметр нормировки на физически обоснованный
-    instrument_block_id.
-  rationale: Независимый свободный масштаб на каждый single-peak scan уничтожает значительную
-    часть информации об интенсивностях.
+  decision: >
+    При использовании относительных INS-интенсивностей связывать normalization
+    на физически обоснованном instrument_block_id, а не вводить автоматически
+    независимый свободный scale для каждого scan.
+  rationale: >
+    Независимый scale на каждый scan может уничтожить значительную часть
+    информации о relative intensities.
   date: '2026-08-21'
+
+
 - id: D-004
   status: active
-  decision: Необнаруженные, но доступные переходы учитывать как цензурированные наблюдения
-    / upper limits.
-  rationale: Отсутствие предсказанной сильной линии является информативным наблюдением.
+  decision: >
+    Сохранять информативные non-detections. Представлять их как censored
+    observations только когда явно определены censoring variable, threshold
+    и likelihood semantics.
+  rationale: >
+    Отсутствие предсказанного сильного сигнала может нести информацию,
+    но censored likelihood требует формально определённой экспериментальной
+    процедуры.
   date: '2026-08-21'
+
+
 - id: D-005
   status: active
-  decision: Не использовать F004 / 44.4 meV как обязательный CEF-уровень Stage 03D.
-  rationale: Назначение остаётся открытым и возможно смешанным.
+  decision: >
+    Не использовать feature F004 около 44.4 meV как обязательный Dy CEF
+    assignment без нового подтверждающего evidence.
+  rationale: >
+    F004 является experimental feature ID; его микроскопическое назначение
+    остаётся открытым.
   date: '2026-08-27'
+
+
 - id: D-006
   status: active
-  decision: Не включать обменное поле в Stage 03D.
-  rationale: Сначала проверяется идентифицируемость структурной/effective-charge модели;
-    exchange рассматривается отдельным последующим уровнем.
+  decision: >
+    Magnetic exchange вводить как отдельный физический уровень модели после
+    получения достаточно надёжного CEF baseline либо раньше только при
+    явном experimental evidence необходимости exchange-aware description.
+  rationale: >
+    Одновременное свободное изменение CEF и exchange при слабом observation
+    set резко увеличивает неидентифицируемость.
   date: '2026-08-27'
+
+
 - id: D-007
-  status: active
-  decision: Stage 03D начинать с вложенных низкоразмерных M0/M1, а не с финального
-    свободного 15D CEF-фита.
-  rationale: Текущий набор наблюдаемых не обеспечивает достаточную идентифицируемость
-    полного Hamiltonian.
+  status: superseded
+  decision: >
+    Stage 03D начинать непосредственно с вложенных M0/M1.
+  rationale: >
+    Это решение было принято до Stage 00C provenance audit и предполагало
+    старый experimental observation set.
   date: '2026-08-27'
+  superseded_by:
+    - D-013
+
+
 - id: D-008
   status: active
-  decision: Work-задачи дробить на автономные jobs с явным STOP CONDITION и review
-    checkpoint.
-  rationale: Экономит Work/Codex budget и отделяет вычисление от научного решения.
+  decision: >
+    Work-задачи дробить на автономные jobs с явным STOP_CONDITION
+    и review checkpoint.
+  rationale: >
+    Отделяет execution от scientific decision и уменьшает риск
+    неконтролируемого перехода между вычислительными этапами.
   date: '2026-08-27'
+
+
 - id: D-009
   status: active
-  decision: Использовать архитектуру PROJECT_STATE / PROJECT_CONTROL / WORK_CHECKPOINTS
-    + RESEARCH_LOGBOOK и реестры.
-  rationale: Ускоряет повторное погружение, сохраняет provenance и уменьшает зависимость
-    от контекста ChatGPT.
-  date: '2026-08-28'
+  decision: >
+    Использовать архитектуру PROJECT_STATE / PROJECT_CONTROL /
+    EVIDENCE_REGISTER / RESULT_REGISTER / HYPOTHESIS_REGISTER /
+    MODEL_REGISTER / DECISION_REGISTER / WORK_CHECKPOINTS /
+    RESEARCH_LOGBOOK.
+  rationale: >
+    Разделяет текущее состояние, evidence, calculations, hypotheses,
+    models, decisions и chronology.
+  date: '2026-09-01'
+
+
 - id: D-010
   status: active
-  decision: Содержательный текст вести преимущественно на русском; английский оставлять
-    для machine-facing metadata и случаев крайней неоднозначности.
-  rationale: Обеспечивает читаемость исследователем при сохранении машинной обработки.
+  decision: >
+    Содержательный текст вести преимущественно на русском; английский
+    использовать прежде всего для machine-facing metadata, IDs, labels,
+    filenames, software entities и случаев реальной терминологической
+    неоднозначности.
+  rationale: >
+    Обеспечивает научную читаемость при сохранении machine-processable layer.
   date: '2026-08-28'
+
+
+- id: D-011
+  status: active
+  decision: >
+    Считать committed GitHub repository oregu93/cef-dy branch main
+    каноническим текущим состоянием Git-tracked Knowledge Base.
+    Старые project snapshots в File Library считать legacy.
+  rationale: >
+    Обеспечивает единый source of truth между компьютерами и ChatGPT sessions.
+  date: '2026-09-01'
+
+
+- id: D-012
+  status: active
+  decision: >
+    Строго разделять experimental evidence, derived spectral parameters,
+    physical assignments и model calculations.
+  rationale: >
+    Предотвращает превращение fitted peak или conditioned calculation
+    в автоматически установленный CEF level.
+  date: '2026-09-01'
+
+
+- id: D-013
+  status: active
+  decision: >
+    Сохранить Stage 03D M0/M1 design, но приостановить execution до
+    завершения Stage 00C, независимого Stage 02R и Stage 03R
+    identifiability review.
+  rationale: >
+    Старый Stage 03D observation set содержит historical assumptions,
+    которые должны быть повторно проверены независимо.
+  date: '2026-09-01'
+
+
+- id: D-014
+  status: active
+  decision: >
+    Использовать exchange-charge model Малкина в текущем цикле только
+    как conceptual reference для понимания ограничений PCM;
+    разработку и fit ECM отложить.
+  rationale: >
+    Текущий приоритет — восстановление experimental evidence и
+    идентифицируемого CEF inference без преждевременного усложнения
+    microscopic model.
+  date: '2026-09-01'

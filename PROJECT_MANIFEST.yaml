@@ -1,26 +1,55 @@
 project_id: CEF-Dy
-schema_version: '2.1'
-updated: '2026-08-31'
+schema_version: '2.2'
+updated: '2026-09-01'
+
 content_language: ru
 metadata_language: en
+
+canonical_repository:
+  provider: github
+  repository: oregu93/cef-dy
+  branch: main
+
 authoritative:
   project_state: 00_Project/PROJECT_STATE.md
   project_control: 00_Project/PROJECT_CONTROL.md
   project_metadata: 00_Project/PROJECT_METADATA.yaml
+
+  evidence: 00_Project/EVIDENCE_REGISTER.yaml
   results: 00_Project/RESULT_REGISTER.yaml
   hypotheses: 00_Project/HYPOTHESIS_REGISTER.yaml
+  models: 00_Project/MODEL_REGISTER.yaml
   decisions: 00_Project/DECISION_REGISTER.yaml
+
+  scientific_terminology: 03_Protocols/SCIENTIFIC_TERMINOLOGY.md
+  knowledge_rules: 03_Protocols/KNOWLEDGE_RULES.md
+  data_contracts: 03_Protocols/DATA_CONTRACTS.md
+  chat_bootstraps: 03_Protocols/CHAT_BOOTSTRAPS.md
+
   logbook: 01_Logbook/RESEARCH_LOGBOOK.md
   checkpoints: 02_Work_Checkpoints/
+
 automation:
   refresh: scripts/kb_refresh.py
   validate: scripts/kb_validate.py
+
+environment:
+  python_requirements: requirements.txt
+
 policy:
   validated_requires_reproducible_evidence: true
   reentry_blocks_generated: true
+
   git_is_version_control_source: true
+  canonical_current_state: github_main
+  file_library_project_snapshots_are_legacy: true
+
   raw_data_external_to_git: true
   machine_specific_paths_not_tracked: true
   multi_machine_workflow_supported: true
-  qr_codes_optional: true
 
+  evidence_assignment_separation_required: true
+  model_purpose_required: true
+  reviewed_is_not_validated: true
+
+  qr_codes_optional: true

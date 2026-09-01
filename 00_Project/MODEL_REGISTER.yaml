@@ -1,0 +1,92 @@
+schema_version: "1.0"
+updated: "2026-09-01"
+
+models:
+
+  - id: MOD-PCM-FORMAL
+    name: Formal-charge point-charge model
+    class: structural_cef_model
+    status: baseline
+    purpose: >
+      Проверить CEF, непосредственно предсказываемый выбранной структурой
+      в простой электростатической модели с формальными зарядами.
+    fit_parameters: []
+    can_establish:
+      - qualitative structural CEF baseline
+      - characteristic energy scale
+      - baseline eigenvectors and transition hierarchy
+    cannot_establish:
+      - microscopic completeness of the electrostatic model
+      - unique experimental CEF Hamiltonian
+
+  - id: MOD-PCM-M0
+    name: Uniform effective-charge-scaled PCM
+    class: structural_cef_model
+    status: retained
+    parent_model: MOD-PCM-FORMAL
+    purpose: >
+      Проверить, достаточно ли одного общего масштаба исходного PCM.
+    parameters:
+      - s
+    key_property: >
+      For positive uniform scaling, the Hamiltonian is scaled without
+      changing its eigenvectors or relative single-ion transition fingerprint.
+    cannot_establish:
+      - refined CEF wavefunctions beyond the parent PCM
+      - microscopic meaning of the fitted scale
+
+  - id: MOD-PCM-M1
+    name: Neutral two-oxygen-scale effective-charge PCM
+    class: structural_cef_model
+    status: suspended_pending_rebaseline
+    parent_model: MOD-PCM-M0
+    purpose: >
+      Проверить, достаточно ли минимального различия effective contributions
+      двух кристаллографически неэквивалентных oxygen sites для совместного
+      описания энергий и INS-интенсивностей.
+    parameters:
+      - s_O1
+      - s_O2
+    derived_parameters:
+      - s_cat
+    nesting_condition: s_O1 == s_O2
+    cannot_establish:
+      - literal oxygen ionic charges
+      - unique microscopic origin of effective scaling
+
+  - id: MOD-CEF-CS15
+    name: General Cs phenomenological CEF Hamiltonian
+    class: effective_hamiltonian
+    status: exploratory
+    parameters:
+      count: 15
+      family: B_lm
+    purpose: >
+      Определить семейства эффективных CEF Hamiltonians, совместимых
+      с экспериментальными observables без жёсткого PCM assumption.
+    limitation: >
+      Strongly underdetermined under energy-only constraints.
+
+  - id: MOD-CEF-EXCHANGE
+    name: CEF plus magnetic exchange
+    class: magnetic_single_ion_model
+    status: deferred
+    purpose: >
+      Описать влияние magnetically ordered Fe environment на Dy states
+      после установления достаточного CEF baseline.
+
+  - id: MOD-SUPERPOSITION
+    name: Superposition model
+    class: structural_cef_model
+    status: deferred
+    purpose: >
+      Future ligand-based structural model more general than simple PCM.
+
+  - id: MOD-ECM-MALKIN
+    name: Malkin exchange-charge model
+    class: microscopic_cef_model
+    status: deferred
+    purpose: >
+      Future microscopic treatment of short-range ligand-overlap
+      contributions to the crystal field.
+    current_scope: conceptual_reference_only

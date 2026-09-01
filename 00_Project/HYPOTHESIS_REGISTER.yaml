@@ -1,49 +1,88 @@
 - id: H-001
-  title: Линия около 18.25 meV относится к CEF-переходу Dy3+
+  title: Особенность около 18.25 meV относится к CEF-переходу Dy3+
   status: working
-  statement: Энергетическая линия около 18.25 meV рассматривается как основной CEF-кандидат
-    проекта.
-  supporting_results:
-  - R-003
-  - R-006
+  statement: >
+    Экспериментальная спектральная особенность около 18.25 meV
+    рассматривается как основной кандидат проекта на переход между
+    CEF-состояниями Dy3+.
+  supporting_evidence:
+    - EV-001
+    - EV-002
+  supporting_results: []
+  consistency_results:
+    - R-006
   conflicting_results: []
   tests_required:
-  - Совместимость относительных INS-интенсивностей.
-  - Проверка Q-зависимости и возможных смешанных вкладов.
+    - Проверить относительные INS-интенсивности на очищенном observation set.
+    - Проверить Q-зависимость.
+    - Проверить температурную зависимость.
+    - Проверить transition matrix elements и selection rules.
+    - Проверить совместимость с общей CEF level scheme.
+  notes: >
+    R-006 является только conditioned model-consistency result и не считается
+    независимым evidence для H-001.
+
+
 - id: H-002
-  title: Двухмасштабная нейтральная модель M1 улучшит описание F002 относительно M0
+  title: M1 может дать информативное улучшение относительно M0
   status: candidate
-  statement: Раздельные масштабы эффективных зарядов для O1/O2 при условии нейтральности
-    могут улучшить совместимость энергий и F002 без перехода к свободному 15D CEF-фиту.
-  supporting_results:
-  - R-006
-  - R-007
+  statement: >
+    Различение effective contributions двух кристаллографически
+    неэквивалентных oxygen sites может изменить CEF wavefunctions и
+    INS intensity pattern относительно uniform-scale M0.
+  supporting_evidence: []
+  supporting_results: []
+  motivation_results:
+    - R-006
+    - R-007
   conflicting_results: []
   tests_required:
-  - Вложенный likelihood comparison M0/M1.
-  - Профили параметров и boundary diagnostics.
+    - Сначала сформировать независимый Stage 02R observation contract.
+    - Проверить в Stage 03R, какие observables реально различают M0 и M1.
+    - Только затем выполнять nested M0/M1 comparison.
+  notes: >
+    Текущие результаты мотивируют тест M1, но ещё не являются evidence,
+    что M1 действительно улучшает описание данных.
+
+
 - id: H-003
-  title: Существуют скрытые CEF-уровни около 6.45 и 27.90 meV
-  status: disfavored
-  statement: Историческое B2-многообразие использовало эти энергетические ориентиры,
-    однако screened PCM Stage 03C не поддерживает их как обязательные уровни.
-  supporting_results:
-  - R-002
-  conflicting_results:
-  - R-006
+  title: CEF scheme содержит переходы около 6.45 и/или 27.90 meV
+  status: candidate
+  statement: >
+    Энергии 6.45 и 27.90 meV использовались в historical B1/B2 assignment
+    tracks, однако они не являются blind experimental detections текущего
+    TAIPAN analysis, а их первичный литературный provenance пока не восстановлен.
+  supporting_evidence: []
+  supporting_results: []
+  historical_target_evidence:
+    - EV-004
+    - EV-005
+  diagnostic_results:
+    - R-006
+  conflicting_results: []
   tests_required:
-  - Цензурированные upper limits.
-  - Независимые INS-данные/полный совместный fit.
+    - Восстановить первичные литературные источники обеих энергий.
+    - Выполнить Stage 02R blind feature discovery без этих target energies.
+    - После blind analysis выполнить targeted sensitivity / upper-limit tests.
+    - Проверить возможные transition strengths в admissible CEF models.
+  notes: >
+    Отсутствие таких переходов в conditioned PCM R-006 не доказывает их
+    физическое отсутствие. Поэтому прежний status disfavored заменён на candidate.
+
+
 - id: H-004
-  title: Структура около 44.4 meV является чистым локализованным Dy CEF-переходом
+  title: Особенность около 44.4 meV является чистым локализованным Dy CEF-переходом
   status: disfavored
-  statement: Такое назначение возможно только как проверяемая гипотеза и не используется
-    как обязательное ограничение Stage 03D.
+  statement: >
+    Простое назначение особенности F004 одному чистому локализованному
+    Dy3+ CEF-переходу в настоящее время считается неблагоприятным,
+    однако микроскопическая природа особенности остаётся открытой.
+  relevant_evidence:
+    - EV-003
   supporting_results: []
   conflicting_results:
-  - R-005
-  - R-006
+    - R-005
   tests_required:
-  - Q dependence.
-  - Температурная зависимость.
-  - Проверка смешанного/Fe вклада и background.
+    - Независимо воспроизвести Q-dependence в Stage 02R.
+    - Исследовать температурную зависимость.
+    - Проверить CEF, phonon, Fe-related и mixed branches.

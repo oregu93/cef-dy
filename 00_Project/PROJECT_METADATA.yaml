@@ -1,86 +1,115 @@
 project_id: CEF-Dy
 project_status: active
-schema_version: '2.1'
-updated: '2026-08-31'
-scientific_question: Получить воспроизводимую и физически интерпретируемую модель
-  кристаллического электрического поля Dy3+ в DyFeO3, согласованную с INS и затем
-  верифицированную макроскопическими измерениями.
-current_model:
-  id: MOD-PCM-NESTED
-  status: working
-  summary: На Stage 03D рассматриваются вложенные низкоразмерные модели эффективных
-    зарядов M0/M1 без обменного поля; подгонка использует энергию CEF-перехода и обнаруженные/цензурированные
-    данные F002.
-strongest_result_ids:
-- R-003
-- R-006
-- R-007
+schema_version: '2.2'
+updated: '2026-09-01'
+
+scientific_question: >
+  Определить воспроизводимый и физически интерпретируемый эффективный
+  гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде
+  всего с энергиями и интенсивностями INS-переходов, а затем проверенный
+  независимыми магнитными наблюдаемыми.
+
+experimental_evidence_summary: >
+  В blind-анализе TAIPAN обнаружена спектральная особенность F002 около
+  18.2–18.3 meV. Последующий профильный анализ дал рабочую оценку положения
+  E_peak ≈ 18.25 ± 0.12 meV. F002 является последовательным feature ID,
+  а не индексом отражения. Также наблюдается широкая особенность F004
+  около 44.4 meV с пока не установленным микроскопическим происхождением.
+
+interpretation_summary: >
+  Особенность около 18.25 meV рассматривается как основной кандидат на
+  CEF-переход Dy3+, но это назначение остаётся рабочей гипотезой.
+  Энергии 6.45 и 27.90 meV являются историческими target energies
+  прежних B1/B2 energy-only поисков; их первичный литературный provenance
+  ещё не восстановлен.
+
+model_status_summary: >
+  Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно
+  мотивированные модельные семейства. Energy-only 15-параметрическая
+  CEF-задача существенно недоопределена. Stage 03D M0/M1 design сохранён,
+  но production execution приостановлен до независимого повторного анализа
+  экспериментального observation set.
+
 main_uncertainties:
-- Не установлен уникальный полный 15-параметрический CEF-гамильтониан.
-- Не подтверждены назначения всех предполагаемых уровней, включая 6.45 и 27.90 meV.
-- Не установлена достаточность приближения без обменного поля для низкотемпературных
-  интенсивностей.
+  - Не установлен уникальный полный 15-параметрический CEF-гамильтониан и соответствующие волновые функции.
+  - Окончательное CEF-назначение особенности около 18.25 meV не подтверждено интенсивностями и другими независимыми наблюдаемыми.
+  - Первичный литературный provenance энергий 6.45 и 27.90 meV не восстановлен.
+  - Физическая природа особенности около 44.4 meV остаётся открытой.
+  - Не определены окончательные systematic uncertainty энергетической шкалы и TAS resolution model.
+  - Не установлена достаточность CEF-only описания низкотемпературных данных.
+
 current_milestone:
-  id: M03
-  title: Stage 03D — идентифицируемый совместный фит энергии и INS-интенсивностей
+  id: M00C
+  title: Stage 00C — scientific re-baselining and provenance audit
   status: active
+
 immediate_next_step:
-  id: T-03D-DESIGN
-  text: 'В чате 03 - CEF Modelling & Fit Design завершить формальную спецификацию
-    M0/M1: профилирование нормировок, границы параметров, сравнение моделей, профили неопределённости и ансамбль принятых решений.'
+  id: T-00C-06
+  text: >
+    Завершить управляющий re-baseline Knowledge Base: синхронизировать
+    PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation с новой
+    evidence/model semantics, после чего выполнить consistency review,
+    kb_refresh и kb_validate.
+
 do_not_assume:
-- F004 / структура около 44.4 meV является обязательным CEF-уровнем.
-- Линии около 6.45 и 27.90 meV являются подтверждёнными CEF-уровнями.
-- Один численный минимум определяет физическую модель.
-- Обменное поле уже включено в Stage 03D.
+  - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
+  - Энергии 6.45 и 27.90 meV являются blind experimental detections или подтверждёнными CEF-уровнями.
+  - F002 и F004 являются индексами кристаллографических отражений.
+  - Особенность около 44.4 meV является чистым локализованным Dy CEF-переходом.
+  - Один energy-only optimum определяет физическую CEF-модель.
+  - Параметры effective-charge PCM являются непосредственно измеренными ионными зарядами.
+  - Magnetic exchange уже включён в текущий CEF baseline.
+  - Exchange-charge model Малкина является активной моделью текущего цикла.
+
 control:
   now: >
-    Stage 03D — формальная ревизия статистической и вычислительной постановки
-    вложенных моделей M0/M1 PCM с эффективными зарядами по энергиям и данным
-    F002, включая детектированные и цензурированные наблюдения и один
-    вспомогательный коэффициент нормировки на каждый instrument block.
+    Stage 00C — научный re-baselining проекта. Разделяются экспериментальные
+    observations, результаты обработки, литературные target energies,
+    физические assignments, model calculations и methodological decisions.
+    Уже сформированы scientific terminology, evidence register, model register
+    и новая семантическая версия PROJECT_STATE.
 
   why: >
-    Инфраструктурный Stage 00B завершён: Knowledge Base v2.1 развёрнута
-    локально, Obsidian vault настроен, Git/GitHub используется как система
-    версионирования и синхронизации, а внешние данные отделены от Git.
-    Следующий научный шаг — до запуска Work полностью определить модели,
-    функцию правдоподобия, вспомогательные параметры, профильный анализ
-    неопределённостей и критерии формирования ансамбля принятых решений
-    для Stage 03D.
+    Предыдущая Knowledge Base была технически структурирована, но часть
+    historical exploratory results и внутренних labels попала в центральное
+    состояние проекта без достаточного provenance и без чёткого различия
+    между наблюдением и интерпретацией. Перед следующими вычислениями необходимо
+    восстановить независимую и воспроизводимую цепочку evidence.
 
   next: >
-    Провести design review Stage 03D в чате
-    "03 - CEF Modelling & Fit Design", сформировать однозначную
-    implementation specification и передать её на review в
-    "00 - Project Control".
+    Завершить Stage 00C governance/automation update, проверить согласованность
+    реестров и центральных документов и подготовить один reviewable commit.
+    После Stage 00C сформировать specification для независимого Stage 02R
+    TAIPAN re-analysis.
 
-  next_work_job: >
-    W03-03D-A-001 — реализация утверждённой архитектуры Stage 03D и только
-    минимальные проверочные тесты. Production optimization, profile scans
-    и accepted-solution ensemble запрещены до отдельного review checkpoint.
+  next_work_job: null
 
   blocked:
-    - Производственная оптимизация Stage 03D до утверждения формальной спецификации.
-    - Переход от проверочных тестов к производственным расчётам без проверки checkpoint.
+    - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 00C и Stage 02R.
+    - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и нового анализа.
+    - Использование F004 около 44.4 meV как обязательного CEF-перехода.
+    - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
 
   deferred:
-    - Обменное поле.
-    - Обязательное назначение F004.
-    - Свободный 15-параметрический CEF-фит как финальная модель.
-    - Полная магнитная валидация.
+    - Production Stage 03D M0/M1 inference.
+    - Magnetic exchange modelling.
+    - Свободный 15-параметрический CEF fit как production inference.
+    - Superposition model.
+    - Exchange-charge model Малкина.
+    - Полная магнитная validation.
 
   last_scientific_source: >
-    Аудит интенсивностей Stage 03C, отражённый в предыдущих
-    Project State / Knowledge Base v2.0.
+    Stage 00C audit of TAIPAN feature provenance, CEF terminology and
+    model hierarchy based on current Knowledge Base, legacy analysis
+    artifacts and reviewed methodological literature.
 
   last_work_checkpoint: null
 
   active_hypothesis_ids:
     - H-001
-    - H-002
 
   key_risk_ids:
     - RSK-001
-    - RSK-002
     - RSK-003
+    - RSK-004
+    - RSK-005

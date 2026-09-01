@@ -19,6 +19,36 @@ updated: 2026-08-31
 
 Смешивать эти функции в одном документе не следует.
 
+### Каноническое текущее состояние
+
+Для Git-tracked слоя проекта каноническим текущим состоянием считается:
+
+```text
+GitHub repository: oregu93/cef-dy
+branch: main
+```
+
+после успешной проверки Knowledge Base и `git push`.
+
+Приоритет источников текущего project state:
+
+```text
+1. явно предоставленный пользователем более новый локальный файл;
+2. текущий committed GitHub main;
+3. File Library snapshots;
+4. Archive/legacy.
+```
+
+Файлы `PROJECT_STATE`, `PROJECT_CONTROL`, registers и protocols,
+сохранённые ранее в ChatGPT File Library, считаются historical snapshots и
+не предполагаются актуальными, если существует более новая версия в GitHub.
+
+File Library используется прежде всего для литературы, книг, внешних
+документов, experimental files и исторических snapshots.
+
+Незакоммиченные локальные изменения не видны через GitHub и до `git push`
+не считаются каноническим repository state.
+
 ## 2. Когда обновлять PROJECT_STATE
 
 Обновляйте `PROJECT_STATE.md` только если изменилось текущее научное знание, например:
@@ -85,6 +115,52 @@ validation_criteria:
 
 и хотя бы один evidence вида `checkpoint`, `artifact`, `dataset` или эквивалентный воспроизводимый источник. Простого пересказа старого Project State недостаточно.
 
+## EVIDENCE_REGISTER
+
+`EVIDENCE_REGISTER.yaml` содержит экспериментальные и внешние
+свидетельства, которые используются как основания научного inference.
+
+Основное правило:
+
+> observation и physical assignment являются разными сущностями.
+
+Experimental feature может иметь `review_status: reviewed`, в то время как
+его CEF assignment остаётся `working` hypothesis.
+
+Для существенного evidence рекомендуется хранить:
+
+```yaml
+id: EV-###
+origin_type:
+review_status:
+provenance_status:
+```
+
+а также dataset/source/artifact metadata, достаточные для восстановления
+его происхождения.
+
+## MODEL_REGISTER
+
+`MODEL_REGISTER.yaml` является канонической картой физических моделей
+проекта.
+
+Для каждой модели фиксируются:
+
+```text
+model_id
+class
+status
+purpose
+parameters
+what it can establish
+what it cannot establish
+```
+
+MODEL_REGISTER описывает научную роль модели, а не историю конкретного
+optimizer run.
+
+Конкретный запуск модели хранится в Work checkpoint / result artifact.
+
 ## 5. HYPOTHESIS_REGISTER
 
 Гипотеза получает `id: H-###`, если она влияет на постановку эксперимента, fit, assignment или интерпретацию.
@@ -146,25 +222,47 @@ Evidence
 
 Не создавать отдельную запись для каждого мелкого технического действия.
 
-## 9. Promotion workflow
+## Promotion workflow
+
+Для experiment-derived knowledge:
 
 ```text
-raw observation / computation
-            ↓
-      WORK_CHECKPOINT
-            ↓
-      scientific review
-            ↓
-       RESULT_REGISTER
-       ↙             ↘
- candidate         rejected
-    ↓
- working/reviewed
-    ↓
- validated  (только после критериев)
-    ↓
- PROJECT_STATE, если результат меняет текущее знание
+raw measurement
+       ↓
+analysis artifact / checkpoint
+       ↓
+EVIDENCE_REGISTER
+       ↓
+physical interpretation
+       ↓
+HYPOTHESIS_REGISTER
+       ↓
+model test
+       ↓
+RESULT_REGISTER
+       ↓
+scientific review
+       ↓
+PROJECT_STATE
 ```
+
+Для model calculations:
+
+```text
+model definition
+    ↓
+MODEL_REGISTER
+    ↓
+Work checkpoint
+    ↓
+RESULT_REGISTER
+    ↓
+scientific review
+    ↓
+PROJECT_STATE, если результат меняет текущее знание
+```
+
+Ни один из переходов не является автоматическим.
 
 ## 10. Краткие re-entry blocks
 
@@ -215,6 +313,10 @@ Obsidian — интерфейс, а Markdown/YAML/Git — основной пе�
 ## 14. Работа с проектом на нескольких компьютерах
 
 GitHub используется как центральная синхронизируемая версия текстового и программного слоя проекта.
+
+ChatGPT при подключённом GitHub repository также использует committed
+`main` как canonical current Knowledge Base. Это позволяет сохранять один
+и тот же project context независимо от конкретного компьютера или браузера.
 
 Для каждого компьютера существует отдельная локальная копия репозитория. Obsidian открывает локальную папку репозитория как vault.
 
