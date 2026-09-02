@@ -46,9 +46,9 @@ current_milestone:
 immediate_next_step:
   id: W02-02R-A-002
   text: >
-    Выполнить в W02-Lin утверждённый verified production parser и
-    canonical file/scan inventory job W02-02R-A-002 для EXP-TAIPAN-001,
-    строго до установленного STOP_CONDITION.
+    Выполнить в выбранном machine-local W02 execution context утверждённый
+    verified production parser и canonical file/scan inventory job
+    W02-02R-A-002 для EXP-TAIPAN-001, строго до STOP_CONDITION.
 
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -77,7 +77,7 @@ control:
     inventories, не закрывая unresolved TAS semantics предположениями.
 
   next: >
-    После canonical design-freeze commit выполнить в W02-Lin только
+    После canonical design-freeze commit выполнить в выбранном machine-local W02 execution context только
     W02-02R-A-002 — verified parser + canonical file/scan inventories.
     После STOP_CONDITION вернуть checkpoint и artifacts в
     "02 - TAIPAN Data Reduction" для scientific review.

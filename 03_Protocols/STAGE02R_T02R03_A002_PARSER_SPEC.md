@@ -29,7 +29,11 @@ execution_status: not_started
 execution_authorized: true_after_canonical_commit
 
 parent_checkpoint: W02-02R-A-001
-execution_context_target: W02-Lin
+execution_role: W02
+execution_context_policy: one_active_machine_local_context
+allowed_execution_contexts:
+  - W02-win
+  - W02-Lin
 
 raw_data_access: read_only
 execution_class: production_parser_and_inventory
@@ -42,7 +46,7 @@ serialization_contract_version: stage02r_a002_serialization_v1
 
 Эта спецификация фиксирует утверждённый Project Control design для второго Work job задачи `T-02R-03`.
 
-Execution разрешается только после canonical Git commit этой frozen specification и отдельного re-entry в W02-Lin.
+Execution разрешается только после canonical Git commit этой frozen specification и отдельного re-entry в selected authorized W02 machine-local context.
 
 A-002 не должен расширять scope до:
 
@@ -269,7 +273,11 @@ write temporary files inside raw tree
 Execution target:
 
 ```yaml
-execution_context: W02-Lin
+execution_role: W02
+execution_context_policy: one_active_machine_local_context
+allowed_execution_contexts:
+  - W02-win
+  - W02-Lin
 ```
 
 A-002 MUST use a local isolated Python environment.
@@ -3065,7 +3073,7 @@ repository:
 branch:
 code_commit:
 
-execution_context: W02-Lin
+execution_context: selected authorized W02 machine-local context
 platform:
 python_version:
 python_implementation:
@@ -4033,7 +4041,11 @@ W02-02R-A-002:
   execution_status: not_started
   execution_authorized: true_after_canonical_commit
   parent_checkpoint: W02-02R-A-001
-  execution_context_target: W02-Lin
+  execution_role: W02
+  execution_context_policy: one_active_machine_local_context
+  allowed_execution_contexts:
+    - W02-win
+    - W02-Lin
 
 T-02R-03:
   status: active

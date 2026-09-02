@@ -29,7 +29,7 @@ control_chat: "00 - Project Control"
 
 **Почему.** W02-02R-A-001 завершил fresh CEF-blind reconnaissance EXP-TAIPAN-001 и был принят scientific review: подтверждены 201 raw files, one-file-to-one-logical-scan representation, 21 structural format families, mixed monitor/time counting semantics, multiple lattice/UB states и byte-identical raw integrity. Следующий methodological step — превратить verified reconnaissance в production parser и canonical inventories, не закрывая unresolved TAS semantics предположениями.
 
-**Следующий шаг.** После canonical design-freeze commit выполнить в W02-Lin только W02-02R-A-002 — verified parser + canonical file/scan inventories. После STOP_CONDITION вернуть checkpoint и artifacts в "02 - TAIPAN Data Reduction" для scientific review.
+**Следующий шаг.** После canonical design-freeze commit выполнить в выбранном machine-local W02 execution context только W02-02R-A-002 — verified parser + canonical file/scan inventories. После STOP_CONDITION вернуть checkpoint и artifacts в "02 - TAIPAN Data Reduction" для scientific review.
 
 **Следующий Work job.** `W02-02R-A-002`
 

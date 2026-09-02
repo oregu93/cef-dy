@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `W02-02R-A-002`: Выполнить в W02-Lin утверждённый verified production parser и canonical file/scan inventory job W02-02R-A-002 для EXP-TAIPAN-001, строго до установленного STOP_CONDITION.
+**Следующий шаг.** `W02-02R-A-002`: Выполнить в выбранном machine-local W02 execution context утверждённый verified production parser и canonical file/scan inventory job W02-02R-A-002 для EXP-TAIPAN-001, строго до STOP_CONDITION.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
