@@ -1,4 +1,3 @@
-````markdown
 ---
 title: "DyFeO3 — Stage 02R W02-02R-A-002 verified parser specification"
 type: work_job_specification
@@ -4052,4 +4051,3 @@ T-02R-03:
   A002_status: frozen_pending_canonical_commit_and_execution
   A003_status: blocked_pending_A002_execution_and_review
 ```
-````
