@@ -4,8 +4,8 @@ type: stage_contract
 project_id: CEF-Dy
 stage_id: M02R
 status: active
-version: "1.0"
-updated: 2026-09-01
+version: "1.1"
+updated: 2026-09-02
 language_content: ru
 language_metadata: en
 ---
@@ -20,9 +20,15 @@ language_metadata: en
 ```text
 raw TAIPAN data
         ↓
-scan inventory
+file census / file inventory
         ↓
-instrument / geometry classification
+logical scan inventory
+        ↓
+TAIPAN/TAS acquisition semantics
+        ↓
+acquisition / instrument configuration classification
+        ↓
+provisional normalization-block classification
         ↓
 quality control
         ↓
@@ -94,8 +100,97 @@ Ei / Ef information
 scan-variable definitions
 ```
 
+### 3.1. Instrument and method prior
+
+Stage 02R должен быть `CEF-blind`, но не `instrument-blind`.
+
+Известное экспериментальное происхождение dataset является допустимой
+априорной информацией:
+
+```text
+instrument: TAIPAN
+method: thermal-neutron triple-axis spectroscopy
+facility: ANSTO
+```
+
+Поэтому для интерпретации raw metadata и acquisition semantics разрешено
+использовать следующий порядок источников:
+
+```text
+EXP-TAIPAN-001 raw data and acquisition metadata
+        ↓
+official TAIPAN / ANSTO documentation
+        ↓
+established TAS methodology
+        ↓
+comparative TAS implementations and mature TAS practice
+        ↓
+historical project spectral information
+        POST-BLIND ONLY
+```
+
+В качестве comparative implementation references допускаются, в частности:
+
+```text
+neutrons/TAVI
+me2d09/neutronpy
+Mantid neutron / instrument infrastructure
+```
+
+Они могут использоваться для понимания общих TAS concepts, data architecture,
+geometry / UB handling, monitor/time semantics, provenance и будущего
+resolution-analysis design.
+
+Они не являются источником TAIPAN-specific file schema, field names,
+normalization rules, geometry conventions или instrument parameters, если
+эти детали независимо не подтверждены официальной документацией TAIPAN
+и/или `EXP-TAIPAN-001`.
+
+CEF-specific functionality этих пакетов не используется для blind Stage 02R
+feature discovery.
+
 Дополнительные instrument documents могут использоваться для интерпретации
 полей файлов и конфигурации инструмента.
+
+Stage 02R является `CEF-blind`, но не `instrument-blind`.
+
+Известный experimental method — thermal-neutron triple-axis spectroscopy
+на TAIPAN — является допустимой и необходимой априорной информацией для
+интерпретации acquisition metadata, TAS kinematics и instrument state.
+
+Разрешённая methodological hierarchy:
+
+```text
+EXP-TAIPAN-001 raw data and acquisition metadata
+        ↓
+official TAIPAN / ANSTO documentation
+        ↓
+established thermal/cold TAS methodology
+        ↓
+comparative TAS implementations
+        ↓
+historical project spectral information
+        post-blind only
+```
+
+В качестве comparative implementation references разрешено использовать,
+в частности:
+
+- neutrons/TAVI
+- me2d09/neutronpy
+- Mantid neutron/instrument infrastructure
+
+Они могут использоваться для понимания TAS data architecture, geometry,
+UB handling, scan semantics, monitor/time acquisition semantics,
+resolution-test design и reproducibility patterns.
+
+Они не являются источниками TAIPAN-specific file schema, field names,
+normalization rules, detector corrections, geometry conventions или
+instrument parameters без независимой проверки по TAIPAN documentation
+и `EXP-TAIPAN-001`.
+
+CEF-specific functionality этих программ не используется для blind
+experimental discovery Stage 02R.
 
 Historical project artifacts разрешено использовать только:
 
@@ -226,50 +321,101 @@ comparison_status:
 
 ## 6. PIPELINE
 
-### 6.1. Raw scan inventory
+### 6.1. Raw file census and logical scan inventory
 
-Для каждого доступного raw file создать одну inventory record.
+Сначала выполняется полный read-only census доступного raw dataset.
 
-Минимально сохранить:
+Не предполагается заранее, что:
 
 ```text
-dataset_id
-experiment_id
-scan_id
-source_file
-source_checksum
-
-scan_variable
-scan_start
-scan_stop
-scan_points
-
-temperature_K
-
-Ei_meV
-Ef_meV
-
-lattice_a_A
-lattice_b_A
-lattice_c_A
-alpha_deg
-beta_deg
-gamma_deg
-
-orientation / UB metadata
-
-monitor metadata
-
-instrument settings available in file/header
-
-quality_flag
-classification_status
+one raw file = one logical scan
 ```
 
-Ни один raw file не должен silently disappear из inventory.
+Используются три раздельные сущности:
 
-Неиспользуемый scan сохраняется с явным reason.
+```text
+file_inventory
+    one record per discovered regular file
 
+scan_inventory
+    one record per logical acquisition / scan
+
+file_scan_map
+    explicit relation between source files and logical scans
+```
+
+Допустимая cardinality должна определяться из реального формата данных:
+
+```text
+1 file  → 1 scan
+1 file  → N scans
+N files → 1 logical acquisition
+```
+
+Если для `EXP-TAIPAN-001` будет установлено строгое соответствие
+`1 file = 1 scan`, это является результатом reconnaissance, а не исходным
+предположением.
+
+Для file-level provenance сохраняются как минимум:
+
+```text
+file_record_id
+dataset_id
+source_file
+source_checksum
+file_size_bytes
+raw_format_id
+raw_format_fingerprint
+file_role
+parse_status
+```
+
+Семантика identity:
+
+```text
+file_record_id
+    dataset-relative archive-entry / source-location identity
+
+source_checksum
+    byte-content identity
+
+duplicate_group_id
+    relation between distinct archive entries with identical byte content
+```
+
+Для logical scan сохраняются как минимум canonical поля из
+`DATA_CONTRACTS.md`, включая scan/acquisition semantics, neutron-energy
+metadata, temperature, lattice / UB / orientation, monitor/counting metadata,
+instrument configuration и source provenance.
+
+Raw dataset является read-only:
+
+```yaml
+raw_data_access: read_only
+```
+
+Ни один analysis job не должен создавать, изменять, переименовывать,
+перемещать или удалять файлы внутри raw dataset root.
+
+По возможности сохраняется информация, необходимая для последующего
+восстановления TAS kinematics:
+
+```text
+Q / hkl
+energy transfer
+Ei / Ef
+fixed-energy mode
+instrument / sample angles
+UB / orientation
+monochromator / analyser configuration
+collimation
+focusing
+filters
+monitor / detector semantics
+```
+
+Для величин, меняющихся внутри scan, scan-level average не заменяет
+point-level metadata.
 
 ### 6.2. Scan classification
 
@@ -294,29 +440,84 @@ Classification должна основываться на acquisition semantics,
 содержит ли scan интересный peak.
 
 
-### 6.3. Instrument-block classification
+### 6.3. Acquisition, instrument configuration and normalization grouping
 
-`instrument_block_id` назначается только после проверки того, какие
-instrument settings действительно одинаковы.
+Stage 02R различает три уровня grouping.
 
-При классификации учитывать, если metadata доступны:
+#### `acquisition_block_id`
+
+Хронологически связанный acquisition segment, границы которого определяются
+из raw acquisition chronology и подтверждённых configuration/change events.
+
+#### `instrument_config_id`
+
+Восстановленное состояние TAS instrument configuration.
+
+При наличии metadata candidate configuration fields могут включать:
 
 ```text
-Ef / Ei mode
-monochromator settings
-analyzer settings
+operating mode
+monochromator material / reflection
+analyser material / reflection
+fixed-Ei / fixed-Ef / elastic mode
+fixed-energy value
 collimation
-filters
-sample orientation
-UB / lattice state
+monochromator focusing
+analyser focusing
+filters / higher-order suppression
+attenuation
 detector configuration
-temperature regime
-other relevant acquisition settings
+monitor / counting mode
+explicit instrument reconfiguration
+major sample remount or scattering-plane change
 ```
 
-Наличие одинакового `Ef` само по себе не является достаточным основанием
-для объединения scans в один normalization block.
+Конкретный набор config-defining fields устанавливается только после
+reconnaissance реальных TAIPAN metadata.
 
+Следующие величины сами по себе не являются автоматическими основаниями
+для создания нового `instrument_config_id`:
+
+```text
+Q
+qh / qk / ql
+ordinary sample-angle motion
+energy-transfer scan coordinate
+temperature
+```
+
+Они обычно характеризуют scan coordinate или sample state, если metadata
+не показывают сопутствующей instrument reconfiguration.
+
+#### `instrument_block_id`
+
+`instrument_block_id` означает provisional candidate group, для которого
+впоследствии может быть физически оправдан общий relative-intensity
+normalization parameter.
+
+Это более сильное утверждение, чем равенство `instrument_config_id`.
+
+Объединение scans в один `instrument_block_id` требует:
+
+```text
+explicit metadata basis
+documented grouping rationale
+compatible monitor / counting semantics
+compatible detector state
+compatible filter / attenuation state
+no unresolved critical configuration conflict
+```
+
+При отсутствии критически важных metadata используется conservative handling:
+
+```text
+instrument_block_status: provisional_missing_metadata
+```
+
+и при необходимости отдельные provisional blocks.
+
+Одинаковый `Ef` или похожий spectral shape сами по себе не являются
+достаточным основанием для объединения scans.
 
 ### 6.4. Data-quality audit
 
@@ -551,6 +752,43 @@ Targeted upper limit означает:
 а не независимое обнаружение feature.
 
 
+### 6.14. Controlled execution sequence for T-02R-03
+
+Execution `T-02R-03` выполняется несколькими независимыми Work jobs с review
+между ними:
+
+```text
+W02-02R-A-001
+TAIPAN/TAS-aware raw census + format/acquisition reconnaissance
+        ↓
+scientific review
+        ↓
+W02-02R-A-002
+verified parser + file/scan inventories
+        ↓
+scientific review
+        ↓
+W02-02R-A-003
+acquisition / instrument configuration /
+provisional instrument-block classification
+        ↓
+scientific review
+        ↓
+T-02R-03 acceptance
+```
+
+Каждый Work job прекращается на собственном `STOP_CONDITION`.
+
+Следующий job не начинается автоматически после успешного завершения
+предыдущего.
+
+Полная specification `T-02R-03` и первого Work job хранится отдельно в:
+
+```text
+03_Protocols/STAGE02R_T02R03_INVENTORY_SPEC.md
+```
+
+
 ## 7. UNCERTAINTY CONTRACT
 
 Для experiment-derived spectral parameters по возможности хранить отдельные
@@ -587,14 +825,30 @@ peak_energy_sigma_total_meV
 ```text
 04_Results/Stage02R/
     README.md
+
+    file_inventory.csv
     scan_inventory.csv
+    file_scan_map.csv
+
+    format_catalogue.yaml
+    parsed_header_metadata.jsonl
+    parsed_scan_points artifact/reference
+
+    acquisition_blocks.yaml
+    instrument_configs.yaml
     instrument_blocks.yaml
+
+    parser_diagnostics.csv
+    quality_diagnostics.csv
+
     blind_features.csv
     blind_catalogue_freeze.yaml
     observations.csv
     targeted_tests.csv
     historical_feature_crosswalk.yaml
+
     provenance_manifest.yaml
+    test_report.yaml
 ```
 
 Если artifact слишком велик для Git, он хранится во внешнем data layer,
@@ -626,12 +880,29 @@ Stage 02R должен иметь как минимум следующие valid
 ### Parser / inventory tests
 
 ```text
-representative files of every discovered scan format parse successfully
-no hard-coded data-column offsets without format verification
-file count reconciles with inventory
-scan IDs reconciled
-checksums stable
-missing metadata reported explicitly
+every discovered regular file has an explicit file-level disposition
+file count reconciles with the fresh filesystem census
+raw source files remain unchanged under read-only execution
+
+file_inventory and scan_inventory are distinct
+file ↔ logical-scan cardinality is explicitly verified
+file_record_id is deterministic and independent of byte checksum
+source_checksum represents byte-content identity
+exact-content duplicates remain distinct archive entries
+
+raw-format fingerprints are deterministic and traversal-order independent
+format identity is based on verified structural grammar, not extension alone
+all readable files participate in lightweight header/key/column census
+representative files of every discovered format receive deeper inspection
+
+no hard-coded semantic column offsets without format verification
+missing metadata remain explicit
+TAS metadata semantics are verified or explicitly unresolved
+
+raw detector counts, monitor, exposure and derived quantities remain separate
+absolute machine-local data paths do not leak into tracked artifacts
+
+blind-independence static audit passes
 ```
 
 ### Physical metadata tests

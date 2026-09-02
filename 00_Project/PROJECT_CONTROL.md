@@ -29,9 +29,9 @@ control_chat: "00 - Project Control"
 
 **Почему.** Stage 00C завершил научный re-baselining: экспериментальные свидетельства, physical assignments, model calculations и methodological decisions теперь разделены; введены EVIDENCE_REGISTER и MODEL_REGISTER; центральные project documents и automation синхронизированы и прошли strict validation. Следующий источник научного прогресса должен быть независимым повторным анализом экспериментальных данных.
 
-**Следующий шаг.** Создать чат "02 - TAIPAN Data Reduction" и передать ему canonical Stage 02R analysis contract. Первой experimental task является воспроизводимый raw scan inventory и acquisition/instrument classification; historical CEF targets при этом не используются.
+**Следующий шаг.** Передать frozen T-02R-03 specification в W02 и выполнить только W02-02R-A-001. После получения checkpoint вернуть результаты в "02 - TAIPAN Data Reduction" для scientific review.
 
-**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
+**Следующий Work job.** `W02-02R-A-001`
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -48,14 +48,14 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Completed Stage 00C scientific re-baselining and provenance audit, including evidence/model separation, register normalization, updated project governance and validated Knowledge Base schema 2.2.
+**Последний научный источник.** Frozen T-02R-03 TAIPAN/TAS-aware inventory and reconnaissance design, including file/scan separation, read-only raw-data access, TAS-aware metadata preservation, deterministic provenance, and controlled W02-02R-A-001 execution specification.
 
 **Последний Work checkpoint.** Для текущего этапа вычислительный checkpoint ещё не зафиксирован.
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
 
-**Ключевые риски.** `RSK-003`, `RSK-004`, `RSK-005`.
+**Ключевые риски.** `RSK-008`, `RSK-007`, `RSK-003`.
 <!-- AUTO:CONTROL_REENTRY:END -->
 
 
@@ -77,13 +77,22 @@ control_chat: "00 - Project Control"
 
 | Task ID | Status | Задача |
 |---|---|---|
-| `T-00C-06` | completed | Обновить PROJECT_METADATA, PROJECT_CONTROL, PROJECT_MANIFEST, protocols и automation. |
-| `T-00C-07` | completed | Провести consistency review, refresh, strict validation, проверить diff и выполнить Stage 00C commit. |
-| `T-02R-01` | completed | Зафиксировать analysis contract Stage 02R до начала повторной обработки данных. |
-| `T-02R-02` | active | Создать чат `02 - TAIPAN Data Reduction` и выполнить re-entry из canonical GitHub state. |
-| `T-02R-03` | queued | Построить независимый raw scan inventory и классификацию acquisition/instrument blocks. |
-| `T-02R-04` | queued | Выполнить model-independent feature discovery без historical energy targets. |
-| `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical observation contract. |
+| `T-00C-01` | completed | Нормализовать scientific vocabulary и разделение measurement / evidence / result / hypothesis / model / decision. |
+| `T-00C-02` | completed | Определить и внедрить provenance schema для experiment, literature и model-derived knowledge. |
+| `T-00C-03` | completed | Провести evidence matrix / experimental landmark audit и отделить наблюдения от физических assignments. |
+| `T-00C-04` | completed | Провести model-purpose audit и сформировать canonical model cards / MODEL_REGISTER. |
+| `T-00C-05` | completed | Переписать `PROJECT_STATE` в соответствии с scientific re-baselining. |
+| `T-00C-06` | completed | Переписать `README` и привести repository entry point в соответствие с новой KB architecture. |
+| `T-00C-07` | completed | Обновить `PROJECT_METADATA`, `PROJECT_CONTROL`, `PROJECT_MANIFEST` и project protocols. |
+| `T-00C-08` | completed | Обновить `kb_refresh.py`, `kb_validate.py` и связанную KB automation. |
+| `T-00C-09` | completed | Провести consistency review, refresh, strict validation, diff audit и завершить Stage 00C commit/push. |
+| `T-02R-01` | completed | Зафиксировать canonical Stage 02R analysis contract до повторной обработки raw TAIPAN data. |
+| `T-02R-02` | completed | Создать чат `02 - TAIPAN Data Reduction`, выполнить canonical re-entry и завершить design review T-02R-03. |
+| `T-02R-03` | active | Построить независимые raw file / logical scan inventories, восстановить TAIPAN acquisition semantics и классифицировать acquisition / instrument configuration / provisional normalization blocks. |
+| `W02-02R-A-001` | ready | Выполнить утверждённый TAIPAN/TAS-aware raw census и format/acquisition reconnaissance с read-only доступом и остановкой до production parser / classification. |
+| `T-02R-04` | queued | Выполнить CEF-model-independent feature discovery без historical energy targets. |
+| `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
+
 
 # 3. Roadmap после Stage 00C
 
@@ -245,41 +254,51 @@ MOD-ECM-MALKIN
 
 | Risk ID | Level | Риск | Контроль |
 |---|---|---|---|
-| `RSK-001` | high | Numerical optimizer создаёт иллюзию идентифицируемости. | Landscape analysis, profile diagnostics, ensembles и независимые observables. |
-| `RSK-002` | high | Нормировка поглощает физическую информацию об интенсивности. | Физически обоснованные shared normalization groups и explicit nuisance treatment. |
+| `RSK-001` | high | Numerical optimizer создаёт иллюзию идентифицируемости или скрывает non-identifiability. | Landscape analysis, profile diagnostics, ensembles и независимые observables. |
+| `RSK-002` | high | Nuisance normalization поглощает физическую информацию об интенсивности. | Физически обоснованные shared normalization groups и explicit nuisance treatment. |
 | `RSK-003` | high | Ошибка convention/frame незаметна по энергиям, но портит интенсивности. | Regression tests Hamiltonian + transition tensors. |
-| `RSK-004` | high | Historical target energies или assignments загрязняют blind experimental analysis. | Raw-to-observation Stage 02R без CEF targets. |
-| `RSK-005` | high | Magnetic exchange или microscopic effects ошибочно поглощаются effective-charge PCM. | Явная model hierarchy и независимая validation. |
-| `RSK-006` | medium | Структурная uncertainty смешивается с statistical fit uncertainty. | Отдельные uncertainty layers / ensembles. |
-| `RSK-007` | medium | Публичный Git содержит raw/private data. | External data directory, `.gitignore`, pre-commit audit. |
+| `RSK-004` | medium | Ошибочное CEF-назначение особенности около 44.4 meV смещает CEF inference. | Сохранять F004 как unassigned/diagnostic до независимого подтверждения. |
+| `RSK-005` | medium | Low-temperature magnetic exchange ошибочно интерпретируется как lattice CEF. | Явно разделять single-ion CEF и magnetic-exchange layer; вводить exchange только отдельным model decision. |
+| `RSK-006` | medium | Work budget расходуется на uncontrolled reasoning, repeated trial-and-error или вычисления без checkpoint boundaries. | Pre-specified Work jobs, resumable execution и explicit STOP_CONDITION. |
+| `RSK-007` | medium | Публичный Git содержит raw/private или machine-local data. | External raw-data tree, `.gitignore`, path-leak checks и pre-commit audit. |
+| `RSK-008` | high | Historical target energies, feature locations или assignments загрязняют blind Stage 02R analysis. | CEF-blind raw-to-observation pipeline, static independence audit и post-blind historical crosswalk. |
+| `RSK-009` | medium | Non-electrostatic microscopic CEF contributions или structural physics чрезмерно интерпретируются через effective-charge PCM parameters. | Считать effective-charge PCM феноменологической structural model; не трактовать fitted charge scales как буквальные ionic charges или уникальный microscopic mechanism. |
+| `RSK-010` | medium | Structural uncertainty смешивается со statistical fit uncertainty. | Раздельные uncertainty layers и structural ensembles / sensitivity analysis. |
 
 
 # 9. Open questions
 
 | ID | Priority | Вопрос | Контекст |
 |---|---|---|---|
-| `Q-001` | high | Каков первичный литературный источник historical targets 6.45 и 27.90 meV? | `01 - Literature & Physics` |
-| `Q-002` | high | Какие spectral features воспроизводимо возникают в независимом blind Stage 02R? | `02 - TAIPAN Data Reduction` |
-| `Q-003` | high | Какова полная uncertainty энергии особенности около 18.25 meV с учётом calibration systematic? | Stage 02R |
-| `Q-004` | high | Какие относительные INS-интенсивности могут использоваться как независимые CEF constraints? | Stage 02R / 03R |
-| `Q-005` | high | Требуют ли очищенные данные изменения CEF wavefunctions относительно M0? | Stage 03R |
+| `Q-001` | deferred | Какова корректная форма censored likelihood для недетектированных spectral components? | Stage 03R / 03D |
+| `Q-002` | deferred | Следует ли nuisance normalization профилировать аналитически или численно? | Stage 03R / 03D |
+| `Q-003` | deferred | Какие физически и статистически оправданные bounds / priors использовать для M0/M1? | Stage 03R / 03D |
+| `Q-004` | deferred | Какой statistic корректно использовать для сравнения nested M0/M1 с учётом bounds / boundary effects? | Stage 03R / 03D |
+| `Q-005` | deferred | Какие profile thresholds и правила определяют accepted-solution ensemble? | Stage 03R / 03D |
 | `Q-006` | medium | Какова физическая природа особенности около 44.4 meV? | TAIPAN / Physics |
-| `Q-007` | deferred | Когда данные требуют введения magnetic exchange? | Stage 05 |
-| `Q-008` | deferred | Как переносить structural uncertainty в CEF inference? | Structure / Modelling |
+| `Q-007` | deferred | Каково минимальное exchange-aware расширение CEF model после single-ion baseline? | Stage 05 |
+| `Q-008` | deferred | Как переносить structural-coordinate uncertainty в CEF inference? | Structure / Modelling |
+| `Q-009` | deferred | Как переносить structural CEF trends по Dy/Ho/Tb/Tm через $A_l^m$ и local multipoles? | Stage 06 / Structure |
+| `Q-010` | high | Каков первичный литературный источник historical targets 6.45 и 27.90 meV? | `01 - Literature & Physics` |
+| `Q-011` | high | Какие spectral features воспроизводимо возникают в независимом blind Stage 02R? | `02 - TAIPAN Data Reduction` |
+| `Q-012` | high | Какова полная uncertainty энергии особенности около 18.25 meV с учётом calibration systematic? | Stage 02R |
+| `Q-013` | high | Какие относительные INS-интенсивности могут использоваться как независимые CEF constraints? | Stage 02R / 03R |
+| `Q-014` | high | Требуют ли очищенные данные изменения CEF wavefunctions относительно M0? | Stage 03R |
 
 
 # 10. Контексты чатов
 
 | Chat | Role |
 |---|---|
-| `00 - Project Control` | Scientific governance, roadmap, review and promotion. |
+| `00 - Project Control` | Scientific governance, roadmap, review, promotion и Work authorization. |
 | `Orthoferrite CF Watch` | Broad literature discovery and triage. |
 | `01 - Literature & Physics` | Curated deep literature analysis and physics integration. |
-| `02 - TAIPAN Data Reduction` | Independent TAIPAN reduction, blind feature discovery and experimental observation contract. |
+| `02 - TAIPAN Data Reduction` | Scientific design/review of independent TAIPAN reduction, blind feature discovery and experimental observation contract. |
+| `W02 - TAIPAN Data Reduction` | Controlled local execution of approved TAIPAN raw-data, parsing and reduction jobs. |
 | `03 - CEF Modelling & Fit Design` | CEF inference/model design before Work execution. |
-| `W03 - CEF Compute` | Approved numerical execution only. |
-| `04 - Structure & Conventions` | Structure, frames and operator conventions. |
-| `05 - Validation & McPhase` | Independent magnetic validation and exchange-aware modelling. |
+| `W03 - CEF Compute` | Approved CEF numerical execution only. |
+| `04 - Structure & Conventions` | Structure, coordinate frames and operator conventions. |
+| `05 - Validation & McPhase` | Independent magnetic / cross-code validation and exchange-aware modelling. |
 | `06 - Paper & Dissertation` | Publication/dissertation layer using reviewed provenance. |
 
 

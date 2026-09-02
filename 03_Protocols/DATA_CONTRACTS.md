@@ -2,8 +2,8 @@
 title: "CEF Dy — контракты данных"
 type: protocol
 status: active
-version: "2.0"
-updated: 2026-09-01
+version: "2.1"
+updated: 2026-09-02
 ---
 
 # Контракты данных
@@ -30,22 +30,95 @@ assignment hypothesis
 
 ## 2. TAIPAN raw / scan inventory
 
-Минимальные поля scan-level inventory:
+Raw-data layer разделяется на file-level и logical scan-level representation.
+
+Не предполагается заранее:
 
 ```text
+one raw file = one logical scan
+```
+
+### 2.1. File inventory
+
+`file_inventory` содержит одну запись на каждый обнаруженный regular file.
+
+Минимальные поля:
+
+```text
+file_record_id
+dataset_id
+
+source_file
+source_checksum
+file_size_bytes
+file_extension
+
+raw_format_id
+raw_format_fingerprint
+
+file_role
+parse_status
+quality_flag
+```
+
+`source_file` задаётся относительно dataset root.
+
+Machine-specific absolute path не является частью canonical provenance.
+
+Identity semantics:
+
+```text
+file_record_id
+    identity of dataset-relative archive entry / source location
+
+source_checksum
+    SHA-256 identity of current byte content
+
+duplicate_group_id
+    equal-content relation across distinct archive entries
+```
+
+Следовательно:
+
+```text
+different paths + identical bytes
+    → different file_record_id
+    → identical source_checksum
+    → same duplicate_group_id where assigned
+```
+
+### 2.2. Logical scan inventory
+
+`scan_inventory` содержит одну запись на logical acquisition / scan.
+
+Минимальные поля:
+
+```text
+scan_record_id
 dataset_id
 experiment_id
-scan_id
+raw_scan_id
 
-temperature_K
+acquisition_start_time
+acquisition_end_time
+sequence_index
 
 scan_variable
 scan_start
 scan_stop
 scan_points
 
+temperature_K
+
 Ei_meV
 Ef_meV
+energy_mode
+energy_transfer_variable
+energy_transfer_convention
+
+h
+k
+l
 
 lattice_a_A
 lattice_b_A
@@ -55,18 +128,96 @@ beta_deg
 gamma_deg
 
 UB / orientation metadata
+
+monitor / counting metadata
+
+acquisition_block_id
+instrument_config_id
 instrument_block_id
 
 source_file
 source_checksum
 quality_flag
+classification_status
 ```
 
-Конкретные instrument metadata сохраняются настолько полно, насколько это
-необходимо для воспроизведения геометрии измерения.
+Конкретные TAS instrument metadata сохраняются настолько полно, насколько
+это необходимо для воспроизведения acquisition semantics, geometry и
+последующей оценки resolution / intensity comparability.
 
-Lattice/UB не должны hard-code одним значением на весь experiment, если
-metadata меняются между acquisition blocks.
+Если metadata меняются между acquisition blocks, lattice / UB / instrument
+configuration не должны hard-code одним глобальным значением на весь
+experiment.
+
+### 2.3. File-to-scan mapping
+
+Связь raw files и logical scans хранится явно через `file_scan_map`.
+
+Минимально:
+
+```text
+file_record_id
+scan_record_id
+source_file
+relationship_role
+```
+
+Contract должен поддерживать:
+
+```text
+1 file  → 1 scan
+1 file  → N scans
+N files → 1 logical acquisition
+```
+
+Фактическая cardinality определяется из raw format.
+
+### 2.4. TAS kinematic preservation
+
+По возможности сохраняются исходные данные, необходимые для связи:
+
+```text
+(Q, energy transfer)
+        ↔
+(ki, kf, TAS geometry, instrument configuration)
+```
+
+В зависимости от реально доступных TAIPAN metadata это может включать:
+
+```text
+qh / qk / ql
+Ei / Ef
+fixed-energy mode
+M1 / M2
+S1 / S2
+A1 / A2
+UB / lattice / orientation
+monochromator / analyser state
+collimation
+focusing
+filters
+detector
+monitor
+sample-environment state
+```
+
+Для point-varying quantities scan-level average не должен уничтожать
+исходную variation.
+
+### 2.5. Raw-data access
+
+Canonical raw dataset по умолчанию read-only.
+
+```yaml
+raw_data_access: read_only
+```
+
+Analysis code не должен создавать, изменять, переименовывать, перемещать
+или удалять файлы внутри raw dataset root.
+
+Derived outputs создаются во внешнем output layer / repository working tree
+в соответствии с project provenance rules.
+
 
 ## 3. Model-independent spectral feature table
 
@@ -265,24 +416,78 @@ rejected
 superseded
 ```
 
-## 8. Instrument normalization
+## 8. Instrument configuration and normalization grouping
 
-Если относительные интенсивности разных scans связаны через общий
-instrument configuration, это должно быть выражено явным:
+Для Stage 02R различаются три разные сущности.
+
+### `acquisition_block_id`
+
+Хронологически связанный acquisition segment, границы которого определяются
+из measurement sequence и подтверждённых configuration/change events.
+
+### `instrument_config_id`
+
+Восстановленное instrument state на основании фактически доступных metadata.
+
+Candidate config-defining fields могут включать:
+
+```text
+operating mode
+monochromator / analyser configuration
+fixed-Ei / fixed-Ef mode
+fixed energy
+collimation
+focusing
+filters / attenuation
+detector configuration
+monitor / counting mode
+explicit instrument reconfiguration
+```
+
+Q, ordinary scan motion, energy-transfer coordinate и temperature сами по
+себе не должны автоматически создавать новый `instrument_config_id`.
+
+### `instrument_block_id`
+
+Provisional evidence-based group scans, для которых может быть допустим один
+общий relative-intensity normalization parameter.
+
+Необходимо явно сохранять:
 
 ```text
 instrument_block_id
+member scan_record_ids
+instrument_config_ids
+grouping rationale
+verified compatible settings
+missing / ambiguous settings
+normalization_compatibility
+normalization_rationale
 ```
 
-и отдельной таблицей/metadata, определяющей:
+Принцип:
 
-- какие scans входят в block;
-- почему для них допустим общий normalization parameter;
-- какие настройки инструмента считаются неизменными.
+```text
+same instrument_config_id
+    ≠
+automatically same instrument_block_id
+```
 
-Нельзя автоматически использовать независимый free scale для каждого
-scan, если это уничтожает физически полезную относительную intensity
-information.
+Общий normalization parameter разрешён только при физически и
+instrumentally обоснованной совместимости.
+
+При недостатке critical metadata следует использовать conservative grouping
+или:
+
+```text
+instrument_block_status: provisional_missing_metadata
+```
+
+Нельзя автоматически использовать независимый free scale для каждого scan,
+если это уничтожает физически полезную relative-intensity information.
+
+Нельзя также объединять scans только потому, что их spectral shapes похожи.
+
 
 ## 9. CEF model observation contract
 

@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `T-02R-02`: Создать отдельный чат "02 - TAIPAN Data Reduction", выполнить re-entry из canonical GitHub state и Stage 02R analysis contract, затем начать T-02R-03 с независимого raw scan inventory.
+**Следующий шаг.** `W02-02R-A-001`: Выполнить утверждённый TAIPAN/TAS-aware raw census и format/acquisition reconnaissance для EXP-TAIPAN-001 в W02, строго до установленного STOP_CONDITION.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.

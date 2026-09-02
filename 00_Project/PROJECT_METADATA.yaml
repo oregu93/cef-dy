@@ -44,11 +44,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: T-02R-02
+  id: W02-02R-A-001
   text: >
-    Создать отдельный чат "02 - TAIPAN Data Reduction", выполнить re-entry
-    из canonical GitHub state и Stage 02R analysis contract, затем начать
-    T-02R-03 с независимого raw scan inventory.
+    Выполнить утверждённый TAIPAN/TAS-aware raw census и
+    format/acquisition reconnaissance для EXP-TAIPAN-001 в W02,
+    строго до установленного STOP_CONDITION.
 
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -76,12 +76,11 @@ control:
     независимым повторным анализом экспериментальных данных.
 
   next: >
-    Создать чат "02 - TAIPAN Data Reduction" и передать ему canonical
-    Stage 02R analysis contract. Первой experimental task является
-    воспроизводимый raw scan inventory и acquisition/instrument
-    classification; historical CEF targets при этом не используются.
+    Передать frozen T-02R-03 specification в W02 и выполнить только
+    W02-02R-A-001. После получения checkpoint вернуть результаты в
+    "02 - TAIPAN Data Reduction" для scientific review.
 
-  next_work_job: null
+  next_work_job: W02-02R-A-001
 
   blocked:
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -99,9 +98,10 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >
-    Completed Stage 00C scientific re-baselining and provenance audit,
-    including evidence/model separation, register normalization,
-    updated project governance and validated Knowledge Base schema 2.2.
+    Frozen T-02R-03 TAIPAN/TAS-aware inventory and reconnaissance design,
+    including file/scan separation, read-only raw-data access, TAS-aware
+    metadata preservation, deterministic provenance, and controlled
+    W02-02R-A-001 execution specification.
 
   last_work_checkpoint: null
 
@@ -109,6 +109,6 @@ control:
     - H-001
 
   key_risk_ids:
+    - RSK-008
+    - RSK-007
     - RSK-003
-    - RSK-004
-    - RSK-005
