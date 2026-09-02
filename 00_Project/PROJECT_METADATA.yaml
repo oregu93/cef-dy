@@ -44,12 +44,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: T-02R-03
+  id: W02-02R-A-002
   text: >
-    На основе accepted checkpoint W02-02R-A-001 сформировать в чате
-    "02 - TAIPAN Data Reduction" formal specification
-    W02-02R-A-002 — verified parser + canonical file/scan inventories.
-    A-002 execution не запускать до отдельного Project Control approval.
+    Выполнить в W02-Lin утверждённый verified production parser и
+    canonical file/scan inventory job W02-02R-A-002 для EXP-TAIPAN-001,
+    строго до установленного STOP_CONDITION.
 
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -78,12 +77,12 @@ control:
     inventories, не закрывая unresolved TAS semantics предположениями.
 
   next: >
-    В чате "02 - TAIPAN Data Reduction" сформировать и провести design review
-    formal specification W02-02R-A-002 — verified parser + canonical
-    file/scan inventories. Execution A-002 не разрешён до отдельного
-    Project Control decision.
+    После canonical design-freeze commit выполнить в W02-Lin только
+    W02-02R-A-002 — verified parser + canonical file/scan inventories.
+    После STOP_CONDITION вернуть checkpoint и artifacts в
+    "02 - TAIPAN Data Reduction" для scientific review.
 
-  next_work_job: null
+  next_work_job: W02-02R-A-002
 
   blocked:
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -101,10 +100,9 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >
-    Reviewed W02-02R-A-001 checkpoint and scientific review in
-    "02 - TAIPAN Data Reduction": A-001 passed 20/20 tests, established the
-    fresh TAIPAN raw-archive/acquisition reconnaissance facts, preserved raw
-    integrity, and stopped before A-002.
+    Frozen W02-02R-A-002 verified-parser specification based on the reviewed
+    W02-02R-A-001 reconnaissance and exact Linux portability verification of
+    EXP-TAIPAN-001.
 
   last_work_checkpoint: W02-02R-A-001
 

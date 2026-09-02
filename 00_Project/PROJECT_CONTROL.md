@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "2.1"
+version: "2.2"
 updated: 2026-09-02
 control_chat: "00 - Project Control"
 ---
@@ -29,9 +29,9 @@ control_chat: "00 - Project Control"
 
 **Почему.** W02-02R-A-001 завершил fresh CEF-blind reconnaissance EXP-TAIPAN-001 и был принят scientific review: подтверждены 201 raw files, one-file-to-one-logical-scan representation, 21 structural format families, mixed monitor/time counting semantics, multiple lattice/UB states и byte-identical raw integrity. Следующий methodological step — превратить verified reconnaissance в production parser и canonical inventories, не закрывая unresolved TAS semantics предположениями.
 
-**Следующий шаг.** В чате "02 - TAIPAN Data Reduction" сформировать и провести design review formal specification W02-02R-A-002 — verified parser + canonical file/scan inventories. Execution A-002 не разрешён до отдельного Project Control decision.
+**Следующий шаг.** После canonical design-freeze commit выполнить в W02-Lin только W02-02R-A-002 — verified parser + canonical file/scan inventories. После STOP_CONDITION вернуть checkpoint и artifacts в "02 - TAIPAN Data Reduction" для scientific review.
 
-**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
+**Следующий Work job.** `W02-02R-A-002`
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -48,7 +48,7 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Reviewed W02-02R-A-001 checkpoint and scientific review in "02 - TAIPAN Data Reduction": A-001 passed 20/20 tests, established the fresh TAIPAN raw-archive/acquisition reconnaissance facts, preserved raw integrity, and stopped before A-002.
+**Последний научный источник.** Frozen W02-02R-A-002 verified-parser specification based on the reviewed W02-02R-A-001 reconnaissance and exact Linux portability verification of EXP-TAIPAN-001.
 
 **Последний Work checkpoint.** `W02-02R-A-001`
 
@@ -90,7 +90,7 @@ control_chat: "00 - Project Control"
 | `T-02R-02` | completed | Создать чат `02 - TAIPAN Data Reduction`, выполнить canonical re-entry и завершить design review T-02R-03. |
 | `T-02R-03` | active | Построить независимые raw file / logical scan inventories, восстановить TAIPAN acquisition semantics и классифицировать acquisition / instrument configuration / provisional normalization blocks. |
 | `W02-02R-A-001` | completed | Fresh TAIPAN/TAS-aware raw census и format/acquisition reconnaissance завершены; 20/20 tests PASS, scientific review accepted, STOP_CONDITION соблюдён. |
-| `W02-02R-A-002` | design_pending | Сформировать и утвердить specification verified parser + canonical file/scan inventories; execution пока не разрешён. |
+| `W02-02R-A-002` | ready | Frozen specification verified parser + canonical file/scan inventories утверждена; execution разрешён после canonical design-freeze commit. |
 | `T-02R-04` | queued | Выполнить CEF-model-independent feature discovery без historical energy targets. |
 | `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
 
