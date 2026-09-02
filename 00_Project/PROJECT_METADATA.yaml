@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-01'
+updated: '2026-09-02'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -44,11 +44,12 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: W02-02R-A-001
+  id: T-02R-03
   text: >
-    Выполнить утверждённый TAIPAN/TAS-aware raw census и
-    format/acquisition reconnaissance для EXP-TAIPAN-001 в W02,
-    строго до установленного STOP_CONDITION.
+    На основе accepted checkpoint W02-02R-A-001 сформировать в чате
+    "02 - TAIPAN Data Reduction" formal specification
+    W02-02R-A-002 — verified parser + canonical file/scan inventories.
+    A-002 execution не запускать до отдельного Project Control approval.
 
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -68,19 +69,21 @@ control:
     contract до использования CEF assignments и microscopic models.
 
   why: >
-    Stage 00C завершил научный re-baselining: экспериментальные свидетельства,
-    physical assignments, model calculations и methodological decisions
-    теперь разделены; введены EVIDENCE_REGISTER и MODEL_REGISTER;
-    центральные project documents и automation синхронизированы и прошли
-    strict validation. Следующий источник научного прогресса должен быть
-    независимым повторным анализом экспериментальных данных.
+    W02-02R-A-001 завершил fresh CEF-blind reconnaissance
+    EXP-TAIPAN-001 и был принят scientific review: подтверждены 201 raw
+    files, one-file-to-one-logical-scan representation, 21 structural format
+    families, mixed monitor/time counting semantics, multiple lattice/UB
+    states и byte-identical raw integrity. Следующий methodological step —
+    превратить verified reconnaissance в production parser и canonical
+    inventories, не закрывая unresolved TAS semantics предположениями.
 
   next: >
-    Передать frozen T-02R-03 specification в W02 и выполнить только
-    W02-02R-A-001. После получения checkpoint вернуть результаты в
-    "02 - TAIPAN Data Reduction" для scientific review.
+    В чате "02 - TAIPAN Data Reduction" сформировать и провести design review
+    formal specification W02-02R-A-002 — verified parser + canonical
+    file/scan inventories. Execution A-002 не разрешён до отдельного
+    Project Control decision.
 
-  next_work_job: W02-02R-A-001
+  next_work_job: null
 
   blocked:
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -98,12 +101,12 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >
-    Frozen T-02R-03 TAIPAN/TAS-aware inventory and reconnaissance design,
-    including file/scan separation, read-only raw-data access, TAS-aware
-    metadata preservation, deterministic provenance, and controlled
-    W02-02R-A-001 execution specification.
+    Reviewed W02-02R-A-001 checkpoint and scientific review in
+    "02 - TAIPAN Data Reduction": A-001 passed 20/20 tests, established the
+    fresh TAIPAN raw-archive/acquisition reconnaissance facts, preserved raw
+    integrity, and stopped before A-002.
 
-  last_work_checkpoint: null
+  last_work_checkpoint: W02-02R-A-001
 
   active_hypothesis_ids:
     - H-001

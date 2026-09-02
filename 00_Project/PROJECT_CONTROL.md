@@ -3,8 +3,8 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "2.0"
-updated: 2026-09-01
+version: "2.1"
+updated: 2026-09-02
 control_chat: "00 - Project Control"
 ---
 
@@ -27,11 +27,11 @@ control_chat: "00 - Project Control"
 
 **Сейчас.** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Почему.** Stage 00C завершил научный re-baselining: экспериментальные свидетельства, physical assignments, model calculations и methodological decisions теперь разделены; введены EVIDENCE_REGISTER и MODEL_REGISTER; центральные project documents и automation синхронизированы и прошли strict validation. Следующий источник научного прогресса должен быть независимым повторным анализом экспериментальных данных.
+**Почему.** W02-02R-A-001 завершил fresh CEF-blind reconnaissance EXP-TAIPAN-001 и был принят scientific review: подтверждены 201 raw files, one-file-to-one-logical-scan representation, 21 structural format families, mixed monitor/time counting semantics, multiple lattice/UB states и byte-identical raw integrity. Следующий methodological step — превратить verified reconnaissance в production parser и canonical inventories, не закрывая unresolved TAS semantics предположениями.
 
-**Следующий шаг.** Передать frozen T-02R-03 specification в W02 и выполнить только W02-02R-A-001. После получения checkpoint вернуть результаты в "02 - TAIPAN Data Reduction" для scientific review.
+**Следующий шаг.** В чате "02 - TAIPAN Data Reduction" сформировать и провести design review formal specification W02-02R-A-002 — verified parser + canonical file/scan inventories. Execution A-002 не разрешён до отдельного Project Control decision.
 
-**Следующий Work job.** `W02-02R-A-001`
+**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -48,9 +48,9 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Frozen T-02R-03 TAIPAN/TAS-aware inventory and reconnaissance design, including file/scan separation, read-only raw-data access, TAS-aware metadata preservation, deterministic provenance, and controlled W02-02R-A-001 execution specification.
+**Последний научный источник.** Reviewed W02-02R-A-001 checkpoint and scientific review in "02 - TAIPAN Data Reduction": A-001 passed 20/20 tests, established the fresh TAIPAN raw-archive/acquisition reconnaissance facts, preserved raw integrity, and stopped before A-002.
 
-**Последний Work checkpoint.** Для текущего этапа вычислительный checkpoint ещё не зафиксирован.
+**Последний Work checkpoint.** `W02-02R-A-001`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -89,7 +89,8 @@ control_chat: "00 - Project Control"
 | `T-02R-01` | completed | Зафиксировать canonical Stage 02R analysis contract до повторной обработки raw TAIPAN data. |
 | `T-02R-02` | completed | Создать чат `02 - TAIPAN Data Reduction`, выполнить canonical re-entry и завершить design review T-02R-03. |
 | `T-02R-03` | active | Построить независимые raw file / logical scan inventories, восстановить TAIPAN acquisition semantics и классифицировать acquisition / instrument configuration / provisional normalization blocks. |
-| `W02-02R-A-001` | ready | Выполнить утверждённый TAIPAN/TAS-aware raw census и format/acquisition reconnaissance с read-only доступом и остановкой до production parser / classification. |
+| `W02-02R-A-001` | completed | Fresh TAIPAN/TAS-aware raw census и format/acquisition reconnaissance завершены; 20/20 tests PASS, scientific review accepted, STOP_CONDITION соблюдён. |
+| `W02-02R-A-002` | design_pending | Сформировать и утвердить specification verified parser + canonical file/scan inventories; execution пока не разрешён. |
 | `T-02R-04` | queued | Выполнить CEF-model-independent feature discovery без historical energy targets. |
 | `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
 

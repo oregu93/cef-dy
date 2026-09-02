@@ -2,7 +2,7 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.2"
+version: "2.3"
 updated: 2026-09-02
 ---
 
@@ -609,6 +609,81 @@ configs/local_paths.yaml
 
 Never hard-code machine-specific absolute data paths into tracked analysis
 code or project artifacts.
+
+
+MULTI-MACHINE CONTINUITY
+
+The logical execution role is W02.
+
+Concrete machine-local execution chats may use labels such as:
+
+W02-win
+W02-Lin
+
+These labels identify execution environments only. They do not define
+different scientific workflows, datasets, or project branches.
+
+Git-tracked specifications, code, reviewed checkpoints, and approved small
+artifacts are the state-transfer mechanism between machines.
+
+Work-chat history MUST NOT be required to continue the project on another
+machine.
+
+Before starting any new authorized W02 job:
+
+1. Require a clean working tree unless an explicit resumable checkpoint says
+   otherwise.
+
+2. Synchronize the repository with canonical main using a fast-forward-only
+   update.
+
+3. Record the exact repository HEAD commit used as job input.
+
+4. Resolve datasets through the machine-local configs/local_paths.yaml.
+
+5. When a reviewed source census exists, verify the local dataset identity
+   against that census before using the dataset.
+
+6. Record execution_context and platform in the Work checkpoint.
+
+One authorized Work job MUST have only one active execution context at a
+time.
+
+Do not execute the same job independently in W02-win and W02-Lin unless
+Project Control explicitly authorizes a reproducibility replication.
+
+Prefer machine switches between atomic Work jobs.
+
+If a job must be interrupted and resumed on another machine, create an
+explicit resumable checkpoint containing at least:
+
+job_id
+execution_status
+completed_steps
+remaining_steps
+repository_commit
+external_artifacts
+checksums
+resume_requirements
+
+The second machine must resume from that checkpoint rather than reconstruct
+state from chat history.
+
+Machine-specific absolute paths, hostnames, usernames, and
+configs/local_paths.yaml MUST NOT be used as canonical project identity.
+
+The same logical dataset may have different local paths on different
+machines if its reviewed identity is verified.
+
+For EXP-TAIPAN-001, dataset identity verification should use the reviewed
+relative-path / size / SHA-256 census when available.
+
+Reviewed generated artifacts whose exact SHA-256 is part of provenance must
+remain byte-stable across machine transfer.
+
+New generated text artifacts should use deterministic UTF-8 / LF output
+where practical so that byte identity does not depend on the operating
+system.
 
 
 EXECUTION CONTRACT

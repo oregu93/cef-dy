@@ -1,0 +1,120 @@
+job_id: W02-02R-A-001
+stage_id: M02R
+task_id: T-02R-03
+dataset_id: EXP-TAIPAN-001
+repository: oregu93/cef-dy
+branch: main
+code_commit: 9ad4d874b05fc2e709df30b3aa3a5316c2d9d661
+configuration:
+  logical_mapping_file: configs/local_paths.yaml
+  output_location: 04_Results/Stage02R
+  raw_format_descriptor_version: stage02r_raw_format_descriptor_v1
+  file_record_id_basis: dataset_id + canonical dataset-relative source_file
+  representative_selection: lexically minimum and maximum file_record_id per format (one when singleton)
+  executor_sha256: 0ab6905bced49718a89f7c28f0c819b89700086d98e319738d5dae0bb0638753
+configuration_checksum: 705bfc8996a97c9a851e4aa3283114090aced89d0043b5cc1c271d3702423a52
+method_references:
+- title: ANSTO Taipan User Manual v14
+  url: https://www.ansto.gov.au/media/1429/download?inline=
+  verified_scope: M1/M2/S1/S2/A1/A2 angle meanings; runscan time syntax; Bm1 monitor/Bm2 detector; PG/Cu and mono/analyser
+    focusing motor names; sapphire filters and collimation controls.
+- title: ANSTO Services - Taipan (SpICE/SICS correspondence)
+  url: https://www.ansto.gov.au/facilities/australian-centre-for-neutron-scattering/neutron-scattering-instruments/taipan/services-taipan
+  verified_scope: SICS/Gumtree control; qh/qk/ql/en as reciprocal-space/energy motors; ei/ef and const ki/kf/elastic concepts;
+    runscan/mscan/cscan; time/monitor counting concepts.
+- title: ANSTO Technical Information - Taipan
+  url: https://www.ansto.gov.au/technical-information-taipan
+  verified_scope: PG(002)/Cu(200) monochromators, PG(002) analyser, horizontal/vertical focusing, Soller collimation, and
+    detector hardware families.
+commands_executed:
+- git rev-parse HEAD
+- git branch --show-current
+- python <ephemeral_a001_executor> --repo-root <canonical_local_checkout> --output-relative 04_Results/Stage02R
+generation_command: python <ephemeral_a001_executor> --repo-root <canonical_local_checkout> --output-relative 04_Results/Stage02R
+generated_at: '2026-09-02T09:14:46.762957Z'
+raw_data_access: read_only
+input_regular_files: 201
+input_census_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+pre_execution_census_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+post_execution_census_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+raw_tree_integrity: unchanged
+tests:
+- test_id: A001-T01
+  status: pass
+- test_id: A001-T02
+  status: pass
+- test_id: A001-T03
+  status: pass
+- test_id: A001-T04
+  status: pass
+- test_id: A001-T05
+  status: pass
+- test_id: A001-T06
+  status: pass
+- test_id: A001-T07
+  status: pass
+- test_id: A001-T08
+  status: pass
+- test_id: A001-T09
+  status: pass
+- test_id: A001-T10
+  status: pass
+- test_id: A001-T11
+  status: pass
+- test_id: A001-T12
+  status: pass
+- test_id: A001-T13
+  status: pass
+- test_id: A001-T14
+  status: pass
+- test_id: A001-T15
+  status: pass
+- test_id: A001-T16
+  status: pass
+- test_id: A001-T17
+  status: pass
+- test_id: A001-T18
+  status: pass
+- test_id: A001-T19
+  status: pass
+- test_id: A001-T20
+  status: pass
+outputs:
+- logical_name: file_inventory_preliminary.csv
+  relative_path: 04_Results/Stage02R/file_inventory_preliminary.csv
+  size_bytes: 74988
+  checksum: 859fbd410caae4346ae400cac20ab419978d14f7d935a82bc521170920f950ef
+- logical_name: format_catalogue.yaml
+  relative_path: 04_Results/Stage02R/format_catalogue.yaml
+  size_bytes: 87991
+  checksum: 4306384d49d595af3e83da6a981075a4f4bd5ef90a01fb2ff536a883e360b359
+- logical_name: parsed_header_metadata_sample.jsonl
+  relative_path: 04_Results/Stage02R/parsed_header_metadata_sample.jsonl
+  size_bytes: 211400
+  checksum: 039fde9116b5862728c49744a5198ae1314ef41ff3540201d88119cced0d63ab
+- logical_name: field_semantics_report.yaml
+  relative_path: 04_Results/Stage02R/field_semantics_report.yaml
+  size_bytes: 616599
+  checksum: 534f9d5b1ec665c51796cd6519922fdfb86c74073b29dadeb31651bf2de7603d
+- logical_name: reconnaissance_diagnostics.csv
+  relative_path: 04_Results/Stage02R/reconnaissance_diagnostics.csv
+  size_bytes: 6295
+  checksum: 5afa3964bc2dac6978974ae6898989457bafdc7b1ebd9140fadabf2b53349fc3
+- logical_name: test_report.yaml
+  relative_path: 04_Results/Stage02R/test_report.yaml
+  size_bytes: 5986
+  checksum: 3dbb1c0a34c6be64acbaac536696f4e7d4094119091bc942fd4884a9b5a0adff
+- logical_name: provenance_manifest.yaml
+  relative_path: 04_Results/Stage02R/provenance_manifest.yaml
+  size_bytes: null
+  checksum: null
+  checksum_note: Self-checksum is reported by the execution checkpoint/final response; embedding it would be self-referential.
+stop_condition:
+  status: reached
+  a001_boundary: stopped after approved reconnaissance package
+  a002_started: false
+  normalization_performed: false
+  spectral_analysis_performed: false
+  resolution_calculation_performed: false
+  cef_analysis_performed: false
+overall_status: pass

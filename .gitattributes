@@ -4,6 +4,7 @@
 *.yaml text eol=lf
 *.yml  text eol=lf
 *.json text eol=lf
+*.jsonl text eol=lf
 *.py   text eol=lf
 *.toml text eol=lf
 *.txt  text eol=lf
@@ -12,3 +13,6 @@
 
 *.bat  text eol=crlf
 *.cmd  text eol=crlf
+
+# Reviewed generated Work snapshot: preserve byte-exact artifacts referenced by SHA-256.
+04_Results/Stage02R/W02-02R-A-001/** -text

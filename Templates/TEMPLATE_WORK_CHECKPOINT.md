@@ -6,6 +6,11 @@ status: completed
 review_status: not_reviewed
 scientific_interpretation_status: not_reviewed
 parent_checkpoint: null
+execution_context: null
+platform: null
+repository_commit: null
+dataset_id: null
+dataset_identity_status: null
 ---
 
 # Work checkpoint
@@ -13,6 +18,8 @@ parent_checkpoint: null
 ## GOAL
 
 ## INPUTS
+
+## DATASET_IDENTITY
 
 ## CODE_VERSION
 
@@ -39,6 +46,8 @@ parent_checkpoint: null
 ## PASS_CRITERIA
 
 ## STOP_CONDITION
+
+## HANDOFF_STATE
 
 ## REVIEW_NOTES
 

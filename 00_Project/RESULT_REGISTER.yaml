@@ -188,3 +188,38 @@
     - Повторить regression test Hamiltonian + transition tensors с явной rotation matrix.
   limitations: >
     До воспроизводимого regression artifact этот convention result остаётся reviewed.
+
+
+- id: R-009
+  title: Stage 02R A-001 TAIPAN raw-archive reconnaissance
+  type: data_reconnaissance_result
+  status: reviewed
+  scope:
+    - Stage02R
+    - TAIPAN
+    - raw_archive
+    - acquisition_semantics
+  statement: >
+    Fresh CEF-blind reconnaissance of EXP-TAIPAN-001 established 201 readable
+    .dat files with zero exact-content duplicates and empirically verified
+    one-file-to-one-logical-scan representation. The archive contains
+    21 deterministic structural format families. Raw detector, monitor,
+    time, h, k, l, e, ei, vei and ef fields are present throughout the
+    archive; 103 scans are monitor-controlled and 98 are time-controlled.
+    The archive contains two lattice states and four UB matrices, and proper
+    acquisition timestamps cover 2023-08-29 through 2023-09-06. Pre/post
+    source census remained byte-identical.
+  evidence:
+    - kind: work_checkpoint
+      source: 02_Work_Checkpoints/W02-02R-A-001.md
+    - kind: result_package
+      source: 04_Results/Stage02R/W02-02R-A-001/
+  review_date: '2026-09-02'
+  validation_criteria:
+    - Verify the tracked A-001 artifact checksums against the reviewed checkpoint.
+    - Verify a second-machine copy of EXP-TAIPAN-001 against the reviewed source census before later execution.
+  limitations: >
+    Several semantics remain intentionally unresolved after A-001, including
+    mode=0, q, qh versus h, en versus e, explicit filter/higher-order
+    suppression state, PG reflection/mosaic, and several auxiliary motor
+    fields. These must not be assigned by assumption in A-002.

@@ -1,0 +1,148 @@
+job_id: W02-02R-A-001
+dataset_id: EXP-TAIPAN-001
+generated_at: '2026-09-02T09:14:46.762957Z'
+status: pass
+tests:
+- test_id: A001-T01
+  status: pass
+  evidence: Two independent enumerations produced the same canonical dataset-relative regular-file set.
+  details:
+    first_count: 201
+    second_count: 201
+- test_id: A001-T02
+  status: pass
+  evidence: Fresh census count reconciles with preliminary inventory records.
+  details:
+    census: 201
+    inventory: 201
+- test_id: A001-T03
+  status: pass
+  evidence: Every readable regular source has SHA-256.
+  details:
+    readable: 201
+    checksummed: 201
+- test_id: A001-T04
+  status: pass
+  evidence: Independent pre/post path-size-SHA-256 censuses are exactly equal.
+  details:
+    pre_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+    post_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+- test_id: A001-T05
+  status: pass
+  evidence: Reversed traversal reproduces full fingerprints and membership; display IDs derive from the sorted fingerprint
+    set.
+  details:
+    format_count: 21
+- test_id: A001-T06
+  status: pass
+  evidence: Every discovered format has deterministic representative file-record IDs.
+  details:
+    FMT-02R-00e53630cd36: 2
+    FMT-02R-029bacfa64d8: 2
+    FMT-02R-06137a7de1ad: 2
+    FMT-02R-172bb66a767d: 1
+    FMT-02R-25ddc2c75b1e: 2
+    FMT-02R-33ee702b9adc: 2
+    FMT-02R-35f17153f38f: 2
+    FMT-02R-365d8346d6ba: 2
+    FMT-02R-42b66acce1bb: 2
+    FMT-02R-7d9e3f2fd3b3: 2
+    FMT-02R-92d14f023eb1: 2
+    FMT-02R-9cd5341dd50f: 1
+    FMT-02R-a20370d76087: 2
+    FMT-02R-a59075cdffed: 1
+    FMT-02R-a96f4c9633b6: 2
+    FMT-02R-a9e025c2acce: 2
+    FMT-02R-ab302e8146f8: 2
+    FMT-02R-ac325217afd4: 2
+    FMT-02R-c8f545518171: 1
+    FMT-02R-de66a609ccd2: 2
+    FMT-02R-fb75879b9023: 2
+- test_id: A001-T07
+  status: pass
+  evidence: Semantic candidates are matched only through explicit normalized raw keys/labels/declared columns.
+  details: No semantic mapping uses an unexplained numeric column position.
+- test_id: A001-T08
+  status: pass
+  evidence: Generated artifacts contain no resolved dataset root.
+  details: Absolute path-like header values are redacted in the parsed sample.
+- test_id: A001-T09
+  status: pass
+  evidence: Static audit found no forbidden historical spectral dependency outside audit-rule declarations.
+  details: no findings
+- test_id: A001-T10
+  status: pass
+  evidence: Executor contains no normalization, spectral search/fitting, resolution, or CEF operation.
+  details: Only filesystem hashing and structural/header metadata census were executed.
+- test_id: A001-T11
+  status: pass
+  evidence: Archive-entry IDs derive from dataset ID plus canonical relative path, independently of content checksum and traversal
+    order.
+  details:
+    unique_ids: 201
+- test_id: A001-T12
+  status: pass
+  evidence: Synthetic changes to scan ID, title, command arguments, and data values preserve the format fingerprint.
+  details:
+    descriptor_version: stage02r_raw_format_descriptor_v1
+- test_id: A001-T13
+  status: pass
+  evidence: Every parsed representative resolves uniquely to inventory file ID, source path, and checksum.
+  details:
+    samples: 38
+- test_id: A001-T14
+  status: pass
+  evidence: Filesystem mtime is explicitly low-trust and never promoted to acquisition time.
+  details: filesystem_metadata_only
+- test_id: A001-T15
+  status: pass
+  evidence: General file-to-scan cardinality was retained until structural assessment; conclusion and evidence are explicit.
+  details:
+    file_scan_cardinality_status: verified_one_archive_file_per_logical_scan
+    scan_candidate_files: 201
+    files_with_one_numeric_data_block: 201
+    files_with_multiple_numeric_data_blocks: 0
+    files_with_one_explicit_scan_identifier: 201
+    unique_explicit_scan_identifiers: true
+    files_whose_name_contains_explicit_scan_id: 201
+    unique_raw_file_references: true
+    evidence: Every scan-candidate .dat file contains one contiguous numeric data block, one unique explicit scan ID matching
+      its dataset-relative filename, and one unique raw_file reference; no continuation/support-file format was discovered.
+      The observed archive representation is therefore 1 file = 1 logical scan for EXP-TAIPAN-001.
+    architecture_requirement: The general A-002 data model must still support 1:N and N:1 mappings even though this dataset's
+      observed representation is verified as 1:1.
+- test_id: A001-T16
+  status: pass
+  evidence: Filter and higher-order suppression fields are explicitly reported whether seen or absent.
+  details: not_seen_in_full_header_census
+- test_id: A001-T17
+  status: pass
+  evidence: Kinematic, angular, UB, and orientation candidates are explicitly covered regardless of observed status.
+  details:
+    qh: not_seen_in_full_header_census
+    qk: verified
+    ql: verified
+    energy_transfer: verified
+    Ei: verified
+    Ef: verified
+    fixed_energy_mode: not_seen_in_full_header_census
+- test_id: A001-T18
+  status: pass
+  evidence: Every readable file participated in the lightweight census and format totals reconcile with membership.
+  details:
+    readable_assigned: 201
+    format_members: 201
+- test_id: A001-T19
+  status: pass
+  evidence: Synthetic shared-prefix fingerprints triggered deterministic prefix extension while full hashes remained unchanged.
+  details:
+    aaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb: FMT-02R-aaaaaaaaaaaab
+    aaaaaaaaaaaacccccccccccccccccccccccccccccccccccccccccccccccccccc: FMT-02R-aaaaaaaaaaaac
+- test_id: A001-T20
+  status: pass
+  evidence: Synthetic identity regression separates archive path identity, byte-content identity, and equal-content grouping
+    semantics.
+  details: different paths keep distinct file IDs; changed bytes keep path ID and change checksum
+pass_criteria_assessment:
+  status: pass
+  reason: All A001-T01 through A001-T20 passed; missing and ambiguous TAIPAN semantics remain explicit and machine-readable.

@@ -3,8 +3,8 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "3.0"
-updated: 2026-09-01
+version: "3.1"
+updated: 2026-09-02
 review_status: working
 ---
 
@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `W02-02R-A-001`: Выполнить утверждённый TAIPAN/TAS-aware raw census и format/acquisition reconnaissance для EXP-TAIPAN-001 в W02, строго до установленного STOP_CONDITION.
+**Следующий шаг.** `T-02R-03`: На основе accepted checkpoint W02-02R-A-001 сформировать в чате "02 - TAIPAN Data Reduction" formal specification W02-02R-A-002 — verified parser + canonical file/scan inventories. A-002 execution не запускать до отдельного Project Control approval.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -151,17 +151,63 @@ INS-данные монокристалла DyFeO$_3$, полученные на
 
 Текущий архив относится к эксперименту `1296`.
 
-В историческом inventory зафиксировано:
+Stage 02R `W02-02R-A-001` выполнил fresh CEF-blind reconnaissance raw
+archive `EXP-TAIPAN-001`. После отдельного scientific review установлены
+следующие archive/acquisition facts:
 
-- 201 `.dat` scans;
-- 7 761 измеренная точка;
-- основные низкотемпературные блоки около $3.4$–$3.5~\mathrm K$
-  и $10~\mathrm K$;
-- типичная фиксированная конечная энергия
-  $E_f\approx14.87~\mathrm{meV}$.
+- 201 regular files, все читаемые `.dat`;
+- zero exact-content duplicates;
+- для данного archive эмпирически подтверждено
+  `1 file = 1 logical scan`;
+- обнаружена 21 deterministic structural format family;
+- во всех 201 files раздельно присутствуют raw
+  `detector`, `monitor`, `time`, `h`, `k`, `l`, `e`, `ei`, `vei`, `ef`;
+- 103 acquisitions являются monitor-controlled,
+  98 — time-controlled;
+- записаны TAS angles `M1/M2`, `S1/S2`, `A1/A2` и дополнительные motors;
+- `monochromator=PG`, `analyzer=PG`,
+  `collimation=o-40-40-o` представлены во всём archive;
+- обнаружены 2 lattice states и 4 UB matrices;
+- proper acquisition timestamps покрывают период
+  2023-08-29 — 2023-09-06;
+- pre/post raw census подтвердил byte-identical source archive.
 
-Эти значения пока имеют provenance из предыдущего анализа и должны
-быть независимо перепроверены в новом TAIPAN reduction cycle.
+Canonical provenance:
+
+```text
+02_Work_Checkpoints/W02-02R-A-001.md
+04_Results/Stage02R/W02-02R-A-001/
+```
+
+Эти результаты описывают структуру экспериментального archive и acquisition
+metadata и не являются CEF interpretation.
+
+A-001 намеренно не закрыл следующие semantics:
+
+```text
+mode=0
+q
+qh versus h
+en versus e
+filters / higher-order suppression
+PG reflection / mosaic
+sgl / sgu / stl / stu
+PS_* / PA_*
+```
+
+Они должны оставаться unresolved до explicit verification в следующем
+parser/inventory cycle.
+
+Исторические quantities:
+
+```text
+7 761 measured points
+основные low-temperature blocks около 3.4–3.5 K и 10 K
+типичная fixed final energy около 14.87 meV
+```
+
+не повышаются автоматически до fresh Stage 02R facts только на основании
+A-001 и должны проверяться последующими jobs.
 
 Lattice, UB, scan geometry и другие instrument metadata должны
 считываться из соответствующего acquisition block и не должны
