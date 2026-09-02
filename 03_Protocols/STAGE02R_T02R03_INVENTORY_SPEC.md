@@ -452,17 +452,17 @@ energy + counts
 
 Нужно сохранять, где возможно:
 
-\[
+$$
 (\mathbf Q,\hbar\omega)
 \longleftrightarrow
 (\mathbf k_i,\mathbf k_f,\text{scattering geometry},\text{instrument state}).
-\]
+$$
 
 В standard TAS notation:
 
-\[
+$$
 \mathbf Q=\mathbf k_i-\mathbf k_f.
-\]
+$$
 
 Нужно сохранить информацию, необходимую позже для определения:
 
@@ -1445,25 +1445,25 @@ unknown
 
 Inventory/parser architecture должна позволять в последующих stages проверить consistency:
 
-\[
+$$
 E_i \leftrightarrow k_i
-\]
+$$
 
-\[
+$$
 E_f \leftrightarrow k_f
-\]
+$$
 
-\[
+$$
 \hbar\omega = E_i-E_f
-\]
+$$
 
 с учётом verified TAIPAN sign convention.
 
 Также, где geometry allows:
 
-\[
+$$
 \mathbf Q=\mathbf k_i-\mathbf k_f.
-\]
+$$
 
 Для этого не следует сводить scan к одному набору:
 

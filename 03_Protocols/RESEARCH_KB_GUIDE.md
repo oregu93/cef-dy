@@ -2,8 +2,8 @@
 title: "CEF Dy — руководство по ведению базы знаний"
 type: protocol
 status: active
-version: "1.0"
-updated: 2026-08-31
+version: "1.1"
+updated: 2026-09-02
 ---
 
 # Руководство по ведению базы знаний исследования
@@ -279,6 +279,28 @@ AUTO:CONTROL_REENTRY
 python scripts/kb_refresh.py
 ```
 
+### Routine operational transitions
+
+Для небольших declarative transitions operational/project-control state
+используйте временный machine-local YAML payload и
+`scripts/project_transition.py`:
+
+```powershell
+python scripts/project_transition.py /tmp/cef_project_transition.yaml --check
+python scripts/project_transition.py /tmp/cef_project_transition.yaml --apply
+```
+
+Payload рекомендуется хранить в `/tmp/cef_project_transition.yaml` или другом
+ignored/local location, а не
+добавлять в Git для каждого шага. `project_transition.py` обновляет только
+разрешённые operational/governance fields и строки существующей очереди,
+после чего вызывает `kb_refresh.py`. Сам `kb_refresh.py` остаётся единственным
+generator AUTO re-entry blocks.
+
+Scientific promotion остаётся review-controlled и **не выполняется**
+`project_transition.py`: script не изменяет scientific registers, не создаёт
+решения и не повышает статус научных результатов.
+
 ## 11. Перед существенным Git commit
 
 Рекомендуемый порядок:
@@ -306,6 +328,30 @@ git commit -m "..."
 - имён функций, команд, программ и API;
 - терминов, перевод которых создаёт реальную неоднозначность;
 - machine-facing LLM bootstrap prompts и executable instruction contracts.
+
+### Markdown и math portability
+
+- Chemical/material names и ions в обычном тексте и headings записываются
+  plain text: `Dy3+`, `Fe3+`, `DyFeO3`, `RFeO3`.
+- LaTeX используется только для genuine mathematical notation.
+- Inline mathematical quantities могут использовать `$...$`.
+- Display equations используют standalone `$$` delimiters на отдельных
+  строках.
+- Canonical Markdown не использует `\[` / `\]` как display delimiters.
+- Math delimiters не используются в Markdown headings.
+- Code fence не должен случайно охватывать весь Markdown document.
+- Canonical Markdown должен переносимо отображаться в Obsidian и GitHub.
+
+### Lean governance
+
+Generic project rules фиксируются один раз в shared protocols. Future Work
+specifications должны содержать только job-specific delta и ссылаться на
+общие contracts вместо их копирования.
+
+Практический target для обычной будущей Work specification — примерно
+200–500 строк и примерно 10–20 job-specific mandatory tests, когда это
+реалистично. Это guidance, а не hard validator limit. Frozen A-001/A-002
+specifications ретроспективно не сокращаются.
 
 ## 13. Принцип переносимости
 

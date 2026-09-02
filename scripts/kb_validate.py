@@ -156,50 +156,178 @@ def require_list(data, path, issues):
     return data
 
 
+FENCE_OPEN_RE = re.compile(
+    r"^(?P<indent> {0,3})(?P<fence>`{3,}|~{3,})(?P<info>.*)$"
+)
+
+HEADING_RE = re.compile(r"^ {0,3}#{1,6}(?:[ \t]+|$)")
+
+CHEMICAL_LATEX_PATTERNS = (
+    (
+        re.compile(r"\b[A-Z][a-z]?\$\^\{?\d+[+-]\}?\$"),
+        "plain-text ion notation is preferred",
+    ),
+    (
+        re.compile(r"\b(?:[A-Z][a-z]?|R)FeO\$_(?:3|\{3\})\$"),
+        "plain-text orthoferrite formula is preferred",
+    ),
+)
+
+
+def is_escaped(text, index):
+    backslashes = 0
+    index -= 1
+
+    while index >= 0 and text[index] == "\\":
+        backslashes += 1
+        index -= 1
+
+    return backslashes % 2 == 1
+
+
+def strip_inline_code(line):
+    """Blank CommonMark-style inline code spans while preserving columns."""
+    chars = list(line)
+    index = 0
+
+    while index < len(line):
+        if line[index] != "`":
+            index += 1
+            continue
+
+        run_end = index
+        while run_end < len(line) and line[run_end] == "`":
+            run_end += 1
+
+        marker = line[index:run_end]
+        close = line.find(marker, run_end)
+
+        if close < 0:
+            index = run_end
+            continue
+
+        for pos in range(index, close + len(marker)):
+            chars[pos] = " "
+
+        index = close + len(marker)
+
+    return "".join(chars)
+
+
+def scan_markdown(text):
+    """Return code-free lines and exact fenced-code spans.
+
+    Fences may use backticks or tildes and any length of at least three.
+    Closing fences must use the same character and at least the opening
+    length, following CommonMark's up-to-three-space indentation rule.
+    """
+    raw_lines = text.splitlines()
+    clean_lines = []
+    fence = None
+    fence_pairs = []
+
+    for index, line in enumerate(raw_lines):
+        if fence is not None:
+            close_re = re.compile(
+                r"^ {0,3}"
+                + re.escape(fence["char"])
+                + "{"
+                + str(fence["length"])
+                + r",}[ \t]*$"
+            )
+
+            if close_re.match(line):
+                fence_pairs.append(
+                    {
+                        "start": fence["start"],
+                        "end": index,
+                        "char": fence["char"],
+                        "length": fence["length"],
+                    }
+                )
+                fence = None
+
+            clean_lines.append("")
+            continue
+
+        match = FENCE_OPEN_RE.match(line)
+
+        if match:
+            marker = match.group("fence")
+            info = match.group("info")
+
+            # A backtick fence cannot have a backtick in its info string.
+            if marker[0] != "`" or "`" not in info:
+                fence = {
+                    "start": index,
+                    "char": marker[0],
+                    "length": len(marker),
+                }
+                clean_lines.append("")
+                continue
+
+        clean_lines.append(strip_inline_code(line))
+
+    return {
+        "raw_lines": raw_lines,
+        "clean_lines": clean_lines,
+        "fence_pairs": fence_pairs,
+        "unclosed_fence": fence,
+    }
+
+
 def strip_fences(text):
-    text = re.sub(
-        r"```.*?```",
-        "",
-        text,
-        flags=re.S,
-    )
+    return "\n".join(scan_markdown(text)["clean_lines"])
 
-    text = re.sub(
-        r"~~~.*?~~~",
-        "",
-        text,
-        flags=re.S,
-    )
 
-    text = re.sub(
-        r"`[^`\n]*`",
-        "",
-        text,
-    )
+def dollar_runs(line):
+    runs = []
+    index = 0
 
-    return text
+    while index < len(line):
+        if line[index] != "$" or is_escaped(line, index):
+            index += 1
+            continue
+
+        end = index + 1
+        while end < len(line) and line[end] == "$":
+            end += 1
+
+        runs.append((index, end - index))
+        index = end
+
+    return runs
 
 
 def latex_checks(path, text, issues):
-    clean = strip_fences(text)
+    scan = scan_markdown(text)
+    raw_lines = scan["raw_lines"]
+    clean_lines = scan["clean_lines"]
+    clean = "\n".join(clean_lines)
 
-    if clean.count("$$") % 2:
-        add_issue(
-            issues,
-            "error",
-            rel(path),
-            "odd number of $$ delimiters",
-        )
+    meaningful = [
+        index
+        for index, line in enumerate(raw_lines)
+        if line.strip()
+    ]
 
-    begins = re.findall(
-        r"\\begin\{([^}]+)\}",
-        clean,
-    )
+    if meaningful:
+        first = meaningful[0]
+        last = meaningful[-1]
 
-    ends = re.findall(
-        r"\\end\{([^}]+)\}",
-        clean,
-    )
+        if any(
+            pair["start"] == first and pair["end"] == last
+            for pair in scan["fence_pairs"]
+        ):
+            add_issue(
+                issues,
+                "error",
+                rel(path),
+                "entire Markdown document is wrapped in an outer code fence",
+            )
+
+    begins = re.findall(r"\\begin\{([^}]+)\}", clean)
+    ends = re.findall(r"\\end\{([^}]+)\}", clean)
 
     if sorted(begins) != sorted(ends):
         add_issue(
@@ -209,14 +337,102 @@ def latex_checks(path, text, issues):
             f"LaTeX environment mismatch: begin={begins}, end={ends}",
         )
 
-    display_spans = [
-        match.span()
-        for match in re.finditer(
-            r"\$\$.*?\$\$",
-            clean,
-            flags=re.S,
+    display_open = None
+    display_lines = set()
+    display_delimiter_lines = set()
+
+    for line_no, line in enumerate(clean_lines, 1):
+        runs = dollar_runs(line)
+        display_runs = [run for run in runs if run[1] >= 2]
+
+        if display_runs:
+            if (
+                len(display_runs) == 1
+                and display_runs[0][1] == 2
+                and line.strip() == "$$"
+            ):
+                display_delimiter_lines.add(line_no)
+
+                if display_open is None:
+                    display_open = line_no
+                else:
+                    display_open = None
+
+            else:
+                add_issue(
+                    issues,
+                    "error",
+                    rel(path),
+                    "display math delimiter must be standalone $$ "
+                    f"at line {line_no}",
+                )
+
+        elif display_open is not None:
+            display_lines.add(line_no)
+        else:
+            inline_count = sum(
+                length == 1
+                for _, length in runs
+            )
+
+            if inline_count % 2:
+                add_issue(
+                    issues,
+                    "error",
+                    rel(path),
+                    f"unpaired inline $ delimiter at line {line_no}",
+                )
+
+    if display_open is not None:
+        add_issue(
+            issues,
+            "error",
+            rel(path),
+            f"unpaired standalone $$ delimiter opened at line {display_open}",
         )
-    ]
+
+    for line_no, line in enumerate(clean_lines, 1):
+        if HEADING_RE.match(line) and (
+            dollar_runs(line)
+            or "\\(" in line
+            or "\\[" in line
+        ):
+            add_issue(
+                issues,
+                "error",
+                rel(path),
+                f"math delimiter in Markdown heading at line {line_no}",
+            )
+
+        if "\\[" in line or "\\]" in line:
+            add_issue(
+                issues,
+                "error",
+                rel(path),
+                "non-portable \\[ or \\] display delimiter "
+                f"at line {line_no}; use standalone $$",
+            )
+
+        if re.match(r"^ {4,}\$\$", line):
+            add_issue(
+                issues,
+                "warning",
+                rel(path),
+                f"indented display math at line {line_no}",
+            )
+
+        if (
+            line_no not in display_lines
+            and line_no not in display_delimiter_lines
+        ):
+            for pattern, message in CHEMICAL_LATEX_PATTERNS:
+                for match in pattern.finditer(line):
+                    add_issue(
+                        issues,
+                        "warning",
+                        rel(path),
+                        f"{message} at line {line_no}: {match.group(0)}",
+                    )
 
     for env in (
         "aligned",
@@ -225,35 +441,16 @@ def latex_checks(path, text, issues):
         "bmatrix",
         "cases",
     ):
-        for match in re.finditer(
-            r"\\begin\{" + env + r"\}",
-            clean,
-        ):
-            if not any(
-                start <= match.start() < end
-                for start, end in display_spans
-            ):
+        pattern = re.compile(r"\\begin\{" + env + r"\}")
+
+        for line_no, line in enumerate(clean_lines, 1):
+            if pattern.search(line) and line_no not in display_lines:
                 add_issue(
                     issues,
                     "error",
                     rel(path),
                     f"{env} environment outside $$ math block",
                 )
-
-    for line_no, line in enumerate(
-        clean.splitlines(),
-        1,
-    ):
-        if re.match(
-            r"^ {4,}\$\$",
-            line,
-        ):
-            add_issue(
-                issues,
-                "warning",
-                rel(path),
-                f"indented display math at line {line_no}",
-            )
 
 
 def markdown_links(path, text, issues):
@@ -1152,6 +1349,44 @@ def file_size_checks(issues):
             )
 
 
+def git_whitespace_checks(issues):
+    commands = (
+        ("working tree", ["git", "diff", "--check"]),
+        ("index", ["git", "diff", "--cached", "--check"]),
+    )
+
+    for label, command in commands:
+        try:
+            proc = subprocess.run(
+                command,
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+        except FileNotFoundError:
+            add_issue(
+                issues,
+                "error",
+                "git",
+                "Git executable is unavailable; whitespace checks did not run",
+            )
+            return
+
+        if proc.returncode != 0:
+            detail = (proc.stdout + "\n" + proc.stderr).strip()
+            message = f"git whitespace check failed for {label}"
+
+            if detail:
+                message += f": {detail}"
+
+            add_issue(
+                issues,
+                "error",
+                "git",
+                message,
+            )
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -1180,6 +1415,7 @@ def main():
     markdown_and_path_checks(issues)
     reentry_check(issues)
     file_size_checks(issues)
+    git_whitespace_checks(issues)
 
     report = {
         "root": str(ROOT),

@@ -635,9 +635,9 @@ present throughout.
 
 A-002 должен проверить candidate relation, например:
 
-\[
+$$
 e = E_i-E_f.
-\]
+$$
 
 Relation не должна приниматься только из generic TAS convention.
 
@@ -649,7 +649,7 @@ Raw numeric preservation не должен зависеть от uncontrolled bi
 
 Для source tokens `e`, `Ei`, `Ef`:
 
-\[
+$$
 \mathrm{tol}
 =
 \frac{1}{2}\mathrm{ulp}_{decimal}(e)
@@ -659,7 +659,7 @@ Raw numeric preservation не должен зависеть от uncontrolled bi
 \frac{1}{2}\mathrm{ulp}_{decimal}(E_f)
 +
 \mathrm{numerical\_guard}.
-\]
+$$
 
 Где:
 
@@ -2323,18 +2323,8 @@ Across all usable rows:
 2. parse Decimal-compatible values where practical;
 3. test documented candidate relation(s);
 4. calculate raw residual;
-5. derive row-level tolerance from represented decimal precision:
-   \[
-   \mathrm{tol}
-   =
-   0.5\,\mathrm{ulp}_{decimal}(e)
-   +
-   0.5\,\mathrm{ulp}_{decimal}(E_i)
-   +
-   0.5\,\mathrm{ulp}_{decimal}(E_f)
-   +
-   \mathrm{numerical\_guard};
-   \]
+5. derive row-level tolerance from represented decimal precision according
+   to the frozen numerical tolerance rule under `e / Ei / Ef`;
 6. report residual and tolerance;
 7. evaluate consistency across formats/scans.
 

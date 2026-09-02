@@ -69,7 +69,7 @@ control_chat: "00 - Project Control"
 | `M03R` | planned | Повторный анализ CEF landscape и идентифицируемости на очищенном experimental observation set. |
 | `M03D` | suspended | Joint constrained M0/M1 energy + intensity inference; существующий design сохранён, но execution приостановлен. |
 | `M05` | planned | Независимая магнитная validation и, при необходимости, CEF + magnetic exchange. |
-| `M06` | later | Более глубокая structural/microscopic interpretation и перенос по ряду RFeO$_3$. |
+| `M06` | later | Более глубокая structural/microscopic interpretation и перенос по ряду RFeO3. |
 | `M07` | ongoing | Накопление результатов, пригодных для статьи и диссертации, с явным provenance. |
 
 
