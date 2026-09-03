@@ -44,12 +44,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: T-02R-03
+  id: W02-02R-A-003
   text: >
-    На основе scientifically accepted W02-02R-A-002 сформировать в чате "02 - TAIPAN Data Reduction"
-    lean specification следующего job W02-02R-A-003 для acquisition/configuration classification
-    и normalization-compatibility analysis. Execution A-003 не запускать до отдельного Project
-    Control approval.
+    После canonical Project Control authorization commit выполнить в выбранном machine-local
+    W02 execution context frozen job W02-02R-A-003 для EXP-TAIPAN-001: acquisition/configuration
+    classification и normalization-compatibility analysis, строго до установленного STOP_CONDITION.
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
   - Энергии 6.45 и 27.90 meV являются blind experimental detections или подтверждёнными CEF-уровнями.
@@ -68,16 +67,15 @@ control:
     contract до использования CEF assignments и microscopic models.
 
   why: >
-    W02-02R-A-002 завершил production parsing EXP-TAIPAN-001 и прошёл scientific review. Получены
-    canonical file/scan/point representations для 201 scans и 7761 points; verified e = Ei -
-    Ef для всех 7761 points и en/e mapping для 85 energy scans. mode=0 и q намеренно остаются
-    unresolved. Normalization, instrument-block inference, resolution, spectral analysis и CEF
-    analysis не выполнялись.
+    Design W02-02R-A-003 прошёл scientific/methodological review и зафиксирован frozen specification
+    commit 5d0704b8b0c085950034a88e6c4975463e76e56d. A-002 остаётся последним reviewed scientific
+    checkpoint; A-003 использует его canonical acquisition layer и не выполняет normalization,
+    spectral analysis, resolution calculation или CEF analysis.
   next: >
-    В чате "02 - TAIPAN Data Reduction" сформировать lean design W02-02R-A-003 на базе reviewed
-    A-002 canonical acquisition layer. A-003 execution не разрешён до отдельного Project Control
-    decision.
-  next_work_job: null
+    После canonical authorization commit выполнить только W02-02R-A-003 в одном выбранном machine-local
+    W02 context. Остановиться на A-003 STOP_CONDITION и вернуть checkpoint/results в "02 - TAIPAN
+    Data Reduction" для scientific review.
+  next_work_job: W02-02R-A-003
 
   blocked:
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.

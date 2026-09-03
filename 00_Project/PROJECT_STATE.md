@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `T-02R-03`: На основе scientifically accepted W02-02R-A-002 сформировать в чате "02 - TAIPAN Data Reduction" lean specification следующего job W02-02R-A-003 для acquisition/configuration classification и normalization-compatibility analysis. Execution A-003 не запускать до отдельного Project Control approval.
+**Следующий шаг.** `W02-02R-A-003`: После canonical Project Control authorization commit выполнить в выбранном machine-local W02 execution context frozen job W02-02R-A-003 для EXP-TAIPAN-001: acquisition/configuration classification и normalization-compatibility analysis, строго до установленного STOP_CONDITION.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
