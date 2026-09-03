@@ -1,0 +1,14 @@
+schema_version: 1
+job_id: W02-02R-A-002
+dataset_id: EXP-TAIPAN-001
+external_artifacts:
+- logical_name: scan_point_auxiliary.csv
+  storage_class: external_large_result
+  external_root: CEF_Dy_Data
+  external_relative_path: Stage02R/W02-02R-A-002/scan_point_auxiliary.csv
+  size_bytes: 36146229
+  sha256: f5a02e2398ed4b7cff0495f6bbcb6a5018db910435521c82ce9a78e8a4c185ba
+  original_execution_path: 04_Results/Stage02R/W02-02R-A-002/scan_point_auxiliary.csv
+  note: Required A-002 lossless point-level auxiliary artifact. Stored outside Git because it exceeds
+    the project advisory size threshold. Canonical integrity is defined by logical external path, byte
+    size and SHA-256.

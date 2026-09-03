@@ -223,3 +223,44 @@
     mode=0, q, qh versus h, en versus e, explicit filter/higher-order
     suppression state, PG reflection/mosaic, and several auxiliary motor
     fields. These must not be assigned by assumption in A-002.
+
+- id: R-010
+  title: Stage 02R A-002 verified TAIPAN parser and acquisition semantics
+  type: data_parser_and_semantics_result
+  status: reviewed
+  scope:
+    - Stage02R
+    - TAIPAN
+    - parser
+    - acquisition_semantics
+    - canonical_inventory
+  statement: >
+    W02-02R-A-002 сформировал canonical lossless acquisition representation
+    EXP-TAIPAN-001: 201 raw files соответствуют 201 logical scans, содержащим
+    7761 measured points во всех 21 reviewed structural format families.
+    Для raw energy fields relation e = Ei - Ef verified для всех 7761 points
+    по frozen decimal-precision tolerance rule; mapping def_x=en к
+    point-level e verified для всех 85 соответствующих scans. Семантика
+    h/k/l является acquisition-consistent и partially verified, тогда как
+    raw q и mode=0 намеренно остаются unresolved. Parser воспроизводит
+    103 monitor-controlled и 98 time-controlled scans, 2 lattice states и
+    4 UB states, сохраняя raw detector, monitor и time отдельно и без
+    normalization.
+  evidence:
+    - kind: work_checkpoint
+      source: 02_Work_Checkpoints/W02-02R-A-002.md
+    - kind: result_package
+      source: 04_Results/Stage02R/W02-02R-A-002/
+  review_date: '2026-09-03'
+  validation_criteria:
+    - Verify tracked A-002 artifact checksums against the reviewed checkpoint and provenance manifest.
+    - Verify externally stored scan_point_auxiliary.csv by exact byte size and SHA-256.
+    - Preserve the distinction between verified, partially verified and unresolved raw-field semantics.
+  limitations: >
+    Scientific review was based on the reported checkpoint/results and did
+    not independently rerun the raw dataset or independently byte-open every
+    local artifact. Independent Windows/Linux reproduction was not performed.
+    mode=0, q, filter/higher-order suppression state, attenuation, PG
+    reflection/mosaic and several auxiliary-motor semantics remain unresolved.
+    A-002 performed no normalization, acquisition/instrument block inference,
+    resolution calculation, spectral feature analysis or CEF analysis.

@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-02'
+updated: '2026-09-03'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -44,12 +44,12 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: W02-02R-A-002
+  id: T-02R-03
   text: >
-    Выполнить в выбранном machine-local W02 execution context утверждённый
-    verified production parser и canonical file/scan inventory job
-    W02-02R-A-002 для EXP-TAIPAN-001, строго до STOP_CONDITION.
-
+    На основе scientifically accepted W02-02R-A-002 сформировать в чате "02 - TAIPAN Data Reduction"
+    lean specification следующего job W02-02R-A-003 для acquisition/configuration classification
+    и normalization-compatibility analysis. Execution A-003 не запускать до отдельного Project
+    Control approval.
 do_not_assume:
   - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
   - Энергии 6.45 и 27.90 meV являются blind experimental detections или подтверждёнными CEF-уровнями.
@@ -68,21 +68,16 @@ control:
     contract до использования CEF assignments и microscopic models.
 
   why: >
-    W02-02R-A-001 завершил fresh CEF-blind reconnaissance
-    EXP-TAIPAN-001 и был принят scientific review: подтверждены 201 raw
-    files, one-file-to-one-logical-scan representation, 21 structural format
-    families, mixed monitor/time counting semantics, multiple lattice/UB
-    states и byte-identical raw integrity. Следующий methodological step —
-    превратить verified reconnaissance в production parser и canonical
-    inventories, не закрывая unresolved TAS semantics предположениями.
-
+    W02-02R-A-002 завершил production parsing EXP-TAIPAN-001 и прошёл scientific review. Получены
+    canonical file/scan/point representations для 201 scans и 7761 points; verified e = Ei -
+    Ef для всех 7761 points и en/e mapping для 85 energy scans. mode=0 и q намеренно остаются
+    unresolved. Normalization, instrument-block inference, resolution, spectral analysis и CEF
+    analysis не выполнялись.
   next: >
-    После canonical design-freeze commit выполнить в выбранном machine-local W02 execution context только
-    W02-02R-A-002 — verified parser + canonical file/scan inventories.
-    После STOP_CONDITION вернуть checkpoint и artifacts в
-    "02 - TAIPAN Data Reduction" для scientific review.
-
-  next_work_job: W02-02R-A-002
+    В чате "02 - TAIPAN Data Reduction" сформировать lean design W02-02R-A-003 на базе reviewed
+    A-002 canonical acquisition layer. A-003 execution не разрешён до отдельного Project Control
+    decision.
+  next_work_job: null
 
   blocked:
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -100,11 +95,11 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >
-    Frozen W02-02R-A-002 verified-parser specification based on the reviewed
-    W02-02R-A-001 reconnaissance and exact Linux portability verification of
-    EXP-TAIPAN-001.
-
-  last_work_checkpoint: W02-02R-A-001
+    Scientifically reviewed W02-02R-A-002 checkpoint: verified production TAIPAN parser and
+    canonical acquisition layer, 38/38 tests PASS, STOP_CONDITION satisfied. Review accepted
+    parser/acquisition semantics; independent raw re-analysis and independent byte verification
+    were not performed.
+  last_work_checkpoint: W02-02R-A-002
 
   active_hypothesis_ids:
     - H-001

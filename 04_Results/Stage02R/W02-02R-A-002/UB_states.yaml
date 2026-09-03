@@ -1,0 +1,277 @@
+UB-02R-1d710a6baa059bbb:
+  UB_state_fingerprint: 1d710a6baa059bbb2b91095a8509dbfd7a51d2f55e4855717d81425cb5eb7c25
+  lattice_association_status: unique
+  lattice_state_id: LAT-02R-ae4c74e47a033f66
+  lattice_state_ids:
+  - LAT-02R-ae4c74e47a033f66
+  matrix:
+  - - '0'
+    - '0.090597'
+    - '0.112998'
+  - - '0'
+    - '0.154105'
+    - '-0.06643'
+  - - '-0.188324'
+    - '0'
+    - '0'
+  semantic_status: recorded_not_refined
+  source_scan_record_ids:
+  - SCAN-02R-03ed38ed92271694
+  - SCAN-02R-072b13029deb0fba
+  - SCAN-02R-076c78acdde2d2d0
+  - SCAN-02R-211255ce1a05d229
+  - SCAN-02R-22608464dd5aff80
+  - SCAN-02R-251028aabdf3c3e7
+  - SCAN-02R-31bc005deb88d4e2
+  - SCAN-02R-33c7ae4485edcd17
+  - SCAN-02R-379ac295ed92a194
+  - SCAN-02R-43979cdff2eef525
+  - SCAN-02R-43d400370d39ebe7
+  - SCAN-02R-49c7081b477e8f3d
+  - SCAN-02R-4ecc00c5eac2e1b4
+  - SCAN-02R-4f9204b624c2d482
+  - SCAN-02R-54bfea84553b4c65
+  - SCAN-02R-59fa80474896a50b
+  - SCAN-02R-5e02dde1da14be55
+  - SCAN-02R-652afedf8df9a217
+  - SCAN-02R-731f452fb62a55bd
+  - SCAN-02R-7493a417e6451013
+  - SCAN-02R-74e2c66cfb23844c
+  - SCAN-02R-774f62fc1777bc6b
+  - SCAN-02R-7d946974f8e94f38
+  - SCAN-02R-8641a638f4880175
+  - SCAN-02R-8ca6316615b8cbae
+  - SCAN-02R-8dcd5041a8a4e044
+  - SCAN-02R-91de8f7a5ce6984b
+  - SCAN-02R-a9a9857e0e5183b2
+  - SCAN-02R-af1610dac9676d6c
+  - SCAN-02R-bc0f4f0c3548d67f
+  - SCAN-02R-c18c53ef408b1d89
+  - SCAN-02R-cb5dd7445a99bc3a
+  - SCAN-02R-d453265e40ec7542
+  - SCAN-02R-d5e00829a2a54fb6
+  - SCAN-02R-e3abafe2717105f3
+  - SCAN-02R-e4b1e60e94f6a5b7
+  - SCAN-02R-e731681e22986e49
+  ub_state_identity_version: stage02r_ub_state_v1
+UB-02R-397acad65dd9e384:
+  UB_state_fingerprint: 397acad65dd9e3848d9abc7b15fa7e139a1df06ca5d0fc7e488b4ba07273945c
+  lattice_association_status: unique
+  lattice_state_id: LAT-02R-ae4c74e47a033f66
+  lattice_state_ids:
+  - LAT-02R-ae4c74e47a033f66
+  matrix:
+  - - '0'
+    - '0.177141'
+    - '-0.017617'
+  - - '0'
+    - '-0.024026'
+    - '-0.12989'
+  - - '-0.188324'
+    - '0'
+    - '0'
+  semantic_status: recorded_not_refined
+  source_scan_record_ids:
+  - SCAN-02R-097d0c674875ad7d
+  - SCAN-02R-20b2aca534749eb8
+  - SCAN-02R-2161de9a5edbe1bf
+  - SCAN-02R-291dabeaaa79ad80
+  - SCAN-02R-2af7f44831b57311
+  - SCAN-02R-2c07251df8824bce
+  - SCAN-02R-2c38778fb264b3af
+  - SCAN-02R-32cf60066cdcd074
+  - SCAN-02R-35c1a2ccd5e9e62e
+  - SCAN-02R-42f2046fce901aec
+  - SCAN-02R-4a9d7177d38df4e7
+  - SCAN-02R-4fb9fc6716a3e65a
+  - SCAN-02R-59701ee4cf5ede45
+  - SCAN-02R-5b1259784f010264
+  - SCAN-02R-5e9a406134424e15
+  - SCAN-02R-71f68f9554b93f6c
+  - SCAN-02R-72904b63e5e6e883
+  - SCAN-02R-78bcb97650a5c779
+  - SCAN-02R-84cb0b6150577fdc
+  - SCAN-02R-8c948345fe20cada
+  - SCAN-02R-8c953d28ca426172
+  - SCAN-02R-8e9939a05c893131
+  - SCAN-02R-93657997ed968c54
+  - SCAN-02R-95f55247c2e05782
+  - SCAN-02R-a37edad191409e00
+  - SCAN-02R-a4d537ac569af0ba
+  - SCAN-02R-a59dc960ac5aa7de
+  - SCAN-02R-c949f2ba4994924e
+  - SCAN-02R-cb3c11e0b8e28580
+  - SCAN-02R-ccdf6f79b6e3b5fc
+  - SCAN-02R-d24a90ed870ef8e6
+  - SCAN-02R-d4d684343e0d7d6c
+  - SCAN-02R-d7af0511d4c5b96e
+  - SCAN-02R-e5f864cf4587fc19
+  - SCAN-02R-e99f0bd2152d59b1
+  - SCAN-02R-f4c54e6724ab8666
+  - SCAN-02R-f4da1c738ba8c661
+  ub_state_identity_version: stage02r_ub_state_v1
+UB-02R-55ac4333b2057246:
+  UB_state_fingerprint: 55ac4333b2057246e3b57ff817021cebc00748f10be23c8fe991b029be2672e2
+  lattice_association_status: unique
+  lattice_state_id: LAT-02R-ae4c74e47a033f66
+  lattice_state_ids:
+  - LAT-02R-ae4c74e47a033f66
+  matrix:
+  - - '0.116637'
+    - '0'
+    - '0.218731'
+  - - '-0.224474'
+    - '0'
+    - '0.126827'
+  - - '0'
+    - '-0.252621'
+    - '0'
+  semantic_status: recorded_not_refined
+  source_scan_record_ids:
+  - SCAN-02R-022f7aa0bc71f84f
+  - SCAN-02R-1dda1db143c363ba
+  - SCAN-02R-3d7ecf2f3c542662
+  - SCAN-02R-6d3fa023f691129f
+  ub_state_identity_version: stage02r_ub_state_v1
+UB-02R-c7cdba07fed2dfd7:
+  UB_state_fingerprint: c7cdba07fed2dfd7460c4b1b01d30343b9fe94f8587d0e6005411684532d65ab
+  lattice_association_status: unique
+  lattice_state_id: LAT-02R-517a9644e4f59287
+  lattice_state_ids:
+  - LAT-02R-517a9644e4f59287
+  matrix:
+  - - '0'
+    - '0.004623'
+    - '0.131241'
+  - - '0'
+    - '0.178895'
+    - '-0.003392'
+  - - '-0.188324'
+    - '0'
+    - '0'
+  semantic_status: recorded_not_refined
+  source_scan_record_ids:
+  - SCAN-02R-059bd02c78268a2b
+  - SCAN-02R-05cdcdc49c83bec6
+  - SCAN-02R-074afad5a6b92ea4
+  - SCAN-02R-0e6d00a831c04e8d
+  - SCAN-02R-0f8fb12fa9acc5a9
+  - SCAN-02R-113d971bbff5b0fe
+  - SCAN-02R-118b7f0b82f35923
+  - SCAN-02R-11f9a7978abc2be1
+  - SCAN-02R-183e2f7a146cbdf6
+  - SCAN-02R-1c3a8acc71d9e5bd
+  - SCAN-02R-1d86949e1fdc12c8
+  - SCAN-02R-1e5b02c69224108d
+  - SCAN-02R-26c5588a4a75efc2
+  - SCAN-02R-26cdfd757f62fb5b
+  - SCAN-02R-2a0e91f43e0fe127
+  - SCAN-02R-2f690557cfd20bec
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-325ad9a57ee92673
+  - SCAN-02R-3796d374ac11519e
+  - SCAN-02R-391364dde623200d
+  - SCAN-02R-3f903a520f921d83
+  - SCAN-02R-403532c05321d7d2
+  - SCAN-02R-41d12941c2dac178
+  - SCAN-02R-42c582e4eb747d10
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-432159a75d80f2b3
+  - SCAN-02R-45d1daf515e218b6
+  - SCAN-02R-4650765ebe11f415
+  - SCAN-02R-46abc72aaf86494c
+  - SCAN-02R-48f6ae0dc1c99d07
+  - SCAN-02R-4979cab4b4eed413
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4cc04512e6886f13
+  - SCAN-02R-4d54ea7698000638
+  - SCAN-02R-4eb3495e2e32dd73
+  - SCAN-02R-4f5e09d1864ac832
+  - SCAN-02R-51cfd518e3a0c6ec
+  - SCAN-02R-51f6ed2eb7632349
+  - SCAN-02R-5215f80c458dc1c4
+  - SCAN-02R-5467ba1e21b73319
+  - SCAN-02R-58a76874c3967085
+  - SCAN-02R-598c5cedd335b846
+  - SCAN-02R-5b80daccf8c23dd0
+  - SCAN-02R-5e52d7e5fbefbc05
+  - SCAN-02R-5ef2c24fed347fd7
+  - SCAN-02R-5f553db9674e6d45
+  - SCAN-02R-616075842b1e4c6e
+  - SCAN-02R-643ff7e40bd97888
+  - SCAN-02R-68a1fdbd8955d9a4
+  - SCAN-02R-6f7239d1961a1e4d
+  - SCAN-02R-6fded6b51e0642a8
+  - SCAN-02R-7044f49c95edc115
+  - SCAN-02R-708cf4d83a29d78f
+  - SCAN-02R-7118d0dce593edea
+  - SCAN-02R-73adc0625f7869df
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-762111064d108c6d
+  - SCAN-02R-76804d90690fee01
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-79960ffd3b8a968b
+  - SCAN-02R-79e659b84aa4786d
+  - SCAN-02R-7a0b878c4f9bf5c8
+  - SCAN-02R-7acd4c14a0007418
+  - SCAN-02R-7bf9711c804eecbc
+  - SCAN-02R-7fc5c872db142199
+  - SCAN-02R-8345a5938afc1084
+  - SCAN-02R-87a18bddebeb7046
+  - SCAN-02R-87edbdf74d1e5fb1
+  - SCAN-02R-88b013f641209af6
+  - SCAN-02R-89614c0503a95275
+  - SCAN-02R-8e62e3b1b9deee81
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-920194e62af87181
+  - SCAN-02R-936cf3ec1b1f48e0
+  - SCAN-02R-94943265720dfbae
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-a0737ac6a3eb4604
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-a88a59b9d2315a05
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-ae86f327e3ed5623
+  - SCAN-02R-b14e49e20117cb08
+  - SCAN-02R-b30351ae2c4fc24c
+  - SCAN-02R-b654b4eb1ebe23d6
+  - SCAN-02R-b704f6a14f738619
+  - SCAN-02R-baae22000a534323
+  - SCAN-02R-c09396a290b0d6b2
+  - SCAN-02R-c0c9b8b4b3c0d88f
+  - SCAN-02R-c3dcce6e5bc72678
+  - SCAN-02R-c5843105fb81b54c
+  - SCAN-02R-c676d8c64735e535
+  - SCAN-02R-c74434b3ed5fc9b8
+  - SCAN-02R-c74d6df747d6fccd
+  - SCAN-02R-c7a73b4824a01210
+  - SCAN-02R-c8f01d8d90de0c04
+  - SCAN-02R-cfcdc3a373b26fb0
+  - SCAN-02R-d2b7e9ee069bd20e
+  - SCAN-02R-d934969a642de523
+  - SCAN-02R-da644119c60690fc
+  - SCAN-02R-dc90a5b672d54c2c
+  - SCAN-02R-e1e2bf2dafefa081
+  - SCAN-02R-e56a9b34b0768e57
+  - SCAN-02R-e772d925e68f4477
+  - SCAN-02R-e7c2e1a042f607c2
+  - SCAN-02R-eb5b106ace121b92
+  - SCAN-02R-eb6fd74d04998612
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-ebcf02322ed12a94
+  - SCAN-02R-ed685e6e0b6d3265
+  - SCAN-02R-eea1fadd4abbd144
+  - SCAN-02R-ef6a11424f751d3f
+  - SCAN-02R-f36bb8e354cf21b7
+  - SCAN-02R-f380a5a0600b447a
+  - SCAN-02R-f52305deb1f82a3a
+  - SCAN-02R-f565bb6e9ffba8d0
+  - SCAN-02R-f56f915bc229d6aa
+  - SCAN-02R-f71173d3ec0c732c
+  - SCAN-02R-f7776e64b8dc4ae4
+  - SCAN-02R-f87c8c3cd06321c2
+  - SCAN-02R-facac32c4f9e5032
+  - SCAN-02R-fb555611767fe647
+  - SCAN-02R-fb62d31e5c3c1dbf
+  - SCAN-02R-fede66c26a275769
+  ub_state_identity_version: stage02r_ub_state_v1

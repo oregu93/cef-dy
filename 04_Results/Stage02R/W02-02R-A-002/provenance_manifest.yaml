@@ -1,0 +1,123 @@
+A001_artifact_checksums:
+  field_semantics_report.yaml: 534f9d5b1ec665c51796cd6519922fdfb86c74073b29dadeb31651bf2de7603d
+  file_inventory_preliminary.csv: 859fbd410caae4346ae400cac20ab419978d14f7d935a82bc521170920f950ef
+  format_catalogue.yaml: 4306384d49d595af3e83da6a981075a4f4bd5ef90a01fb2ff536a883e360b359
+  parsed_header_metadata_sample.jsonl: 039fde9116b5862728c49744a5198ae1314ef41ff3540201d88119cced0d63ab
+  provenance_manifest.yaml: ff6bc1810d2ed6f1cacc1492186dd86c04202d61045066cc560bf61c842731f1
+  reconnaissance_diagnostics.csv: 5afa3964bc2dac6978974ae6898989457bafdc7b1ebd9140fadabf2b53349fc3
+  test_report.yaml: 3dbb1c0a34c6be64acbaac536696f4e7d4094119091bc942fd4884a9b5a0adff
+A001_capture_commit: 55b54c9b9e4510cf993cb2b968b44aeefd497893
+branch: main
+code_commit: f73c44a8ac2eb4629f458e355d58c8238a554001
+commands:
+- git pull --ff-only
+- git status --short
+- git rev-parse HEAD
+- python -m venv .venv
+- .venv/Scripts/python.exe -m pip install -r requirements.txt
+- .venv/Scripts/python.exe -B scripts/stage02r/a002_parser.py --self-test
+- .venv/Scripts/python.exe -B scripts/stage02r/a002_parser.py --execute --execution-context W02-win --expected-commit f73c44a8ac2eb4629f458e355d58c8238a554001
+configuration_checksum: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e
+cross_platform_validation: Windows production plus synthetic Windows/POSIX paths, shuffled/reversed traversal and serialization
+  roundtrips; no independent Linux execution
+dataset_id: EXP-TAIPAN-001
+dataset_resolver: configs/local_paths.yaml:EXP-TAIPAN-001 (local absolute value intentionally excluded)
+execution_context: W02-win
+execution_metadata:
+  completed_at_UTC: '2026-09-02T22:56:21.570844+00:00'
+filesystem_mtime_policy: A001 reviewed snapshot, not execution-machine mtime; never used as acquisition time or identity
+input_raw_census_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+installed_dependency_versions:
+  PyYAML: 6.0.3
+  pip: '24.0'
+job_id: W02-02R-A-002
+manifest_canonical_content_sha256: d0069d59922d59bfc0ffdbb3604469a113ec85b206574c77ea7f9e39e0449bc8
+manifest_digest_policy: Self byte SHA-256 is detached in checkpoint to avoid circular hashing; canonical content excludes
+  execution_metadata and manifest_canonical_content_sha256 and uses deterministic YAML bytes.
+output_raw_census_digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+outputs:
+- byte_sha256: 1cdb5e0e4aa137eaeb4ef88528314932044e82203bfd84cfe1075242a6847a80
+  canonical_content_sha256: 1cdb5e0e4aa137eaeb4ef88528314932044e82203bfd84cfe1075242a6847a80
+  logical_name: UB_states.yaml
+  path: 04_Results/Stage02R/W02-02R-A-002/UB_states.yaml
+  size_bytes: 8026
+- byte_sha256: f8adde558390a94144fbcf05b9fb4fc54e3c5395bcc93982e16a08ae9f60df53
+  canonical_content_sha256: f8adde558390a94144fbcf05b9fb4fc54e3c5395bcc93982e16a08ae9f60df53
+  logical_name: file_inventory.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/file_inventory.csv
+  size_bytes: 110428
+- byte_sha256: 199f62d9af1b9251d0732b13b76fea6c0fcdb54bb735cafeae5af2ff4317aadc
+  canonical_content_sha256: 199f62d9af1b9251d0732b13b76fea6c0fcdb54bb735cafeae5af2ff4317aadc
+  logical_name: file_scan_map.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/file_scan_map.csv
+  size_bytes: 24401
+- byte_sha256: 4a0acd20b37019a5fed4336d62fdab780ac00a290dcd0d7f93864d6e0271b5cd
+  canonical_content_sha256: 4a0acd20b37019a5fed4336d62fdab780ac00a290dcd0d7f93864d6e0271b5cd
+  logical_name: lattice_states.yaml
+  path: 04_Results/Stage02R/W02-02R-A-002/lattice_states.yaml
+  size_bytes: 6636
+- byte_sha256: 5fe552c66b8bbf3543801a921d4afe6ca0852e98c8e8f12fc9ac153f3b6af37d
+  canonical_content_sha256: 5fe552c66b8bbf3543801a921d4afe6ca0852e98c8e8f12fc9ac153f3b6af37d
+  logical_name: parsed_header_metadata.jsonl
+  path: 04_Results/Stage02R/W02-02R-A-002/parsed_header_metadata.jsonl
+  size_bytes: 1433002
+- byte_sha256: 4a8838922349ef8df03c6108c0896f5e847696e406835ff43c3e27edecfe8f3b
+  canonical_content_sha256: 4a8838922349ef8df03c6108c0896f5e847696e406835ff43c3e27edecfe8f3b
+  logical_name: parser_diagnostics.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/parser_diagnostics.csv
+  size_bytes: 41177
+- byte_sha256: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e
+  canonical_content_sha256: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e
+  logical_name: parser_schema_registry.yaml
+  path: 04_Results/Stage02R/W02-02R-A-002/parser_schema_registry.yaml
+  size_bytes: 84281
+- byte_sha256: d5f8dad6e2fa2069bdc7c2b544bbbfbac6b5928c07e379c04a375159222b7ce4
+  canonical_content_sha256: d5f8dad6e2fa2069bdc7c2b544bbbfbac6b5928c07e379c04a375159222b7ce4
+  logical_name: quality_diagnostics.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/quality_diagnostics.csv
+  size_bytes: 339480
+- byte_sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  canonical_content_sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  logical_name: scan_inventory.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+  size_bytes: 331285
+- byte_sha256: f5a02e2398ed4b7cff0495f6bbcb6a5018db910435521c82ce9a78e8a4c185ba
+  canonical_content_sha256: f5a02e2398ed4b7cff0495f6bbcb6a5018db910435521c82ce9a78e8a4c185ba
+  logical_name: scan_point_auxiliary.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/scan_point_auxiliary.csv
+  size_bytes: 36146229
+- byte_sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  canonical_content_sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  logical_name: scan_points.csv
+  path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+  size_bytes: 1589013
+- byte_sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+  canonical_content_sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+  logical_name: semantic_verification_report.yaml
+  path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+  size_bytes: 5776579
+- byte_sha256: 7edfeff1fe18220930414ab10ae026924ddcaa0a6e34d7caa75f3eb989893daa
+  canonical_content_sha256: 7edfeff1fe18220930414ab10ae026924ddcaa0a6e34d7caa75f3eb989893daa
+  logical_name: test_report.yaml
+  path: 04_Results/Stage02R/W02-02R-A-002/test_report.yaml
+  size_bytes: 7945
+parent_checkpoint: W02-02R-A-001
+parser_version: stage02r_a002_parser_v1
+platform: windows
+python_implementation: CPython
+python_version: 3.12.3
+raw_data_access: read_only
+registry_snapshot_match: true
+repository: canonical Git working tree
+requirements_file: requirements.txt
+requirements_file_checksum: 61ff6b4b8406200118a59e78d9821dee260b09d51b07ff3d3c50ea4ab4448d98
+result_schema_registry_snapshot_checksum: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e
+serialization_contract_version: stage02r_a002_serialization_v1
+source_schema_registry_checksum: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e
+stop_condition: A002 complete; STOP for 02 - TAIPAN Data Reduction scientific review; no A003, normalization, block/configuration
+  inference, resolution, spectral or CEF analysis
+uncommitted_execution_sources:
+  03_Protocols/STAGE02R_T02R03_A002_PARSER_SPEC.md: beef4cb4042468824fa24767b41d52485286fd5960abdff6b2c65d4bcf23b2fb
+  scripts/stage02r/a001_reconnaissance.py: 0ab6905bced49718a89f7c28f0c819b89700086d98e319738d5dae0bb0638753
+  scripts/stage02r/a002_parser.py: a64a026e28633ffce7e69ce165ba9349ea592b43d31dc8a1e884b1206af7c732
+  scripts/stage02r/a002_schema_registry.yaml: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e

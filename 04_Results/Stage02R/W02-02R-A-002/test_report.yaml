@@ -1,0 +1,272 @@
+job_id: W02-02R-A-002
+semantic_unresolved_is_not_computational_failure: true
+summary:
+  failed: 0
+  passed: 38
+  total: 38
+tests:
+- details:
+    field_semantics_report.yaml: 534f9d5b1ec665c51796cd6519922fdfb86c74073b29dadeb31651bf2de7603d
+    file_inventory_preliminary.csv: 859fbd410caae4346ae400cac20ab419978d14f7d935a82bc521170920f950ef
+    format_catalogue.yaml: 4306384d49d595af3e83da6a981075a4f4bd5ef90a01fb2ff536a883e360b359
+    parsed_header_metadata_sample.jsonl: 039fde9116b5862728c49744a5198ae1314ef41ff3540201d88119cced0d63ab
+    provenance_manifest.yaml: ff6bc1810d2ed6f1cacc1492186dd86c04202d61045066cc560bf61c842731f1
+    reconnaissance_diagnostics.csv: 5afa3964bc2dac6978974ae6898989457bafdc7b1ebd9140fadabf2b53349fc3
+    test_report.yaml: 3dbb1c0a34c6be64acbaac536696f4e7d4094119091bc942fd4884a9b5a0adff
+  evidence: seven reviewed artifact SHA-256 and reviewed checkpoint verified before raw parsing
+  status: pass
+  test_id: A002-T01
+- details:
+    count: 201
+    digest: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+  evidence: full relative-path/size/SHA census
+  status: pass
+  test_id: A002-T02
+- details:
+    post: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+    pre: bb7a3f99710a9463a7697ebbf23cce3fd5c02936b9788df72cac3cc0f90a1e95
+  evidence: complete postflight census
+  status: pass
+  test_id: A002-T03
+- details:
+    parsed_files: 201
+  evidence: strict parser completed
+  status: pass
+  test_id: A002-T04
+- details: 201:201:201
+  evidence: one required scan header and numeric block perfile
+  status: pass
+  test_id: A002-T05
+- details:
+  - - FMT-02R-00e53630cd36
+    - 33
+  - - FMT-02R-029bacfa64d8
+    - 2
+  - - FMT-02R-06137a7de1ad
+    - 85
+  - - FMT-02R-172bb66a767d
+    - 1
+  - - FMT-02R-25ddc2c75b1e
+    - 2
+  - - FMT-02R-33ee702b9adc
+    - 2
+  - - FMT-02R-35f17153f38f
+    - 2
+  - - FMT-02R-365d8346d6ba
+    - 9
+  - - FMT-02R-42b66acce1bb
+    - 9
+  - - FMT-02R-7d9e3f2fd3b3
+    - 2
+  - - FMT-02R-92d14f023eb1
+    - 3
+  - - FMT-02R-9cd5341dd50f
+    - 1
+  - - FMT-02R-a20370d76087
+    - 12
+  - - FMT-02R-a59075cdffed
+    - 1
+  - - FMT-02R-a96f4c9633b6
+    - 3
+  - - FMT-02R-a9e025c2acce
+    - 2
+  - - FMT-02R-ab302e8146f8
+    - 2
+  - - FMT-02R-ac325217afd4
+    - 2
+  - - FMT-02R-c8f545518171
+    - 1
+  - - FMT-02R-de66a609ccd2
+    - 14
+  - - FMT-02R-fb75879b9023
+    - 13
+  evidence: full frozen descriptor comparison
+  status: pass
+  test_id: A002-T06
+- details: 7fdd689707cb7d159a43f4f31e22bfcd896be79c91117ff6b7a1b3e3e5a33d6e
+  evidence: registry snapshot and reordered-input determinism
+  status: pass
+  test_id: A002-T07
+- details: &id001
+    UB_row_major: verified
+    collision_hex_lengths:
+    - 20
+    - 20
+    - 18
+    csv_roundtrip: pass
+    decimal_regressions: &id002
+    - '0'
+    - '1'
+    - '1'
+    - '1.0000001'
+    exact_duplicate: distinct_records_one_group
+    instrument_path: preserved
+    intensity_permutation: invariant
+    machine_mtime_identity: invariant
+    malformed_fixtures_rejected: 5
+    raw_scan_collision: distinct
+    state_exact_not_tolerance: verified
+    windows_posix_path: equal
+  evidence: strict declared-width and numeric-token failures
+  status: pass
+  test_id: A002-T08
+- details:
+    declared_tokens: 452887
+    preserved_tokens: 452887
+  evidence: every field reconstructed from wide+aux by declared index
+  status: pass
+  test_id: A002-T09
+- details: No identity derived from mtime
+  evidence: exact A001 IDs retained
+  status: pass
+  test_id: A002-T10
+- details: *id001
+  evidence: exact LF payload and collision-extension regression
+  status: pass
+  test_id: A002-T11
+- details: SHA-256 retained
+  evidence: scan/file/header provenance reconciliation
+  status: pass
+  test_id: A002-T12
+- details:
+    point_count: 7761
+  evidence: point indexes0-based, source lines1-based, no truncation
+  status: pass
+  test_id: A002-T13
+- details: No floating-point replacement of raw tokens
+  evidence: all four fields separately roundtripped
+  status: pass
+  test_id: A002-T14
+- details:
+    monitor_controlled: 103
+    time_controlled: 98
+  evidence: explicit preset_channel classification
+  status: pass
+  test_id: A002-T15
+- details:
+    failures: 0
+    rows: 7761
+  evidence: frozen row-precision decision procedure; failures remain unresolved
+  status: pass
+  test_id: A002-T16
+- details:
+    not_applicable: 116
+    verified: 85
+  evidence: all en occurrences, progression and energy convention checked
+  status: pass
+  test_id: A002-T17
+- details: No fixed-Ef default
+  evidence: No unique mode enum evidence; conservative unresolved passes
+  status: pass
+  test_id: A002-T18
+- details: partial verification; qh unavailable; no refinement
+  evidence: qk/k and ql/l plus lattice/UB metric tests
+  status: pass
+  test_id: A002-T19
+- details: No forced q=|Q| alias
+  evidence: bounded kinematic candidate evaluated; ambiguity retained
+  status: pass
+  test_id: A002-T20
+- details:
+    count: 2
+    numeric: *id002
+  evidence: exact Decimal lattice states + shared collision/numeric regressions
+  status: pass
+  test_id: A002-T21
+- details:
+    count: 4
+  evidence: exact Decimal row-major UB + shared identity regressions
+  status: pass
+  test_id: A002-T22
+- details: reflection/mosaic unverified
+  evidence: explicit PG material only
+  status: pass
+  test_id: A002-T23
+- details: scan titles not used for filter inference
+  evidence: dedicated field absence checked
+  status: pass
+  test_id: A002-T24
+- details: no assumed absent attenuation
+  evidence: dedicated field absence checked
+  status: pass
+  test_id: A002-T25
+- details:
+    auxiliary_rows: 313189
+    raw_units: not recorded, left null
+  evidence: all auxiliary fields and duplicate occurrences retained
+  status: pass
+  test_id: A002-T26
+- details: filesystem mtime is reviewed A001 snapshot only
+  evidence: header-only chronology; no fabricated endpoints
+  status: pass
+  test_id: A002-T27
+- details:
+    exact_duplicate_groups: 0
+  evidence: current census and synthetic duplicate behavior
+  status: pass
+  test_id: A002-T28
+- details: distinct full scan fingerprints, never merged
+  evidence: synthetic same raw ID in different file identities
+  status: pass
+  test_id: A002-T29
+- details: repeat whitelist contains only acquisition headers
+  evidence: detector replacement and point permutation
+  status: pass
+  test_id: A002-T30
+- details: *id001
+  evidence: specific local roots audited, instrument absolute path preserved
+  status: pass
+  test_id: A002-T31
+- details: Canonical bytes for nonvolatile outputs; manifest excludes volatile execution metadata/self digest for content
+    hash; no actual Linux execution claimed
+  evidence: forward/reverse/shuffled byte equality and serialization roundtrips
+  status: pass
+  test_id: A002-T32
+- details: additive canonical mappings only
+  evidence: ordered raw_text, repeated keys, empty values, physical lines
+  status: pass
+  test_id: A002-T33
+- details: no ratios, corrections or background subtraction
+  evidence: raw reconstruction and executable-source scope review
+  status: pass
+  test_id: A002-T34
+- details: no acquisition/instrument block inference
+  evidence: exact frozen column schema
+  status: pass
+  test_id: A002-T35
+- details: no spectral plotting, detection or fitting
+  evidence: AST imports and manual full source review
+  status: pass
+  test_id: A002-T36
+- details: no CEF analysis
+  evidence: AST imports and manual full source review
+  status: pass
+  test_id: A002-T37
+- details:
+    blind_static_audit: true
+    imports:
+    - __future__
+    - a001_reconnaissance
+    - argparse
+    - ast
+    - collections
+    - copy
+    - csv
+    - datetime
+    - decimal
+    - hashlib
+    - importlib
+    - io
+    - json
+    - math
+    - pathlib
+    - platform
+    - random
+    - re
+    - subprocess
+    - sys
+    - yaml
+    scope_import_audit: true
+  evidence: A001 frozen historical-token audit on A002 source+registry; dependencies limited to metadata methods
+  status: pass
+  test_id: A002-T38

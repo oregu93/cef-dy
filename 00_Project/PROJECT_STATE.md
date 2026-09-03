@@ -3,8 +3,8 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "3.2"
-updated: 2026-09-02
+version: "3.3"
+updated: 2026-09-03
 review_status: working
 ---
 
@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `W02-02R-A-002`: Выполнить в выбранном machine-local W02 execution context утверждённый verified production parser и canonical file/scan inventory job W02-02R-A-002 для EXP-TAIPAN-001, строго до STOP_CONDITION.
+**Следующий шаг.** `T-02R-03`: На основе scientifically accepted W02-02R-A-002 сформировать в чате "02 - TAIPAN Data Reduction" lean specification следующего job W02-02R-A-003 для acquisition/configuration classification и normalization-compatibility analysis. Execution A-003 не запускать до отдельного Project Control approval.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -212,6 +212,39 @@ A-001 и должны проверяться последующими jobs.
 Lattice, UB, scan geometry и другие instrument metadata должны
 считываться из соответствующего acquisition block и не должны
 задаваться единым жёстким набором для всего эксперимента.
+
+
+## 3.1. Stage 02R A-002: canonical acquisition layer
+
+Stage 02R `W02-02R-A-002` построил reviewed production parser и canonical
+acquisition representation этого archive.
+
+Основные принятые результаты A-002:
+
+- 201 raw files → 201 logical scans → 7 761 measured points;
+- production parser покрывает все 21 reviewed structural format families;
+- raw relation $e = E_i-E_f$ verified для 7 761 / 7 761 points по
+  precision-based test, не использующему spectral assumptions;
+- mapping `def_x=en` ↔ point-level `e` verified для всех 85 соответствующих
+  scans;
+- `h/k/l` acquisition semantics partially verified;
+- `mode=0` и raw `q` остаются unresolved;
+- подтверждены 103 monitor-controlled и 98 time-controlled scans;
+- сохраняются 2 lattice states и 4 UB states;
+- raw `detector`, `monitor`, `time` сохраняются отдельно;
+- normalization, acquisition/instrument-block inference, resolution
+  calculation, spectral feature discovery и CEF analysis не выполнялись.
+
+Canonical provenance:
+
+```text
+02_Work_Checkpoints/W02-02R-A-002.md
+04_Results/Stage02R/W02-02R-A-002/
+00_Project/RESULT_REGISTER.yaml#R-010
+```
+
+Большой lossless auxiliary point artifact хранится вне Git и
+идентифицируется logical external path, exact byte size и SHA-256.
 
 
 # 4. Текущие экспериментальные свидетельства

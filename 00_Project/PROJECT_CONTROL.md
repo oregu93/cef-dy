@@ -27,11 +27,11 @@ control_chat: "00 - Project Control"
 
 **Сейчас.** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Почему.** W02-02R-A-001 завершил fresh CEF-blind reconnaissance EXP-TAIPAN-001 и был принят scientific review: подтверждены 201 raw files, one-file-to-one-logical-scan representation, 21 structural format families, mixed monitor/time counting semantics, multiple lattice/UB states и byte-identical raw integrity. Следующий methodological step — превратить verified reconnaissance в production parser и canonical inventories, не закрывая unresolved TAS semantics предположениями.
+**Почему.** W02-02R-A-002 завершил production parsing EXP-TAIPAN-001 и прошёл scientific review. Получены canonical file/scan/point representations для 201 scans и 7761 points; verified e = Ei - Ef для всех 7761 points и en/e mapping для 85 energy scans. mode=0 и q намеренно остаются unresolved. Normalization, instrument-block inference, resolution, spectral analysis и CEF analysis не выполнялись.
 
-**Следующий шаг.** После canonical design-freeze commit выполнить в выбранном machine-local W02 execution context только W02-02R-A-002 — verified parser + canonical file/scan inventories. После STOP_CONDITION вернуть checkpoint и artifacts в "02 - TAIPAN Data Reduction" для scientific review.
+**Следующий шаг.** В чате "02 - TAIPAN Data Reduction" сформировать lean design W02-02R-A-003 на базе reviewed A-002 canonical acquisition layer. A-003 execution не разрешён до отдельного Project Control decision.
 
-**Следующий Work job.** `W02-02R-A-002`
+**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -48,9 +48,9 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Frozen W02-02R-A-002 verified-parser specification based on the reviewed W02-02R-A-001 reconnaissance and exact Linux portability verification of EXP-TAIPAN-001.
+**Последний научный источник.** Scientifically reviewed W02-02R-A-002 checkpoint: verified production TAIPAN parser and canonical acquisition layer, 38/38 tests PASS, STOP_CONDITION satisfied. Review accepted parser/acquisition semantics; independent raw re-analysis and independent byte verification were not performed.
 
-**Последний Work checkpoint.** `W02-02R-A-001`
+**Последний Work checkpoint.** `W02-02R-A-002`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -90,7 +90,7 @@ control_chat: "00 - Project Control"
 | `T-02R-02` | completed | Создать чат `02 - TAIPAN Data Reduction`, выполнить canonical re-entry и завершить design review T-02R-03. |
 | `T-02R-03` | active | Построить независимые raw file / logical scan inventories, восстановить TAIPAN acquisition semantics и классифицировать acquisition / instrument configuration / provisional normalization blocks. |
 | `W02-02R-A-001` | completed | Fresh TAIPAN/TAS-aware raw census и format/acquisition reconnaissance завершены; 20/20 tests PASS, scientific review accepted, STOP_CONDITION соблюдён. |
-| `W02-02R-A-002` | ready | Frozen specification verified parser + canonical file/scan inventories утверждена; execution разрешён после canonical design-freeze commit. |
+| `W02-02R-A-002` | completed | Verified production parser + canonical file/scan inventories завершены; 38/38 tests PASS, scientific review ACCEPT, STOP_CONDITION соблюдён. |
 | `T-02R-04` | queued | Выполнить CEF-model-independent feature discovery без historical energy targets. |
 | `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
 
