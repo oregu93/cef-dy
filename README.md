@@ -52,7 +52,7 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Current focus:** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Next:** После canonical Project Control authorization commit выполнить в выбранном machine-local W02 execution context frozen job W02-02R-A-003 для EXP-TAIPAN-001: acquisition/configuration classification и normalization-compatibility analysis, строго до установленного STOP_CONDITION.
+**Next:** В чате "02 - TAIPAN Data Reduction" на базе scientifically reviewed A-001/A-002/A-003 сформировать lean design следующего atomic Stage 02R job для CEF-model-independent spectral feature discovery. Перед execution явно определить необходимую normalization semantics: A-003 compatibility groups являются только conditionally_supported candidate shared-treatment classes, а не готовыми numerical scale parameters. Production execution не запускать до отдельного design freeze и Project Control authorization.
 
 **Metadata updated:** `2026-09-03`.
 <!-- AUTO:README_STATUS:END -->

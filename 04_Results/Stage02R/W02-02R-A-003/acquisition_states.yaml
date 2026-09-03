@@ -1,0 +1,707 @@
+ACQSTATE-02R-0393fd8a12137f3f:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 0393fd8a12137f3f08849160cdbb64c99014eb0a0e89b883492a262e359c61fe
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: ps_right
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-183e2f7a146cbdf6
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-03c418e03bbff8ef:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 03c418e03bbff8ef0a84e3e801f3167a875307640b51fccd0535c8101c47239e
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: qk
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-097d0c674875ad7d
+  - SCAN-02R-71f68f9554b93f6c
+  - SCAN-02R-8c948345fe20cada
+  - SCAN-02R-c949f2ba4994924e
+  - SCAN-02R-f4c54e6724ab8666
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-08c77f1cdd894d24:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 08c77f1cdd894d241c6e30921501363681e8a5baf10da5148ed8fbae781aa2b6
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: a1
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-4a9d7177d38df4e7
+  - SCAN-02R-a59dc960ac5aa7de
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-0fc7191ce8c954ce:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 0fc7191ce8c954ce974e1c9e76dd4cca41e5181cb3685d917d001ae9d475b9ec
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: ps_bottom
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-73adc0625f7869df
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-108dfc3a3c6afd9c:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 108dfc3a3c6afd9c8243d20df6f2cb1678b3633f2c21c8e93eac979eb3d03d8c
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgl
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-251028aabdf3c3e7
+  - SCAN-02R-7d946974f8e94f38
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-1bcac31a192a56d2:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 1bcac31a192a56d2d2845b28708de291c17ab40a15c2329f0070c95c5b5f3416
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: pa_bottom
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-c0c9b8b4b3c0d88f
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-1f2cf8c8f4f60684:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 1f2cf8c8f4f606842ce6aa6fd4aa710b9bbe24e4e8ccae76ca7fcc202893e3a1
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: qk
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-4979cab4b4eed413
+  - SCAN-02R-e56a9b34b0768e57
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-26af9d97fec840cb:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 26af9d97fec840cba948e327fa627ef2689952c088f80106b6ef46a58c3a34b4
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: ps_top
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-b654b4eb1ebe23d6
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-28209d72681aed75:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 28209d72681aed75282b5016c8d4f6b072950e530ee4a7522973ee28dd1cb355
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s2
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-291dabeaaa79ad80
+  - SCAN-02R-2c07251df8824bce
+  - SCAN-02R-2c38778fb264b3af
+  - SCAN-02R-78bcb97650a5c779
+  - SCAN-02R-8e9939a05c893131
+  - SCAN-02R-95f55247c2e05782
+  - SCAN-02R-a4d537ac569af0ba
+  - SCAN-02R-ccdf6f79b6e3b5fc
+  - SCAN-02R-d7af0511d4c5b96e
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-2db5d7be3b4beb37:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 2db5d7be3b4beb371004593fbeb6c4ff4a524d62dd9421fa876a7296380de3a8
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: ps_left
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-11f9a7978abc2be1
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-30a8b3a0d08462ab:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 30a8b3a0d08462abf02235e1a6e94791e09b57f515a374123c679b4568fcc8dd
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: pa_top
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-5467ba1e21b73319
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-361a3ee8046c2cc4:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 361a3ee8046c2cc408a139f6566ffde32afa02051eb8766b718ebd820b2a1630
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: pa_top
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-22608464dd5aff80
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-39797c031fe0f745:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 39797c031fe0f745765fb4fae8b3af085aa0e195580282ddef1ed2e74cc86df7
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ql
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-4ecc00c5eac2e1b4
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-3ee91d21cbc1f09d:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 3ee91d21cbc1f09dc198231294ee6a7c64c1ea54856cea7b347e5967ba408f27
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ps_right
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-e731681e22986e49
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-4c4e33f0acec143e:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 4c4e33f0acec143e1cbce0afdbfefd4687527b0edb31dffed2e6d1bc80c7fdd2
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: en
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-4fb9fc6716a3e65a
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-529ef1e7aa3e8091:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 529ef1e7aa3e80913d31502072132eb1ba9218bf580b3ed78cb1bf25106497e3
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ps_left
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-cb5dd7445a99bc3a
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-53df6374615f09d5:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 53df6374615f09d57d39bbbd7779c7fbc801ccf8a2128eeb0bc7afbef685f06b
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgl
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-5e9a406134424e15
+  - SCAN-02R-72904b63e5e6e883
+  - SCAN-02R-d4d684343e0d7d6c
+  - SCAN-02R-e99f0bd2152d59b1
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-546c4f5ed876d928:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 546c4f5ed876d9282dca19cdaad9d73a3e7d14aaa4e96dbd58cdf50fbebff04a
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: pa_right
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-c74d6df747d6fccd
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-6adc9825d6f4cc64:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 6adc9825d6f4cc6472e072c18db82f95283f48d82505058749f19ecdd7ff7054
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgu
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-113d971bbff5b0fe
+  - SCAN-02R-7bf9711c804eecbc
+  - SCAN-02R-dc90a5b672d54c2c
+  - SCAN-02R-f565bb6e9ffba8d0
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-6c0bdd080b2c5a8d:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 6c0bdd080b2c5a8dd350ca5bd5594e503e961a11318eedb8359e712299fba740
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: qk
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-0f8fb12fa9acc5a9
+  - SCAN-02R-118b7f0b82f35923
+  - SCAN-02R-1d86949e1fdc12c8
+  - SCAN-02R-5b80daccf8c23dd0
+  - SCAN-02R-facac32c4f9e5032
+  - SCAN-02R-fb555611767fe647
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-72bc31d155544226:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 72bc31d1555442265ba97c890de288d7d4b05964ce9de33406e959171388a723
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: s1
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-1c3a8acc71d9e5bd
+  - SCAN-02R-3796d374ac11519e
+  - SCAN-02R-42c582e4eb747d10
+  - SCAN-02R-5ef2c24fed347fd7
+  - SCAN-02R-7fc5c872db142199
+  - SCAN-02R-87a18bddebeb7046
+  - SCAN-02R-a0737ac6a3eb4604
+  - SCAN-02R-c8f01d8d90de0c04
+  - SCAN-02R-e772d925e68f4477
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-763c392f103059d4:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 763c392f103059d4b19580bafd13ac63b50c5f04ee8a5707888c3683f944ac83
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgl
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-391364dde623200d
+  - SCAN-02R-7044f49c95edc115
+  - SCAN-02R-920194e62af87181
+  - SCAN-02R-da644119c60690fc
+  - SCAN-02R-eb5b106ace121b92
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-76cbd914416780d4:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 76cbd914416780d4b1d0c5b43327ade063c734e8be04f9867aaf58c9f010b033
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: pa_bottom
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-74e2c66cfb23844c
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-76dbf689e6cbf1b2:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 76dbf689e6cbf1b292b7ce57a58164a215251dabb06f4cdd1ff3ac1a5cab55e4
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s1
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-076c78acdde2d2d0
+  - SCAN-02R-211255ce1a05d229
+  - SCAN-02R-33c7ae4485edcd17
+  - SCAN-02R-43d400370d39ebe7
+  - SCAN-02R-49c7081b477e8f3d
+  - SCAN-02R-652afedf8df9a217
+  - SCAN-02R-a9a9857e0e5183b2
+  - SCAN-02R-af1610dac9676d6c
+  - SCAN-02R-bc0f4f0c3548d67f
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-76ff5c324efb0d8a:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 76ff5c324efb0d8af47be928302f7ec781ff3b2ad08cdf15657dc5328a18719f
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: en
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-43979cdff2eef525
+  - SCAN-02R-54bfea84553b4c65
+  - SCAN-02R-5e02dde1da14be55
+  - SCAN-02R-731f452fb62a55bd
+  - SCAN-02R-774f62fc1777bc6b
+  - SCAN-02R-8641a638f4880175
+  - SCAN-02R-8ca6316615b8cbae
+  - SCAN-02R-8dcd5041a8a4e044
+  - SCAN-02R-91de8f7a5ce6984b
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-7948f6139a5d7c87:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 7948f6139a5d7c87e9bd6f934b29ad3408edfdb1f0cf07ce4bf75a2aca2cced6
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgu
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-55ac4333b2057246
+  member_scan_record_ids:
+  - SCAN-02R-3d7ecf2f3c542662
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-896f06c2a7c231ec:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 896f06c2a7c231ec92c904cdfac36a6491d0e54ee85df112e1664200b6569c7e
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: en
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-059bd02c78268a2b
+  - SCAN-02R-074afad5a6b92ea4
+  - SCAN-02R-0e6d00a831c04e8d
+  - SCAN-02R-1e5b02c69224108d
+  - SCAN-02R-26c5588a4a75efc2
+  - SCAN-02R-26cdfd757f62fb5b
+  - SCAN-02R-2a0e91f43e0fe127
+  - SCAN-02R-2f690557cfd20bec
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-3f903a520f921d83
+  - SCAN-02R-403532c05321d7d2
+  - SCAN-02R-41d12941c2dac178
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-432159a75d80f2b3
+  - SCAN-02R-45d1daf515e218b6
+  - SCAN-02R-4650765ebe11f415
+  - SCAN-02R-46abc72aaf86494c
+  - SCAN-02R-48f6ae0dc1c99d07
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4d54ea7698000638
+  - SCAN-02R-4eb3495e2e32dd73
+  - SCAN-02R-4f5e09d1864ac832
+  - SCAN-02R-51f6ed2eb7632349
+  - SCAN-02R-5215f80c458dc1c4
+  - SCAN-02R-58a76874c3967085
+  - SCAN-02R-598c5cedd335b846
+  - SCAN-02R-5e52d7e5fbefbc05
+  - SCAN-02R-5f553db9674e6d45
+  - SCAN-02R-616075842b1e4c6e
+  - SCAN-02R-643ff7e40bd97888
+  - SCAN-02R-68a1fdbd8955d9a4
+  - SCAN-02R-6f7239d1961a1e4d
+  - SCAN-02R-6fded6b51e0642a8
+  - SCAN-02R-708cf4d83a29d78f
+  - SCAN-02R-7118d0dce593edea
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-762111064d108c6d
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-79960ffd3b8a968b
+  - SCAN-02R-79e659b84aa4786d
+  - SCAN-02R-7a0b878c4f9bf5c8
+  - SCAN-02R-7acd4c14a0007418
+  - SCAN-02R-8345a5938afc1084
+  - SCAN-02R-87edbdf74d1e5fb1
+  - SCAN-02R-88b013f641209af6
+  - SCAN-02R-89614c0503a95275
+  - SCAN-02R-8e62e3b1b9deee81
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-a88a59b9d2315a05
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-ae86f327e3ed5623
+  - SCAN-02R-b14e49e20117cb08
+  - SCAN-02R-b704f6a14f738619
+  - SCAN-02R-baae22000a534323
+  - SCAN-02R-c3dcce6e5bc72678
+  - SCAN-02R-c5843105fb81b54c
+  - SCAN-02R-c676d8c64735e535
+  - SCAN-02R-c74434b3ed5fc9b8
+  - SCAN-02R-c7a73b4824a01210
+  - SCAN-02R-d2b7e9ee069bd20e
+  - SCAN-02R-e7c2e1a042f607c2
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-ed685e6e0b6d3265
+  - SCAN-02R-eea1fadd4abbd144
+  - SCAN-02R-ef6a11424f751d3f
+  - SCAN-02R-f36bb8e354cf21b7
+  - SCAN-02R-f380a5a0600b447a
+  - SCAN-02R-f52305deb1f82a3a
+  - SCAN-02R-f56f915bc229d6aa
+  - SCAN-02R-f71173d3ec0c732c
+  - SCAN-02R-f87c8c3cd06321c2
+  - SCAN-02R-fb62d31e5c3c1dbf
+  - SCAN-02R-fede66c26a275769
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-92658811a43cf789:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 92658811a43cf78918c12e6f2c81884581b1913b076a2d2732036624bf28e632
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgu
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-35c1a2ccd5e9e62e
+  - SCAN-02R-42f2046fce901aec
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-99416886f2a6708c:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 99416886f2a6708c7cc12c24e22f7c259e6f46d26eefe13ce48634120a4aefb6
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: m1
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-cb3c11e0b8e28580
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-9ab3f10f56634512:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: 9ab3f10f56634512b3513c786af074ba102e32c73af7ce883211a38a09a34220
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s1
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-05cdcdc49c83bec6
+  - SCAN-02R-325ad9a57ee92673
+  - SCAN-02R-51cfd518e3a0c6ec
+  - SCAN-02R-cfcdc3a373b26fb0
+  - SCAN-02R-eb6fd74d04998612
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-adba83e7b042797b:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: adba83e7b042797b040c54d76d9f57872be23101672619c417c31a20b0dfb8e9
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ei
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-8c953d28ca426172
+  - SCAN-02R-e5f864cf4587fc19
+  - SCAN-02R-f4da1c738ba8c661
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-b456d493f62e0335:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: b456d493f62e03356ea9c721dbb179e05d998a2273878d9460d0e00d04ee7d76
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s2
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-4cc04512e6886f13
+  - SCAN-02R-ebcf02322ed12a94
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-b75f4d6045c9a350:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: b75f4d6045c9a350896fe744594138b82a82415b86bbe871557bfdd233d856fe
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ql
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-20b2aca534749eb8
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-b89c4bffa1f47288:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: b89c4bffa1f47288c250c00352cc500364aef8f473d9cc3938291f1e93822c51
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ql
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-76804d90690fee01
+  - SCAN-02R-936cf3ec1b1f48e0
+  - SCAN-02R-94943265720dfbae
+  - SCAN-02R-b30351ae2c4fc24c
+  - SCAN-02R-c09396a290b0d6b2
+  - SCAN-02R-e1e2bf2dafefa081
+  - SCAN-02R-f7776e64b8dc4ae4
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-b914afde3130cb09:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: b914afde3130cb0903fb6899c4d2c494b092e50b3ade9f590223ad183f82235d
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: a2
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-59701ee4cf5ede45
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-be28a48a7631be59:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: be28a48a7631be5957d81f3c142f04ba46edb315f185e9fd61bcfc82729f9484
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: pa_right
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-31bc005deb88d4e2
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-be6ac2534d3a03ee:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: be6ac2534d3a03eeea3ded368eb835382169437faa149d00fd42f935362a119f
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ps_bottom
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-03ed38ed92271694
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-c0eac91ee4e36a39:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: c0eac91ee4e36a39754de415f720b0257bc272709aadfb55d972ea6cfdf093a4
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: qk
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-c18c53ef408b1d89
+  - SCAN-02R-d453265e40ec7542
+  - SCAN-02R-d5e00829a2a54fb6
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-c3afc250a187b5a4:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: c3afc250a187b5a41c78e21cf6a98a3fa519010f190b25df4fdc8d5339771f83
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s1
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-397acad65dd9e384
+  member_scan_record_ids:
+  - SCAN-02R-2161de9a5edbe1bf
+  - SCAN-02R-2af7f44831b57311
+  - SCAN-02R-32cf60066cdcd074
+  - SCAN-02R-5b1259784f010264
+  - SCAN-02R-84cb0b6150577fdc
+  - SCAN-02R-93657997ed968c54
+  - SCAN-02R-a37edad191409e00
+  - SCAN-02R-d24a90ed870ef8e6
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-cbc3f2d268d2ba2a:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: cbc3f2d268d2ba2a6dc5f6d08368803fff49d5a2eb5621cde9a2c2e1d662cd05
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgu
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-379ac295ed92a194
+  - SCAN-02R-59fa80474896a50b
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-d4c7951e1191398f:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: d4c7951e1191398f8170ab776487a41b59e4d68981e3786420fc97d094d4f8c6
+  state_vector:
+    count_control_mode: monitor_controlled
+    scan_variable_raw: pa_left
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+  member_scan_record_ids:
+  - SCAN-02R-d934969a642de523
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-d8bd77a44fe00800:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: d8bd77a44fe008000872e52219a1c1100baddf9135bce1236a3390fff01d2546
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s2
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-072b13029deb0fba
+  - SCAN-02R-4f9204b624c2d482
+  - SCAN-02R-7493a417e6451013
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-e0b6de9c98c0c6b7:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: e0b6de9c98c0c6b73e8b8427632c9adfebb69d80d37ba3e54ccf07ad86474b38
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: sgl
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-55ac4333b2057246
+  member_scan_record_ids:
+  - SCAN-02R-1dda1db143c363ba
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-e4276bdea8e15cd5:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: e4276bdea8e15cd53a9e2d39a9b7b0c9085a2e67a3f3b9588e3befcbc45fae08
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: s1
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-55ac4333b2057246
+  member_scan_record_ids:
+  - SCAN-02R-022f7aa0bc71f84f
+  - SCAN-02R-6d3fa023f691129f
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-e97b44628314d841:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: e97b44628314d841a97abec0389ed6b846575ef8983985086c4e69c0ef013593
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: pa_left
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-e3abafe2717105f3
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.
+ACQSTATE-02R-ee0ae71d1e3d66e5:
+  identity_version: stage02r_acquisition_state_v1
+  fingerprint: ee0ae71d1e3d66e5ca4b1d49d53301e714d0ff561f7d2f08669ccdef5a0098f8
+  state_vector:
+    count_control_mode: time_controlled
+    scan_variable_raw: ps_top
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+  member_scan_record_ids:
+  - SCAN-02R-e4b1e60e94f6a5b7
+  evidence:
+  - 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv; exact frozen four-field recorded vector.

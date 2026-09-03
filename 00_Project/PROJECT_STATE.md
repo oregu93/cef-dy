@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `W02-02R-A-003`: После canonical Project Control authorization commit выполнить в выбранном machine-local W02 execution context frozen job W02-02R-A-003 для EXP-TAIPAN-001: acquisition/configuration classification и normalization-compatibility analysis, строго до установленного STOP_CONDITION.
+**Следующий шаг.** `T-02R-04`: В чате "02 - TAIPAN Data Reduction" на базе scientifically reviewed A-001/A-002/A-003 сформировать lean design следующего atomic Stage 02R job для CEF-model-independent spectral feature discovery. Перед execution явно определить необходимую normalization semantics: A-003 compatibility groups являются только conditionally_supported candidate shared-treatment classes, а не готовыми numerical scale parameters. Production execution не запускать до отдельного design freeze и Project Control authorization.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.
@@ -245,6 +245,46 @@ Canonical provenance:
 
 Большой lossless auxiliary point artifact хранится вне Git и
 идентифицируется logical external path, exact byte size и SHA-256.
+
+
+## 3.2. Stage 02R A-003: acquisition/configuration compatibility
+
+Scientifically reviewed `W02-02R-A-003` классифицировал все 201 canonical
+scans по frozen metadata-only rules:
+
+- 46 recorded acquisition states — acquisition regimes, а не физические
+  sample/instrument states;
+- 1 recorded verified instrument-config class только по v1 vector
+  `monochromator=PG`, `analyzer=PG`, `collimation=o-40-40-o`;
+- 85 acquisition boundaries, но 0 verified normalization-relevant boundaries;
+- 1 normalization epoch: verified normalization-relevant hardware
+  reconfiguration boundary не обнаружена.
+
+Из всех 20 100 unordered scan pairs: 10 094 cross-control-mode pairs имеют
+статус `not_supported`, 10 006 same-control-mode pairs —
+`conditionally_supported`; `supported: 0`, `unresolved: 0`.
+Exact-key partition содержит две `conditionally_supported` группы:
+103 monitor-controlled scans и 98 time-controlled scans; full clique audit
+прошёл, 16/16 computational tests PASS, STOP_CONDITION соблюдён.
+
+These groups are candidate shared-treatment classes based on available
+recorded metadata. They are not numerical normalization parameters.
+Numerical normalization не выполнялась. Critical unknown instrument metadata
+остаются научно значимыми; один instrument-config ID не доказывает полную
+физическую идентичность configuration. Scientific review основан на
+reported checkpoint/results, без independent local artifact opening,
+independent byte verification или raw reanalysis.
+
+Canonical provenance:
+
+```text
+02_Work_Checkpoints/W02-02R-A-003.md
+04_Results/Stage02R/W02-02R-A-003/
+00_Project/RESULT_REGISTER.yaml#R-011
+```
+
+Полная pairwise table хранится вне Git; logical external path, exact byte
+size и SHA-256 зафиксированы в A-003 `external_artifacts.yaml`.
 
 
 # 4. Текущие экспериментальные свидетельства

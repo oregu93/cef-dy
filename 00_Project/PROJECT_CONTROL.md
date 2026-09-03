@@ -27,11 +27,11 @@ control_chat: "00 - Project Control"
 
 **Сейчас.** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Почему.** Design W02-02R-A-003 прошёл scientific/methodological review и зафиксирован frozen specification commit 5d0704b8b0c085950034a88e6c4975463e76e56d. A-002 остаётся последним reviewed scientific checkpoint; A-003 использует его canonical acquisition layer и не выполняет normalization, spectral analysis, resolution calculation или CEF analysis.
+**Почему.** W02-02R-A-003 завершён и принят scientific review. Для 201 scans восстановлены 46 acquisition states, один recorded verified instrument-config class, 85 acquisition boundaries, zero verified normalization-relevant boundaries и один normalization epoch. Все 10006 same-control-mode pairs conditionally_supported из-за critical unknown configuration metadata; 10094 cross-control-mode pairs not_supported. Numerical normalization и spectral analysis не выполнялись.
 
-**Следующий шаг.** После canonical authorization commit выполнить только W02-02R-A-003 в одном выбранном machine-local W02 context. Остановиться на A-003 STOP_CONDITION и вернуть checkpoint/results в "02 - TAIPAN Data Reduction" для scientific review.
+**Следующий шаг.** Перейти в "02 - TAIPAN Data Reduction" к design T-02R-04. Сначала определить минимально необходимую и физически корректную normalization/data-reduction strategy для blind feature discovery, не превращая A-003 compatibility groups автоматически в nuisance scale factors. После scientific design review вернуть specification в Project Control для freeze/authorization.
 
-**Следующий Work job.** `W02-02R-A-003`
+**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -48,9 +48,9 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Scientifically reviewed W02-02R-A-002 checkpoint: verified production TAIPAN parser and canonical acquisition layer, 38/38 tests PASS, STOP_CONDITION satisfied. Review accepted parser/acquisition semantics; independent raw re-analysis and independent byte verification were not performed.
+**Последний научный источник.** Scientifically reviewed W02-02R-A-003 checkpoint: metadata-only acquisition/configuration and normalization-compatibility classification accepted; 16/16 tests PASS and STOP_CONDITION satisfied. Review was based on reported checkpoint/results and did not independently rerun raw data or independently byte-open the complete local artifact package.
 
-**Последний Work checkpoint.** `W02-02R-A-002`
+**Последний Work checkpoint.** `W02-02R-A-003`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -88,11 +88,11 @@ control_chat: "00 - Project Control"
 | `T-00C-09` | completed | Провести consistency review, refresh, strict validation, diff audit и завершить Stage 00C commit/push. |
 | `T-02R-01` | completed | Зафиксировать canonical Stage 02R analysis contract до повторной обработки raw TAIPAN data. |
 | `T-02R-02` | completed | Создать чат `02 - TAIPAN Data Reduction`, выполнить canonical re-entry и завершить design review T-02R-03. |
-| `T-02R-03` | active | Построить независимые raw file / logical scan inventories, восстановить TAIPAN acquisition semantics и классифицировать acquisition / instrument configuration / provisional normalization blocks. |
+| `T-02R-03` | completed | Построить независимые raw file / logical scan inventories, восстановить TAIPAN acquisition semantics и классифицировать acquisition / instrument configuration / provisional normalization blocks. |
 | `W02-02R-A-001` | completed | Fresh TAIPAN/TAS-aware raw census и format/acquisition reconnaissance завершены; 20/20 tests PASS, scientific review accepted, STOP_CONDITION соблюдён. |
 | `W02-02R-A-002` | completed | Verified production parser + canonical file/scan inventories завершены; 38/38 tests PASS, scientific review ACCEPT, STOP_CONDITION соблюдён. |
-| `W02-02R-A-003` | ready | Frozen acquisition/configuration classification + normalization-compatibility job; execution разрешён только после canonical Project Control authorization commit и строго до A-003 STOP_CONDITION. |
-| `T-02R-04` | queued | Выполнить CEF-model-independent feature discovery без historical energy targets. |
+| `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
+| `T-02R-04` | active | Выполнить CEF-model-independent feature discovery без historical energy targets. |
 | `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
 
 

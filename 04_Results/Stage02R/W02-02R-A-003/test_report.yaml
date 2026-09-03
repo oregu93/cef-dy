@@ -1,0 +1,126 @@
+job_id: W02-02R-A-003
+required_tests: 16
+passed: 16
+failed: 0
+not_run: 0
+tests:
+- test_id: A003-T01
+  status: PASS
+  evidence:
+    reviewed_primary_artifacts: 9
+    canonical_inputs: 21
+    byte_size_and_sha256: PASS
+    external_auxiliary_used: false
+- test_id: A003-T02
+  status: PASS
+  evidence:
+    canonical_scans: 201
+    classification_rows: 201
+    silent_exclusions: 0
+- test_id: A003-T03
+  status: PASS
+  evidence:
+    states: 46
+    golden_payload: PASS
+    shuffle_and_collision_extension: PASS
+- test_id: A003-T04
+  status: PASS
+  evidence:
+    configs: 1
+    golden_payload: PASS
+    shuffle_and_collision_extension: PASS
+- test_id: A003-T05
+  status: PASS
+  evidence:
+    both_unknown_sets_propagated: PASS
+    shared_missing_null_fixture: PASS
+- test_id: A003-T06
+  status: PASS
+  evidence:
+    unordered_pairs: 20100
+    duplicates: 0
+    cross_control_mode_pairs: 10094
+    count_control_memberships:
+      monitor_controlled: 103
+      time_controlled: 98
+- test_id: A003-T07
+  status: PASS
+  evidence:
+    lattice_states: 2
+    UB_states: 4
+    orientation_only_epoch_test: PASS
+- test_id: A003-T08
+  status: PASS
+  evidence:
+    recorded_configuration_changes: 0
+    synthetic_verified_change_and_explicit_event: PASS
+- test_id: A003-T09
+  status: PASS
+  evidence:
+    excluded_fields_varied:
+    - scan_variable_raw
+    - h
+    - k
+    - l
+    - e
+    - Ei_summary_meV
+    - Ef_summary_meV
+    - scan_start_derived
+    - scan_stop_derived
+    - temperature_summary_K
+    - raw_format_id
+    instrument_configs_in_fixture: 1
+- test_id: A003-T10
+  status: PASS
+  evidence:
+    six_step_precedence:
+    - count_control_mode_conflict
+    - verified_configuration_conflict
+    - explicit_reconfiguration_boundary
+    - insufficient_or_contradictory_metadata
+    - recorded_equivalence_with_critical_unknowns
+    - recorded_metadata_supports_shared_treatment
+    additional_verified_conflict: PASS
+- test_id: A003-T11
+  status: PASS
+  evidence:
+    synthetic_critical_unknowns: PASS
+    supported_output_audit: PASS
+- test_id: A003-T12
+  status: PASS
+  evidence:
+    fixture: synthetic detector payload on every canonical metadata record; no measurement table opened
+    invariant:
+    - acquisition_state_id
+    - instrument_config_id
+    - normalization_epoch_id
+    - all_pair_decisions
+    - groups
+    mutation_and_permutation: PASS
+- test_id: A003-T13
+  status: PASS
+  evidence:
+    shuffled_serialized_artifacts: byte_identical
+    gap_day_coordinates_and_uncertain_epoch_tests: PASS
+- test_id: A003-T14
+  status: PASS
+  evidence:
+    classification_numeric_division: absent
+    count_values_accessed: false
+    normalization_performed: false
+- test_id: A003-T15
+  status: PASS
+  evidence:
+    source_scope_audit: PASS
+    raw_or_point_files_read: false
+    spectral_and_model_operations: absent
+- test_id: A003-T16
+  status: PASS
+  evidence:
+    groups: 2
+    all_internal_pairs_checked: 10006
+    clique_audit: PASS
+    forbidden_pair_rejection_and_singleton_rules: PASS
+    connected_components_used: false
+scientific_review_status: pending
+normalization_performed: false

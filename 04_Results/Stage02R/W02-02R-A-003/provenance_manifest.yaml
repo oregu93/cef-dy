@@ -1,0 +1,911 @@
+job_id: W02-02R-A-003
+dataset_id: EXP-TAIPAN-001
+parent_checkpoint: W02-02R-A-002
+execution_status: completed
+review_status: pending
+scientific_interpretation_status: pending
+repository_commit: 302f6323cda03aeb17cdbf621e85edc1599bda9a
+repository: oregu93/cef-dy
+branch: main
+execution_context: W02-Lin
+platform: linux
+python_executable: python3
+python_invocation: python3
+python_environment: system interpreter; no machine-local absolute path recorded
+python_version: 3.12.3
+python_implementation: CPython
+PyYAML_version: 6.0.1
+command: python3 -B scripts/stage02r/a003_classify.py --execute --execution-context W02-Lin --expected-commit 302f6323cda03aeb17cdbf621e85edc1599bda9a
+frozen_specification:
+  path: 03_Protocols/STAGE02R_T02R03_A003_CLASSIFICATION_SPEC.md
+  sha256: 3055739f853bd65344025bd64253afb513fd9b9ea6db480fb132332f9466479f
+source:
+  path: scripts/stage02r/a003_classify.py
+  sha256: 488d4da833cf4efe60ebfe645cc17461662c1421a6f821c8b45fafd33e0873ac
+  status: uncommitted_execution_candidate
+inputs:
+- path: 03_Protocols/STAGE02R_T02R03_A003_CLASSIFICATION_SPEC.md
+  size_bytes: 24662
+  sha256: 3055739f853bd65344025bd64253afb513fd9b9ea6db480fb132332f9466479f
+- path: 00_Project/PROJECT_STATE.md
+  size_bytes: 34930
+  sha256: 5a22c5ad5dfbbc974526dc0942b73210792c845bf582d8df7244e3151c92a932
+- path: 00_Project/PROJECT_CONTROL.md
+  size_bytes: 20879
+  sha256: 123be34b222cb7acd63534b0cbaf35958fedcdae31199a04713fc2be14e32a3f
+- path: 00_Project/PROJECT_METADATA.yaml
+  size_bytes: 7310
+  sha256: b85e5bd9224ba52b697dfd7772e8e9d505ca619c776ffe4e873a83128c17a0e8
+- path: 00_Project/RESULT_REGISTER.yaml
+  size_bytes: 12551
+  sha256: 35ff32d66b103c9323530770855507ffb2527bfc2029a5e8260594de52d8e6c5
+- path: 02_Work_Checkpoints/W02-02R-A-001.md
+  size_bytes: 8235
+  sha256: 641922d51868ef0f8999ad4071e2c52cd749adba2f02b160640d2bbc8a083489
+- path: 02_Work_Checkpoints/W02-02R-A-002.md
+  size_bytes: 24862
+  sha256: 071f8af51610e44bcb47b9151d69fd4012a4d06df95565dfcaa9cd6f56676bbe
+- path: 03_Protocols/STAGE02R_TAIPAN_ANALYSIS_CONTRACT.md
+  size_bytes: 30036
+  sha256: 9e4b1f1deb2ce25b238511ebcea987e118644a2a7791ab607d923043f4e91069
+- path: 03_Protocols/DATA_CONTRACTS.md
+  size_bytes: 11944
+  sha256: cca483f6ea97e7a25afa5f52116d7b14f42d074f380daaccc06eda9283adb87e
+- path: 03_Protocols/SCIENTIFIC_TERMINOLOGY.md
+  size_bytes: 25591
+  sha256: 288967afc6af0d12a8d660b40ad2be3f6f1af40a634d19f4b1bd74cbfc8386cd
+- path: 03_Protocols/STAGE02R_T02R03_INVENTORY_SPEC.md
+  size_bytes: 75081
+  sha256: 77be0b5caaebe760f969546673450f2793d77f44e5bb209c09f27e5dc26466f7
+- path: 03_Protocols/CHAT_BOOTSTRAPS.md
+  size_bytes: 30828
+  sha256: af91e94650cdfcee97d16693e0801b791b897e91f96e03e57de4a41c9f34b8f2
+- path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+  size_bytes: 331285
+  sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+- path: 04_Results/Stage02R/W02-02R-A-002/file_scan_map.csv
+  size_bytes: 24401
+  sha256: 199f62d9af1b9251d0732b13b76fea6c0fcdb54bb735cafeae5af2ff4317aadc
+- path: 04_Results/Stage02R/W02-02R-A-002/lattice_states.yaml
+  size_bytes: 6636
+  sha256: 4a0acd20b37019a5fed4336d62fdab780ac00a290dcd0d7f93864d6e0271b5cd
+- path: 04_Results/Stage02R/W02-02R-A-002/UB_states.yaml
+  size_bytes: 8026
+  sha256: 1cdb5e0e4aa137eaeb4ef88528314932044e82203bfd84cfe1075242a6847a80
+- path: 04_Results/Stage02R/W02-02R-A-002/parsed_header_metadata.jsonl
+  size_bytes: 1433002
+  sha256: 5fe552c66b8bbf3543801a921d4afe6ca0852e98c8e8f12fc9ac153f3b6af37d
+- path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+  size_bytes: 5776579
+  sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+- path: 04_Results/Stage02R/W02-02R-A-002/parser_diagnostics.csv
+  size_bytes: 41177
+  sha256: 4a8838922349ef8df03c6108c0896f5e847696e406835ff43c3e27edecfe8f3b
+- path: 04_Results/Stage02R/W02-02R-A-002/quality_diagnostics.csv
+  size_bytes: 339480
+  sha256: d5f8dad6e2fa2069bdc7c2b544bbbfbac6b5928c07e379c04a375159222b7ce4
+- path: 04_Results/Stage02R/W02-02R-A-002/provenance_manifest.yaml
+  size_bytes: 7547
+  sha256: 79f0e63dafd8fc1468c26ed09716fb633976c6461cd61f6b22d967d34ebcd237
+input_identity_basis: Canonical HEAD bytes plus reviewed A002 checkpoint and manifest sizes/SHA256.
+input_postflight_identity_status: unchanged
+external_auxiliary_used: false
+external_auxiliary_reason: Frozen fields and verified chronology are in primary tracked metadata; unresolved auxiliary
+  semantics do not justify reading values.
+raw_data_access: none
+point_table_access: none
+raw_dataset_rehashed: false
+identity_rules:
+  acquisition:
+    version: stage02r_acquisition_state_v1
+    fields:
+    - count_control_mode
+    - scan_variable_raw
+    - lattice_state_id
+    - UB_state_id
+  instrument:
+    version: stage02r_instrument_config_v1
+    fields:
+    - monochromator_material
+    - analyzer_material
+    - collimation
+  group:
+    version: stage02r_normalization_compatibility_group_v1
+    fields:
+    - count_control_mode
+    - instrument_config_id
+    - normalization_epoch_id
+  serialization: UTF-8/no BOM/LF/final LF; full SHA256; shortest unique even prefix >=16
+boundary_recording_policy: One row per adjacent verified-chronology transition with a frozen acquisition-vector
+  change, verified configuration change, or explicit/uncertain recorded event; no initial pseudo-boundary.
+normalization_epoch_evidence: Verified physical configuration changes and explicit verified events only. No dedicated
+  event metadata recorded; no event inferred from titles or unverified auxiliary fields.
+unknown_evidence:
+  critical_fields:
+  - filter_state
+  - higher_order_suppression_state
+  - attenuation_state
+  - monochromator_reflection
+  - analyzer_reflection
+  - detector_hardware_identity
+  - monitor_hardware_identity
+  relevant_fields:
+  - monochromator_mosaic
+  - analyzer_mosaic
+  - unresolved_focusing_aperture_configuration_fields
+  - other_unresolved_beam_path_configuration_fields
+  source: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+  interpretation: Frozen sets propagated on every pair, scan, configuration and group; missing values never enter
+    equality evidence.
+serialization:
+  text: UTF-8/no BOM/LF/final LF
+  CSV_lists: semicolon-separated field names or IDs; empty means none
+  CSV_objects: compact sorted-key JSON
+  row_order: lexical scan IDs and lexical unordered pairs; chronological boundaries
+  YAML: stable insertion order, identity vector order frozen, sorted ID maps and member lists, no aliases
+classification_summary:
+  canonical_scan_count: 201
+  acquisition_state_count: 46
+  acquisition_state_membership_counts:
+    ACQSTATE-02R-0393fd8a12137f3f: 1
+    ACQSTATE-02R-03c418e03bbff8ef: 5
+    ACQSTATE-02R-08c77f1cdd894d24: 2
+    ACQSTATE-02R-0fc7191ce8c954ce: 1
+    ACQSTATE-02R-108dfc3a3c6afd9c: 2
+    ACQSTATE-02R-1bcac31a192a56d2: 1
+    ACQSTATE-02R-1f2cf8c8f4f60684: 2
+    ACQSTATE-02R-26af9d97fec840cb: 1
+    ACQSTATE-02R-28209d72681aed75: 9
+    ACQSTATE-02R-2db5d7be3b4beb37: 1
+    ACQSTATE-02R-30a8b3a0d08462ab: 1
+    ACQSTATE-02R-361a3ee8046c2cc4: 1
+    ACQSTATE-02R-39797c031fe0f745: 1
+    ACQSTATE-02R-3ee91d21cbc1f09d: 1
+    ACQSTATE-02R-4c4e33f0acec143e: 1
+    ACQSTATE-02R-529ef1e7aa3e8091: 1
+    ACQSTATE-02R-53df6374615f09d5: 4
+    ACQSTATE-02R-546c4f5ed876d928: 1
+    ACQSTATE-02R-6adc9825d6f4cc64: 4
+    ACQSTATE-02R-6c0bdd080b2c5a8d: 6
+    ACQSTATE-02R-72bc31d155544226: 9
+    ACQSTATE-02R-763c392f103059d4: 5
+    ACQSTATE-02R-76cbd914416780d4: 1
+    ACQSTATE-02R-76dbf689e6cbf1b2: 9
+    ACQSTATE-02R-76ff5c324efb0d8a: 9
+    ACQSTATE-02R-7948f6139a5d7c87: 1
+    ACQSTATE-02R-896f06c2a7c231ec: 75
+    ACQSTATE-02R-92658811a43cf789: 2
+    ACQSTATE-02R-99416886f2a6708c: 1
+    ACQSTATE-02R-9ab3f10f56634512: 5
+    ACQSTATE-02R-adba83e7b042797b: 3
+    ACQSTATE-02R-b456d493f62e0335: 2
+    ACQSTATE-02R-b75f4d6045c9a350: 1
+    ACQSTATE-02R-b89c4bffa1f47288: 7
+    ACQSTATE-02R-b914afde3130cb09: 1
+    ACQSTATE-02R-be28a48a7631be59: 1
+    ACQSTATE-02R-be6ac2534d3a03ee: 1
+    ACQSTATE-02R-c0eac91ee4e36a39: 3
+    ACQSTATE-02R-c3afc250a187b5a4: 8
+    ACQSTATE-02R-cbc3f2d268d2ba2a: 2
+    ACQSTATE-02R-d4c7951e1191398f: 1
+    ACQSTATE-02R-d8bd77a44fe00800: 3
+    ACQSTATE-02R-e0b6de9c98c0c6b7: 1
+    ACQSTATE-02R-e4276bdea8e15cd5: 2
+    ACQSTATE-02R-e97b44628314d841: 1
+    ACQSTATE-02R-ee0ae71d1e3d66e5: 1
+  instrument_config_count: 1
+  recorded_instrument_config_vectors:
+    INSTCFG-02R-d3a276575fd49dd8:
+      monochromator_material: PG
+      analyzer_material: PG
+      collimation: o-40-40-o
+  acquisition_boundary_count: 85
+  boundary_locations:
+  - boundary_index: 1
+    previous_sequence_index: 0
+    next_sequence_index: 1
+    previous_raw_scan_id: '104040'
+    next_raw_scan_id: '104041'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 2
+    previous_sequence_index: 1
+    next_sequence_index: 2
+    previous_raw_scan_id: '104041'
+    next_raw_scan_id: '104042'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 3
+    previous_sequence_index: 2
+    next_sequence_index: 3
+    previous_raw_scan_id: '104042'
+    next_raw_scan_id: '104043'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 4
+    previous_sequence_index: 3
+    next_sequence_index: 4
+    previous_raw_scan_id: '104043'
+    next_raw_scan_id: '104044'
+    changed_fields:
+    - scan_variable_raw
+    - UB_state_id
+  - boundary_index: 5
+    previous_sequence_index: 4
+    next_sequence_index: 5
+    previous_raw_scan_id: '104044'
+    next_raw_scan_id: '104045'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 6
+    previous_sequence_index: 5
+    next_sequence_index: 6
+    previous_raw_scan_id: '104045'
+    next_raw_scan_id: '104046'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 7
+    previous_sequence_index: 8
+    next_sequence_index: 9
+    previous_raw_scan_id: '104048'
+    next_raw_scan_id: '104049'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 8
+    previous_sequence_index: 9
+    next_sequence_index: 10
+    previous_raw_scan_id: '104049'
+    next_raw_scan_id: '104050'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 9
+    previous_sequence_index: 10
+    next_sequence_index: 11
+    previous_raw_scan_id: '104050'
+    next_raw_scan_id: '104051'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 10
+    previous_sequence_index: 11
+    next_sequence_index: 12
+    previous_raw_scan_id: '104051'
+    next_raw_scan_id: '104052'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 11
+    previous_sequence_index: 12
+    next_sequence_index: 13
+    previous_raw_scan_id: '104052'
+    next_raw_scan_id: '104053'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 12
+    previous_sequence_index: 19
+    next_sequence_index: 20
+    previous_raw_scan_id: '104059'
+    next_raw_scan_id: '104060'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 13
+    previous_sequence_index: 21
+    next_sequence_index: 22
+    previous_raw_scan_id: '104061'
+    next_raw_scan_id: '104062'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 14
+    previous_sequence_index: 22
+    next_sequence_index: 23
+    previous_raw_scan_id: '104062'
+    next_raw_scan_id: '104063'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 15
+    previous_sequence_index: 25
+    next_sequence_index: 26
+    previous_raw_scan_id: '104065'
+    next_raw_scan_id: '104066'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 16
+    previous_sequence_index: 26
+    next_sequence_index: 27
+    previous_raw_scan_id: '104066'
+    next_raw_scan_id: '104067'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 17
+    previous_sequence_index: 27
+    next_sequence_index: 28
+    previous_raw_scan_id: '104067'
+    next_raw_scan_id: '104068'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 18
+    previous_sequence_index: 28
+    next_sequence_index: 29
+    previous_raw_scan_id: '104068'
+    next_raw_scan_id: '104069'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 19
+    previous_sequence_index: 29
+    next_sequence_index: 30
+    previous_raw_scan_id: '104069'
+    next_raw_scan_id: '104070'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 20
+    previous_sequence_index: 31
+    next_sequence_index: 32
+    previous_raw_scan_id: '104071'
+    next_raw_scan_id: '104072'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 21
+    previous_sequence_index: 33
+    next_sequence_index: 34
+    previous_raw_scan_id: '104073'
+    next_raw_scan_id: '104074'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 22
+    previous_sequence_index: 37
+    next_sequence_index: 38
+    previous_raw_scan_id: '104077'
+    next_raw_scan_id: '104078'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 23
+    previous_sequence_index: 38
+    next_sequence_index: 39
+    previous_raw_scan_id: '104078'
+    next_raw_scan_id: '104079'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 24
+    previous_sequence_index: 39
+    next_sequence_index: 40
+    previous_raw_scan_id: '104079'
+    next_raw_scan_id: '104080'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 25
+    previous_sequence_index: 40
+    next_sequence_index: 41
+    previous_raw_scan_id: '104080'
+    next_raw_scan_id: '104081'
+    changed_fields:
+    - scan_variable_raw
+    - UB_state_id
+  - boundary_index: 26
+    previous_sequence_index: 41
+    next_sequence_index: 42
+    previous_raw_scan_id: '104081'
+    next_raw_scan_id: '104082'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 27
+    previous_sequence_index: 42
+    next_sequence_index: 43
+    previous_raw_scan_id: '104082'
+    next_raw_scan_id: '104083'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 28
+    previous_sequence_index: 43
+    next_sequence_index: 44
+    previous_raw_scan_id: '104083'
+    next_raw_scan_id: '104084'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 29
+    previous_sequence_index: 44
+    next_sequence_index: 45
+    previous_raw_scan_id: '104084'
+    next_raw_scan_id: '104085'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 30
+    previous_sequence_index: 45
+    next_sequence_index: 46
+    previous_raw_scan_id: '104085'
+    next_raw_scan_id: '104086'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 31
+    previous_sequence_index: 46
+    next_sequence_index: 47
+    previous_raw_scan_id: '104086'
+    next_raw_scan_id: '104087'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 32
+    previous_sequence_index: 47
+    next_sequence_index: 48
+    previous_raw_scan_id: '104087'
+    next_raw_scan_id: '104088'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 33
+    previous_sequence_index: 48
+    next_sequence_index: 49
+    previous_raw_scan_id: '104088'
+    next_raw_scan_id: '104089'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 34
+    previous_sequence_index: 49
+    next_sequence_index: 50
+    previous_raw_scan_id: '104089'
+    next_raw_scan_id: '104090'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 35
+    previous_sequence_index: 50
+    next_sequence_index: 51
+    previous_raw_scan_id: '104090'
+    next_raw_scan_id: '104091'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 36
+    previous_sequence_index: 51
+    next_sequence_index: 52
+    previous_raw_scan_id: '104091'
+    next_raw_scan_id: '104092'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 37
+    previous_sequence_index: 52
+    next_sequence_index: 53
+    previous_raw_scan_id: '104092'
+    next_raw_scan_id: '104093'
+    changed_fields:
+    - count_control_mode
+    - scan_variable_raw
+  - boundary_index: 38
+    previous_sequence_index: 61
+    next_sequence_index: 62
+    previous_raw_scan_id: '104101'
+    next_raw_scan_id: '104102'
+    changed_fields:
+    - count_control_mode
+    - scan_variable_raw
+  - boundary_index: 39
+    previous_sequence_index: 64
+    next_sequence_index: 65
+    previous_raw_scan_id: '104104'
+    next_raw_scan_id: '104105'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 40
+    previous_sequence_index: 65
+    next_sequence_index: 66
+    previous_raw_scan_id: '104105'
+    next_raw_scan_id: '104106'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 41
+    previous_sequence_index: 66
+    next_sequence_index: 67
+    previous_raw_scan_id: '104106'
+    next_raw_scan_id: '104107'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 42
+    previous_sequence_index: 67
+    next_sequence_index: 68
+    previous_raw_scan_id: '104107'
+    next_raw_scan_id: '104108'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 43
+    previous_sequence_index: 69
+    next_sequence_index: 70
+    previous_raw_scan_id: '104109'
+    next_raw_scan_id: '104110'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 44
+    previous_sequence_index: 74
+    next_sequence_index: 75
+    previous_raw_scan_id: '104114'
+    next_raw_scan_id: '104115'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 45
+    previous_sequence_index: 75
+    next_sequence_index: 76
+    previous_raw_scan_id: '104115'
+    next_raw_scan_id: '104116'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 46
+    previous_sequence_index: 76
+    next_sequence_index: 77
+    previous_raw_scan_id: '104116'
+    next_raw_scan_id: '104117'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 47
+    previous_sequence_index: 77
+    next_sequence_index: 78
+    previous_raw_scan_id: '104117'
+    next_raw_scan_id: '104118'
+    changed_fields:
+    - scan_variable_raw
+    - lattice_state_id
+    - UB_state_id
+  - boundary_index: 48
+    previous_sequence_index: 79
+    next_sequence_index: 80
+    previous_raw_scan_id: '104119'
+    next_raw_scan_id: '104120'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 49
+    previous_sequence_index: 80
+    next_sequence_index: 81
+    previous_raw_scan_id: '104120'
+    next_raw_scan_id: '104121'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 50
+    previous_sequence_index: 82
+    next_sequence_index: 83
+    previous_raw_scan_id: '104122'
+    next_raw_scan_id: '104123'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 51
+    previous_sequence_index: 84
+    next_sequence_index: 85
+    previous_raw_scan_id: '104124'
+    next_raw_scan_id: '104125'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 52
+    previous_sequence_index: 85
+    next_sequence_index: 86
+    previous_raw_scan_id: '104125'
+    next_raw_scan_id: '104126'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 53
+    previous_sequence_index: 87
+    next_sequence_index: 88
+    previous_raw_scan_id: '104127'
+    next_raw_scan_id: '104128'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 54
+    previous_sequence_index: 89
+    next_sequence_index: 90
+    previous_raw_scan_id: '104129'
+    next_raw_scan_id: '104130'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 55
+    previous_sequence_index: 90
+    next_sequence_index: 91
+    previous_raw_scan_id: '104130'
+    next_raw_scan_id: '104131'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 56
+    previous_sequence_index: 91
+    next_sequence_index: 92
+    previous_raw_scan_id: '104131'
+    next_raw_scan_id: '104132'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 57
+    previous_sequence_index: 92
+    next_sequence_index: 93
+    previous_raw_scan_id: '104132'
+    next_raw_scan_id: '104133'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 58
+    previous_sequence_index: 96
+    next_sequence_index: 97
+    previous_raw_scan_id: '104136'
+    next_raw_scan_id: '104137'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 59
+    previous_sequence_index: 97
+    next_sequence_index: 98
+    previous_raw_scan_id: '104137'
+    next_raw_scan_id: '104138'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 60
+    previous_sequence_index: 98
+    next_sequence_index: 99
+    previous_raw_scan_id: '104138'
+    next_raw_scan_id: '104139'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 61
+    previous_sequence_index: 99
+    next_sequence_index: 100
+    previous_raw_scan_id: '104139'
+    next_raw_scan_id: '104140'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 62
+    previous_sequence_index: 101
+    next_sequence_index: 102
+    previous_raw_scan_id: '104141'
+    next_raw_scan_id: '104142'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 63
+    previous_sequence_index: 102
+    next_sequence_index: 103
+    previous_raw_scan_id: '104142'
+    next_raw_scan_id: '104143'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 64
+    previous_sequence_index: 103
+    next_sequence_index: 104
+    previous_raw_scan_id: '104143'
+    next_raw_scan_id: '104144'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 65
+    previous_sequence_index: 104
+    next_sequence_index: 105
+    previous_raw_scan_id: '104144'
+    next_raw_scan_id: '104145'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 66
+    previous_sequence_index: 106
+    next_sequence_index: 107
+    previous_raw_scan_id: '104146'
+    next_raw_scan_id: '104147'
+    changed_fields:
+    - count_control_mode
+    - scan_variable_raw
+  - boundary_index: 67
+    previous_sequence_index: 137
+    next_sequence_index: 138
+    previous_raw_scan_id: '104177'
+    next_raw_scan_id: '104178'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 68
+    previous_sequence_index: 138
+    next_sequence_index: 139
+    previous_raw_scan_id: '104178'
+    next_raw_scan_id: '104179'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 69
+    previous_sequence_index: 139
+    next_sequence_index: 140
+    previous_raw_scan_id: '104179'
+    next_raw_scan_id: '104180'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 70
+    previous_sequence_index: 141
+    next_sequence_index: 142
+    previous_raw_scan_id: '104181'
+    next_raw_scan_id: '104182'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 71
+    previous_sequence_index: 142
+    next_sequence_index: 143
+    previous_raw_scan_id: '104182'
+    next_raw_scan_id: '104183'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 72
+    previous_sequence_index: 143
+    next_sequence_index: 144
+    previous_raw_scan_id: '104183'
+    next_raw_scan_id: '104184'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 73
+    previous_sequence_index: 144
+    next_sequence_index: 145
+    previous_raw_scan_id: '104184'
+    next_raw_scan_id: '104185'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 74
+    previous_sequence_index: 145
+    next_sequence_index: 146
+    previous_raw_scan_id: '104185'
+    next_raw_scan_id: '104186'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 75
+    previous_sequence_index: 146
+    next_sequence_index: 147
+    previous_raw_scan_id: '104186'
+    next_raw_scan_id: '104187'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 76
+    previous_sequence_index: 147
+    next_sequence_index: 148
+    previous_raw_scan_id: '104187'
+    next_raw_scan_id: '104188'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 77
+    previous_sequence_index: 148
+    next_sequence_index: 149
+    previous_raw_scan_id: '104188'
+    next_raw_scan_id: '104189'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 78
+    previous_sequence_index: 149
+    next_sequence_index: 150
+    previous_raw_scan_id: '104189'
+    next_raw_scan_id: '104190'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 79
+    previous_sequence_index: 150
+    next_sequence_index: 151
+    previous_raw_scan_id: '104190'
+    next_raw_scan_id: '104191'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 80
+    previous_sequence_index: 151
+    next_sequence_index: 152
+    previous_raw_scan_id: '104191'
+    next_raw_scan_id: '104192'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 81
+    previous_sequence_index: 152
+    next_sequence_index: 153
+    previous_raw_scan_id: '104192'
+    next_raw_scan_id: '104193'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 82
+    previous_sequence_index: 154
+    next_sequence_index: 155
+    previous_raw_scan_id: '104194'
+    next_raw_scan_id: '104195'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 83
+    previous_sequence_index: 155
+    next_sequence_index: 156
+    previous_raw_scan_id: '104195'
+    next_raw_scan_id: '104196'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 84
+    previous_sequence_index: 172
+    next_sequence_index: 173
+    previous_raw_scan_id: '104212'
+    next_raw_scan_id: '104213'
+    changed_fields:
+    - scan_variable_raw
+  - boundary_index: 85
+    previous_sequence_index: 174
+    next_sequence_index: 175
+    previous_raw_scan_id: '104214'
+    next_raw_scan_id: '104215'
+    changed_fields:
+    - scan_variable_raw
+  boundary_type_distribution:
+    acquisition_state_change: 85
+  boundary_confidence_distribution:
+    verified_recorded_acquisition_change: 85
+  normalization_relevant_boundary_count: 0
+  normalization_epoch_count: 1
+  normalization_epochs:
+    NORMEPOCH-02R-0001:
+      scan_count: 201
+      first_scan_record_id: SCAN-02R-022f7aa0bc71f84f
+      last_scan_record_id: SCAN-02R-2f690557cfd20bec
+  pairwise_count: 20100
+  pairwise_status_counts:
+    supported: 0
+    conditionally_supported: 10006
+    not_supported: 10094
+    unresolved: 0
+  cross_control_mode_pairs: 10094
+  normalization_compatibility_group_count: 2
+  groups:
+    NORMCOMP-02R-26ed32e42105dda7:
+      scan_count: 103
+      status: conditionally_supported
+      count_control_mode: monitor_controlled
+      internal_pair_count: 5253
+      clique_audit_status: PASS
+    NORMCOMP-02R-bc7c0a966a7cf80b:
+      scan_count: 98
+      status: conditionally_supported
+      count_control_mode: time_controlled
+      internal_pair_count: 4753
+      clique_audit_status: PASS
+  clique_audit_status: PASS
+  critical_unknown_fields:
+  - filter_state
+  - higher_order_suppression_state
+  - attenuation_state
+  - monochromator_reflection
+  - analyzer_reflection
+  - detector_hardware_identity
+  - monitor_hardware_identity
+  relevant_unknown_fields:
+  - monochromator_mosaic
+  - analyzer_mosaic
+  - unresolved_focusing_aperture_configuration_fields
+  - other_unresolved_beam_path_configuration_fields
+  diagnostic_candidate_fields_unverified:
+  - ahfocus
+  - avfocus
+  - pghf
+  - pgvf
+  - cuhf
+  - cuvf
+  - atilt
+  - atrans
+  - mtilt
+  - mtrans
+  - pa_bottom
+  - pa_left
+  - pa_right
+  - pa_top
+  - ps_bottom
+  - ps_left
+  - ps_right
+  - ps_top
+  - vs_left
+  - vs_right
+  new_verified_candidate_identity_fields: []
+  external_auxiliary_used: false
+  normalization_performed: false
+scope_audit:
+  normalization_performed: false
+  spectral_analysis_performed: false
+  resolution_calculation_performed: false
+  cef_analysis_performed: false
+  scientific_registers_or_project_control_modified: false
+outputs:
+- path: 04_Results/Stage02R/W02-02R-A-003/acquisition_boundaries.csv
+  size_bytes: 35369
+  sha256: ae61bb58750792f77ba7d6de68e6e930a1cb838497881176f6ec223e17b01abb
+- path: 04_Results/Stage02R/W02-02R-A-003/acquisition_states.yaml
+  size_bytes: 27690
+  sha256: d982e7271a40b79c7332ba7b10f5a6d8006e4495311fde5e29a2411e66638439
+- path: 04_Results/Stage02R/W02-02R-A-003/classification_diagnostics.csv
+  size_bytes: 7648
+  sha256: 6f6328136a53289008fb017bb2de67535e246351a00651d5f8caa66920f9b6de
+- path: 04_Results/Stage02R/W02-02R-A-003/instrument_configs.yaml
+  size_bytes: 6880
+  sha256: 3e71224b264a1f926868cb1b4b80a21092d0af58a1813d9b311170893eb96441
+- path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility.csv
+  size_bytes: 10519345
+  sha256: d87e4763f9056924f3f4fc2bf104a0381f7ec949daeb7f809cc1d34ce81d496d
+- path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility_groups.yaml
+  size_bytes: 10063
+  sha256: cbc1907a38e8fdd23ab3f72fd22b8412c561ebff8ebad58ee80928b9e27b51e9
+- path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+  size_bytes: 137024
+  sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
+- path: 04_Results/Stage02R/W02-02R-A-003/test_report.yaml
+  size_bytes: 3098
+  sha256: 32e28c62b39ec55fab0ef04dfc7b80c5897c97ae875b3bc1e25cc67ee4ea31f2
+self_hash_policy: Manifest byte SHA256 is detached in the execution checkpoint; not self-referential.
+project_validation: Separate required post-execution KB checks; no validator or storage-policy override by this
+  source.
+stop_condition: A003 metadata classification complete; STOP for 02 - TAIPAN Data Reduction scientific review; no
+  downstream execution.

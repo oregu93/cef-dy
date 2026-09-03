@@ -264,3 +264,49 @@
     reflection/mosaic and several auxiliary-motor semantics remain unresolved.
     A-002 performed no normalization, acquisition/instrument block inference,
     resolution calculation, spectral feature analysis or CEF analysis.
+
+- id: R-011
+  title: Stage 02R A-003 acquisition/configuration and normalization-compatibility classification
+  type: acquisition_configuration_classification_result
+  status: reviewed
+  scope:
+    - Stage02R
+    - TAIPAN
+    - acquisition_state
+    - instrument_configuration
+    - normalization_compatibility
+  statement: >
+    W02-02R-A-003 classified all 201 canonical TAIPAN scans using the frozen
+    metadata-only Stage 02R rules. It produced 46 recorded acquisition-state
+    classes, one recorded_verified_configuration_equivalence instrument class
+    (PG monochromator, PG analyzer, o-40-40-o collimation), 85 acquisition-state
+    boundaries, no verified normalization-relevant reconfiguration boundary and
+    one normalization epoch. Of all 20100 unordered scan pairs, 10094
+    cross-control-mode pairs are not_supported and all 10006 same-control-mode
+    pairs are conditionally_supported; none are fully supported or unresolved.
+    The exact-key normalization-compatibility partition therefore contains two
+    conditionally_supported groups: 103 monitor-controlled scans and 98
+    time-controlled scans. No numerical normalization was performed.
+  evidence:
+    - kind: work_checkpoint
+      source: 02_Work_Checkpoints/W02-02R-A-003.md
+    - kind: result_package
+      source: 04_Results/Stage02R/W02-02R-A-003/
+    - kind: artifact
+      source: 04_Results/Stage02R/W02-02R-A-003/external_artifacts.yaml
+  review_date: '2026-09-03'
+  limitations: >
+    Scientific review was based on the reported checkpoint/results and did not
+    independently open all local artifacts, independently byte-verify the full
+    package or rerun raw data. One instrument-config class proves equality only
+    of the frozen verified v1 fields, not complete physical configuration.
+    Filter state, higher-order suppression, attenuation, monochromator/analyzer
+    reflection, detector/monitor hardware identity and other unresolved
+    configuration dimensions prevent promotion of same-mode compatibility from
+    conditionally_supported to supported. The two compatibility groups are not
+    established numerical scale parameters.
+  validation_criteria:
+    - Verify tracked A003 artifact checksums against checkpoint/provenance.
+    - Verify external normalization_compatibility.csv by exact byte size and SHA-256.
+    - Preserve 20100-pair accounting and 103/98 count-control separation.
+    - Do not interpret normalization compatibility as normalization already performed.

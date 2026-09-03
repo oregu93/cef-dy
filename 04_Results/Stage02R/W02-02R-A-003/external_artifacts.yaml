@@ -1,0 +1,16 @@
+schema_version: 1
+job_id: W02-02R-A-003
+dataset_id: EXP-TAIPAN-001
+external_artifacts:
+- logical_name: normalization_compatibility.csv
+  storage_class: external_large_result
+  external_root: CEF_Dy_Data
+  external_relative_path: Stage02R/W02-02R-A-003/normalization_compatibility.csv
+  size_bytes: 10519345
+  sha256: d87e4763f9056924f3f4fc2bf104a0381f7ec949daeb7f809cc1d34ce81d496d
+  original_execution_path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility.csv
+  note: >
+    Required A-003 full 20100-row unordered pairwise compatibility artifact.
+    Stored outside Git because it exceeds the project advisory size threshold.
+    Canonical integrity is defined by logical external path, exact byte size
+    and SHA-256.
