@@ -1,0 +1,77 @@
+configuration_version: stage02r_b001_discovery_v1
+
+exposure_preflight:
+  control_required_fraction_within_tolerance: 0.95
+  control_relative_tolerance: 0.10
+  control_max_relative_deviation: 0.25
+  timestamp_rounding_slack_seconds: 2.0
+
+geometry:
+  minimum_usable_points: 9
+  central_width_points: [1, 3, 5, 7]
+  left_flank_points: 3
+  right_flank_points: 3
+  maximum_local_gap_ratio: 3.0
+  maximum_center_shift_points: 1
+
+local_statistic:
+  model: poisson_log_link_with_exposure_offset
+  primary_test: one_sided_central_excess
+  nuisance_trend_order: 1
+
+optimizer:
+  implementation: scipy.optimize.minimize
+  method: L-BFGS-B
+  maxiter: 500
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+
+bootstrap:
+  baseline_neighborhood_points: 9
+  replicates: 2048
+  familywise_alpha: 0.05
+  rng: PCG64
+  seed_version: stage02r_b001_bootstrap_seed_v1
+  master_seed_text: "CEF-Dy:T-02R-04:W02-02R-B-001:bootstrap-v1"
+
+holdout:
+  identity_version: stage02r_b001_holdout_v1
+  salt: "CEF-Dy:T-02R-04:W02-02R-B-001:algorithmic-holdout-v1"
+  stratification:
+    - count_control_mode
+    - acquisition_state_id
+  fraction: 0.25
+  minimum_stratum_size: 4
+  detector_access_before_catalogue_freeze: forbidden
+  holdout_backfill: false
+
+high_rate_qc:
+  documented_saturation_warning_cps: 35000
+  approaching_warning_fraction: 0.80
+  approaching_warning_cps: 28000
+  stop_at_or_above_warning: true
+  dead_time_correction: false
+  apply_to_split_role: discovery_only
+
+synthetic_null_test:
+  scans: 100
+  points: 31
+  mean_counts_at_center: 25
+  log_rate_slope_per_grid_unit: 0.015
+  max_false_positive_scans: 10
+
+synthetic_injection_test:
+  scans: 100
+  points: 31
+  central_width_points: 3
+  rate_multiplier: 2.5
+  minimum_recovered_scans: 85
+
+reproducibility:
+  minimum_distinct_scans_within_control_mode: 2
+  tier2_requires_multiple_acquisition_states: true
+  cross_mode_amplitude_comparison: false
+  cross_mode_position_annotation_only: true
+
+blind_feature_catalogue:
+  zero_features_allowed: true

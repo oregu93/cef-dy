@@ -1,0 +1,288 @@
+job_id: W02-02R-B-001
+dataset_id: EXP-TAIPAN-001
+repository_commit: 4fff990b40c673b1a2a679880d2495ec519f835f
+execution_context: W02-Lin
+platform: linux
+python_version: 3.12.3
+raw_data_access: none
+raw_reparse: false
+external_auxiliary_used: false
+review_status: reviewed
+scientific_interpretation_status: pending
+preparation_source_sha256: 00d339faf84ffd934b066cc11783cd324bf7c063c15cf8d1a12dfdbf967ae328
+configuration_sha256: 2ee87ea3a4f81124fa18979ebee1807f5b8594b4fecc37c8a37de5b2220ca65c
+inputs:
+- path: 03_Protocols/STAGE02R_T02R04_B001_BLIND_FEATURE_DISCOVERY_SPEC.md
+  size_bytes: 38867
+  sha256: 010b54125bdd97618353e70915c009f3be0d8cd76a8547f04ca401904e9e4a86
+- path: 02_Work_Checkpoints/W02-02R-A-001.md
+  size_bytes: 8235
+  sha256: 641922d51868ef0f8999ad4071e2c52cd749adba2f02b160640d2bbc8a083489
+- path: 02_Work_Checkpoints/W02-02R-A-002.md
+  size_bytes: 24862
+  sha256: 071f8af51610e44bcb47b9151d69fd4012a4d06df95565dfcaa9cd6f56676bbe
+- path: 02_Work_Checkpoints/W02-02R-A-003.md
+  size_bytes: 25131
+  sha256: d6412ae696ced6b44bd5ce1108cabc8634d3df152c4ddaab554b99f9de601032
+- path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+  size_bytes: 331285
+  sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+- path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+  size_bytes: 1589013
+  sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+- path: 04_Results/Stage02R/W02-02R-A-002/quality_diagnostics.csv
+  size_bytes: 339480
+  sha256: d5f8dad6e2fa2069bdc7c2b544bbbfbac6b5928c07e379c04a375159222b7ce4
+- path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+  size_bytes: 5776579
+  sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+- path: 04_Results/Stage02R/W02-02R-A-002/provenance_manifest.yaml
+  size_bytes: 7547
+  sha256: 79f0e63dafd8fc1468c26ed09716fb633976c6461cd61f6b22d967d34ebcd237
+- path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+  size_bytes: 137024
+  sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
+- path: 04_Results/Stage02R/W02-02R-A-003/acquisition_states.yaml
+  size_bytes: 27690
+  sha256: d982e7271a40b79c7332ba7b10f5a6d8006e4495311fde5e29a2411e66638439
+- path: 04_Results/Stage02R/W02-02R-A-003/acquisition_boundaries.csv
+  size_bytes: 35369
+  sha256: ae61bb58750792f77ba7d6de68e6e930a1cb838497881176f6ec223e17b01abb
+- path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility_groups.yaml
+  size_bytes: 10063
+  sha256: cbc1907a38e8fdd23ab3f72fd22b8412c561ebff8ebad58ee80928b9e27b51e9
+- path: 04_Results/Stage02R/W02-02R-A-003/provenance_manifest.yaml
+  size_bytes: 28894
+  sha256: e02157a673e44a0371f0776a7992ebcb59838d98e2445b319b0ec80b6b3e6cb3
+- path: 04_Results/Stage02R/W02-02R-A-001/field_semantics_report.yaml
+  size_bytes: 616599
+  sha256: 534f9d5b1ec665c51796cd6519922fdfb86c74073b29dadeb31651bf2de7603d
+- path: 04_Results/Stage02R/W02-02R-A-001/file_inventory_preliminary.csv
+  size_bytes: 74988
+  sha256: 859fbd410caae4346ae400cac20ab419978d14f7d935a82bc521170920f950ef
+- path: 04_Results/Stage02R/W02-02R-A-001/format_catalogue.yaml
+  size_bytes: 87991
+  sha256: 4306384d49d595af3e83da6a981075a4f4bd5ef90a01fb2ff536a883e360b359
+- path: 04_Results/Stage02R/W02-02R-A-001/parsed_header_metadata_sample.jsonl
+  size_bytes: 211400
+  sha256: 039fde9116b5862728c49744a5198ae1314ef41ff3540201d88119cced0d63ab
+- path: 04_Results/Stage02R/W02-02R-A-001/provenance_manifest.yaml
+  size_bytes: 4860
+  sha256: ff6bc1810d2ed6f1cacc1492186dd86c04202d61045066cc560bf61c842731f1
+- path: 04_Results/Stage02R/W02-02R-A-001/reconnaissance_diagnostics.csv
+  size_bytes: 6295
+  sha256: 5afa3964bc2dac6978974ae6898989457bafdc7b1ebd9140fadabf2b53349fc3
+- path: 04_Results/Stage02R/W02-02R-A-001/test_report.yaml
+  size_bytes: 5986
+  sha256: 3dbb1c0a34c6be64acbaac536696f4e7d4094119091bc942fd4884a9b5a0adff
+- path: 00_Project/PROJECT_CONTROL.md
+  size_bytes: 21457
+  sha256: 33dfc2cd0d7206b3d49380aa926b263d722dfb2ef40e6bbbc1270f353fe416cd
+- path: 00_Project/PROJECT_METADATA.yaml
+  size_bytes: 7936
+  sha256: 4aefe0d4feaa77230966dedbd1f4b59c4a0c055b7b845c10df3e814e4f48c858
+- path: 00_Project/PROJECT_STATE.md
+  size_bytes: 37192
+  sha256: 3035ce67bf3a748e2dafa886ad3a83a03d1ba974847490630114194234928535
+- path: 03_Protocols/STAGE02R_TAIPAN_ANALYSIS_CONTRACT.md
+  size_bytes: 30036
+  sha256: 9e4b1f1deb2ce25b238511ebcea987e118644a2a7791ab607d923043f4e91069
+- path: 03_Protocols/DATA_CONTRACTS.md
+  size_bytes: 11944
+  sha256: cca483f6ea97e7a25afa5f52116d7b14f42d074f380daaccc06eda9283adb87e
+- path: 03_Protocols/SCIENTIFIC_TERMINOLOGY.md
+  size_bytes: 25591
+  sha256: 288967afc6af0d12a8d660b40ad2be3f6f1af40a634d19f4b1bd74cbfc8386cd
+- path: 03_Protocols/STAGE02R_T02R03_INVENTORY_SPEC.md
+  size_bytes: 75081
+  sha256: 77be0b5caaebe760f969546673450f2793d77f44e5bb209c09f27e5dc26466f7
+- path: 03_Protocols/STAGE02R_T02R03_A003_CLASSIFICATION_SPEC.md
+  size_bytes: 24662
+  sha256: 3055739f853bd65344025bd64253afb513fd9b9ea6db480fb132332f9466479f
+- path: 03_Protocols/CHAT_BOOTSTRAPS.md
+  size_bytes: 30828
+  sha256: af91e94650cdfcee97d16693e0801b791b897e91f96e03e57de4a41c9f34b8f2
+- path: 03_Protocols/WORK_RECOVERY_PROTOCOL.md
+  size_bytes: 8885
+  sha256: 8c241968d4a6b97b0d26a5088d4c1cdb382a273cf6df50b0caa68f2ab0269b4c
+- path: scripts/work_recovery.py
+  size_bytes: 42558
+  sha256: f4913d90b92fc4c84126ccad1266468c481886a9d364e8a828feb9136d8670c3
+recovery_start:
+  snapshot_id: 20260904T071945904165Z_950dbe95_start
+  relative_path: CEF_Dy_Backup/work_recovery/W02-02R-B-001/20260904T071945904165Z_950dbe95_start
+  head: 4fff990b40c673b1a2a679880d2495ec519f835f
+  branch: main
+  integrity: PASS
+phase: completed_stop_condition
+discovery_QC_source_sha256: 070ea59eae1b6db698ba0170e49126ca5c6232c037a41c17fff237fd5877f27f
+blind_split_sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+source_sha256: c836485c8f472506ca186c7329519fe812f3bcf9c8fe18910966e614ff89a3e7
+package_versions:
+  numpy: 1.26.4
+  scipy: 1.14.1
+  PyYAML: 6.0.1
+catalogue_sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+stop_condition: satisfied
+outputs:
+- logical_name: EXECUTION_ARTIFACT_SHA256SUMS
+  size_bytes: 1827
+  sha256: ff856594434d78ee3f5e26dc99a9df5b0b29acc5aa08e814d1d65fc62fa9d3e1
+- logical_name: PROJECT_TRANSITION.yaml
+  size_bytes: 3498
+  sha256: aae33225de3d356b5aa840b4c9ba0b61937423ff3616f2660569e0ae301b9ed1
+- logical_name: SCIENTIFIC_REVIEW.md
+  size_bytes: 23860
+  sha256: ea5eb8c331827aa651d7a82b709a168d4e1ec198c9be0a8e7b826cbe923b9d4c
+- logical_name: blind_feature_catalogue.yaml
+  size_bytes: 12407
+  sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+- logical_name: blind_split.csv
+  size_bytes: 32522
+  sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+- logical_name: completion_manifest.json
+  size_bytes: 42925
+  sha256: 87c0385b4ad05a21f132fe805bc7f6c4f8ab388ac384a83a1d61b44477b8a257
+- logical_name: discovery_diagnostics.yaml
+  size_bytes: 2610691
+  sha256: 48405649943d18f3679dc891ab5967bd56224bab6ac6dd737c22dcb78596710b
+- logical_name: discovery_point_representation.csv
+  size_bytes: 585015
+  sha256: e8f1f0298df74b1948804614ac43ec4580f333d87ad8c68b610acc3933c97b21
+- logical_name: discovery_qc.csv
+  size_bytes: 161582
+  sha256: ae0dc36a594e34bfec0a85be650ee9b001197ab0292e84fdaa915c825e460f6e
+- logical_name: exposure_semantic_preflight.yaml
+  size_bytes: 41546
+  sha256: 3f15c160591dfbf15e7f80d300415d5837f999718d68665219fd449673697694
+- logical_name: feature_reproducibility.csv
+  size_bytes: 2621
+  sha256: f27cc18f011fce62ad056089b61995edad6b19beb3056b43b38f6b4fb069614e
+- logical_name: handoff_completed_scan_runs.tar
+  size_bytes: 1249280
+  sha256: fdac73d0c7f83bbbfe0978e0526bc02087ea8e9620cb0d3ff8e1832063462f3e
+- logical_name: handoff_manifest.json
+  size_bytes: 31282
+  sha256: 420f92a23cadb73250d7b07985010462b38ca547d6636c0e957103fafe9c22ab
+- logical_name: scan_feature_candidates.csv
+  size_bytes: 11118
+  sha256: 1d71ebb3ba84b2949bdb569e9a903573a4edfcce1061a64c33852d205a83c290
+- logical_name: scan_selection.csv
+  size_bytes: 43528
+  sha256: 0aa57b2e214c9b7dc8dc00ce50b4dcabd75bd03e545fa36dc7c223818aeab96f
+- logical_name: test_report.yaml
+  size_bytes: 229469
+  sha256: 62300f47357d86bd71d53a41ed968721ee9700b5f4e225ca3f099b12031b1ecb
+execution_status: completed
+completed_at_utc: '2026-09-04T13:07:37.829589+00:00'
+discovery_outcome_summary:
+  discovery_scan_count: 57
+  full_bootstrap_outcomes: 56
+  final_numerical_exclusions: 1
+  missing_outcomes: 0
+  invalid_or_partial_outcomes: 0
+  unexpected_cache_files: 0
+  bootstrap_replicates_per_complete_outcome: 2048
+  original_31_outcomes_unchanged: true
+  discovery_scans_by_mode:
+    monitor_controlled: 56
+    time_controlled: 1
+  complete_bootstrap_scans_by_mode:
+    monitor_controlled: 55
+    time_controlled: 1
+  scan_candidates: 52
+  scans_with_candidates: 32
+  scan_candidates_by_mode:
+    monitor_controlled: 50
+    time_controlled: 2
+  reproducibility_clusters: 11
+  cluster_tiers:
+    tier_0: 3
+    tier_1: 8
+    tier_2: 0
+  cluster_modes:
+    time_controlled: 2
+    monitor_controlled: 9
+  blind_features: 8
+  feature_modes:
+    monitor_controlled: 8
+    time_controlled: 0
+  feature_tiers:
+    tier_1: 8
+    tier_2: 0
+  cross_mode_position_annotations: 0
+  cross_mode_amplitude_comparison: false
+  holdout_scans: 18
+  holdout_detector_access: 0
+  holdout_backfill: false
+  runtime_exclusions:
+  - reason: nuisance_field_fit_failure
+    scan_record_id: SCAN-02R-7acd4c14a0007418
+    status: numeric_exclusion
+completion_manifest:
+  path: 04_Results/Stage02R/W02-02R-B-001/completion_manifest.json
+  sha256: 87c0385b4ad05a21f132fe805bc7f6c4f8ab388ac384a83a1d61b44477b8a257
+completion_recovery:
+  original_start: 20260904T071945904165Z_950dbe95_start
+  verified_panic: 20260904T104840241548Z_d7de1851_panic
+  local_resume_run_id: local_resume_20260904T122243Z
+  completion_run_id: completion_20260904T130600Z
+  pre_finalization_safe_to_resume: 'yes'
+  new_start_created: false
+  restoration_performed: false
+  local_resume_helper_sha256: 59e2a2674ea45d305ffd82441b5889b1c53750001474e2b11807c510f8e9c14c
+  finalization_driver_sha256: 0ad6d087d0507e5820fafb292f30eaf23d575858f02ecbb77123d5cacf36b8bd
+  reporting_driver_sha256: b1fea18daeeacf93f762b35a651625be4ad4fdcabc9c6778d096925377ded287
+  interruption_manifest_sha256: 420f92a23cadb73250d7b07985010462b38ca547d6636c0e957103fafe9c22ab
+  pre_finalization_audit_sha256: 63cb302215ef7a179564ec764cc8e1537bebb1917190fd9f307fb640f977eca2
+  frozen_execution_receipt_sha256: 6b7a9261da95959bdee010aca9dba08763700513f55568162fa20e8d6b34a41c
+kb_validation:
+  kb_refresh_check: 'PASS: REENTRY_OK'
+  kb_validate_strict: 'FAIL: warnings are fatal in strict mode'
+  errors: 0
+  warnings: 48
+  warnings_in_active_project_files: 0
+  warning_origin: broken relative links in four pre-existing ignored recovery control_context copies
+  warning_files:
+    ? CEF_Dy_Backup/work_recovery/W02-02R-B-001/20260904T104504309458Z_128ef4b3_panic/control_context/00_Project/PROJECT_CONTROL.md
+    : 12
+    ? CEF_Dy_Backup/work_recovery/W02-02R-B-001/20260904T104840241548Z_d7de1851_panic/control_context/00_Project/PROJECT_CONTROL.md
+    : 12
+    ? CEF_Dy_Backup/work_recovery/W02-02R-B-001/20260904T071945904165Z_950dbe95_start/control_context/00_Project/PROJECT_CONTROL.md
+    : 12
+    ? CEF_Dy_Backup/work_recovery/W02-02R-B-001/20260904T104610496056Z_3f09cb51_panic/control_context/00_Project/PROJECT_CONTROL.md
+    : 12
+  validator_or_snapshot_changes: false
+  requires_separate_infrastructure_review: true
+reporting_completion:
+  reason: final runtime summary reconciled to scan_selection after frozen numeric exclusion
+  pre_statistics_discovery_runtime_status_counts:
+    discovery_usable: 57
+  final_discovery_runtime_status_counts:
+    discovery_usable: 56
+    excluded_other_detector_QC: 1
+  scientific_source_changed: false
+  catalogue_bytes_changed: false
+output_manifest_exclusions:
+  provenance_manifest.yaml: self-reference
+  ARTIFACT_SHA256SUMS: external checksum inventory includes this provenance and checkpoint
+review_outcome: accepted_with_limitations
+scientific_review:
+  status: reviewed
+  outcome: accepted_with_limitations
+  review_date: '2026-09-04'
+  path: 04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md
+  sha256: ea5eb8c331827aa651d7a82b709a168d4e1ec198c9be0a8e7b826cbe923b9d4c
+  result_id: R-012
+  evidence_id: EV-007
+  T_02R_05_execution_authorized: false
+  holdout_detector_access_authorized: false
+  physical_interpretation_performed: false
+canonical_review_capture:
+  execution_authorization_head: 4fff990b40c673b1a2a679880d2495ec519f835f
+  catalogue_bytes_immutable: true
+  execution_completion_manifest_is_historical_record: true
+  original_execution_artifact_hashes: EXECUTION_ARTIFACT_SHA256SUMS
+  project_transition_payload: 04_Results/Stage02R/W02-02R-B-001/PROJECT_TRANSITION.yaml
+  next_step_mode: design_review_only
+  next_work_job: null

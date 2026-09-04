@@ -1,0 +1,693 @@
+{
+  "job_id": "W02-02R-B-001",
+  "execution_context": "W02-Lin",
+  "platform": "linux",
+  "canonical_head": "4fff990b40c673b1a2a679880d2495ec519f835f",
+  "branch": "main",
+  "execution_status": "user_requested_interrupted_before_catalogue",
+  "stop_method": "SIGSTOP exact parent/worker group; resume parent only to drain ready results; SIGTERM then SIGCONT stopped workers; parent exited BrokenProcessPool (exit 1)",
+  "graceful_active_scan_drain_supported_by_current_source": false,
+  "active_workers_interrupted": 5,
+  "running_workers_after_stop": 0,
+  "active_scan_ids_at_interrupt": null,
+  "active_scan_identity_limitation": "Current source does not persist scan-start/worker assignments; exact five active scan IDs were not independently observed. All unsaved IDs are remaining; none treated as completed.",
+  "completed_outcome_count": 31,
+  "complete_bootstrap_count": 30,
+  "final_numeric_exclusion_count": 1,
+  "completed": [
+    {
+      "scan_record_id": "SCAN-02R-059bd02c78268a2b",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-059bd02c78268a2b.json",
+      "size_bytes": 40061,
+      "sha256": "b896daafb719c35f6efda4a85eda59011e0f7940327e6daa0c3ed989cae62014",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-074afad5a6b92ea4",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-074afad5a6b92ea4.json",
+      "size_bytes": 41309,
+      "sha256": "c2205834ca61b0b71a485b21519d5b8c302a2d8a6cefd5cca91a61f740d1c1e8",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-0e6d00a831c04e8d",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-0e6d00a831c04e8d.json",
+      "size_bytes": 40104,
+      "sha256": "ae1b555bba3ae7bfa29f4953be0bdb7157301a5e293eb70ba34951d48257bb3b",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-1e5b02c69224108d",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-1e5b02c69224108d.json",
+      "size_bytes": 41563,
+      "sha256": "b73487b8eedb53ef4ced770cc6bc87a33926946f9062938435bc097d1d92495b",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-26c5588a4a75efc2",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-26c5588a4a75efc2.json",
+      "size_bytes": 40772,
+      "sha256": "a06d55e586eabb3d886d174e75bf32b37251685bbd4d021bb0260e783798201c",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-2a0e91f43e0fe127",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-2a0e91f43e0fe127.json",
+      "size_bytes": 41262,
+      "sha256": "c1c309b7a89623c9b704de43e354b0342a45ebe8657020b639b7e7dc3245442a",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-2f690557cfd20bec",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-2f690557cfd20bec.json",
+      "size_bytes": 40170,
+      "sha256": "3af23bb59bcc316fa6d16a4e1c6311b0fadc8efb4c4f196f9fae2683a44bea41",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-306a96179bd778b6",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-306a96179bd778b6.json",
+      "size_bytes": 41172,
+      "sha256": "eef8eea5c8f0804c0c6d540529eb00ef3bdce13c2be16885593b921da2ee5bf3",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-3f903a520f921d83",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-3f903a520f921d83.json",
+      "size_bytes": 40005,
+      "sha256": "68d7558cf5f28e18f164d2876ca1293ae4d28e4e9e3215fe28cc65338d172646",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-432159a75d80f2b3",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-432159a75d80f2b3.json",
+      "size_bytes": 40603,
+      "sha256": "664e930b9fac9f147fb46486fd3e947456ec704161f6a21b54f56b00e052d953",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-43979cdff2eef525",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-43979cdff2eef525.json",
+      "size_bytes": 40495,
+      "sha256": "483f26ad70dbb2d8a1f3b5a356052dc43a15f215cb0ff2fe850b068b3d677cba",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-45d1daf515e218b6",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-45d1daf515e218b6.json",
+      "size_bytes": 39944,
+      "sha256": "c6e2edc4aaaceb0c822a5e53e465af6afd30b5b52303eed609d9cb5cc1fe5cbd",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-4ad1398a663b7933",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4ad1398a663b7933.json",
+      "size_bytes": 40347,
+      "sha256": "390f173a3f739b6a1c31cb03123b5c8fb0f1be1e66f8ee4e3d96d2284f6536c7",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-4d54ea7698000638",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4d54ea7698000638.json",
+      "size_bytes": 40968,
+      "sha256": "6acd1a67b18cb2e7f4feacf083e34229acabaac4bc36d03bac47ece9df20b194",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-4eb3495e2e32dd73",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4eb3495e2e32dd73.json",
+      "size_bytes": 40828,
+      "sha256": "746df609f29e70e3d9c78afd0495afb0dc38db75dac11634aa4b66d427ad0efd",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-4f5e09d1864ac832",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4f5e09d1864ac832.json",
+      "size_bytes": 40300,
+      "sha256": "e7340e72adb10d2dc68d080e020223f145c0f851a2c5d68ab3fa4b84cd3052c7",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-4fb9fc6716a3e65a",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4fb9fc6716a3e65a.json",
+      "size_bytes": 40906,
+      "sha256": "9ded5f4ad67d12313f9037cd504b644bf765d873e95bfcfedf59a8eafeb5c9cb",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-51f6ed2eb7632349",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-51f6ed2eb7632349.json",
+      "size_bytes": 40597,
+      "sha256": "c668aa355fd4ee1b7d8a8714bfd667bff05e44264e4c0ce891788a93e86550fb",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-5215f80c458dc1c4",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-5215f80c458dc1c4.json",
+      "size_bytes": 40135,
+      "sha256": "9956962854c7180845ee3d8c9221d3d076dd7f0fcab87ad23365884d8675aa52",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-5e52d7e5fbefbc05",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-5e52d7e5fbefbc05.json",
+      "size_bytes": 40549,
+      "sha256": "1f4cc5f66bb6b4078b0a590d8cfdd9ad1ece3d951df1adebb5b1108bccf8b0d0",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-68a1fdbd8955d9a4",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-68a1fdbd8955d9a4.json",
+      "size_bytes": 41079,
+      "sha256": "bbeb1f7d9906264bb4f06d86ced67dbe5d3e217a54f719d401e59c5d0137a834",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-6fded6b51e0642a8",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-6fded6b51e0642a8.json",
+      "size_bytes": 40069,
+      "sha256": "19d8d05912d84a6e2291c6cafa130f92ff57ed601d531c634262c3a483610ec2",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-708cf4d83a29d78f",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-708cf4d83a29d78f.json",
+      "size_bytes": 39973,
+      "sha256": "c4cc521d0d6ed174651ce4ce593d1841e124619d326fd9ed319872245515ef5d",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-7118d0dce593edea",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-7118d0dce593edea.json",
+      "size_bytes": 41285,
+      "sha256": "8c8cbbdeda2f58a7a8a10978909349a8e1ab72b37fd5b19367d903a45fe48712",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-731f452fb62a55bd",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-731f452fb62a55bd.json",
+      "size_bytes": 40489,
+      "sha256": "62b2a9d6376173b54ed983b7c4375cc8496b63bf6c07f985d4b327d19a46542a",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-75faa4a614a8f130",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-75faa4a614a8f130.json",
+      "size_bytes": 40593,
+      "sha256": "7a7da0168b7043491dbccf14c7693c69ab2ec7d8ac08c01f2eefc9cfdf3fe882",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-762111064d108c6d",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-762111064d108c6d.json",
+      "size_bytes": 41074,
+      "sha256": "4e192cfbb4f38431afec9d01a17da87bc1df950a4ce4958223bbd0e44a97cb85",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-774f62fc1777bc6b",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-774f62fc1777bc6b.json",
+      "size_bytes": 40397,
+      "sha256": "de31b2c187241cad42f337e3eb13100a71ee993d37707f8dc959fa41f149d667",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-79e659b84aa4786d",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-79e659b84aa4786d.json",
+      "size_bytes": 40281,
+      "sha256": "a76a9da9ff1e92bf77d6042b31272ba61f3d42c480dacdff8c5c3b1ea1a17e88",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-7acd4c14a0007418",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-7acd4c14a0007418.json",
+      "size_bytes": 300,
+      "sha256": "10313b786021f5914c6607d780de0ec4a93ca1ca073869ea6052b215059dc255",
+      "status": "numeric_exclusion",
+      "reason": "nuisance_field_fit_failure",
+      "bootstrap_replicates": null,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    },
+    {
+      "scan_record_id": "SCAN-02R-8345a5938afc1084",
+      "path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-8345a5938afc1084.json",
+      "size_bytes": 39944,
+      "sha256": "6f668f68691a9e236ea8190f942bbb0f1f2886dda5023b0eb73ee564d7e40864",
+      "status": "complete",
+      "reason": null,
+      "bootstrap_replicates": 2048,
+      "individually_final": true,
+      "deterministic_under_frozen_implementation": true,
+      "rerun_performed": false
+    }
+  ],
+  "remaining_count": 26,
+  "remaining_scan_record_ids": [
+    "SCAN-02R-77b71bd09c7eb4b4",
+    "SCAN-02R-8641a638f4880175",
+    "SCAN-02R-89614c0503a95275",
+    "SCAN-02R-8ca6316615b8cbae",
+    "SCAN-02R-8dcd5041a8a4e044",
+    "SCAN-02R-8e62e3b1b9deee81",
+    "SCAN-02R-91de8f7a5ce6984b",
+    "SCAN-02R-91f840c137c7a43c",
+    "SCAN-02R-957a8834d758202b",
+    "SCAN-02R-abcd8030795bc9cb",
+    "SCAN-02R-ae86f327e3ed5623",
+    "SCAN-02R-b704f6a14f738619",
+    "SCAN-02R-c3dcce6e5bc72678",
+    "SCAN-02R-c5843105fb81b54c",
+    "SCAN-02R-c7a73b4824a01210",
+    "SCAN-02R-d2b7e9ee069bd20e",
+    "SCAN-02R-ebc55d8b20e3cec0",
+    "SCAN-02R-eea1fadd4abbd144",
+    "SCAN-02R-ef6a11424f751d3f",
+    "SCAN-02R-f36bb8e354cf21b7",
+    "SCAN-02R-f380a5a0600b447a",
+    "SCAN-02R-f56f915bc229d6aa",
+    "SCAN-02R-f71173d3ec0c732c",
+    "SCAN-02R-f87c8c3cd06321c2",
+    "SCAN-02R-fb62d31e5c3c1dbf",
+    "SCAN-02R-fede66c26a275769"
+  ],
+  "last_saved_scan_record_id": "SCAN-02R-8345a5938afc1084",
+  "last_saved_basis": "latest cache file modification time after parent drain; not a claim about worker CPU completion ordering",
+  "frozen_file_sha256": {
+    "scripts/stage02r/b001_blind_feature_discovery.py": "c836485c8f472506ca186c7329519fe812f3bcf9c8fe18910966e614ff89a3e7",
+    "scripts/stage02r/b001_discovery_config.yaml": "2ee87ea3a4f81124fa18979ebee1807f5b8594b4fecc37c8a37de5b2220ca65c",
+    "04_Results/Stage02R/W02-02R-B-001/blind_split.csv": "a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670"
+  },
+  "preserved_execution_outputs": [
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/blind_split.csv",
+      "size_bytes": 32522,
+      "sha256": "a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/discovery_diagnostics.yaml",
+      "size_bytes": 2527,
+      "sha256": "0f747097a218408cc2ef2a43db23a78e520f699af9efd089c9c6a71c1074666e"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/discovery_point_representation.csv",
+      "size_bytes": 585015,
+      "sha256": "e8f1f0298df74b1948804614ac43ec4580f333d87ad8c68b610acc3933c97b21"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/discovery_qc.csv",
+      "size_bytes": 161582,
+      "sha256": "ae0dc36a594e34bfec0a85be650ee9b001197ab0292e84fdaa915c825e460f6e"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/exposure_semantic_preflight.yaml",
+      "size_bytes": 41546,
+      "sha256": "3f15c160591dfbf15e7f80d300415d5837f999718d68665219fd449673697694"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/provenance_manifest.yaml",
+      "size_bytes": 5866,
+      "sha256": "1b2e9799b90468082953b24fedd2431b54c242e9e2aeebf0e2ffdf5abbc7512a"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/scan_selection.csv",
+      "size_bytes": 43492,
+      "sha256": "bde1a30386f4d765c3b5c0de4e9a92c128076c14231bf612c08fd0a8c69288eb"
+    },
+    {
+      "path": "04_Results/Stage02R/W02-02R-B-001/test_report.yaml",
+      "size_bytes": 228226,
+      "sha256": "cffc1cf2980c01b80ba936aab36b5137f8b001895c0f1452a04c8cc69cc6659a"
+    }
+  ],
+  "holdout_detector_values_decoded": 0,
+  "holdout_count": 18,
+  "holdout_backfill": false,
+  "tests": {
+    "passed": 15,
+    "failed": 0,
+    "not_run": [
+      "B001-T16"
+    ]
+  },
+  "partial_reproducibility_or_catalogue_generated": false,
+  "cache_backup": {
+    "path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs.tar",
+    "size_bytes": 1249280,
+    "sha256": "fdac73d0c7f83bbbfe0978e0526bc02087ea8e9620cb0d3ff8e1832063462f3e",
+    "reason": "Secondary byte-exact archive; ignored by repository *.tar rule and not included in PANIC. Use the explicit per-scan snapshot_cache_mirrors for captured recovery copies."
+  },
+  "resume": {
+    "authorization": "Do not resume until the user explicitly requests continuation.",
+    "preconditions": [
+      "No B001 computational process running; work_recovery audit SAFE_TO_RESUME yes.",
+      "HEAD/main unchanged; frozen file hashes and every completed cache byte match this manifest.",
+      "Retain discovery_QC_complete phase and passed T01-T15 report; do not edit these to mark the interruption.",
+      "Use CPython 3.12.3, NumPy 1.26.4, SciPy 1.14.1, PyYAML 6.0.1 in the validated local environment."
+    ],
+    "command_from_repository": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \"$B001_PYTHON\" -B scripts/stage02r/b001_blind_feature_discovery.py --discover --workers 5",
+    "behavior": "Current execute_statistics reads the 31 cache files with source/split identity checks and submits only the 26 missing IDs. Interrupted unsaved scans start from their deterministic beginning, not an unfinished replicate. Numeric exclusion is final and reused. Reproducibility/catalogue only after all 57 outcomes are present.",
+    "do_not_run": [
+      "--prepare",
+      "--discovery-qc",
+      "--tests",
+      "completed scans",
+      "T-02R-05"
+    ],
+    "cache_missing_or_mismatch": "STOP. Do not run discovery, which otherwise would recompute missing cache entries. Byte-exact archive restoration requires explicit review; never overwrite differing files."
+  },
+  "snapshot_cache_mirrors": [
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-059bd02c78268a2b.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-059bd02c78268a2b.json",
+      "size_bytes": 40061,
+      "sha256": "b896daafb719c35f6efda4a85eda59011e0f7940327e6daa0c3ed989cae62014"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-074afad5a6b92ea4.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-074afad5a6b92ea4.json",
+      "size_bytes": 41309,
+      "sha256": "c2205834ca61b0b71a485b21519d5b8c302a2d8a6cefd5cca91a61f740d1c1e8"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-0e6d00a831c04e8d.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-0e6d00a831c04e8d.json",
+      "size_bytes": 40104,
+      "sha256": "ae1b555bba3ae7bfa29f4953be0bdb7157301a5e293eb70ba34951d48257bb3b"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-1e5b02c69224108d.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-1e5b02c69224108d.json",
+      "size_bytes": 41563,
+      "sha256": "b73487b8eedb53ef4ced770cc6bc87a33926946f9062938435bc097d1d92495b"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-26c5588a4a75efc2.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-26c5588a4a75efc2.json",
+      "size_bytes": 40772,
+      "sha256": "a06d55e586eabb3d886d174e75bf32b37251685bbd4d021bb0260e783798201c"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-2a0e91f43e0fe127.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-2a0e91f43e0fe127.json",
+      "size_bytes": 41262,
+      "sha256": "c1c309b7a89623c9b704de43e354b0342a45ebe8657020b639b7e7dc3245442a"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-2f690557cfd20bec.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-2f690557cfd20bec.json",
+      "size_bytes": 40170,
+      "sha256": "3af23bb59bcc316fa6d16a4e1c6311b0fadc8efb4c4f196f9fae2683a44bea41"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-306a96179bd778b6.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-306a96179bd778b6.json",
+      "size_bytes": 41172,
+      "sha256": "eef8eea5c8f0804c0c6d540529eb00ef3bdce13c2be16885593b921da2ee5bf3"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-3f903a520f921d83.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-3f903a520f921d83.json",
+      "size_bytes": 40005,
+      "sha256": "68d7558cf5f28e18f164d2876ca1293ae4d28e4e9e3215fe28cc65338d172646"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-432159a75d80f2b3.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-432159a75d80f2b3.json",
+      "size_bytes": 40603,
+      "sha256": "664e930b9fac9f147fb46486fd3e947456ec704161f6a21b54f56b00e052d953"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-43979cdff2eef525.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-43979cdff2eef525.json",
+      "size_bytes": 40495,
+      "sha256": "483f26ad70dbb2d8a1f3b5a356052dc43a15f215cb0ff2fe850b068b3d677cba"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-45d1daf515e218b6.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-45d1daf515e218b6.json",
+      "size_bytes": 39944,
+      "sha256": "c6e2edc4aaaceb0c822a5e53e465af6afd30b5b52303eed609d9cb5cc1fe5cbd"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4ad1398a663b7933.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-4ad1398a663b7933.json",
+      "size_bytes": 40347,
+      "sha256": "390f173a3f739b6a1c31cb03123b5c8fb0f1be1e66f8ee4e3d96d2284f6536c7"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4d54ea7698000638.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-4d54ea7698000638.json",
+      "size_bytes": 40968,
+      "sha256": "6acd1a67b18cb2e7f4feacf083e34229acabaac4bc36d03bac47ece9df20b194"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4eb3495e2e32dd73.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-4eb3495e2e32dd73.json",
+      "size_bytes": 40828,
+      "sha256": "746df609f29e70e3d9c78afd0495afb0dc38db75dac11634aa4b66d427ad0efd"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4f5e09d1864ac832.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-4f5e09d1864ac832.json",
+      "size_bytes": 40300,
+      "sha256": "e7340e72adb10d2dc68d080e020223f145c0f851a2c5d68ab3fa4b84cd3052c7"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-4fb9fc6716a3e65a.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-4fb9fc6716a3e65a.json",
+      "size_bytes": 40906,
+      "sha256": "9ded5f4ad67d12313f9037cd504b644bf765d873e95bfcfedf59a8eafeb5c9cb"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-51f6ed2eb7632349.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-51f6ed2eb7632349.json",
+      "size_bytes": 40597,
+      "sha256": "c668aa355fd4ee1b7d8a8714bfd667bff05e44264e4c0ce891788a93e86550fb"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-5215f80c458dc1c4.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-5215f80c458dc1c4.json",
+      "size_bytes": 40135,
+      "sha256": "9956962854c7180845ee3d8c9221d3d076dd7f0fcab87ad23365884d8675aa52"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-5e52d7e5fbefbc05.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-5e52d7e5fbefbc05.json",
+      "size_bytes": 40549,
+      "sha256": "1f4cc5f66bb6b4078b0a590d8cfdd9ad1ece3d951df1adebb5b1108bccf8b0d0"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-68a1fdbd8955d9a4.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-68a1fdbd8955d9a4.json",
+      "size_bytes": 41079,
+      "sha256": "bbeb1f7d9906264bb4f06d86ced67dbe5d3e217a54f719d401e59c5d0137a834"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-6fded6b51e0642a8.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-6fded6b51e0642a8.json",
+      "size_bytes": 40069,
+      "sha256": "19d8d05912d84a6e2291c6cafa130f92ff57ed601d531c634262c3a483610ec2"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-708cf4d83a29d78f.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-708cf4d83a29d78f.json",
+      "size_bytes": 39973,
+      "sha256": "c4cc521d0d6ed174651ce4ce593d1841e124619d326fd9ed319872245515ef5d"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-7118d0dce593edea.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-7118d0dce593edea.json",
+      "size_bytes": 41285,
+      "sha256": "8c8cbbdeda2f58a7a8a10978909349a8e1ab72b37fd5b19367d903a45fe48712"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-731f452fb62a55bd.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-731f452fb62a55bd.json",
+      "size_bytes": 40489,
+      "sha256": "62b2a9d6376173b54ed983b7c4375cc8496b63bf6c07f985d4b327d19a46542a"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-75faa4a614a8f130.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-75faa4a614a8f130.json",
+      "size_bytes": 40593,
+      "sha256": "7a7da0168b7043491dbccf14c7693c69ab2ec7d8ac08c01f2eefc9cfdf3fe882"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-762111064d108c6d.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-762111064d108c6d.json",
+      "size_bytes": 41074,
+      "sha256": "4e192cfbb4f38431afec9d01a17da87bc1df950a4ce4958223bbd0e44a97cb85"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-774f62fc1777bc6b.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-774f62fc1777bc6b.json",
+      "size_bytes": 40397,
+      "sha256": "de31b2c187241cad42f337e3eb13100a71ee993d37707f8dc959fa41f149d667"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-79e659b84aa4786d.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-79e659b84aa4786d.json",
+      "size_bytes": 40281,
+      "sha256": "a76a9da9ff1e92bf77d6042b31272ba61f3d42c480dacdff8c5c3b1ea1a17e88"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-7acd4c14a0007418.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-7acd4c14a0007418.json",
+      "size_bytes": 300,
+      "sha256": "10313b786021f5914c6607d780de0ec4a93ca1ca073869ea6052b215059dc255"
+    },
+    {
+      "source_path": "04_Results/cache/W02-02R-B-001/discovery/SCAN-02R-8345a5938afc1084.json",
+      "backup_path": "04_Results/Stage02R/W02-02R-B-001/handoff_completed_scan_runs/SCAN-02R-8345a5938afc1084.json",
+      "size_bytes": 39944,
+      "sha256": "6f668f68691a9e236ea8190f942bbb0f1f2886dda5023b0eb73ee564d7e40864"
+    }
+  ]
+}

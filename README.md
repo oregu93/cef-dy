@@ -50,9 +50,9 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Stage:** `M02R` — Stage 02R — independent TAIPAN re-analysis (`active`).
 
-**Current focus:** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
+**Current focus:** W02-02R-B-001 и T-02R-04 завершены. Научный результат reviewed, исход accepted_with_limitations: восемь нейтральных BF, все monitor-controlled Tier-1. Это экспериментальные свидетельства до подтверждающей спектроскопии, без физического CEF-назначения.
 
-**Next:** После canonical Project Control authorization commit выполнить в выбранном machine-local W02 context frozen job W02-02R-B-001 для blind exposure-aware energy-scan feature discovery. Перед execution обязательно создать recovery START snapshot через scripts/work_recovery.py. Выполнить только B-001, соблюсти detector-blind preflight/holdout contract и остановиться строго на B-001 STOP_CONDITION; затем вернуть checkpoint/results в "02 - TAIPAN Data Reduction" для scientific review.
+**Next:** T-02R-05: только проектирование и научное рецензирование подтверждающего анализа по неизменяемому каталогу B-001. Исполнение не авторизовано; детекторные данные всех 18 holdout-сканов недоступны до отдельного разрешения. Широкая переработка терминологии и документации отложена.
 
 **Metadata updated:** `2026-09-04`.
 <!-- AUTO:README_STATUS:END -->

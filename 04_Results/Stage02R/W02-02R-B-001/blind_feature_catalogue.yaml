@@ -1,0 +1,450 @@
+job_id: W02-02R-B-001
+catalogue_status: frozen_for_scientific_review
+feature_namespace: BF
+scientific_interpretation_status: pending
+feature_count: 8
+zero_features_allowed: true
+usable_discovery_scans: 56
+holdout_detector_access: false
+blind_split_sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+cross_mode_amplitude_combination: false
+features:
+- blind_feature_id: BF-001
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 2.4987
+  - 3.49865
+  discovery_location_not_confirmatory_centroid: 2.998675
+  supporting_scan_record_ids:
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-eea1fadd4abbd144
+  - SCAN-02R-f36bb8e354cf21b7
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-91f840c137c7a43c
+    interval:
+    - 2.4986
+    - 3.49865
+    p_FWER: 0.0004880429477794046
+    T: 124.8730515546631
+  - scan_record_id: SCAN-02R-f36bb8e354cf21b7
+    interval:
+    - 2.49865
+    - 3.49865
+    p_FWER: 0.02879453391898487
+    T: 13.241457861775416
+  - scan_record_id: SCAN-02R-957a8834d758202b
+    interval:
+    - 2.4987
+    - 3.49865
+    p_FWER: 0.0004880429477794046
+    T: 140.69509909127373
+  - scan_record_id: SCAN-02R-75faa4a614a8f130
+    interval:
+    - 2.4987
+    - 3.4987
+    p_FWER: 0.0004880429477794046
+    T: 25.887732520328427
+  - scan_record_id: SCAN-02R-eea1fadd4abbd144
+    interval:
+    - 2.4987
+    - 3.4987
+    p_FWER: 0.0004880429477794046
+    T: 25.69324309561489
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-002
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 2.499
+  - 5.4985
+  discovery_location_not_confirmatory_centroid: 3.9987500000000002
+  supporting_scan_record_ids:
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4d54ea7698000638
+  - SCAN-02R-4f5e09d1864ac832
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-fb62d31e5c3c1dbf
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-fb62d31e5c3c1dbf
+    interval:
+    - 2.49865
+    - 5.4985
+    p_FWER: 0.0004880429477794046
+    T: 93.91003896713664
+  - scan_record_id: SCAN-02R-4d54ea7698000638
+    interval:
+    - 2.4986
+    - 5.4986
+    p_FWER: 0.0004880429477794046
+    T: 211.1279943423142
+  - scan_record_id: SCAN-02R-4f5e09d1864ac832
+    interval:
+    - 2.49865
+    - 5.49865
+    p_FWER: 0.0004880429477794046
+    T: 876.1540910307085
+  - scan_record_id: SCAN-02R-4ad1398a663b7933
+    interval:
+    - 2.499
+    - 5.49885
+    p_FWER: 0.0004880429477794046
+    T: 834.244929165463
+  - scan_record_id: SCAN-02R-91f840c137c7a43c
+    interval:
+    - 2.4986
+    - 7.4986
+    p_FWER: 0.0004880429477794046
+    T: 334.2048706882051
+  - scan_record_id: SCAN-02R-957a8834d758202b
+    interval:
+    - 2.4987
+    - 7.4986
+    p_FWER: 0.0004880429477794046
+    T: 605.9063009376696
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-003
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 4.9986
+  - 6.99865
+  discovery_location_not_confirmatory_centroid: 5.998625
+  supporting_scan_record_ids:
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4d54ea7698000638
+  - SCAN-02R-4f5e09d1864ac832
+  - SCAN-02R-c3dcce6e5bc72678
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-4d54ea7698000638
+    interval:
+    - 2.4986
+    - 9.4983
+    p_FWER: 0.0004880429477794046
+    T: 116.47403237529215
+  - scan_record_id: SCAN-02R-4f5e09d1864ac832
+    interval:
+    - 2.49865
+    - 9.49855
+    p_FWER: 0.0004880429477794046
+    T: 1346.1904081640532
+  - scan_record_id: SCAN-02R-c3dcce6e5bc72678
+    interval:
+    - 4.9986
+    - 6.99865
+    p_FWER: 0.0004880429477794046
+    T: 209.87521852107602
+  - scan_record_id: SCAN-02R-4ad1398a663b7933
+    interval:
+    - 2.499
+    - 9.49855
+    p_FWER: 0.0004880429477794046
+    T: 1418.1828216069844
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-004
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 17.498
+  - 18.498150000000003
+  discovery_location_not_confirmatory_centroid: 17.998075
+  supporting_scan_record_ids:
+  - SCAN-02R-731f452fb62a55bd
+  - SCAN-02R-8641a638f4880175
+  - SCAN-02R-8dcd5041a8a4e044
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-76ff5c324efb0d8a
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-8dcd5041a8a4e044
+    interval:
+    - 16.497799999999998
+    - 19.4982
+    p_FWER: 0.0019521717911176184
+    T: 18.042845635063713
+  - scan_record_id: SCAN-02R-8641a638f4880175
+    interval:
+    - 16.49775
+    - 19.49825
+    p_FWER: 0.021961932650073207
+    T: 11.364997707187285
+  - scan_record_id: SCAN-02R-731f452fb62a55bd
+    interval:
+    - 17.498
+    - 18.498150000000003
+    p_FWER: 0.0004880429477794046
+    T: 30.654871666665713
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-005
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 17.4983
+  - 20.498350000000002
+  discovery_location_not_confirmatory_centroid: 18.998325
+  supporting_scan_record_ids:
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-f56f915bc229d6aa
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-75faa4a614a8f130
+    interval:
+    - 15.4978
+    - 22.4981
+    p_FWER: 0.013665202537823329
+    T: 15.637302910245126
+  - scan_record_id: SCAN-02R-f56f915bc229d6aa
+    interval:
+    - 17.4983
+    - 20.498350000000002
+    p_FWER: 0.003904343582235237
+    T: 16.52889631902326
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-006
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 40.49835
+  - 44.4983
+  discovery_location_not_confirmatory_centroid: 42.498325
+  supporting_scan_record_ids:
+  - SCAN-02R-074afad5a6b92ea4
+  - SCAN-02R-1e5b02c69224108d
+  - SCAN-02R-2a0e91f43e0fe127
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-432159a75d80f2b3
+  - SCAN-02R-7118d0dce593edea
+  - SCAN-02R-762111064d108c6d
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-79e659b84aa4786d
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-d2b7e9ee069bd20e
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-ef6a11424f751d3f
+  - SCAN-02R-f71173d3ec0c732c
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-1e5b02c69224108d
+    interval:
+    - 38.49725
+    - 45.497699999999995
+    p_FWER: 0.025866276232308444
+    T: 44.25929741683831
+  - scan_record_id: SCAN-02R-2a0e91f43e0fe127
+    interval:
+    - 38.49725
+    - 45.49825
+    p_FWER: 0.010248901903367497
+    T: 55.44934428119086
+  - scan_record_id: SCAN-02R-074afad5a6b92ea4
+    interval:
+    - 38.49725
+    - 45.498400000000004
+    p_FWER: 0.02342606149341142
+    T: 46.13140817747626
+  - scan_record_id: SCAN-02R-306a96179bd778b6
+    interval:
+    - 39.49825
+    - 44.4983
+    p_FWER: 0.04587603709126403
+    T: 46.05173167506291
+  - scan_record_id: SCAN-02R-77b71bd09c7eb4b4
+    interval:
+    - 38.49835
+    - 45.49835
+    p_FWER: 0.0004880429477794046
+    T: 66.68821661612856
+  - scan_record_id: SCAN-02R-ef6a11424f751d3f
+    interval:
+    - 39.4955
+    - 46.497749999999996
+    p_FWER: 0.0004880429477794046
+    T: 120.38763539568026
+  - scan_record_id: SCAN-02R-79e659b84aa4786d
+    interval:
+    - 39.496700000000004
+    - 46.49715
+    p_FWER: 0.0004880429477794046
+    T: 47.05691259125342
+  - scan_record_id: SCAN-02R-abcd8030795bc9cb
+    interval:
+    - 39.49825
+    - 46.4985
+    p_FWER: 0.012201073694485115
+    T: 61.955580634637954
+  - scan_record_id: SCAN-02R-432159a75d80f2b3
+    interval:
+    - 40.49555
+    - 47.49835
+    p_FWER: 0.0004880429477794046
+    T: 127.32088284289784
+  - scan_record_id: SCAN-02R-f71173d3ec0c732c
+    interval:
+    - 40.49665
+    - 47.497550000000004
+    p_FWER: 0.0004880429477794046
+    T: 452.2078758566422
+  - scan_record_id: SCAN-02R-d2b7e9ee069bd20e
+    interval:
+    - 40.497299999999996
+    - 47.4983
+    p_FWER: 0.0004880429477794046
+    T: 173.43189662337318
+  - scan_record_id: SCAN-02R-ebc55d8b20e3cec0
+    interval:
+    - 40.49835
+    - 47.497699999999995
+    p_FWER: 0.0004880429477794046
+    T: 53.88044433966388
+  - scan_record_id: SCAN-02R-7118d0dce593edea
+    interval:
+    - 40.4978
+    - 47.49835
+    p_FWER: 0.0009760858955588092
+    T: 53.12282241121284
+  - scan_record_id: SCAN-02R-762111064d108c6d
+    interval:
+    - 40.49835
+    - 47.49835
+    p_FWER: 0.0004880429477794046
+    T: 79.69663570774719
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-007
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 43.496849999999995
+  - 46.497749999999996
+  discovery_location_not_confirmatory_centroid: 44.997299999999996
+  supporting_scan_record_ids:
+  - SCAN-02R-074afad5a6b92ea4
+  - SCAN-02R-1e5b02c69224108d
+  - SCAN-02R-26c5588a4a75efc2
+  - SCAN-02R-2a0e91f43e0fe127
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-51f6ed2eb7632349
+  - SCAN-02R-68a1fdbd8955d9a4
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-ef6a11424f751d3f
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-2a0e91f43e0fe127
+    interval:
+    - 40.49720000000001
+    - 47.4976
+    p_FWER: 0.0004880429477794046
+    T: 114.51119535504222
+  - scan_record_id: SCAN-02R-1e5b02c69224108d
+    interval:
+    - 40.49720000000001
+    - 47.4978
+    p_FWER: 0.0004880429477794046
+    T: 89.80123259127868
+  - scan_record_id: SCAN-02R-306a96179bd778b6
+    interval:
+    - 40.49845
+    - 47.49765
+    p_FWER: 0.0004880429477794046
+    T: 103.0587376359199
+  - scan_record_id: SCAN-02R-074afad5a6b92ea4
+    interval:
+    - 40.497699999999995
+    - 47.49845
+    p_FWER: 0.0004880429477794046
+    T: 100.22147785175548
+  - scan_record_id: SCAN-02R-77b71bd09c7eb4b4
+    interval:
+    - 40.49835
+    - 47.49835
+    p_FWER: 0.0004880429477794046
+    T: 92.31504563355702
+  - scan_record_id: SCAN-02R-ef6a11424f751d3f
+    interval:
+    - 43.496849999999995
+    - 46.497749999999996
+    p_FWER: 0.0004880429477794046
+    T: 114.24194170120063
+  - scan_record_id: SCAN-02R-26c5588a4a75efc2
+    interval:
+    - 41.498450000000005
+    - 48.49745
+    p_FWER: 0.0004880429477794046
+    T: 119.49785288753446
+  - scan_record_id: SCAN-02R-91f840c137c7a43c
+    interval:
+    - 41.498549999999994
+    - 48.4976
+    p_FWER: 0.0004880429477794046
+    T: 80.71356971036766
+  - scan_record_id: SCAN-02R-68a1fdbd8955d9a4
+    interval:
+    - 41.49835
+    - 48.498099999999994
+    p_FWER: 0.004880429477794046
+    T: 36.22215720112581
+  - scan_record_id: SCAN-02R-51f6ed2eb7632349
+    interval:
+    - 41.49835
+    - 48.498149999999995
+    p_FWER: 0.0029282576866764276
+    T: 27.39846065873644
+  - scan_record_id: SCAN-02R-abcd8030795bc9cb
+    interval:
+    - 41.498400000000004
+    - 48.4982
+    p_FWER: 0.0004880429477794046
+    T: 113.23374505250285
+  - scan_record_id: SCAN-02R-ebc55d8b20e3cec0
+    interval:
+    - 42.498400000000004
+    - 49.4977
+    p_FWER: 0.049292337725719865
+    T: 31.133551424502002
+  cross_mode_position_recurrence: []
+- blind_feature_id: BF-008
+  count_control_mode: monitor_controlled
+  discovery_energy_interval:
+  - 45.496449999999996
+  - 46.4971
+  discovery_location_not_confirmatory_centroid: 45.996775
+  supporting_scan_record_ids:
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-d2b7e9ee069bd20e
+  - SCAN-02R-f71173d3ec0c732c
+  supporting_acquisition_state_ids:
+  - ACQSTATE-02R-896f06c2a7c231ec
+  reproducibility_tier: tier_1
+  scan_level_support_intervals:
+  - scan_record_id: SCAN-02R-f71173d3ec0c732c
+    interval:
+    - 45.496449999999996
+    - 46.4971
+    p_FWER: 0.0004880429477794046
+    T: 170.83464736116912
+  - scan_record_id: SCAN-02R-d2b7e9ee069bd20e
+    interval:
+    - 44.49695
+    - 47.4983
+    p_FWER: 0.0004880429477794046
+    T: 110.21542104786204
+  - scan_record_id: SCAN-02R-77b71bd09c7eb4b4
+    interval:
+    - 42.4978
+    - 49.498400000000004
+    p_FWER: 0.0004880429477794046
+    T: 59.65296829081308
+  cross_mode_position_recurrence: []

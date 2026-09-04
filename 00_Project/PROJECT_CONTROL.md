@@ -25,13 +25,13 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
+**Сейчас.** W02-02R-B-001 и T-02R-04 завершены. Научный результат reviewed, исход accepted_with_limitations: восемь нейтральных BF, все monitor-controlled Tier-1. Это экспериментальные свидетельства до подтверждающей спектроскопии, без физического CEF-назначения.
 
-**Почему.** Design T-02R-04 прошёл scientific/methodological review и зафиксирован frozen specification commit 0b59ac6b2cc2a73e83b1f7d2e5f980f33c065825. Recovery snapshot infrastructure зафиксирована canonical commit dab5b28cf8b5cd5349a6817d6af26eee495df924. W02-02R-B-001 ещё не запускался. Frozen job сохраняет CEF-blind, TAS-aware scope, detector-blind exposure-semantic preflight, metadata-only holdout seal, count-control separation и B-001 STOP_CONDITION.
+**Почему.** Проверены 57 окончательных исходов: 56 полных bootstrap B=2048 и одно окончательное численное исключение. Все 16 тестов PASS; каталог неизменяем. Перекрытия BF и численные отказы отдельных окон ограничивают выводы. Holdout не раскрывался; подмены исключённого скана не было.
 
-**Следующий шаг.** После canonical authorization commit выполнить только W02-02R-B-001. Перед первым computational step запустить scripts/work_recovery.py start --job W02-02R-B-001. Не выполнять T-02R-05, historical comparison, confirmatory peak fitting, CEF assignment или другой downstream analysis. После B-001 STOP_CONDITION вернуть checkpoint/results в "02 - TAIPAN Data Reduction" для scientific review.
+**Следующий шаг.** T-02R-05: только проектирование и научное рецензирование подтверждающего анализа по неизменяемому каталогу B-001. Исполнение не авторизовано; детекторные данные всех 18 holdout-сканов недоступны до отдельного разрешения. Широкая переработка терминологии и документации отложена.
 
-**Следующий Work job.** `W02-02R-B-001`
+**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -48,9 +48,9 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** Scientifically reviewed W02-02R-A-003 checkpoint: metadata-only acquisition/configuration and normalization-compatibility classification accepted; 16/16 tests PASS and STOP_CONDITION satisfied. Review was based on reported checkpoint/results and did not independently rerun raw data or independently byte-open the complete local artifact package.
+**Последний научный источник.** Рецензированный пакет W02-02R-B-001: 04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md; reviewed, accepted_with_limitations. R-012 / EV-007. Каталог SHA-256 f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5. Физическое назначение не выполнялось.
 
-**Последний Work checkpoint.** `W02-02R-A-003`
+**Последний Work checkpoint.** `W02-02R-B-001`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -92,9 +92,9 @@ control_chat: "00 - Project Control"
 | `W02-02R-A-001` | completed | Fresh TAIPAN/TAS-aware raw census и format/acquisition reconnaissance завершены; 20/20 tests PASS, scientific review accepted, STOP_CONDITION соблюдён. |
 | `W02-02R-A-002` | completed | Verified production parser + canonical file/scan inventories завершены; 38/38 tests PASS, scientific review ACCEPT, STOP_CONDITION соблюдён. |
 | `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
-| `T-02R-04` | active | Выполнить CEF-model-independent feature discovery без historical energy targets. |
-| `W02-02R-B-001` | ready | Frozen blind exposure-aware energy-scan feature discovery job; Project Control authorization разрешает только B-001 execution после canonical authorization commit, с обязательным recovery START snapshot и строго до B-001 STOP_CONDITION. |
-| `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
+| `T-02R-04` | completed | Слепое обнаружение и рецензирование B-001 завершены; результат принят с ограничениями, без физического назначения. |
+| `W02-02R-B-001` | completed | Выполнение завершено; scientific review: reviewed; outcome: accepted_with_limitations. Восемь monitor-controlled Tier-1 BF, 16/16 тестов PASS; каталог заморожен, holdout закрыт. |
+| `T-02R-05` | design_review_only | Следующий этап — только проектирование и научное рецензирование подтверждающего анализа. Исполнение не авторизовано; все 18 holdout-сканов закрыты до отдельного разрешения. |
 
 
 # 3. Roadmap после Stage 00C
