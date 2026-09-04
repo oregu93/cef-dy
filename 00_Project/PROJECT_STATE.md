@@ -60,7 +60,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — independent TAIPAN re-analysis
 
-**Следующий шаг.** `T-02R-04`: В чате "02 - TAIPAN Data Reduction" на базе scientifically reviewed A-001/A-002/A-003 сформировать lean design следующего atomic Stage 02R job для CEF-model-independent spectral feature discovery. Перед execution явно определить необходимую normalization semantics: A-003 compatibility groups являются только conditionally_supported candidate shared-treatment classes, а не готовыми numerical scale parameters. Production execution не запускать до отдельного design freeze и Project Control authorization.
+**Следующий шаг.** `W02-02R-B-001`: После canonical Project Control authorization commit выполнить в выбранном machine-local W02 context frozen job W02-02R-B-001 для blind exposure-aware energy-scan feature discovery. Перед execution обязательно создать recovery START snapshot через scripts/work_recovery.py. Выполнить только B-001, соблюсти detector-blind preflight/holdout contract и остановиться строго на B-001 STOP_CONDITION; затем вернуть checkpoint/results в "02 - TAIPAN Data Reduction" для scientific review.
 
 **Не следует предполагать.**
 - Особенность около 18.25 meV уже окончательно доказана как CEF-переход Dy3+.

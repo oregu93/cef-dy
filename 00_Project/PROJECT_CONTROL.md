@@ -27,11 +27,11 @@ control_chat: "00 - Project Control"
 
 **Сейчас.** Stage 02R — независимый повторный анализ TAIPAN. Цель этапа — построить воспроизводимую цепочку от raw instrument data до model-independent spectral features и canonical experimental observation contract до использования CEF assignments и microscopic models.
 
-**Почему.** W02-02R-A-003 завершён и принят scientific review. Для 201 scans восстановлены 46 acquisition states, один recorded verified instrument-config class, 85 acquisition boundaries, zero verified normalization-relevant boundaries и один normalization epoch. Все 10006 same-control-mode pairs conditionally_supported из-за critical unknown configuration metadata; 10094 cross-control-mode pairs not_supported. Numerical normalization и spectral analysis не выполнялись.
+**Почему.** Design T-02R-04 прошёл scientific/methodological review и зафиксирован frozen specification commit 0b59ac6b2cc2a73e83b1f7d2e5f980f33c065825. Recovery snapshot infrastructure зафиксирована canonical commit dab5b28cf8b5cd5349a6817d6af26eee495df924. W02-02R-B-001 ещё не запускался. Frozen job сохраняет CEF-blind, TAS-aware scope, detector-blind exposure-semantic preflight, metadata-only holdout seal, count-control separation и B-001 STOP_CONDITION.
 
-**Следующий шаг.** Перейти в "02 - TAIPAN Data Reduction" к design T-02R-04. Сначала определить минимально необходимую и физически корректную normalization/data-reduction strategy для blind feature discovery, не превращая A-003 compatibility groups автоматически в nuisance scale factors. После scientific design review вернуть specification в Project Control для freeze/authorization.
+**Следующий шаг.** После canonical authorization commit выполнить только W02-02R-B-001. Перед первым computational step запустить scripts/work_recovery.py start --job W02-02R-B-001. Не выполнять T-02R-05, historical comparison, confirmatory peak fitting, CEF assignment или другой downstream analysis. После B-001 STOP_CONDITION вернуть checkpoint/results в "02 - TAIPAN Data Reduction" для scientific review.
 
-**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
+**Следующий Work job.** `W02-02R-B-001`
 
 **Заблокировано.**
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
@@ -93,6 +93,7 @@ control_chat: "00 - Project Control"
 | `W02-02R-A-002` | completed | Verified production parser + canonical file/scan inventories завершены; 38/38 tests PASS, scientific review ACCEPT, STOP_CONDITION соблюдён. |
 | `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
 | `T-02R-04` | active | Выполнить CEF-model-independent feature discovery без historical energy targets. |
+| `W02-02R-B-001` | ready | Frozen blind exposure-aware energy-scan feature discovery job; Project Control authorization разрешает только B-001 execution после canonical authorization commit, с обязательным recovery START snapshot и строго до B-001 STOP_CONDITION. |
 | `T-02R-05` | queued | Выполнить confirmatory/shared line-shape analysis и сформировать canonical experimental observation contract. |
 
 
