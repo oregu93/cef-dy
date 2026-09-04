@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import argparse
+import os
 import re
 import yaml
 
@@ -36,11 +37,63 @@ def wrapped(text):
     return " ".join(str(text).split())
 
 
+def relative_link(document, repository_path):
+    target = ROOT / repository_path
+    return Path(os.path.relpath(target, document.parent)).as_posix()
+
+
+def facade_source_links(meta, document):
+    provenance = meta["scientific_facade"]["provenance"]
+    links = []
+
+    for item in provenance.get("links", []):
+        links.append(
+            f"[{wrapped(item['label'])}]"
+            f"({relative_link(document, item['path'])})"
+        )
+
+    commit = provenance.get("canonical_commit")
+    if commit:
+        links.append(
+            f"[canonical commit `{commit[:7]}`]"
+            f"(https://github.com/oregu93/cef-dy/commit/{commit})"
+        )
+
+    return "; ".join(links) + "."
+
+
+def b001_summary_lines(meta):
+    b001 = meta["scientific_facade"]["b001"]
+    return [
+        f"- Каталог: `{b001['catalogue_feature_count']}` BF-записей; "
+        f"все относятся к `{b001['catalogue_count_control_mode']}`; "
+        f"`{b001['catalogue_tier_1_count']}` Tier-1, "
+        f"`{b001['catalogue_tier_2_count']}` Tier-2; межрежимная "
+        f"повторяемость положения — "
+        f"`{b001['cross_mode_position_recurrence_count']}`.",
+        f"- Отложенная выборка: `{b001['holdout_scan_count']}` сканов; "
+        "детекторные данные не использовались на поисковом этапе.",
+        f"- Численная оговорка: `{b001['excluded_discovery_scan_count']}` "
+        f"скан для поиска (`discovery`) исключён по правилу "
+        f"`{b001['exclusion_reason']}` без повторного расчёта и замещения.",
+        "- BF-ID обозначают алгоритмические кластеры воспроизводимости; "
+        "они не устанавливают число различных физических возбуждений; "
+        "CEF-назначение не выполнялось.",
+    ]
+
+
 def state_block(meta):
-    lines = ["# 60-second re-entry", ""]
+    facade = meta["scientific_facade"]
+    lines = ["# Научное состояние за 60 секунд", ""]
 
     lines += [
         f"**Научная задача.** {wrapped(meta['scientific_question'])}",
+        "",
+        f"**Текущий научный вопрос.** "
+        f"{wrapped(facade['current_scientific_question'])}",
+        "",
+        f"**Зачем выполняется Stage 02R.** "
+        f"{wrapped(facade['stage02r_purpose'])}",
         "",
         f"**Что непосредственно поддерживают экспериментальные данные.** "
         f"{wrapped(meta['experimental_evidence_summary'])}",
@@ -52,6 +105,10 @@ def state_block(meta):
         f"{wrapped(meta['model_status_summary'])}",
         "",
     ]
+
+    lines += ["**Результат B-001.**"]
+    lines.extend(b001_summary_lines(meta))
+    lines.append("")
 
     lines += ["**Основные неопределённости.**"]
     for item in meta.get("main_uncertainties", []):
@@ -75,6 +132,11 @@ def state_block(meta):
     lines += ["**Не следует предполагать.**"]
     for item in meta.get("do_not_assume", []):
         lines.append(f"- {wrapped(item)}")
+
+    lines += [
+        "",
+        "**Происхождение B-001.** " + facade_source_links(meta, STATE),
+    ]
 
     return "\n".join(lines).rstrip() + "\n"
 
@@ -168,21 +230,49 @@ def control_block(meta, hyps):
 
 
 def readme_status_block(meta):
+    facade = meta["scientific_facade"]
     milestone = meta["current_milestone"]
     next_step = meta["immediate_next_step"]
 
     lines = [
-        "## Текущий статус проекта",
+        "## Краткое научное состояние",
         "",
-        f"**Stage:** `{milestone['id']}` — "
+        f"**Научная цель.** {wrapped(meta['scientific_question'])}",
+        "",
+        f"**Текущий этап.** `{milestone['id']}` — "
         f"{wrapped(milestone['title'])} "
         f"(`{milestone['status']}`).",
         "",
-        f"**Current focus:** {wrapped(meta['control']['now'])}",
+        f"**Текущий научный вопрос.** "
+        f"{wrapped(facade['current_scientific_question'])}",
         "",
-        f"**Next:** {wrapped(next_step['text'])}",
+        f"**Зачем выполняется Stage 02R.** "
+        f"{wrapped(facade['stage02r_purpose'])}",
         "",
-        f"**Metadata updated:** `{meta.get('updated', 'unknown')}`.",
+        "**Что установил B-001.**",
+    ]
+    lines.extend(b001_summary_lines(meta))
+
+    lines += ["", "**Основные ограничения.**"]
+    for item in facade.get("limitations", []):
+        lines.append(f"- {wrapped(item)}")
+
+    lines += ["", "**Что не установлено.**"]
+    for item in facade.get("not_established", []):
+        lines.append(f"- {wrapped(item)}")
+
+    lines += [
+        "",
+        f"**Следующий научный шаг.** `{next_step['id']}`: "
+        f"{wrapped(next_step['text'])}",
+        "",
+        "**Дорожная карта.** "
+        + " → ".join(wrapped(item) for item in facade.get("roadmap", []))
+        + ".",
+        "",
+        "**Происхождение B-001.** " + facade_source_links(meta, README),
+        "",
+        f"**Метаданные обновлены:** `{meta.get('updated', 'unknown')}`.",
     ]
 
     return "\n".join(lines).rstrip() + "\n"

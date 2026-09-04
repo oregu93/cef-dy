@@ -21,6 +21,11 @@ MODELS = ROOT / "00_Project" / "MODEL_REGISTER.yaml"
 
 EXPECTED_SCHEMA_VERSION = "2.2"
 
+VALIDATION_EXCLUDED_PREFIXES = (
+    "Archive/legacy/",
+    "CEF_Dy_Backup/",
+)
+
 RESULT_STATUSES = {
     "candidate",
     "working",
@@ -94,6 +99,12 @@ def rel_posix(path):
         return path.relative_to(ROOT).as_posix()
     except Exception:
         return str(path).replace("\\", "/")
+
+
+def excluded_from_validation(path):
+    return rel_posix(path).startswith(
+        VALIDATION_EXCLUDED_PREFIXES
+    )
 
 
 def add_issue(issues, level, file, message):
@@ -491,7 +502,7 @@ def markdown_links(path, text, issues):
 def path_leak_checks(path, text, issues):
     path_str = rel_posix(path)
 
-    if path_str.startswith("Archive/legacy/"):
+    if excluded_from_validation(path):
         return
 
     if path.name in {
@@ -536,6 +547,7 @@ def metadata_checks(issues):
     required = [
         "project_id",
         "scientific_question",
+        "scientific_facade",
         "experimental_evidence_summary",
         "interpretation_summary",
         "model_status_summary",
@@ -628,6 +640,16 @@ def metadata_checks(issues):
             "error",
             rel(META),
             "control must be a mapping",
+        )
+
+    facade = meta.get("scientific_facade")
+
+    if facade is not None and not isinstance(facade, dict):
+        add_issue(
+            issues,
+            "error",
+            rel(META),
+            "scientific_facade must be a mapping",
         )
 
 
@@ -1236,7 +1258,7 @@ def register_checks(issues):
 
 def markdown_and_path_checks(issues):
     for path in ROOT.rglob("*.md"):
-        if rel_posix(path).startswith("Archive/legacy/"):
+        if excluded_from_validation(path):
             continue
 
         text = path.read_text(
@@ -1262,7 +1284,7 @@ def markdown_and_path_checks(issues):
         )
 
     for path in ROOT.rglob("*.yaml"):
-        if rel_posix(path).startswith("Archive/legacy/"):
+        if excluded_from_validation(path):
             continue
 
         text = path.read_text(
@@ -1327,10 +1349,7 @@ def file_size_checks(issues):
             "/",
         )
 
-        if (
-            "Archive/legacy/"
-            in path_str
-        ):
+        if excluded_from_validation(path):
             continue
 
         if path_str.startswith(".git/"):
@@ -1401,7 +1420,7 @@ def main():
 
     # Parse every active YAML file at least once.
     for path in ROOT.rglob("*.yaml"):
-        if rel_posix(path).startswith("Archive/legacy/"):
+        if excluded_from_validation(path):
             continue
 
         load_yaml(

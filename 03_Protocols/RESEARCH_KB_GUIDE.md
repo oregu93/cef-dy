@@ -2,8 +2,8 @@
 title: "CEF Dy — руководство по ведению базы знаний"
 type: protocol
 status: active
-version: "1.1"
-updated: 2026-09-02
+version: "1.2"
+updated: 2026-09-04
 ---
 
 # Руководство по ведению базы знаний исследования
@@ -221,6 +221,8 @@ Evidence
 ```
 
 Не создавать отдельную запись для каждого мелкого технического действия.
+Master-индекс должен содержать прямую относительную ссылку на файл каждой
+отдельной записи. Параллельный раздел со вторым списком тех же ссылок не нужен.
 
 ## Promotion workflow
 
@@ -269,10 +271,17 @@ PROJECT_STATE, если результат меняет текущее знан�
 Не редактировать вручную текст между markers:
 
 ```text
+AUTO:README_STATUS
 AUTO:STATE_REENTRY
 AUTO:CONTROL_REENTRY
 ```
 
+Высокоуровневый научный фасад хранится в структурированном разделе
+`PROJECT_METADATA.yaml:scientific_facade`. `kb_refresh.py` отображает его
+в `README.md` и в кратком re-entry `PROJECT_STATE.md`; operational/governance
+поля `control` формируют re-entry `PROJECT_CONTROL.md`.
+
+Generated blocks не являются независимыми источниками научного состояния.
 Изменяйте `PROJECT_METADATA.yaml`, затем запускайте:
 
 ```powershell
@@ -328,6 +337,16 @@ git commit -m "..."
 - имён функций, команд, программ и API;
 - терминов, перевод которых создаёт реальную неоднозначность;
 - machine-facing LLM bootstrap prompts и executable instruction contracts.
+
+Принятые соответствия для содержательного текста: blind analysis — «слепой
+анализ», holdout — «отложенная выборка», nuisance parameter — «мешающий
+параметр», profile likelihood — «профильное правдоподобие», spectral feature —
+«спектральная особенность». Точные enum/ID внутри YAML, CSV и кода не
+переводятся.
+
+Если перевод неустоявшегося термина может изменить научный смысл, он не
+канонизируется автоматически, а помещается в `TERMINOLOGY_REVIEW_REQUIRED`
+с контекстом, вариантами и причиной неопределённости.
 
 ### Markdown и math portability
 

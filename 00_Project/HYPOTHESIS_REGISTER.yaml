@@ -60,10 +60,12 @@
   diagnostic_results:
     - R-006
   conflicting_results: []
+  completed_prerequisites:
+    - B-001 завершил слепой поиск спектральных особенностей как R-012 / EV-007 без исторического сопоставления и без CEF-назначения.
   tests_required:
     - Восстановить первичные литературные источники обеих энергий.
-    - Выполнить Stage 02R blind feature discovery без этих target energies.
-    - После blind analysis выполнить targeted sensitivity / upper-limit tests.
+    - До отдельного design review T-02R-05 не сопоставлять historical target energies с каталогом BF-*.
+    - В отдельном design review заранее определить targeted sensitivity / upper-limit tests; не выполнять их без разрешения.
     - Проверить возможные transition strengths в admissible CEF models.
   notes: >
     Отсутствие таких переходов в conditioned PCM R-006 не доказывает их
