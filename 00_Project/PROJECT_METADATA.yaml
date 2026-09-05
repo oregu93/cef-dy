@@ -11,7 +11,7 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Может ли замороженная процедура C-001 после отдельной авторизации
+    Может ли замороженная процедура C-001 после вступления в силу canonical authorization
     сформировать на данных для поиска и метаданных отложенной выборки без
     детекторных полей самодостаточную модель и реестр гипотез для будущего C-002,
     сохранив каталог B-001 и границы слепого анализа?
@@ -39,10 +39,26 @@ scientific_facade:
     job_id: W02-02R-C-001
     design_status: approved
     specification_status: frozen
+    scientific_execution_readiness: accepted
     execution_status: not_started
-    execution_authorized: false
+    execution_authorization_decision: approved
+    execution_authorized: true
+    authorization_effective_after: canonical_authorization_commit_pushed_to_main
     holdout_detector_access_authorized: false
     design_open_questions: none
+    capability_envelope:
+      execute_c001: true
+      discovery_detector_access: true
+      resolution_evidence_detector_access: true
+      holdout_metadata_access: true
+      holdout_detector_access: false
+      execute_c002: false
+      modify_b001_catalogue: false
+      historical_target_comparison: false
+      f002_f004_mapping: false
+      cef_assignment: false
+      stage03r_inference: false
+      stage03d_execution: false
     canonical_design_baseline: 31b16b22fc38fc51c063dc1d2908fcb630b8d3cf
     specification_path: 03_Protocols/STAGE02R_T02R05_C001_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
   c002:
@@ -69,8 +85,8 @@ scientific_facade:
     id: T-02R-05
     job_id: W02-02R-C-001
     specification_status: frozen
-    next_governance_action: separate_c001_execution_authorization
-    execution_authorized: false
+    next_governance_action: canonical_commit_and_push_then_execute_c001
+    execution_authorized: true
     holdout_detector_access_authorized: false
   roadmap:
     - Stage 02R — независимый повторный анализ TAIPAN
@@ -128,11 +144,13 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: T-02R-05
+  id: W02-02R-C-001
   text: >-
-    Спецификация W02-02R-C-001 заморожена и одобрена методологически. Следующее действие — отдельное
-    решение Project Control об авторизации исполнения C-001. C-001 не выполнялся; C-002 не
-    авторизован; детекторные данные всех 18 сканов отложенной выборки (`holdout`) недоступны.
+    После validation, canonical authorization commit и push выполнить только W02-02R-C-001.
+    Перед первым вычислительным шагом при синхронизированном чистом HEAD запустить
+    `python scripts/work_recovery.py start --job W02-02R-C-001`. C-001 ещё не выполнялся;
+    C-002 и детекторный доступ к отложенной выборке не авторизованы. После STOP_CONDITION
+    вернуть checkpoint и artifacts в «02 - TAIPAN Data Reduction» для научно-методологического review.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -147,20 +165,22 @@ do_not_assume:
 
 control:
   now: >-
-    W02-02R-B-001 и T-02R-04 завершены. Спецификация W02-02R-C-001 методологически одобрена и
-    заморожена; открытых вопросов проектирования нет. C-001 не выполнялся, а R-012 / EV-007 и
-    каталог B-001 не изменялись.
+    Спецификация W02-02R-C-001 заморожена, научная готовность к исполнению принята, а отдельное
+    решение об авторизации одобрено. Авторизация становится операционной только после validation,
+    commit и push этого capture в canonical main. C-001 ещё не выполнялся.
   why: >-
-    C-001 фиксирует `complex-first` модельную подготовку на данных для поиска и только метаданных
-    отложенной выборки. Спецификация сохраняет восемь BF как алгоритмические области без допущения
-    «одна BF — одна физическая линия» и не разрешает историческое сопоставление или CEF-назначение.
+    C-001 ограничен модельной подготовкой по замороженной спецификации: detector access разрешён
+    только для discovery-данных и resolution evidence, а для отложенной выборки разрешены только
+    allowlisted metadata. Каталог B-001 неизменяем; историческое сопоставление и CEF-назначение запрещены.
   next: >-
-    Project Control должен отдельно решить вопрос об авторизации исполнения W02-02R-C-001.
-    Исполнение C-001 и C-002 не авторизовано; детекторный доступ ко всем 18 сканам отложенной
-    выборки (`holdout`) не авторизован.
-  next_work_job: null
+    После canonical authorization commit и push, при local HEAD == origin/main и чистом preflight,
+    перед первым вычислительным шагом запустить `python scripts/work_recovery.py start --job
+    W02-02R-C-001`, затем выполнить только C-001 до его STOP_CONDITION. После этого вернуть
+    checkpoint/artifacts в «02 - TAIPAN Data Reduction». C-002 и holdout detector access запрещены.
+  next_work_job: W02-02R-C-001
 
   blocked:
+    - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
     - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
     - Использование F004 около 44.4 meV как обязательного CEF-перехода.
