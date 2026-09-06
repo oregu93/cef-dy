@@ -3,8 +3,8 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "2.5"
-updated: 2026-09-05
+version: "2.6"
+updated: 2026-09-06
 control_chat: "00 - Project Control"
 ---
 
@@ -25,15 +25,16 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Спецификация W02-02R-C-001 заморожена, научная готовность к исполнению принята, а отдельное решение об авторизации одобрено. Авторизация становится операционной только после validation, commit и push этого capture в canonical main. C-001 ещё не выполнялся.
+**Сейчас.** Попытка W02-02R-C-001-A1 завершена по причине frozen_numerical_failure; её реализация признана несоответствующей спецификации, а научный результат отклонён как канонический. Скорректированная реализация прошла статическую проверку с решением A и готова к отдельному рассмотрению авторизации повторного запуска, но повторный запуск не авторизован.
 
-**Почему.** C-001 ограничен модельной подготовкой по замороженной спецификации: detector access разрешён только для discovery-данных и resolution evidence, а для отложенной выборки разрешены только allowlisted metadata. Каталог B-001 неизменяем; историческое сопоставление и CEF-назначение запрещены.
+**Почему.** Диагностические наблюдения A1 сохранены только как provenance отказа и не образуют научный результат C-001. Исправления реализации не меняют замороженную спецификацию, каталог B-001 или границы доступа.
 
-**Следующий шаг.** После canonical authorization commit и push, при local HEAD == origin/main и чистом preflight, перед первым вычислительным шагом запустить `python scripts/work_recovery.py start --job W02-02R-C-001`, затем выполнить только C-001 до его STOP_CONDITION. После этого вернуть checkpoint/artifacts в «02 - TAIPAN Data Reduction». C-002 и holdout detector access запрещены.
+**Следующий шаг.** Вернуть canonical capture в «00 - Project Control» для отдельного решения о повторной авторизации. До такого решения не запускать C-001 и не обращаться к данным. C-002 и holdout detector access остаются запрещены.
 
-**Следующий Work job.** `W02-02R-C-001`
+**Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
+- Повторный запуск W02-02R-C-001 до отдельной Project Control rerun authorization.
 - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
 - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
@@ -51,7 +52,7 @@ control_chat: "00 - Project Control"
 
 **Последний научный источник.** [Рецензированный пакет W02-02R-B-001](../04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md): reviewed, accepted_with_limitations; R-012 / EV-007. Канонический переход зафиксирован в [commit 21506b7](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d). Физическое назначение не выполнялось.
 
-**Последний Work checkpoint.** `W02-02R-B-001`
+**Последний Work checkpoint.** `W02-02R-C-001-A1`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -95,8 +96,8 @@ control_chat: "00 - Project Control"
 | `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
 | `T-02R-04` | completed | Слепое обнаружение и рецензирование B-001 завершены; результат принят с ограничениями, без физического назначения. |
 | `W02-02R-B-001` | completed | Выполнение завершено; scientific review: reviewed; outcome: accepted_with_limitations. Восемь monitor-controlled Tier-1 BF, 16/16 тестов PASS; каталог заморожен, holdout закрыт. |
-| `T-02R-05` | active | Архитектура C-001 → Project Control freeze → C-002 → scientific review → C-003. Авторизован только C-001; C-002 и детекторный доступ к отложенной выборке запрещены. |
-| `W02-02R-C-001` | ready | Frozen confirmatory model-preparation job. Выполнение разрешено только после canonical authorization commit/push и recovery START snapshot; C-001 ещё не выполнялся. |
+| `T-02R-05` | active | Архитектура C-001 → Project Control freeze → C-002 → scientific review → C-003 сохранена. A1 отклонена как канонический результат; повторный запуск C-001, C-002 и детекторный доступ к отложенной выборке не авторизованы. |
+| `W02-02R-C-001` | blocked | `job_status: blocked_pending_rerun_authorization`. Скорректированная реализация принята по Decision A и готова к отдельному рассмотрению повторной авторизации; канонический научный результат не установлен. |
 
 
 # 3. Roadmap после Stage 00C

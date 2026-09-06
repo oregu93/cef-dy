@@ -1,0 +1,93 @@
+configuration_version: stage02r_c001_confirmatory_v1
+job_id: W02-02R-C-001
+dataset_id: EXP-TAIPAN-001
+authorization_baseline: 8525e573e7de253b7fcb1922502e99b3eddd1a0d
+canonical_design_baseline: 31b16b22fc38fc51c063dc1d2908fcb630b8d3cf
+recovery_start_snapshot: 20260905T162248675143Z_3fca5d46_start
+
+frozen_inputs:
+  specification_sha256: 6dabdf49d72e50329a57bd86e6b2cac8a4f664a76caf4c1f3d62870ccb163ea5
+  blind_catalogue_sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+  excluded_discovery_scan_record_id: SCAN-02R-7acd4c14a0007418
+
+complexes:
+  CX-01:
+    source_bf_ids: [BF-001, BF-002, BF-003]
+    frozen_union_meV: [2.49870, 6.99865]
+    maximum_BF_defined_K: 3
+  CX-02:
+    source_bf_ids: [BF-004, BF-005]
+    frozen_union_meV: [17.49800, 20.49835]
+    maximum_BF_defined_K: 2
+  CX-03:
+    source_bf_ids: [BF-006, BF-007, BF-008]
+    frozen_union_meV: [40.49835, 46.49775]
+    maximum_BF_defined_K: 3
+
+fit_window:
+  candidate_margin_multiples: [5, 4, 3]
+  minimum_scan_count: 2
+  minimum_points_in_window: 15
+  minimum_flank_points_each_side: 4
+
+resolution:
+  historical_EV006_fwhm_meV: 0.894
+  historical_EV006_sigma_meV: 0.025
+  empirical_window_contraction_points: 1
+  maximum_background_window_width_change_fraction: 0.10
+  empirical_resolution_interpolation_enabled: false
+  resolution_probe_physical_basis_status: unresolved
+  calculated_resolution_implementation:
+    availability: unavailable
+    algorithm_family: Popovici_type
+    validation_status: unavailable
+
+background_development:
+  candidate_families: [B0, B1, B2]
+  alpha: 0.05
+  bootstrap_replicates: 4096
+
+component_development:
+  alpha: 0.10
+  bootstrap_replicates: 4096
+
+numerical:
+  numerical_spec_version: stage02r_c001_numerical_v1
+  optimizer:
+    implementation: scipy.optimize.minimize
+    method: L-BFGS-B
+    maxiter: 4000
+    ftol: 1.0e-12
+    gtol: 1.0e-8
+    maxls: 50
+  observed_fit_multistarts: 33
+  bootstrap_fit_multistarts_candidate_sequence: [4, 8, 16, 33]
+  bootstrap_reference_multistarts: 33
+  bootstrap_adequacy_benchmark_replicates: 64
+  log_likelihood_relative_tolerance: 1.0e-6
+  allowed_likelihood_mismatches_per_model: 1
+  bootstrap_failed_replicate_fraction_max: 0.01
+  profile_grid_points: 41
+  profile_delta_minus2logL_threshold: 3.841458820694124
+  hessian_condition_warning_threshold: 1.0e+10
+  projected_gradient_threshold: 1.0e-4
+  active_bound_relative_tolerance: 1.0e-8
+  finite_difference_relative_step: 1.0e-6
+  initialization_constants:
+    C_b: 4.0
+    C_A: 4.0
+    C_eta: 4.0
+
+future_c002:
+  execution_authorized: false
+  holdout_detector_access_authorized: false
+  bootstrap_replicates: 8192
+  global_multiple_testing: holm
+  global_alpha: 0.05
+  raw_p_value_rule: plus_one
+
+execution:
+  output_directory: 04_Results/Stage02R/W02-02R-C-001
+  checkpoint_path: 02_Work_Checkpoints/W02-02R-C-001.md
+  atomic_writes: true
+  instrument_block_default: not_proposed

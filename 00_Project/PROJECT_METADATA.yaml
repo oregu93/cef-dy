@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-05'
+updated: '2026-09-06'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -11,7 +11,7 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Может ли замороженная процедура C-001 после вступления в силу canonical authorization
+    Сможет ли скорректированная реализация C-001 после отдельной авторизации повторного запуска
     сформировать на данных для поиска и метаданных отложенной выборки без
     детекторных полей самодостаточную модель и реестр гипотез для будущего C-002,
     сохранив каталог B-001 и границы слепого анализа?
@@ -40,17 +40,57 @@ scientific_facade:
     design_status: approved
     specification_status: frozen
     scientific_execution_readiness: accepted
-    execution_status: not_started
-    execution_authorization_decision: approved
-    execution_authorized: true
-    authorization_effective_after: canonical_authorization_commit_pushed_to_main
+    job_status: blocked_pending_rerun_authorization
+    canonical_scientific_result_status: not_established
+    initial_execution_authorization_decision: approved
+    initial_execution_authorization_status: consumed
+    execution_authorized: false
+    ready_for_rerun_authorization: true
+    rerun_authorization_status: not_authorized
     holdout_detector_access_authorized: false
     design_open_questions: none
+    current_implementation_status: conforming
+    current_implementation_review_status: accepted
+    current_implementation_review_decision: A
+    current_implementation:
+      source_path: scripts/stage02r/c001_confirmatory_model_preparation.py
+      source_sha256: cdbd4192b27f4fe538192ade836150e13c1a485632d0b38f60b9eaa99ff1cc25
+      config_path: scripts/stage02r/c001_confirmatory_config.yaml
+      config_sha256: 2dab1efa675d6d492c7102be5952a99668ee5da7c0c8687603e318a1a0f3066a
+      static_conformance_status: pass
+      conformance_checks:
+        numerical_path: pass
+        lbfgsb: pass
+        physical_parameter_domain: pass
+        kkt: pass
+        multistart: pass
+        t11: pass
+        t18: pass
+        failure_detail_preservation: pass
+        holdout_boundary: pass
+        b001_immutability: pass
+      residual_nonconformances: []
+    attempts:
+      - attempt_id: W02-02R-C-001-A1
+        provenance_class: failed_nonconforming_diagnostic_attempt
+        attempt_status: terminated
+        termination_reason: frozen_numerical_failure
+        implementation_conformance_status: nonconforming
+        scientific_result_status: rejected_as_canonical
+        diagnostic_evidence_status: preserved
+        scientific_outputs_promoted: false
+        holdout_boundary_status: intact
+        holdout_detector_access_count: 0
+        source_sha256: 0f254df928c569f9758b10909f517ef9b0a98d60b77b98deb61e7e98cd536362
+        config_sha256: d0a001341b14f753867637074d3b009db0da8ec4e9ad1a15df5834f36f67e52c
+        panic_snapshot_id: 20260905T202856509649Z_f524a0ff_panic
+        snapshot_integrity: pass
+        checkpoint_path: 02_Work_Checkpoints/W02-02R-C-001-A1.md
     capability_envelope:
-      execute_c001: true
-      discovery_detector_access: true
-      resolution_evidence_detector_access: true
-      holdout_metadata_access: true
+      execute_c001: false
+      discovery_detector_access: false
+      resolution_evidence_detector_access: false
+      holdout_metadata_access: false
       holdout_detector_access: false
       execute_c002: false
       modify_b001_catalogue: false
@@ -63,6 +103,7 @@ scientific_facade:
     specification_path: 03_Protocols/STAGE02R_T02R05_C001_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
   c002:
     job_id: W02-02R-C-002
+    freeze_ready: false
     execution_authorized: false
   t02r05_architecture:
     - W02-02R-C-001
@@ -85,8 +126,10 @@ scientific_facade:
     id: T-02R-05
     job_id: W02-02R-C-001
     specification_status: frozen
-    next_governance_action: canonical_commit_and_push_then_execute_c001
-    execution_authorized: true
+    next_governance_action: project_control_rerun_authorization_review
+    execution_authorized: false
+    ready_for_rerun_authorization: true
+    rerun_authorization_status: not_authorized
     holdout_detector_access_authorized: false
   roadmap:
     - Stage 02R — независимый повторный анализ TAIPAN
@@ -144,13 +187,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: W02-02R-C-001
+  id: Project-Control-rerun-authorization-review
   text: >-
-    После validation, canonical authorization commit и push выполнить только W02-02R-C-001.
-    Перед первым вычислительным шагом при синхронизированном чистом HEAD запустить
-    `python scripts/work_recovery.py start --job W02-02R-C-001`. C-001 ещё не выполнялся;
-    C-002 и детекторный доступ к отложенной выборке не авторизованы. После STOP_CONDITION
-    вернуть checkpoint и artifacts в «02 - TAIPAN Data Reduction» для научно-методологического review.
+    Передать скорректированную реализацию C-001 и диагностическое происхождение завершённой с отказом
+    попытки A1 в «00 - Project Control» для отдельного решения об авторизации повторного запуска.
+    Повторный запуск C-001, C-002 и детекторный доступ к отложенной выборке не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -165,21 +206,21 @@ do_not_assume:
 
 control:
   now: >-
-    Спецификация W02-02R-C-001 заморожена, научная готовность к исполнению принята, а отдельное
-    решение об авторизации одобрено. Авторизация становится операционной только после validation,
-    commit и push этого capture в canonical main. C-001 ещё не выполнялся.
+    Попытка W02-02R-C-001-A1 завершена по причине frozen_numerical_failure; её реализация признана
+    несоответствующей спецификации, а научный результат отклонён как канонический. Скорректированная
+    реализация прошла статическую проверку с решением A и готова к отдельному рассмотрению авторизации
+    повторного запуска, но повторный запуск не авторизован.
   why: >-
-    C-001 ограничен модельной подготовкой по замороженной спецификации: detector access разрешён
-    только для discovery-данных и resolution evidence, а для отложенной выборки разрешены только
-    allowlisted metadata. Каталог B-001 неизменяем; историческое сопоставление и CEF-назначение запрещены.
+    Диагностические наблюдения A1 сохранены только как provenance отказа и не образуют научный результат
+    C-001. Исправления реализации не меняют замороженную спецификацию, каталог B-001 или границы доступа.
   next: >-
-    После canonical authorization commit и push, при local HEAD == origin/main и чистом preflight,
-    перед первым вычислительным шагом запустить `python scripts/work_recovery.py start --job
-    W02-02R-C-001`, затем выполнить только C-001 до его STOP_CONDITION. После этого вернуть
-    checkpoint/artifacts в «02 - TAIPAN Data Reduction». C-002 и holdout detector access запрещены.
-  next_work_job: W02-02R-C-001
+    Вернуть canonical capture в «00 - Project Control» для отдельного решения о повторной авторизации.
+    До такого решения не запускать C-001 и не обращаться к данным. C-002 и holdout detector access
+    остаются запрещены.
+  next_work_job:
 
   blocked:
+    - Повторный запуск W02-02R-C-001 до отдельной Project Control rerun authorization.
     - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
     - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
@@ -200,7 +241,7 @@ control:
     reviewed, accepted_with_limitations; R-012 / EV-007. Канонический переход зафиксирован в
     [commit 21506b7](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
     Физическое назначение не выполнялось.
-  last_work_checkpoint: W02-02R-B-001
+  last_work_checkpoint: W02-02R-C-001-A1
 
   active_hypothesis_ids:
     - H-001
