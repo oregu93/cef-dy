@@ -11,7 +11,7 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Сможет ли скорректированная реализация C-001 после отдельной авторизации повторного запуска
+    Сможет ли будущая отдельно подготовленная реализация замороженной спецификации C-001 v1.1
     сформировать на данных для поиска и метаданных отложенной выборки без
     детекторных полей самодостаточную модель и реестр гипотез для будущего C-002,
     сохранив каталог B-001 и границы слепого анализа?
@@ -37,22 +37,50 @@ scientific_facade:
     cef_assignment_performed: false
   c001:
     job_id: W02-02R-C-001
-    design_status: approved
-    specification_status: frozen
-    scientific_execution_readiness: accepted
-    job_status: blocked_pending_rerun_authorization
+    active_specification_version: '1.1'
+    active_specification_path: 03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
+    job_status: blocked_pending_v1_1_implementation_and_execution_authorization
     canonical_scientific_result_status: not_established
-    initial_execution_authorization_decision: approved
-    initial_execution_authorization_status: consumed
     execution_authorized: false
-    ready_for_rerun_authorization: true
-    rerun_authorization_status: not_authorized
     holdout_detector_access_authorized: false
     design_open_questions: none
-    current_implementation_status: conforming
-    current_implementation_review_status: accepted
-    current_implementation_review_decision: A
-    current_implementation:
+    capability_envelope:
+      execute_c001: false
+      discovery_detector_access: false
+      resolution_evidence_detector_access: false
+      holdout_metadata_access: false
+      holdout_detector_access: false
+      execute_c002: false
+      modify_b001_catalogue: false
+      historical_target_comparison: false
+      f002_f004_mapping: false
+      cef_assignment: false
+      stage03r_inference: false
+      stage03d_execution: false
+  c001_v1_1:
+    job_id: W02-02R-C-001
+    specification_version: '1.1'
+    specification_status: frozen
+    scientific_design_status: accepted
+    execution_status: not_started
+    implementation_status: not_prepared
+    execution_authorized: false
+    holdout_detector_access_authorized: false
+    canonical_freeze_baseline: 9fe295fbb7af26b8c88cfacef17965a8bcda5d09
+    specification_path: 03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
+  c001_v1:
+    job_id: W02-02R-C-001
+    specification_version: '1'
+    status: superseded_for_future_execution
+    historical_provenance_retained: true
+    rerun_authorized: false
+    initial_execution_authorization_status: consumed
+    specification_path: 03_Protocols/STAGE02R_T02R05_C001_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
+    specification_sha256: 6dabdf49d72e50329a57bd86e6b2cac8a4f664a76caf4c1f3d62870ccb163ea5
+    last_reviewed_implementation:
+      implementation_status: conforming_to_v1
+      implementation_review_status: accepted
+      implementation_review_decision: A
       source_path: scripts/stage02r/c001_confirmatory_model_preparation.py
       source_sha256: cdbd4192b27f4fe538192ade836150e13c1a485632d0b38f60b9eaa99ff1cc25
       config_path: scripts/stage02r/c001_confirmatory_config.yaml
@@ -86,21 +114,6 @@ scientific_facade:
         panic_snapshot_id: 20260905T202856509649Z_f524a0ff_panic
         snapshot_integrity: pass
         checkpoint_path: 02_Work_Checkpoints/W02-02R-C-001-A1.md
-    capability_envelope:
-      execute_c001: false
-      discovery_detector_access: false
-      resolution_evidence_detector_access: false
-      holdout_metadata_access: false
-      holdout_detector_access: false
-      execute_c002: false
-      modify_b001_catalogue: false
-      historical_target_comparison: false
-      f002_f004_mapping: false
-      cef_assignment: false
-      stage03r_inference: false
-      stage03d_execution: false
-    canonical_design_baseline: 31b16b22fc38fc51c063dc1d2908fcb630b8d3cf
-    specification_path: 03_Protocols/STAGE02R_T02R05_C001_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
   c002:
     job_id: W02-02R-C-002
     freeze_ready: false
@@ -125,11 +138,14 @@ scientific_facade:
   next_scientific_step:
     id: T-02R-05
     job_id: W02-02R-C-001
+    specification_version: '1.1'
     specification_status: frozen
-    next_governance_action: project_control_rerun_authorization_review
+    scientific_design_status: accepted
+    execution_status: not_started
+    implementation_status: not_prepared
+    next_governance_action: prepare_and_review_v1_1_implementation
     execution_authorized: false
-    ready_for_rerun_authorization: true
-    rerun_authorization_status: not_authorized
+    A2_authorized: false
     holdout_detector_access_authorized: false
   roadmap:
     - Stage 02R — независимый повторный анализ TAIPAN
@@ -150,8 +166,8 @@ scientific_facade:
         path: 00_Project/RESULT_REGISTER.yaml
       - label: EV-007
         path: 00_Project/EVIDENCE_REGISTER.yaml
-      - label: Замороженная спецификация C-001
-        path: 03_Protocols/STAGE02R_T02R05_C001_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
+      - label: Активная замороженная спецификация C-001 v1.1
+        path: 03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
 
 experimental_evidence_summary: >
   В B-001 из 75 пригодных энергетических сканов 57 использованы для поиска,
@@ -187,11 +203,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: Project-Control-rerun-authorization-review
+  id: W02-02R-C-001-v1.1-implementation-preparation
   text: >-
-    Передать скорректированную реализацию C-001 и диагностическое происхождение завершённой с отказом
-    попытки A1 в «00 - Project Control» для отдельного решения об авторизации повторного запуска.
-    Повторный запуск C-001, C-002 и детекторный доступ к отложенной выборке не авторизованы.
+    Отдельно подготовить реализацию и конфигурацию для замороженной спецификации C-001 v1.1,
+    затем провести conformance review и отдельное execution-authorization review.
+    Исполнение C-001/A2, C-002 и детекторный доступ к отложенной выборке не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -206,21 +222,21 @@ do_not_assume:
 
 control:
   now: >-
-    Попытка W02-02R-C-001-A1 завершена по причине frozen_numerical_failure; её реализация признана
-    несоответствующей спецификации, а научный результат отклонён как канонический. Скорректированная
-    реализация прошла статическую проверку с решением A и готова к отдельному рассмотрению авторизации
-    повторного запуска, но повторный запуск не авторизован.
+    Project Control заморозил научно-методологическую спецификацию W02-02R-C-001 v1.1.
+    Она замещает v1 для будущего исполнения; v1 и A1 сохранены как историческое и диагностическое
+    происхождение. Реализация v1.1 ещё не подготовлена, исполнение не авторизовано.
   why: >-
-    Диагностические наблюдения A1 сохранены только как provenance отказа и не образуют научный результат
-    C-001. Исправления реализации не меняют замороженную спецификацию, каталог B-001 или границы доступа.
+    v1.1 сохраняет B-001 и discovery/holdout boundary, но вводит принятую пропорциональную
+    статистическую и численную архитектуру. Принятая ранее реализация относится только к superseded v1
+    и не является реализацией v1.1.
   next: >-
-    Вернуть canonical capture в «00 - Project Control» для отдельного решения о повторной авторизации.
-    До такого решения не запускать C-001 и не обращаться к данным. C-002 и holdout detector access
-    остаются запрещены.
+    После ручного commit/push materialization отдельно подготовить v1.1 implementation/config,
+    проверить их соответствие замороженной спецификации и только затем рассматривать execution authorization.
+    До отдельного решения не запускать C-001; C-002 и holdout detector access запрещены.
   next_work_job:
 
   blocked:
-    - Повторный запуск W02-02R-C-001 до отдельной Project Control rerun authorization.
+    - Любое исполнение W02-02R-C-001 до подготовки и review реализации v1.1 и отдельной Project Control execution authorization.
     - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
     - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.

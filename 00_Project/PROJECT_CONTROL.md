@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "2.6"
+version: "2.7"
 updated: 2026-09-06
 control_chat: "00 - Project Control"
 ---
@@ -25,16 +25,16 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Попытка W02-02R-C-001-A1 завершена по причине frozen_numerical_failure; её реализация признана несоответствующей спецификации, а научный результат отклонён как канонический. Скорректированная реализация прошла статическую проверку с решением A и готова к отдельному рассмотрению авторизации повторного запуска, но повторный запуск не авторизован.
+**Сейчас.** Project Control заморозил научно-методологическую спецификацию W02-02R-C-001 v1.1. Она замещает v1 для будущего исполнения; v1 и A1 сохранены как историческое и диагностическое происхождение. Реализация v1.1 ещё не подготовлена, исполнение не авторизовано.
 
-**Почему.** Диагностические наблюдения A1 сохранены только как provenance отказа и не образуют научный результат C-001. Исправления реализации не меняют замороженную спецификацию, каталог B-001 или границы доступа.
+**Почему.** v1.1 сохраняет B-001 и discovery/holdout boundary, но вводит принятую пропорциональную статистическую и численную архитектуру. Принятая ранее реализация относится только к superseded v1 и не является реализацией v1.1.
 
-**Следующий шаг.** Вернуть canonical capture в «00 - Project Control» для отдельного решения о повторной авторизации. До такого решения не запускать C-001 и не обращаться к данным. C-002 и holdout detector access остаются запрещены.
+**Следующий шаг.** После ручного commit/push materialization отдельно подготовить v1.1 implementation/config, проверить их соответствие замороженной спецификации и только затем рассматривать execution authorization. До отдельного решения не запускать C-001; C-002 и holdout detector access запрещены.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
-- Повторный запуск W02-02R-C-001 до отдельной Project Control rerun authorization.
+- Любое исполнение W02-02R-C-001 до подготовки и review реализации v1.1 и отдельной Project Control execution authorization.
 - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
 - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
@@ -96,8 +96,8 @@ control_chat: "00 - Project Control"
 | `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
 | `T-02R-04` | completed | Слепое обнаружение и рецензирование B-001 завершены; результат принят с ограничениями, без физического назначения. |
 | `W02-02R-B-001` | completed | Выполнение завершено; scientific review: reviewed; outcome: accepted_with_limitations. Восемь monitor-controlled Tier-1 BF, 16/16 тестов PASS; каталог заморожен, holdout закрыт. |
-| `T-02R-05` | active | Архитектура C-001 → Project Control freeze → C-002 → scientific review → C-003 сохранена. A1 отклонена как канонический результат; повторный запуск C-001, C-002 и детекторный доступ к отложенной выборке не авторизованы. |
-| `W02-02R-C-001` | blocked | `job_status: blocked_pending_rerun_authorization`. Скорректированная реализация принята по Decision A и готова к отдельному рассмотрению повторной авторизации; канонический научный результат не установлен. |
+| `T-02R-05` | active | Архитектура C-001 → Project Control freeze → C-002 → scientific review → C-003 сохранена. Активная спецификация C-001 v1.1 заморожена; C-001/A2, C-002 и детекторный доступ к отложенной выборке не авторизованы. |
+| `W02-02R-C-001` | blocked | `job_status: blocked_pending_v1_1_implementation_and_execution_authorization`. Для v1.1 реализация не подготовлена; ранее принятая реализация относится только к исторической v1. |
 
 
 # 3. Roadmap после Stage 00C
