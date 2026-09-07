@@ -1,0 +1,271 @@
+configuration_version: stage02r_c001_v1_1_candidate_v1
+job_id: W02-02R-C-001
+dataset_id: EXP-TAIPAN-001
+
+active_specification:
+  version: "1.1"
+  path: 03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
+  sha256: 566a0d4fc193452ddd08366f2ef956122575da6f041f29b2c819df888cb7b66f
+  canonical_freeze_baseline: 9fe295fbb7af26b8c88cfacef17965a8bcda5d09
+
+implementation:
+  status: prepared_candidate
+  review_status: pending
+  preparation_baseline: b984e871a21b161684c1d41737d028676b1aa533
+  historical_v1_authority: false
+  compatibility_switches_allowed: false
+  production_dispatcher: reviewed_in_source
+  algorithm_sequence: [A01, A02, A03, A04, A05, A06, A07, A08, A09, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22]
+
+authorization:
+  execution_authorized: false
+  A2_authorized: false
+  C002_execution_authorized: false
+  holdout_detector_access_authorized: false
+  future_authorization_path: 00_Project/C001_V1_1_EXECUTION_AUTHORIZATION.yaml
+  require_external_project_control_authorization: true
+
+frozen_inputs:
+  B001_catalogue_path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+  B001_catalogue_sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+  B001_excluded_scan_record_id: SCAN-02R-7acd4c14a0007418
+  B001_feature_ids: [BF-001, BF-002, BF-003, BF-004, BF-005, BF-006, BF-007, BF-008]
+  split_metadata_path: 04_Results/Stage02R/W02-02R-B-001/blind_split.csv
+  scan_selection_path: 04_Results/Stage02R/W02-02R-B-001/scan_selection.csv
+  scan_classification_path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+  scan_inventory_path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+  scan_points_path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+
+complexes:
+  CX-01:
+    source_bf_ids: [BF-001, BF-002, BF-003]
+    frozen_union_meV: [2.49870, 6.99865]
+    maximum_BF_defined_K: 3
+  CX-02:
+    source_bf_ids: [BF-004, BF-005]
+    frozen_union_meV: [17.49800, 20.49835]
+    maximum_BF_defined_K: 2
+  CX-03:
+    source_bf_ids: [BF-006, BF-007, BF-008]
+    frozen_union_meV: [40.49835, 46.49775]
+    maximum_BF_defined_K: 3
+
+scan_eligibility:
+  native_points_inside_frozen_complex_union_min: 3
+  lower_background_anchor_points_min: 2
+  upper_background_anchor_points_min: 2
+  model_estimability_rule: n_fit_points_strictly_greater_than_n_free_parameters
+  failure_status: insufficient_local_coverage
+  failure_is_nondetection: false
+  descending_monotonic_grid_allowed: true
+
+exposure:
+  verified_classes:
+    monitor_controlled: monitor_raw
+    time_controlled: time_raw
+  shared_monitor_time_normalization: forbidden
+  global_fixed_Ef_assumption: forbidden
+  Ei_Ef_semantics: per_scan_or_independently_verified_homogeneous_block
+  cross_scan_intensity_comparability: not_established
+  cross_mode_intensity_comparability: not_established
+
+model:
+  likelihood: raw_count_exposure_conditioned_Poisson
+  component_family: observed_unit_area_Gaussian
+  primary_background: B1_log_linear
+  local_background_coordinate: [-1.0, 1.0]
+  sensitivity_backgrounds:
+    B0: {role: sensitivity}
+    B2: {role: sensitivity, lower_anchor_points_min: 3, upper_anchor_points_min: 3}
+  background_order_bootstrap_selection: false
+  scan_specific_parameters: [background, integrated_area, centroid, observed_fwhm]
+  arbitrary_per_scan_scale: forbidden
+  centroid_parameterization: softmax_gap_with_fixed_zero_reference
+  centroid_free_logits_equal_K: true
+  post_fit_centroid_sorting: forbidden
+  physical_minimum_separation_rule: none
+  parameter_domains:
+    b0: unbounded
+    b1: unbounded
+    area: nonnegative_unbounded
+    observed_fwhm: strictly_positive_unbounded
+    centroid: strictly_inside_frozen_complex_union
+
+observed_optimizer:
+  implementation: scipy.optimize.minimize
+  method: L-BFGS-B
+  parameter_coordinates: physical_model_coordinates
+  post_optimizer_polishing: forbidden
+  secondary_optimizer: forbidden
+  initial_starts: 8
+  escalated_starts: 16
+  start_bank: deterministic_unscrambled_Sobol_single_bank
+  reproduction_required_distinct_starts: 2
+  reproduction_relative_likelihood_tolerance: 1.0e-6
+  deterministic_tie_absolute_likelihood_tolerance: 1.0e-8
+  deterministic_tie_parameter_round_decimals: 12
+  options:
+    maxiter: 4000
+    ftol: 1.0e-12
+    gtol: 1.0e-8
+    maxls: 50
+
+bootstrap_optimizer:
+  model_local_starts: 4
+  adaptive_start_escalation: forbidden
+  parent_child_embedding: forbidden
+  child_parent_projection: forbidden
+  KKT_bootstrap_gate: false
+  failed_replicate_statistic: positive_infinity
+  fixed_failure_fraction_scientific_gate: none
+
+component_development:
+  presence_registration_independent_of_discovery_significance: true
+  sequential_parent_gated_K: true
+  discovery_bootstrap_replicates: 1024
+  development_alpha: 0.10
+  p_value_convention: plus_one
+  rng: numpy.random.PCG64
+  seed_payload_fields: [specification_version, complex_id, comparison_id, replicate_count]
+  supportive_discovery_scans_min: 2
+  supportive_area_rule: strictly_above_active_lower_bound
+  supportive_profile_rule: finite_in_domain_95_percent_crossings
+  recurrence_scan_identity_rule: distinct_scan_record_id
+  promotion_gates:
+    - parent_observed_fit_stable
+    - child_observed_fit_stable
+    - discovery_bootstrap_support
+    - cross_scan_recurrence
+    - centroid_identifiability
+    - background_sensitivity_acceptable
+
+kkt:
+  role: final_observed_fit_diagnostic_only
+  finite_difference_relative_step: 1.0e-6
+  active_bound_relative_tolerance: 1.0e-8
+  projected_gradient_reference: 1.0e-4
+  bootstrap_validity_gate: false
+  component_selection_gate: false
+  theta_modification: forbidden
+
+identifiability:
+  profile_grid_points: 41
+  profile_95_delta_minus2logL: 3.841458820694124
+  profile_required_for_final_promoted_K_gt_1: true
+  profile_required_for_ambiguous_final_model: true
+  profile_required_for_every_transient_model: false
+  hessian_condition_role: optional_non_gating_diagnostic
+
+resolution:
+  default_status: resolution_not_established
+  ordinary_parameter_extraction_allowed_without_resolution: [centroid, integrated_area, observed_empirical_fwhm]
+  intrinsic_linewidth_claim_without_resolution: forbidden
+  full_resolution_calculation_default_required: false
+  full_resolution_trigger_claims:
+    - intrinsic_linewidth
+    - close_unresolved_splitting
+    - appreciable_dispersion_convolution
+    - detailed_line_shape_or_asymmetry_interpretation
+  scan_104062:
+    scan_class: ordinary_energy_scan
+    elastic_zero_covered: true
+    calibration_role: unresolved
+    established_calibration_purpose: false
+    allowed_role: [empirical_elastic_peak_width_context, resolution_plausibility_context]
+    transfer_to_production_resolution_function: forbidden_without_independent_applicability_evidence
+
+acquisition_coverage:
+  dataset_type: purpose_driven_targeted_TAIPAN_scan_set
+  exhaustive_continuous_energy_survey: false
+  spectral_completeness_claim: forbidden
+  insufficient_coverage_physical_absence_claim: forbidden
+  B001_exhaustive_physical_level_list: false
+
+holdout:
+  role: [anti_circularity, internal_confirmation]
+  independent_beamtime: false
+  independent_experimental_replication: false
+  random_unbiased_sample_of_complete_spectrum: false
+  metadata_only_before_C001_stop: true
+  allowed_point_fields:
+    - scan_record_id
+    - point_index
+    - e_raw
+    - ei_raw
+    - ef_raw
+    - h_raw
+    - k_raw
+    - l_raw
+    - monitor_raw
+    - time_raw
+  forbidden_fields:
+    - detector_raw
+    - det_err_raw
+    - detector_monitor_rate
+    - detector_time_rate
+    - spectral_residual
+  detector_materialization_allowed: false
+
+future_C002:
+  preparation_only: true
+  execution_authorized: false
+  holdout_detector_access_authorized: false
+  bootstrap_replicates: 4096
+  bootstrap_design: fixed
+  adaptive_extension: forbidden
+  p_value_convention: plus_one
+  rng: numpy.random.PCG64
+  bootstrap_model_local_starts: 4
+  KKT_bootstrap_gate: false
+  multiplicity_procedure: Holm
+  global_alpha: 0.05
+  family_frozen_before_detector_access: true
+  failed_hypothesis_raw_p_value: 1.0
+  post_holdout_family_shrinkage: forbidden
+  ancestor_rule: all_ancestor_hypotheses_must_pass
+  numerical_failure_test_status: numerical_failure
+
+external_context:
+  complementary_experiment:
+    facility: ILL
+    instrument: IN20
+    proposal: 4-01-1772
+    role: post_blind_external_validation
+    C001_model_input: forbidden
+  TAIPAN_proposal_15702_status: unresolved_historical_clue
+
+scope:
+  CEF_assignment: forbidden
+  magnon_assignment: forbidden
+  phonon_assignment: forbidden
+  F002_F004_mapping: forbidden
+  historical_target_comparison: forbidden
+  Stage03R_inference: forbidden
+  Stage03D_inference: forbidden
+  private_material_input: forbidden
+
+output_contract:
+  production_result_directory: 04_Results/Stage02R/W02-02R-C-001-v1.1
+  scientific_execution_artifacts_created_by_static_mode: false
+  spectral_completeness_claim: forbidden
+  output_names:
+    - experimental_context_assessment.yaml
+    - scan_eligibility.csv
+    - count_control_assessment.yaml
+    - confirmatory_complexes.yaml
+    - phenomenological_model_spec.yaml
+    - discovery_final_fits.csv
+    - component_development.yaml
+    - background_sensitivity.csv
+    - parameter_uncertainty.csv
+    - reproducibility_assessment.csv
+    - resolution_evidence.yaml
+    - resolution_status.csv
+    - holdout_metadata_eligibility.csv
+    - holdout_coverage_summary.yaml
+    - holdout_field_access_log.csv
+    - confirmatory_hypotheses.yaml
+    - future_C002_spec.yaml
+    - numerical_diagnostics.yaml
+    - provenance_manifest.yaml
+    - test_report.yaml
