@@ -152,6 +152,22 @@ def exposure_from_row(row, exposure_class, config):
     return value
 
 
+def energy_transfer_semantics_valid(metadata):
+    """Apply the frozen A002 energy contract without consulting detector values."""
+    direct_e = (
+        metadata.get("energy_transfer_field_raw") == "e"
+        and metadata.get("energy_transfer_convention") == "Ei_minus_Ef"
+        and metadata.get("energy_relation_status") == "verified_global"
+    )
+    if not direct_e:
+        return False
+    mapping_status = metadata.get("en_e_mapping_status")
+    def_x = metadata.get("def_x_raw")
+    if def_x == "en":
+        return mapping_status == "verified"
+    return mapping_status == "not_applicable"
+
+
 def assess_local_coverage(energy, union, free_parameters, config):
     values = np.asarray(energy, dtype=float)
     finite = np.isfinite(values).all()
@@ -982,12 +998,13 @@ def dispatch_c001_core(discovery_scans, holdout_metadata, config, bootstrap_repl
             local_scans = candidate_scans
             result["final_K"] = child_k
         result["final_fit"] = current
+        result["final_scan_ids"] = [scan.scan_id for scan in local_scans]
         final_sensitivity = []
         for scan, section in zip(local_scans, joint_layout(local_scans, result["final_K"])):
             if current.get("theta") is not None:
-                final_sensitivity.append(background_sensitivity(
+                final_sensitivity.append({"scan_id": scan.scan_id, **background_sensitivity(
                     scan, original_by_id[scan.scan_id], union, result["final_K"],
-                    current["theta"][section], config))
+                    current["theta"][section], config)})
         result["final_background_sensitivity"] = final_sensitivity
         ambiguous = (not fit_is_stable(current)
                      or any(item["status"] == "material" for item in final_sensitivity))
@@ -1001,16 +1018,9 @@ def dispatch_c001_core(discovery_scans, holdout_metadata, config, bootstrap_repl
         results[complex_id] = result
     registry = build_future_c002_registry(results, holdout_metadata, config)
     holdout_eligibility = registry["eligibility_by_hypothesis"]
-    provenance = {"canonical_main": PREPARATION_BASELINE, "dataset_id": config["dataset_id"],
-                  "B001_catalogue_sha256": B001_SHA256,
-                  "source_sha256": sha256_file(Path(__file__)),
-                  "config_sha256": sha256_file(ROOT / CONFIG_PATH),
-                  "spectral_completeness_claim": "forbidden",
-                  "holdout_detector_access_count": 0, "C002_executed": False,
-                  "algorithm_stop": "A22_STOP_before_holdout_detector_access"}
     return {"component_results": results, "scan_eligibility": eligibility,
             "holdout_metadata_eligibility": holdout_eligibility,
-            "future_C002_registry": registry, "provenance": provenance,
+            "future_C002_registry": registry,
             "STOP_CONDITION": "A22_STOP_before_holdout_detector_access"}
 
 
@@ -1298,7 +1308,7 @@ def run_targeted_regression_tests(config):
                     "energy_transfer_semantics_valid": True}]
         result = dispatch_c001_core(scans, holdout, config, bootstrap_replicates=1)
         require(result["STOP_CONDITION"] == "A22_STOP_before_holdout_detector_access"
-                and result["provenance"]["holdout_detector_access_count"] == 0, "mini dispatcher")
+                and result.get("holdout_detector_access_count", 0) == 0, "mini dispatcher")
 
     functions = (rc01, rc02, rc03, rc04, rc05, rc06, rc07, rc08, rc09, rc10, rc11, rc12, rc13, rc14)
     for index, function in enumerate(functions, 1):
@@ -1400,6 +1410,138 @@ def run_targeted_regression_tests(config):
     localized = (b01, b02, b03, b04, b05, b06, b07, b08, b09, b10)
     for index, function in enumerate(localized, 1):
         test(f"C001V11-RC4B{index:02d}", function)
+
+    direct_e = {"def_x_raw": "s1", "energy_transfer_field_raw": "e",
+                "energy_transfer_convention": "Ei_minus_Ef",
+                "energy_relation_status": "verified_global",
+                "en_e_mapping_status": "not_applicable"}
+    alias_e = {**direct_e, "def_x_raw": "en", "en_e_mapping_status": "verified"}
+
+    def production_fixture():
+        scan = synthetic_scan("D1")
+        theta = baseline_joint([scan], [-1.0, 1.0], 1)
+        fit = {"fit_status": "valid", "theta": theta, "log_likelihood": -1.0,
+               "start_count": 8, "optimizer_stability_status": "stable",
+               "projected_gradient_max": 1e-6,
+               "numerical_convergence_status": "within_reference", "KKT_role": "diagnostic_only"}
+        component = {"adequate_model_preparation": True,
+                     "presence_hypothesis_registered": True, "final_K": 1,
+                     "final_scan_ids": ["D1"], "final_fit": fit,
+                     "developments": [{"child_K": 2, "promoted": False,
+                                       "gates": {"parent_observed_fit_stable": False}}],
+                     "final_background_sensitivity": [{"scan_id": "D1", "status": "acceptable",
+                         "refits": [{"background": "B0", "status": "valid", "material": False,
+                                     "window_lower_anchors": 2, "window_upper_anchors": 2,
+                                     "window_point_count": 9},
+                                    {"background": "B2", "status": "not_estimable", "material": False}]}],
+                     "final_profiles": {"required": False, "performed": False, "records": []},
+                     "uncertainty_status": {"centroid": "profile_where_required",
+                                            "area": "not_estimated_explicit_no_frozen_method",
+                                            "observed_fwhm": "not_estimated_explicit_no_frozen_method"},
+                     "resolution_status": "resolution_not_established"}
+        lower, upper = config["complexes"]["CX-01"]["frozen_union_meV"]
+        holdout_energy = np.asarray([lower - 2.0, lower - 1.0] +
+                                    list(np.linspace(lower, upper, 5)) +
+                                    [upper + 1.0, upper + 2.0])
+        holdout = [{"scan_id": "H1", "energy": holdout_energy,
+                    "exposure_class": "monitor_controlled", "exposure": np.ones(9),
+                    "energy_transfer_semantics_valid": True}]
+        registry = build_future_c002_registry({"CX-01": component}, holdout, config)
+        return {"component_results": {"CX-01": component},
+                "scan_eligibility": {"CX-01": [{"scan_id": "D1", "eligible": True}]},
+                "holdout_metadata_eligibility": registry["eligibility_by_hypothesis"],
+                "future_C002_registry": registry,
+                "holdout_field_access_log": [{"decoded_field": "e_raw", "detector_field": False}],
+                "holdout_detector_access_count": 0,
+                "STOP_CONDITION": "A22_STOP_before_holdout_detector_access"}
+
+    def production_context():
+        return {"split_role_per_scan": {"D1": "discovery", "H1": "holdout"},
+                "exposure_class_per_scan": {"D1": "monitor_controlled", "H1": "monitor_controlled"},
+                "Ei_Ef_status_per_scan": {"D1": direct_e, "H1": direct_e}}
+
+    def production_authorization():
+        return {"canonical_head": git_head(), "source_sha256": sha256_file(Path(__file__)),
+                "config_sha256": sha256_file(ROOT / CONFIG_PATH)}
+
+    def p01():
+        require(energy_transfer_semantics_valid(direct_e), "canonical direct e rejected")
+        require(energy_transfer_semantics_valid(alias_e), "verified en/e alias rejected")
+    def p02():
+        for change in ({"energy_relation_status": "unresolved"},
+                       {"energy_transfer_convention": None}, {"energy_transfer_field_raw": "en"}):
+            require(not energy_transfer_semantics_valid({**direct_e, **change}), "unknown semantics accepted")
+    def p03():
+        require(energy_transfer_semantics_valid(direct_e), "not_applicable direct e rejected")
+        require(not energy_transfer_semantics_valid({**alias_e, "en_e_mapping_status": "unresolved"}),
+                "unresolved required alias accepted")
+    def p04(): rc01()
+    def p05():
+        result = production_fixture()
+        require(result["future_C002_registry"]["hypotheses"], "future presence family empty")
+    def p06(): b03()
+    def p07():
+        rows = final_fit_rows(production_fixture(), config)
+        require(rows and {"fit_status", "log_likelihood", "fitted_background_parameters",
+                          "integrated_area", "centroid", "observed_empirical_fwhm",
+                          "scientific_status"} <= set(rows[0]),
+                "fit serialization incomplete")
+    def p08():
+        rows = sensitivity_rows(production_fixture())
+        require({row["sensitivity_model"] for row in rows} == {"B0", "B2"}, "sensitivity rows absent")
+    def p09():
+        rows = uncertainty_rows(production_fixture())
+        require(rows and "uncertainty_status" in rows[0] and rows[0]["area_uncertainty_status"].startswith("not_estimated"),
+                "uncertainty status absent")
+    def p10():
+        rows = reproducibility_rows(production_fixture())
+        require(any(row["assessment_type"] == "final_optimizer_reproduction" for row in rows),
+                "reproducibility rows absent")
+    def p11():
+        rows = resolution_rows(production_fixture(), config)
+        require(rows[0]["resolution_status"] == "resolution_not_established", "resolution row absent")
+    def p12():
+        result, context, auth = production_fixture(), production_context(), production_authorization()
+        provenance = build_provenance(result, config, auth, context, {}, {})
+        report = production_test_report(result, config, auth, context, provenance)
+        require([row["test_id"] for row in report["tests"]] ==
+                [f"C001V11-T{i:02d}" for i in range(1, 17)]
+                and all({"status", "evidence", "reason"} <= set(row) for row in report["tests"]),
+                "T01-T16 report incomplete")
+    def p13():
+        result, context, auth = production_fixture(), production_context(), production_authorization()
+        bad = dict(auth); bad["source_sha256"] = "0" * 64
+        report = production_test_report(result, config, bad, context,
+                                        build_provenance(result, config, bad, context, {}, {}))
+        require(report["tests"][0]["status"] == "FAIL" and not report["all_mandatory_tests_pass"],
+                "failing invariant converted to PASS")
+    def p14():
+        result, context, auth = production_fixture(), production_context(), production_authorization()
+        require(build_provenance(result, config, auth, context, {}, {})["canonical_main"] == git_head(),
+                "preparation baseline serialized as canonical main")
+    def p15():
+        result, context, auth = production_fixture(), production_context(), production_authorization()
+        require(required_provenance_fields() <= set(build_provenance(
+            result, config, auth, context, {}, {})), "provenance fields absent")
+    def p16():
+        rows = [{"b": 2, "a": 1}]
+        require(csv_document_bytes(rows) == csv_document_bytes(rows), "nondeterministic CSV")
+        policy = build_provenance(production_fixture(), config, production_authorization(),
+                                  production_context(), {"x": "1"}, {})["output_identity_policy"]
+        require("excluded" in policy["provenance_manifest.yaml"], "recursive identity policy")
+    def p17():
+        require(production_fixture()["STOP_CONDITION"] == "A22_STOP_before_holdout_detector_access", "STOP")
+    def p18():
+        require(not production_fixture()["future_C002_registry"]["C002_executed"], "C002 executed")
+    def p19():
+        require(static_privacy_audit(config)["private_urls"] == 0, "private material")
+    def p20():
+        for function in (rc01, rc02, rc03, rc04): function()
+
+    production_regressions = (p01, p02, p03, p04, p05, p06, p07, p08, p09, p10,
+                              p11, p12, p13, p14, p15, p16, p17, p18, p19, p20)
+    for index, function in enumerate(production_regressions, 1):
+        test(f"C001V11-PROD{index:02d}", function)
     return tests
 
 
@@ -1434,7 +1576,8 @@ def load_execution_inputs(config):
     selection = {row["scan_record_id"]: row for row in selection_rows}
     inventory_rows = project_csv_fields(
         ROOT / frozen["scan_inventory_path"],
-        ("scan_record_id", "energy_relation_status", "en_e_mapping_status"))
+        ("scan_record_id", "def_x_raw", "energy_transfer_field_raw",
+         "energy_transfer_convention", "energy_relation_status", "en_e_mapping_status"))
     inventory = {row["scan_record_id"]: row for row in inventory_rows}
     discovery_ids = {row["scan_record_id"] for row in split_rows if row["split_role"] == "discovery"
                      and selection.get(row["scan_record_id"], {}).get("discovery_runtime_status") == "discovery_usable"}
@@ -1471,12 +1614,26 @@ def load_execution_inputs(config):
             "energy": np.asarray([float(row["e_raw"]) for row in rows]),
             "exposure_class": exposure_class,
             "exposure": [] if exposure_field is None else [row.get(exposure_field) for row in rows],
-            "energy_transfer_semantics_valid": (
-                scan_inventory.get("energy_relation_status") == "verified"
-                and scan_inventory.get("en_e_mapping_status") == "verified"),
+            "energy_transfer_semantics_valid": energy_transfer_semantics_valid(scan_inventory),
         })
     require(guard.detector_materializations == 0, "holdout detector materialized")
-    return discovery_scans, holdout_metadata, guard
+    split_role_per_scan = {row["scan_record_id"]: row["split_role"] for row in split_rows}
+    exposure_class_per_scan = {
+        scan_id: selection.get(scan_id, {}).get("count_control_mode")
+        for scan_id in sorted(split_role_per_scan)
+    }
+    energy_status_per_scan = {
+        scan_id: {key: inventory.get(scan_id, {}).get(key) for key in (
+            "def_x_raw", "energy_transfer_field_raw", "energy_transfer_convention",
+            "energy_relation_status", "en_e_mapping_status")}
+        for scan_id in sorted(split_role_per_scan)
+    }
+    input_context = {
+        "split_role_per_scan": split_role_per_scan,
+        "exposure_class_per_scan": exposure_class_per_scan,
+        "Ei_Ef_status_per_scan": energy_status_per_scan,
+    }
+    return discovery_scans, holdout_metadata, guard, input_context
 
 
 def serializable(value):
@@ -1504,17 +1661,357 @@ def write_csv_rows(path, rows):
             writer.writerow({"status": "not_applicable"})
 
 
-def write_execution_outputs(result, config):
-    """A21 machine-readable construction for every frozen output name."""
+def csv_document_bytes(rows):
+    rows = list(rows)
+    fields = sorted({key for row in rows for key in row}) if rows else ["status"]
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(stream, fieldnames=fields)
+    writer.writeheader()
+    for row in rows or [{"status": "not_applicable"}]:
+        writer.writerow({key: json.dumps(row.get(key), default=serializable, sort_keys=True)
+                         if isinstance(row.get(key), (dict, list, np.ndarray))
+                         else row.get(key) for key in fields})
+    return stream.getvalue().encode("utf-8")
+
+
+def yaml_document_bytes(document):
+    plain = json.loads(json.dumps(document, default=serializable))
+    return yaml.safe_dump(plain, sort_keys=False).encode("utf-8")
+
+
+def final_fit_rows(result, config):
+    rows = []
+    for complex_id, item in sorted(result["component_results"].items()):
+        final_k = int(item.get("final_K", 0))
+        fit = item.get("final_fit", {})
+        scan_ids = item.get("final_scan_ids", [])
+        theta = fit.get("theta")
+        sections = joint_layout(scan_ids, final_k) if scan_ids else []
+        for scan_id, section in zip(scan_ids, sections):
+            local = None if theta is None else np.asarray(theta)[section]
+            layout = block_layout(final_k)
+            background = None if local is None else {
+                f"b{index}": float(value)
+                for index, value in enumerate(local[layout["background"]])
+            }
+            centroids = ([] if local is None or final_k == 0 else ordered_centroids(
+                local[layout["eta"]], *config["complexes"][complex_id]["frozen_union_meV"]))
+            component_indices = range(final_k) if final_k else (None,)
+            for index in component_indices:
+                estimated = local is not None and index is not None
+                rows.append({
+                    "complex_id": complex_id, "scan_id": scan_id,
+                    "final_K": final_k, "model_id": f"K{final_k}",
+                    "component_id": None if index is None else f"C{index + 1:02d}",
+                    "fit_status": fit.get("fit_status", item.get("status", "not_estimated")),
+                    "optimizer_stability_status": fit.get("optimizer_stability_status", "not_estimated"),
+                    "numerical_convergence_status": fit.get("numerical_convergence_status", "not_estimated"),
+                    "log_likelihood": fit.get("log_likelihood"),
+                    "start_count": fit.get("start_count", 0),
+                    "fitted_background_parameters": background,
+                    "integrated_area": float(local[layout["areas"]][index]) if estimated else None,
+                    "centroid": float(centroids[index]) if estimated else None,
+                    "observed_empirical_fwhm": float(local[layout["widths"]][index]) if estimated else None,
+                    "parameter_status": "estimated" if estimated else "not_estimated",
+                    "scientific_status": ("estimate_available" if estimated and
+                                          fit.get("optimizer_stability_status") == "stable" else
+                                          "estimate_numerically_unresolved" if estimated else
+                                          "not_estimated"),
+                    "reason": None if estimated else (
+                        "final_fit_numerical_failure" if theta is None else "zero_component_model"),
+                })
+        if not scan_ids:
+            rows.append({"complex_id": complex_id, "scan_id": None, "final_K": final_k,
+                         "model_id": f"K{final_k}", "component_id": None,
+                         "fit_status": item.get("status", "not_estimated"),
+                         "optimizer_stability_status": "not_estimated",
+                         "numerical_convergence_status": "not_estimated",
+                         "log_likelihood": None, "start_count": 0,
+                         "fitted_background_parameters": None, "integrated_area": None,
+                         "centroid": None, "observed_empirical_fwhm": None,
+                         "parameter_status": "not_estimated", "scientific_status": "not_estimated",
+                         "reason": "no_eligible_discovery_scans"})
+    return rows
+
+
+def sensitivity_rows(result):
+    rows = []
+    for complex_id, item in sorted(result["component_results"].items()):
+        records = item.get("final_background_sensitivity", [])
+        for record in records:
+            for refit in record.get("refits", []):
+                rows.append({"complex_id": complex_id, "scan_id": record.get("scan_id"),
+                             "sensitivity_model": refit.get("background"),
+                             "estimability_status": ("not_estimable" if refit.get("status") == "not_estimable"
+                                                      else "estimable"),
+                             "fit_status": refit.get("status"),
+                             "material": refit.get("material"),
+                             "overall_status": record.get("status"),
+                             "window_lower_anchors": refit.get("window_lower_anchors"),
+                             "window_upper_anchors": refit.get("window_upper_anchors"),
+                             "window_point_count": refit.get("window_point_count"),
+                             "reason": ("insufficient_B2_anchor_coverage"
+                                        if refit.get("status") == "not_estimable" else None)})
+        if not records:
+            for scan_id in item.get("final_scan_ids", [None]):
+                for background in ("B0", "B2"):
+                    rows.append({"complex_id": complex_id, "scan_id": scan_id,
+                                 "sensitivity_model": background, "estimability_status": "not_estimated",
+                                 "fit_status": "not_estimated", "material": None,
+                                 "overall_status": "not_estimated",
+                                 "reason": "final_fit_unavailable_for_sensitivity"})
+    return rows
+
+
+def uncertainty_rows(result):
+    rows = []
+    for complex_id, item in sorted(result["component_results"].items()):
+        profiles = {record["scan_id"]: record.get("centroid_profiles", [])
+                    for record in item.get("final_profiles", {}).get("records", [])}
+        final_k = int(item.get("final_K", 0))
+        for scan_id in item.get("final_scan_ids", [None]):
+            for index in range(final_k) if final_k else (None,):
+                profile = (profiles.get(scan_id, [])[index]
+                           if index is not None and index < len(profiles.get(scan_id, [])) else None)
+                centroid_status = ("not_estimated" if profile is None else
+                                   "estimated_finite" if profile.get("finite_in_domain_crossings") else
+                                   "estimated_no_finite_in_domain_crossing")
+                rows.append({
+                    "complex_id": complex_id, "scan_id": scan_id,
+                    "component_id": None if index is None else f"C{index + 1:02d}",
+                    "centroid_uncertainty": (None if profile is None else
+                                             {"lower": profile.get("lower"), "upper": profile.get("upper")}),
+                    "area_uncertainty": None, "observed_width_uncertainty": None,
+                    "uncertainty_method": "selective_likelihood_profile_for_centroid",
+                    "uncertainty_status": centroid_status,
+                    "area_uncertainty_status": "not_estimated_explicit_no_frozen_method",
+                    "observed_width_uncertainty_status": "not_estimated_explicit_no_frozen_method",
+                    "reason": (None if centroid_status == "estimated_finite" else
+                               "profile_not_required_or_not_performed" if profile is None else
+                               "profile_has_no_finite_in_domain_crossing"),
+                })
+    return rows
+
+
+def reproducibility_rows(result):
+    rows = []
+    for complex_id, item in sorted(result["component_results"].items()):
+        fit = item.get("final_fit", {})
+        for scan_id in item.get("final_scan_ids", [None]):
+            rows.append({"complex_id": complex_id, "scan_id": scan_id,
+                         "assessment_type": "final_optimizer_reproduction",
+                         "model_id": f"K{item.get('final_K', 0)}",
+                         "status": fit.get("optimizer_stability_status", "not_estimated"),
+                         "passes": fit.get("optimizer_stability_status") == "stable",
+                         "start_count": fit.get("start_count", 0),
+                         "reason": (None if fit.get("optimizer_stability_status") == "stable"
+                                    else "optimizer_solution_not_reproduced_or_fit_unavailable")})
+        for development in item.get("developments", []):
+            recurrence = development.get("recurrence")
+            rows.append({"complex_id": complex_id, "scan_id": None,
+                         "assessment_type": "cross_scan_component_recurrence",
+                         "model_id": f"K{development.get('child_K')}",
+                         "status": ("evaluated" if recurrence is not None else "not_evaluated"),
+                         "passes": None if recurrence is None else recurrence.get("passes"),
+                         "supportive_scan_ids": None if recurrence is None else recurrence.get("supportive_scan_ids"),
+                         "supportive_scan_count": None if recurrence is None else recurrence.get("supportive_scan_count"),
+                         "promotion_status": "promoted" if development.get("promoted") else "not_promoted",
+                         "reason": (None if recurrence is not None else "earlier_component_development_gate_failed")})
+            for support in development.get("support", []):
+                rows.append({"complex_id": complex_id, "scan_id": support.get("scan_id"),
+                             "assessment_type": "scan_component_support",
+                             "model_id": f"K{development.get('child_K')}",
+                             "status": "supportive" if all(support.get(key) for key in (
+                                 "fit_stable", "areas_strictly_positive", "profiles_finite", "adjacent_rule")) else "not_supportive",
+                             "passes": all(support.get(key) for key in (
+                                 "fit_stable", "areas_strictly_positive", "profiles_finite", "adjacent_rule")),
+                             "reason": None})
+    return rows
+
+
+def resolution_rows(result, config):
+    rows = []
+    for complex_id, item in sorted(result["component_results"].items()):
+        for scan_id in item.get("final_scan_ids", [None]):
+            rows.append({"complex_id": complex_id, "scan_id": scan_id,
+                         "resolution_status": item.get("resolution_status", config["resolution"]["default_status"]),
+                         "ordinary_parameter_extraction_allowed": config["resolution"]["ordinary_parameter_extraction_allowed_without_resolution"],
+                         "intrinsic_linewidth_claim_allowed": False,
+                         "scan_104062_calibration_role": config["resolution"]["scan_104062"]["calibration_role"],
+                         "reason": "no_independently_established_production_resolution_function"})
+    return rows
+
+
+def required_provenance_fields():
+    return {"canonical_main", "dataset_id", "B001_catalogue_sha256", "source_sha256",
+            "config_sha256", "scan_ids_per_complex", "split_role_per_scan",
+            "exposure_class_per_scan", "Ei_Ef_status_per_scan", "model_specification",
+            "component_development_result", "background_sensitivity_status",
+            "resolution_status", "bootstrap_B", "bootstrap_seed_payload",
+            "bootstrap_seed_sha256", "holdout_detector_access_count", "C002_executed",
+            "input_artifact_identities", "output_artifact_identities"}
+
+
+def input_artifact_identities(config):
+    a002_manifest = yaml_load(ROOT / "04_Results/Stage02R/W02-02R-A-002/provenance_manifest.yaml")
+    upstream = {item["path"]: item.get("byte_sha256") for item in a002_manifest.get("outputs", [])}
+    identities = {}
+    for key, relative in sorted(config["frozen_inputs"].items()):
+        if not key.endswith("_path"):
+            continue
+        digest = upstream.get(relative)
+        if digest is None:
+            digest = sha256_file(ROOT / relative)
+        identities[key] = {"path": relative, "sha256": digest}
+    return identities
+
+
+def build_provenance(result, config, authorization, input_context, output_identities=None,
+                     input_identities=None):
+    bootstrap_records = [development["bootstrap"]
+                         for item in result["component_results"].values()
+                         for development in item.get("developments", []) if "bootstrap" in development]
+    scan_ids_per_complex = {
+        complex_id: sorted(row["scan_id"] for row in result["scan_eligibility"].get(complex_id, [])
+                           if row.get("eligible"))
+        for complex_id in result["component_results"]
+    }
+    return {
+        "canonical_main": authorization["canonical_head"],
+        "implementation_preparation_baseline": PREPARATION_BASELINE,
+        "dataset_id": config["dataset_id"], "B001_catalogue_sha256": B001_SHA256,
+        "source_sha256": authorization["source_sha256"],
+        "config_sha256": authorization["config_sha256"],
+        "scan_ids_per_complex": scan_ids_per_complex,
+        "split_role_per_scan": input_context["split_role_per_scan"],
+        "exposure_class_per_scan": input_context["exposure_class_per_scan"],
+        "Ei_Ef_status_per_scan": input_context["Ei_Ef_status_per_scan"],
+        "model_specification": config["model"],
+        "component_development_result": result["component_results"],
+        "background_sensitivity_status": {
+            complex_id: [record.get("status") for record in item.get("final_background_sensitivity", [])]
+            for complex_id, item in result["component_results"].items()},
+        "resolution_status": {complex_id: item.get("resolution_status", config["resolution"]["default_status"])
+                              for complex_id, item in result["component_results"].items()},
+        "bootstrap_B": config["component_development"]["discovery_bootstrap_replicates"],
+        "bootstrap_seed_payload": [record.get("seed_payload") for record in bootstrap_records],
+        "bootstrap_seed_sha256": [record.get("seed_sha256") for record in bootstrap_records],
+        "holdout_detector_access_count": result.get("holdout_detector_access_count", 0),
+        "C002_executed": result["future_C002_registry"].get("C002_executed", False),
+        "input_artifact_identities": (input_identities if input_identities is not None
+                                      else input_artifact_identities(config)),
+        "output_artifact_identities": output_identities or {},
+        "output_identity_policy": {
+            "algorithm": "sha256_of_final_file_bytes",
+            "provenance_manifest.yaml": "excluded_from_internal_map_to_avoid_recursive_self_hash"},
+        "spectral_completeness_claim": "forbidden",
+        "algorithm_stop": result["STOP_CONDITION"],
+    }
+
+
+def production_test_report(result, config, authorization, input_context, provenance):
+    tests = []
+    def check(test_id, condition, evidence, failure_reason):
+        try:
+            passed = bool(condition())
+        except Exception as error:
+            passed = False
+            failure_reason = f"{type(error).__name__}: {error}"
+        try:
+            evidence_value = evidence()
+        except Exception as error:
+            passed = False
+            evidence_value = {"evidence_error": f"{type(error).__name__}: {error}"}
+            failure_reason = "runtime evidence serialization failed"
+        tests.append({"test_id": test_id, "status": "PASS" if passed else "FAIL",
+                      "evidence": evidence_value, "reason": None if passed else failure_reason})
+    check("C001V11-T01", lambda: authorization["canonical_head"] == git_head()
+          and authorization["source_sha256"] == sha256_file(Path(__file__))
+          and authorization["config_sha256"] == sha256_file(ROOT / CONFIG_PATH),
+          lambda: {"canonical_head": authorization["canonical_head"],
+                   "source_sha256": authorization["source_sha256"],
+                   "config_sha256": authorization["config_sha256"]}, "runtime identity mismatch")
+    check("C001V11-T02", lambda: config["frozen_inputs"]["B001_catalogue_sha256"] == B001_SHA256
+          and sha256_file(ROOT / config["frozen_inputs"]["B001_catalogue_path"]) == B001_SHA256,
+          lambda: {"B001_catalogue_sha256": B001_SHA256}, "B001 byte identity mismatch")
+    check("C001V11-T03", lambda: result.get("holdout_detector_access_count", 0) == 0
+          and not any(row.get("detector_field") for row in result.get("holdout_field_access_log", [])),
+          lambda: {"holdout_detector_access_count": result.get("holdout_detector_access_count", 0)},
+          "holdout detector boundary violated")
+    check("C001V11-T04", lambda: all(value == "forbidden" for value in config["scope"].values())
+          and not static_privacy_audit(config)["private_urls"],
+          lambda: {"scope": config["scope"]}, "scope or private-material audit failed")
+    check("C001V11-T05", lambda: bool(result["scan_eligibility"])
+          and all(status.get("energy_relation_status") == "verified_global"
+                  for status in input_context["Ei_Ef_status_per_scan"].values()),
+          lambda: {"complex_count": len(result["scan_eligibility"]),
+                   "scan_count": len(input_context["split_role_per_scan"])}, "eligibility contract failed")
+    check("C001V11-T06", lambda: all(value in config["exposure"]["verified_classes"]
+                                     for value in input_context["exposure_class_per_scan"].values()),
+          lambda: {"exposure_classes": sorted(set(input_context["exposure_class_per_scan"].values()))},
+          "unverified exposure class")
+    check("C001V11-T07", lambda: config["model"]["likelihood"] == "raw_count_exposure_conditioned_Poisson"
+          and config["model"]["primary_background"] == "B1_log_linear",
+          lambda: config["model"], "model contract mismatch")
+    check("C001V11-T08", lambda: all(item.get("final_fit", {}).get("start_count") in (8, 16)
+                                     for item in result["component_results"].values()
+                                     if item.get("adequate_model_preparation")),
+          lambda: {key: value.get("final_fit", {}).get("start_count")
+                   for key, value in result["component_results"].items()}, "observed optimizer policy mismatch")
+    check("C001V11-T09", lambda: config["bootstrap_optimizer"]["model_local_starts"] == 4
+          and config["bootstrap_optimizer"]["failed_replicate_statistic"] == "positive_infinity",
+          lambda: config["bootstrap_optimizer"], "bootstrap optimizer policy mismatch")
+    check("C001V11-T10", lambda: provenance["bootstrap_B"] == 1024
+          and len(provenance["bootstrap_seed_payload"]) == len(provenance["bootstrap_seed_sha256"]),
+          lambda: {"bootstrap_B": provenance["bootstrap_B"],
+                   "executed_seed_count": len(provenance["bootstrap_seed_sha256"])}, "bootstrap identity mismatch")
+    check("C001V11-T11", lambda: all("promoted" in development
+                                     for item in result["component_results"].values()
+                                     for development in item.get("developments", [])),
+          lambda: {key: value.get("developments", []) for key, value in result["component_results"].items()},
+          "component-development result incomplete")
+    check("C001V11-T12", lambda: all(item.get("resolution_status") == config["resolution"]["default_status"]
+                                     for item in result["component_results"].values()
+                                     if item.get("adequate_model_preparation")),
+          lambda: provenance["resolution_status"], "resolution status mismatch")
+    check("C001V11-T13", lambda: config["kkt"]["role"] == "final_observed_fit_diagnostic_only"
+          and not config["kkt"]["component_selection_gate"],
+          lambda: config["kkt"], "KKT role mismatch")
+    holdout_rows = [row for rows in result["holdout_metadata_eligibility"].values() for row in rows]
+    check("C001V11-T14", lambda: config["holdout"]["metadata_only_before_C001_stop"]
+          and result.get("holdout_detector_access_count", 0) == 0
+          and any(row.get("energy_transfer_semantics_valid") for row in holdout_rows),
+          lambda: {"records": len(holdout_rows),
+                   "energy_semantics_valid": sum(bool(row.get("energy_transfer_semantics_valid")) for row in holdout_rows)},
+          "metadata-only holdout eligibility invalid")
+    check("C001V11-T15", lambda: result["future_C002_registry"]["family_frozen_before_detector_access"]
+          and bool(result["future_C002_registry"]["hypotheses"])
+          and not result["future_C002_registry"]["C002_executed"],
+          lambda: {"future_C002_family_size": len(result["future_C002_registry"]["hypotheses"]),
+                   "C002_executed": result["future_C002_registry"]["C002_executed"]},
+          "future C002 family invalid or empty")
+    check("C001V11-T16", lambda: required_provenance_fields() <= set(provenance)
+          and result["STOP_CONDITION"] == "A22_STOP_before_holdout_detector_access"
+          and provenance["canonical_main"] == authorization["canonical_head"]
+          and not provenance["C002_executed"],
+          lambda: {"provenance_fields": sorted(provenance), "STOP_CONDITION": result["STOP_CONDITION"]},
+          "provenance/privacy/STOP invariant failed")
+    return {"scientific_execution": True, "tests": tests,
+            "passed": sum(item["status"] == "PASS" for item in tests),
+            "failed": sum(item["status"] == "FAIL" for item in tests),
+            "all_mandatory_tests_pass": all(item["status"] == "PASS" for item in tests)}
+
+
+def write_execution_outputs(result, config, authorization, input_context):
+    """A21 machine-readable construction with nonrecursive byte identities."""
     output_dir = ROOT / config["output_contract"]["production_result_directory"]
     output_dir.mkdir(parents=True, exist_ok=False)
-    component_rows = [{"complex_id": key, "final_K": value.get("final_K"),
-                       "status": value.get("status", "prepared")}
-                      for key, value in result["component_results"].items()]
     eligibility_rows = [{"complex_id": key, **row}
                         for key, rows in result["scan_eligibility"].items() for row in rows]
     holdout_rows = [{"complex_id": key, **row}
                     for key, rows in result["holdout_metadata_eligibility"].items() for row in rows]
+    provenance = build_provenance(result, config, authorization, input_context)
+    report = production_test_report(result, config, authorization, input_context, provenance)
     yaml_documents = {
         "experimental_context_assessment.yaml": {"global_fixed_Ef": False},
         "count_control_assessment.yaml": config["exposure"],
@@ -1527,41 +2024,44 @@ def write_execution_outputs(result, config):
         "confirmatory_hypotheses.yaml": result["future_C002_registry"],
         "future_C002_spec.yaml": result["future_C002_registry"],
         "numerical_diagnostics.yaml": {"KKT_role": "final_observed_fit_diagnostic_only"},
-        "provenance_manifest.yaml": result["provenance"],
-        "test_report.yaml": {"static_tests": "C001V11-T01..T16", "scientific_execution": True},
+        "test_report.yaml": report,
     }
     csv_documents = {
         "scan_eligibility.csv": eligibility_rows,
-        "discovery_final_fits.csv": component_rows,
-        "background_sensitivity.csv": component_rows,
-        "parameter_uncertainty.csv": component_rows,
-        "reproducibility_assessment.csv": component_rows,
-        "resolution_status.csv": component_rows,
+        "discovery_final_fits.csv": final_fit_rows(result, config),
+        "background_sensitivity.csv": sensitivity_rows(result),
+        "parameter_uncertainty.csv": uncertainty_rows(result),
+        "reproducibility_assessment.csv": reproducibility_rows(result),
+        "resolution_status.csv": resolution_rows(result, config),
         "holdout_metadata_eligibility.csv": holdout_rows,
         "holdout_field_access_log.csv": result.get(
             "holdout_field_access_log", [{"holdout_detector_access_count": 0}]),
     }
     for name, document in yaml_documents.items():
-        (output_dir / name).write_text(yaml.safe_dump(
-            json.loads(json.dumps(document, default=serializable)), sort_keys=False), encoding="utf-8")
+        (output_dir / name).write_bytes(yaml_document_bytes(document))
     for name, rows in csv_documents.items():
-        write_csv_rows(output_dir / name, rows)
+        (output_dir / name).write_bytes(csv_document_bytes(rows))
+    identities = {name: sha256_file(output_dir / name)
+                  for name in sorted(set(yaml_documents) | set(csv_documents))}
+    provenance = build_provenance(result, config, authorization, input_context, identities)
+    (output_dir / "provenance_manifest.yaml").write_bytes(yaml_document_bytes(provenance))
     return output_dir
 
 
 def execute_candidate(config):
     """Reviewed A01-A22 path; authorization and identities precede production reads."""
-    require_external_execution_authorization(config)
+    authorization = require_external_execution_authorization(config)
     verify_static_identities(config)
-    discovery_scans, holdout_metadata, guard = load_execution_inputs(config)
+    discovery_scans, holdout_metadata, guard, input_context = load_execution_inputs(config)
     result = dispatch_c001_core(discovery_scans, holdout_metadata, config)
     result["holdout_field_access_log"] = [
         {"decoded_field": field, "detector_field": field in DETECTOR_FIELDS}
         for field in guard.decoded_fields
     ] or [{"decoded_field": None, "detector_field": False}]
+    result["holdout_detector_access_count"] = guard.detector_materializations
     require(result["STOP_CONDITION"] == "A22_STOP_before_holdout_detector_access", "STOP failure")
     require(guard.detector_materializations == 0, "holdout detector access before STOP")
-    write_execution_outputs(result, config)
+    write_execution_outputs(result, config, authorization, input_context)
     return result
 
 

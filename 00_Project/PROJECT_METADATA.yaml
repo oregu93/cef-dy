@@ -11,7 +11,7 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Сможет ли принятая реализация замороженной спецификации C-001 v1.1 после отдельной авторизации
+    Сможет ли исправленная и принятая реализация C-001 v1.1 после отдельной авторизации повторного запуска
     сформировать на данных для поиска и метаданных отложенной выборки без
     детекторных полей самодостаточную модель и реестр гипотез для будущего C-002,
     сохранив каталог B-001 и границы слепого анализа?
@@ -39,7 +39,7 @@ scientific_facade:
     job_id: W02-02R-C-001
     active_specification_version: '1.1'
     active_specification_path: 03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md
-    job_status: blocked_pending_execution_authorization
+    job_status: blocked_pending_corrected_rerun_authorization
     canonical_scientific_result_status: not_established
     execution_authorized: false
     holdout_detector_access_authorized: false
@@ -67,9 +67,19 @@ scientific_facade:
     implementation_review_status: completed
     implementation_review_decision: A
     source_path: scripts/stage02r/c001_v1_1_confirmatory_model_preparation.py
-    source_sha256: 6aa8b812e4a8d840a2fe2955ac1176a997cbda9bed5ad67070354dc6fdb1401c
+    source_sha256: edd1ae2d4144660353d9e07c1d82e1878100d69f0b61ba8ed0f287ca474ebca0
     config_path: scripts/stage02r/c001_v1_1_confirmatory_config.yaml
     config_sha256: 7f1ef3dca5901e1865151cea19271c68575c45f06640cc7417d06ca3a02b7459
+    implementation_review_type: focused_post_production_correction
+    first_production_execution:
+      technical_execution_status: completed
+      scientific_result_status: correction_required
+      canonical_result: false
+      role: diagnostic_noncanonical_execution
+    corrected_rerun:
+      execution_status: not_started
+      execution_authorized: false
+    execution_status_scope: corrected_rerun
     execution_authorized: false
     A2_authorized: false
     holdout_detector_access_authorized: false
@@ -152,7 +162,10 @@ scientific_facade:
     implementation_status: accepted
     implementation_review_status: completed
     implementation_review_decision: A
-    next_governance_action: project_control_execution_authorization_review
+    first_production_scientific_result_status: correction_required
+    first_production_canonical_result: false
+    corrected_rerun_status: not_started
+    next_governance_action: project_control_corrected_rerun_execution_authorization_review
     execution_authorized: false
     A2_authorized: false
     holdout_detector_access_authorized: false
@@ -212,10 +225,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: Project-Control-execution-authorization-review
+  id: Project-Control-corrected-rerun-execution-authorization-review
   text: >-
-    Передать materialized и принятую по Decision A реализацию C-001 v1.1 в «00 - Project Control»
-    для отдельного execution-authorization review.
+    Передать исправленную и принятую по Decision A реализацию C-001 v1.1 в «00 - Project Control»
+    для отдельного corrected-rerun execution-authorization review. Первый production execution остаётся
+    diagnostic_noncanonical_execution с scientific_result_status: correction_required.
     Исполнение C-001/A2, C-002 и детекторный доступ к отложенной выборке не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
@@ -231,18 +245,19 @@ do_not_assume:
 
 control:
   now: >-
-    Научно-методологическая спецификация W02-02R-C-001 v1.1 заморожена, а точные source/config
-    materialized и приняты по итогам статического review с Decision A. Исполнение не начато и не авторизовано.
+    Первый production execution C-001 v1.1 технически завершён, но его научный результат имеет статус
+    correction_required и остаётся diagnostic_noncanonical_execution. Исправленный source принят после
+    focused post-production review с Decision A; corrected rerun не начат и не авторизован.
   why: >-
-    Принятие exact implementation bytes устанавливает готовность реализации к отдельному рассмотрению
-    execution authorization, но не изменяет B-001, discovery/holdout boundary или capability envelope.
+    Обнаруженные production defects требуют повторного запуска с исправленным source. Принятие correction
+    не продвигает первый результат в canonical и не изменяет B-001, discovery/holdout boundary или capability envelope.
   next: >-
     После ручного commit/push materialization вернуть состояние в «00 - Project Control» для отдельного
-    execution-authorization review. До отдельного решения не запускать C-001; C-002 и holdout detector access запрещены.
+    corrected-rerun execution-authorization review. До отдельного решения не запускать C-001; C-002 и holdout detector access запрещены.
   next_work_job:
 
   blocked:
-    - Любое исполнение W02-02R-C-001 до отдельной Project Control execution authorization.
+    - Corrected rerun W02-02R-C-001 до отдельной Project Control execution authorization.
     - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
     - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
