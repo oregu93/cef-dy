@@ -3,7 +3,7 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "4.0"
+version: "4.1"
 updated: 2026-09-07
 review_status: working
 ---
@@ -44,7 +44,7 @@ review_status: working
 
 **Научная задача.** Определить воспроизводимый и физически интерпретируемый эффективный гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде всего с энергиями и интенсивностями INS-переходов, а затем проверенный независимыми магнитными наблюдаемыми.
 
-**Текущий научный вопрос.** Сможет ли исправленная и принятая реализация C-001 v1.1 после отдельной авторизации повторного запуска сформировать на данных для поиска и метаданных отложенной выборки без детекторных полей самодостаточную модель и реестр гипотез для будущего C-002, сохранив каталог B-001 и границы слепого анализа?
+**Текущий научный вопрос.** Подтвердит ли будущий C-002 на замороженной отложенной выборке три заранее зарегистрированные K0→K1 presence hypotheses, сохранив антициркулярную границу и не переоценивая неоднозначные результаты C-001?
 
 **Зачем выполняется Stage 02R.** Stage 02R формирует независимый от CEF-модели слой экспериментальных свидетельств до нового цикла физического назначения и CEF-моделирования. Это уменьшает риск замкнутого анализа, при котором ожидаемые энергии или предсказания модели одновременно задают искомые признаки и служат основанием для проверки той же модели.
 
@@ -70,7 +70,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — независимый повторный анализ TAIPAN
 
-**Следующий шаг.** `Project-Control-corrected-rerun-execution-authorization-review`: Передать исправленную и принятую по Decision A реализацию C-001 v1.1 в «00 - Project Control» для отдельного corrected-rerun execution-authorization review. Первый production execution остаётся diagnostic_noncanonical_execution с scientific_result_status: correction_required. Исполнение C-001/A2, C-002 и детекторный доступ к отложенной выборке не авторизованы.
+**Следующий шаг.** `Project-Control-C002-execution-authorization-review`: Передать принятый с ограничениями canonical результат C-001 v1.1 и замороженную семью из трёх C002 K0→K1 presence hypotheses в «00 - Project Control» для отдельного C002 execution-authorization review. C002 и детекторный доступ к отложенной выборке не авторизованы.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
@@ -344,12 +344,17 @@ W02-02R-B-001 и T-02R-04 завершены; научный результат 
 исторические записи.
 
 Первый production execution v1.1 технически завершён, но его научный результат
-имеет `scientific_result_status: correction_required`,
+сохраняет `scientific_result_status: correction_required`,
 `canonical_result: false` и роль `diagnostic_noncanonical_execution`.
-Исправленный source принят после focused post-production review с
-`implementation_review_decision: A`. Для corrected rerun
-`execution_status: not_started` и `execution_authorized: false`; A2, C-002 и
-детекторный доступ ко всем 18 сканам отложенной выборки не авторизованы.
+Corrected rerun завершён и принят по Decision A с
+`scientific_result_status: accepted_with_limitations`; он является canonical
+результатом C-001. Для CX-01 итоговая феноменология unresolved; CX-02/CX-03
+численно неустойчивы и неоднозначны. Надёжные centroid/FWHM не установлены,
+K>=2 splits не продвинуты, `resolution_status: resolution_not_established`.
+C-002 и детекторный доступ ко всем 18 сканам отложенной выборки не авторизованы.
+
+Canonical C-001 provenance:
+[provenance_manifest.yaml](../04_Results/Stage02R/W02-02R-C-001-v1.1/provenance_manifest.yaml).
 
 Диагностическое происхождение A1:
 [W02-02R-C-001-A1](../02_Work_Checkpoints/W02-02R-C-001-A1.md).

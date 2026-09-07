@@ -1,0 +1,10 @@
+status: resolution_not_established
+scan_104062:
+  scan_class: ordinary_energy_scan
+  elastic_zero_covered: true
+  calibration_role: unresolved
+  established_calibration_purpose: false
+  allowed_role:
+  - empirical_elastic_peak_width_context
+  - resolution_plausibility_context
+  transfer_to_production_resolution_function: forbidden_without_independent_applicability_evidence

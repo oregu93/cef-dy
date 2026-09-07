@@ -1,0 +1,30 @@
+likelihood: raw_count_exposure_conditioned_Poisson
+component_family: observed_unit_area_Gaussian
+primary_background: B1_log_linear
+local_background_coordinate:
+- -1.0
+- 1.0
+sensitivity_backgrounds:
+  B0:
+    role: sensitivity
+  B2:
+    role: sensitivity
+    lower_anchor_points_min: 3
+    upper_anchor_points_min: 3
+background_order_bootstrap_selection: false
+scan_specific_parameters:
+- background
+- integrated_area
+- centroid
+- observed_fwhm
+arbitrary_per_scan_scale: forbidden
+centroid_parameterization: softmax_gap_with_fixed_zero_reference
+centroid_free_logits_equal_K: true
+post_fit_centroid_sorting: forbidden
+physical_minimum_separation_rule: none
+parameter_domains:
+  b0: unbounded
+  b1: unbounded
+  area: nonnegative_unbounded
+  observed_fwhm: strictly_positive_unbounded
+  centroid: strictly_inside_frozen_complex_union

@@ -1,0 +1,659 @@
+family_frozen_before_detector_access: true
+hypotheses:
+- hypothesis_id: C002-CX-01-K0-K1
+  complex_id: CX-01
+  hypothesis_type: presence
+  parent_K: 0
+  child_K: 1
+  eligible_holdout_scan_ids:
+  - SCAN-02R-26cdfd757f62fb5b
+  - SCAN-02R-41d12941c2dac178
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-4650765ebe11f415
+  - SCAN-02R-48f6ae0dc1c99d07
+  - SCAN-02R-54bfea84553b4c65
+  - SCAN-02R-58a76874c3967085
+  - SCAN-02R-5e02dde1da14be55
+  - SCAN-02R-79960ffd3b8a968b
+  - SCAN-02R-87edbdf74d1e5fb1
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-b14e49e20117cb08
+  - SCAN-02R-c74434b3ed5fc9b8
+  exposure_class_per_scan:
+    SCAN-02R-26cdfd757f62fb5b: monitor_controlled
+    SCAN-02R-41d12941c2dac178: monitor_controlled
+    SCAN-02R-42d0a4d8bd2d58cc: monitor_controlled
+    SCAN-02R-4650765ebe11f415: monitor_controlled
+    SCAN-02R-48f6ae0dc1c99d07: monitor_controlled
+    SCAN-02R-54bfea84553b4c65: monitor_controlled
+    SCAN-02R-58a76874c3967085: monitor_controlled
+    SCAN-02R-5e02dde1da14be55: monitor_controlled
+    SCAN-02R-79960ffd3b8a968b: monitor_controlled
+    SCAN-02R-87edbdf74d1e5fb1: monitor_controlled
+    SCAN-02R-a1d82bdc331e2df4: monitor_controlled
+    SCAN-02R-b14e49e20117cb08: monitor_controlled
+    SCAN-02R-c74434b3ed5fc9b8: monitor_controlled
+  background_family: B1_log_linear
+  component_family: observed_unit_area_Gaussian
+  parameter_domain_rules:
+    b0: unbounded
+    b1: unbounded
+    area: nonnegative_unbounded
+    observed_fwhm: strictly_positive_unbounded
+    centroid: strictly_inside_frozen_complex_union
+  resolution_status: resolution_not_established
+  multiplicity_rule:
+    procedure: Holm
+    global_alpha: 0.05
+    primary_sort:
+      raw_p_value: ascending
+    tie_break:
+      hypothesis_id: lexical_ascending
+  bootstrap_replicates: 4096
+  rng: numpy.random.PCG64
+  p_value_convention: plus_one
+  bootstrap_design: fixed
+  adaptive_extension: forbidden
+  Holm_global_alpha: 0.05
+  numerical_failure_raw_p_value: 1.0
+  ancestor_hypothesis_id: null
+  ancestor_rule: all_ancestor_hypotheses_must_pass
+  family_frozen_before_detector_access: true
+- hypothesis_id: C002-CX-02-K0-K1
+  complex_id: CX-02
+  hypothesis_type: presence
+  parent_K: 0
+  child_K: 1
+  eligible_holdout_scan_ids:
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-48f6ae0dc1c99d07
+  - SCAN-02R-54bfea84553b4c65
+  - SCAN-02R-58a76874c3967085
+  - SCAN-02R-5e02dde1da14be55
+  - SCAN-02R-5f553db9674e6d45
+  - SCAN-02R-79960ffd3b8a968b
+  - SCAN-02R-87edbdf74d1e5fb1
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-b14e49e20117cb08
+  - SCAN-02R-baae22000a534323
+  - SCAN-02R-c74434b3ed5fc9b8
+  exposure_class_per_scan:
+    SCAN-02R-42d0a4d8bd2d58cc: monitor_controlled
+    SCAN-02R-48f6ae0dc1c99d07: monitor_controlled
+    SCAN-02R-54bfea84553b4c65: monitor_controlled
+    SCAN-02R-58a76874c3967085: monitor_controlled
+    SCAN-02R-5e02dde1da14be55: monitor_controlled
+    SCAN-02R-5f553db9674e6d45: monitor_controlled
+    SCAN-02R-79960ffd3b8a968b: monitor_controlled
+    SCAN-02R-87edbdf74d1e5fb1: monitor_controlled
+    SCAN-02R-a1d82bdc331e2df4: monitor_controlled
+    SCAN-02R-b14e49e20117cb08: monitor_controlled
+    SCAN-02R-baae22000a534323: monitor_controlled
+    SCAN-02R-c74434b3ed5fc9b8: monitor_controlled
+  background_family: B1_log_linear
+  component_family: observed_unit_area_Gaussian
+  parameter_domain_rules:
+    b0: unbounded
+    b1: unbounded
+    area: nonnegative_unbounded
+    observed_fwhm: strictly_positive_unbounded
+    centroid: strictly_inside_frozen_complex_union
+  resolution_status: resolution_not_established
+  multiplicity_rule:
+    procedure: Holm
+    global_alpha: 0.05
+    primary_sort:
+      raw_p_value: ascending
+    tie_break:
+      hypothesis_id: lexical_ascending
+  bootstrap_replicates: 4096
+  rng: numpy.random.PCG64
+  p_value_convention: plus_one
+  bootstrap_design: fixed
+  adaptive_extension: forbidden
+  Holm_global_alpha: 0.05
+  numerical_failure_raw_p_value: 1.0
+  ancestor_hypothesis_id: null
+  ancestor_rule: all_ancestor_hypotheses_must_pass
+  family_frozen_before_detector_access: true
+- hypothesis_id: C002-CX-03-K0-K1
+  complex_id: CX-03
+  hypothesis_type: presence
+  parent_K: 0
+  child_K: 1
+  eligible_holdout_scan_ids:
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-5f553db9674e6d45
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-a88a59b9d2315a05
+  - SCAN-02R-baae22000a534323
+  exposure_class_per_scan:
+    SCAN-02R-42d0a4d8bd2d58cc: monitor_controlled
+    SCAN-02R-5f553db9674e6d45: monitor_controlled
+    SCAN-02R-a1d82bdc331e2df4: monitor_controlled
+    SCAN-02R-a88a59b9d2315a05: monitor_controlled
+    SCAN-02R-baae22000a534323: monitor_controlled
+  background_family: B1_log_linear
+  component_family: observed_unit_area_Gaussian
+  parameter_domain_rules:
+    b0: unbounded
+    b1: unbounded
+    area: nonnegative_unbounded
+    observed_fwhm: strictly_positive_unbounded
+    centroid: strictly_inside_frozen_complex_union
+  resolution_status: resolution_not_established
+  multiplicity_rule:
+    procedure: Holm
+    global_alpha: 0.05
+    primary_sort:
+      raw_p_value: ascending
+    tie_break:
+      hypothesis_id: lexical_ascending
+  bootstrap_replicates: 4096
+  rng: numpy.random.PCG64
+  p_value_convention: plus_one
+  bootstrap_design: fixed
+  adaptive_extension: forbidden
+  Holm_global_alpha: 0.05
+  numerical_failure_raw_p_value: 1.0
+  ancestor_hypothesis_id: null
+  ancestor_rule: all_ancestor_hypotheses_must_pass
+  family_frozen_before_detector_access: true
+Holm_global_alpha: 0.05
+ancestor_rule: all_ancestors_must_pass
+Holm_ordering:
+  primary_sort:
+    raw_p_value: ascending
+  tie_break:
+    hypothesis_id: lexical_ascending
+eligibility_by_hypothesis:
+  C002-CX-01-K0-K1:
+  - scan_id: SCAN-02R-26cdfd757f62fb5b
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-41d12941c2dac178
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-42d0a4d8bd2d58cc
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-4650765ebe11f415
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-48f6ae0dc1c99d07
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-54bfea84553b4c65
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-58a76874c3967085
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-598c5cedd335b846
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-5e02dde1da14be55
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-5f553db9674e6d45
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-6f7239d1961a1e4d
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-79960ffd3b8a968b
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-87edbdf74d1e5fb1
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-a1d82bdc331e2df4
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-a88a59b9d2315a05
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-b14e49e20117cb08
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-baae22000a534323
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-c74434b3ed5fc9b8
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  C002-CX-02-K0-K1:
+  - scan_id: SCAN-02R-26cdfd757f62fb5b
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-41d12941c2dac178
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-42d0a4d8bd2d58cc
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-4650765ebe11f415
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-48f6ae0dc1c99d07
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-54bfea84553b4c65
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-58a76874c3967085
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-598c5cedd335b846
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-5e02dde1da14be55
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-5f553db9674e6d45
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-6f7239d1961a1e4d
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-79960ffd3b8a968b
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-87edbdf74d1e5fb1
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-a1d82bdc331e2df4
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-a88a59b9d2315a05
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-b14e49e20117cb08
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-baae22000a534323
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-c74434b3ed5fc9b8
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  C002-CX-03-K0-K1:
+  - scan_id: SCAN-02R-26cdfd757f62fb5b
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-41d12941c2dac178
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-42d0a4d8bd2d58cc
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-4650765ebe11f415
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-48f6ae0dc1c99d07
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-54bfea84553b4c65
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-58a76874c3967085
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-598c5cedd335b846
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-5e02dde1da14be55
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-5f553db9674e6d45
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-6f7239d1961a1e4d
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-79960ffd3b8a968b
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-87edbdf74d1e5fb1
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-a1d82bdc331e2df4
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-a88a59b9d2315a05
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-b14e49e20117cb08
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-baae22000a534323
+    child_K: 1
+    eligible: true
+    status: eligible
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+  - scan_id: SCAN-02R-c74434b3ed5fc9b8
+    child_K: 1
+    eligible: false
+    status: metadata_eligibility_failure
+    exposure_class: monitor_controlled
+    exposure_valid: true
+    energy_transfer_semantics_valid: true
+    nondetection: false
+    physical_absence_evidence: false
+C002_executed: false

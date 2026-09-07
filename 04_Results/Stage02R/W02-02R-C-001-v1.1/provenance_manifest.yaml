@@ -1,0 +1,4051 @@
+canonical_main: a8f5605177470d55de982227d9a9f36a7c801562
+implementation_preparation_baseline: b984e871a21b161684c1d41737d028676b1aa533
+dataset_id: EXP-TAIPAN-001
+B001_catalogue_sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+source_sha256: edd1ae2d4144660353d9e07c1d82e1878100d69f0b61ba8ed0f287ca474ebca0
+config_sha256: 7f1ef3dca5901e1865151cea19271c68575c45f06640cc7417d06ca3a02b7459
+scan_ids_per_complex:
+  CX-01:
+  - SCAN-02R-059bd02c78268a2b
+  - SCAN-02R-0e6d00a831c04e8d
+  - SCAN-02R-26c5588a4a75efc2
+  - SCAN-02R-2f690557cfd20bec
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-3f903a520f921d83
+  - SCAN-02R-43979cdff2eef525
+  - SCAN-02R-45d1daf515e218b6
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4d54ea7698000638
+  - SCAN-02R-4f5e09d1864ac832
+  - SCAN-02R-5e52d7e5fbefbc05
+  - SCAN-02R-6fded6b51e0642a8
+  - SCAN-02R-708cf4d83a29d78f
+  - SCAN-02R-7118d0dce593edea
+  - SCAN-02R-731f452fb62a55bd
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-774f62fc1777bc6b
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-8345a5938afc1084
+  - SCAN-02R-8641a638f4880175
+  - SCAN-02R-89614c0503a95275
+  - SCAN-02R-8ca6316615b8cbae
+  - SCAN-02R-8dcd5041a8a4e044
+  - SCAN-02R-8e62e3b1b9deee81
+  - SCAN-02R-91de8f7a5ce6984b
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-ae86f327e3ed5623
+  - SCAN-02R-b704f6a14f738619
+  - SCAN-02R-c5843105fb81b54c
+  - SCAN-02R-c7a73b4824a01210
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-eea1fadd4abbd144
+  - SCAN-02R-f36bb8e354cf21b7
+  - SCAN-02R-f380a5a0600b447a
+  - SCAN-02R-f56f915bc229d6aa
+  - SCAN-02R-f87c8c3cd06321c2
+  - SCAN-02R-fb62d31e5c3c1dbf
+  - SCAN-02R-fede66c26a275769
+  CX-02:
+  - SCAN-02R-059bd02c78268a2b
+  - SCAN-02R-0e6d00a831c04e8d
+  - SCAN-02R-26c5588a4a75efc2
+  - SCAN-02R-2f690557cfd20bec
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-3f903a520f921d83
+  - SCAN-02R-43979cdff2eef525
+  - SCAN-02R-45d1daf515e218b6
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4eb3495e2e32dd73
+  - SCAN-02R-51f6ed2eb7632349
+  - SCAN-02R-68a1fdbd8955d9a4
+  - SCAN-02R-6fded6b51e0642a8
+  - SCAN-02R-708cf4d83a29d78f
+  - SCAN-02R-7118d0dce593edea
+  - SCAN-02R-731f452fb62a55bd
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-774f62fc1777bc6b
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-8345a5938afc1084
+  - SCAN-02R-8641a638f4880175
+  - SCAN-02R-89614c0503a95275
+  - SCAN-02R-8ca6316615b8cbae
+  - SCAN-02R-8dcd5041a8a4e044
+  - SCAN-02R-8e62e3b1b9deee81
+  - SCAN-02R-91de8f7a5ce6984b
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-ae86f327e3ed5623
+  - SCAN-02R-c5843105fb81b54c
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-eea1fadd4abbd144
+  - SCAN-02R-f36bb8e354cf21b7
+  - SCAN-02R-f380a5a0600b447a
+  - SCAN-02R-f56f915bc229d6aa
+  - SCAN-02R-f87c8c3cd06321c2
+  - SCAN-02R-fede66c26a275769
+  CX-03:
+  - SCAN-02R-074afad5a6b92ea4
+  - SCAN-02R-1e5b02c69224108d
+  - SCAN-02R-26c5588a4a75efc2
+  - SCAN-02R-2a0e91f43e0fe127
+  - SCAN-02R-306a96179bd778b6
+  - SCAN-02R-432159a75d80f2b3
+  - SCAN-02R-4ad1398a663b7933
+  - SCAN-02R-4eb3495e2e32dd73
+  - SCAN-02R-51f6ed2eb7632349
+  - SCAN-02R-68a1fdbd8955d9a4
+  - SCAN-02R-7118d0dce593edea
+  - SCAN-02R-762111064d108c6d
+  - SCAN-02R-77b71bd09c7eb4b4
+  - SCAN-02R-79e659b84aa4786d
+  - SCAN-02R-91f840c137c7a43c
+  - SCAN-02R-abcd8030795bc9cb
+  - SCAN-02R-d2b7e9ee069bd20e
+  - SCAN-02R-ebc55d8b20e3cec0
+  - SCAN-02R-ef6a11424f751d3f
+  - SCAN-02R-f71173d3ec0c732c
+split_role_per_scan:
+  SCAN-02R-022f7aa0bc71f84f: not_applicable
+  SCAN-02R-03ed38ed92271694: not_applicable
+  SCAN-02R-059bd02c78268a2b: discovery
+  SCAN-02R-05cdcdc49c83bec6: not_applicable
+  SCAN-02R-072b13029deb0fba: not_applicable
+  SCAN-02R-074afad5a6b92ea4: discovery
+  SCAN-02R-076c78acdde2d2d0: not_applicable
+  SCAN-02R-097d0c674875ad7d: not_applicable
+  SCAN-02R-0e6d00a831c04e8d: discovery
+  SCAN-02R-0f8fb12fa9acc5a9: not_applicable
+  SCAN-02R-113d971bbff5b0fe: not_applicable
+  SCAN-02R-118b7f0b82f35923: not_applicable
+  SCAN-02R-11f9a7978abc2be1: not_applicable
+  SCAN-02R-183e2f7a146cbdf6: not_applicable
+  SCAN-02R-1c3a8acc71d9e5bd: not_applicable
+  SCAN-02R-1d86949e1fdc12c8: not_applicable
+  SCAN-02R-1dda1db143c363ba: not_applicable
+  SCAN-02R-1e5b02c69224108d: discovery
+  SCAN-02R-20b2aca534749eb8: not_applicable
+  SCAN-02R-211255ce1a05d229: not_applicable
+  SCAN-02R-2161de9a5edbe1bf: not_applicable
+  SCAN-02R-22608464dd5aff80: not_applicable
+  SCAN-02R-251028aabdf3c3e7: not_applicable
+  SCAN-02R-26c5588a4a75efc2: discovery
+  SCAN-02R-26cdfd757f62fb5b: holdout
+  SCAN-02R-291dabeaaa79ad80: not_applicable
+  SCAN-02R-2a0e91f43e0fe127: discovery
+  SCAN-02R-2af7f44831b57311: not_applicable
+  SCAN-02R-2c07251df8824bce: not_applicable
+  SCAN-02R-2c38778fb264b3af: not_applicable
+  SCAN-02R-2f690557cfd20bec: discovery
+  SCAN-02R-306a96179bd778b6: discovery
+  SCAN-02R-31bc005deb88d4e2: not_applicable
+  SCAN-02R-325ad9a57ee92673: not_applicable
+  SCAN-02R-32cf60066cdcd074: not_applicable
+  SCAN-02R-33c7ae4485edcd17: not_applicable
+  SCAN-02R-35c1a2ccd5e9e62e: not_applicable
+  SCAN-02R-3796d374ac11519e: not_applicable
+  SCAN-02R-379ac295ed92a194: not_applicable
+  SCAN-02R-391364dde623200d: not_applicable
+  SCAN-02R-3d7ecf2f3c542662: not_applicable
+  SCAN-02R-3f903a520f921d83: discovery
+  SCAN-02R-403532c05321d7d2: not_applicable
+  SCAN-02R-41d12941c2dac178: holdout
+  SCAN-02R-42c582e4eb747d10: not_applicable
+  SCAN-02R-42d0a4d8bd2d58cc: holdout
+  SCAN-02R-42f2046fce901aec: not_applicable
+  SCAN-02R-432159a75d80f2b3: discovery
+  SCAN-02R-43979cdff2eef525: discovery
+  SCAN-02R-43d400370d39ebe7: not_applicable
+  SCAN-02R-45d1daf515e218b6: discovery
+  SCAN-02R-4650765ebe11f415: holdout
+  SCAN-02R-46abc72aaf86494c: not_applicable
+  SCAN-02R-48f6ae0dc1c99d07: holdout
+  SCAN-02R-4979cab4b4eed413: not_applicable
+  SCAN-02R-49c7081b477e8f3d: not_applicable
+  SCAN-02R-4a9d7177d38df4e7: not_applicable
+  SCAN-02R-4ad1398a663b7933: discovery
+  SCAN-02R-4cc04512e6886f13: not_applicable
+  SCAN-02R-4d54ea7698000638: discovery
+  SCAN-02R-4eb3495e2e32dd73: discovery
+  SCAN-02R-4ecc00c5eac2e1b4: not_applicable
+  SCAN-02R-4f5e09d1864ac832: discovery
+  SCAN-02R-4f9204b624c2d482: not_applicable
+  SCAN-02R-4fb9fc6716a3e65a: discovery
+  SCAN-02R-51cfd518e3a0c6ec: not_applicable
+  SCAN-02R-51f6ed2eb7632349: discovery
+  SCAN-02R-5215f80c458dc1c4: discovery
+  SCAN-02R-5467ba1e21b73319: not_applicable
+  SCAN-02R-54bfea84553b4c65: holdout
+  SCAN-02R-58a76874c3967085: holdout
+  SCAN-02R-59701ee4cf5ede45: not_applicable
+  SCAN-02R-598c5cedd335b846: holdout
+  SCAN-02R-59fa80474896a50b: not_applicable
+  SCAN-02R-5b1259784f010264: not_applicable
+  SCAN-02R-5b80daccf8c23dd0: not_applicable
+  SCAN-02R-5e02dde1da14be55: holdout
+  SCAN-02R-5e52d7e5fbefbc05: discovery
+  SCAN-02R-5e9a406134424e15: not_applicable
+  SCAN-02R-5ef2c24fed347fd7: not_applicable
+  SCAN-02R-5f553db9674e6d45: holdout
+  SCAN-02R-616075842b1e4c6e: not_applicable
+  SCAN-02R-643ff7e40bd97888: not_applicable
+  SCAN-02R-652afedf8df9a217: not_applicable
+  SCAN-02R-68a1fdbd8955d9a4: discovery
+  SCAN-02R-6d3fa023f691129f: not_applicable
+  SCAN-02R-6f7239d1961a1e4d: holdout
+  SCAN-02R-6fded6b51e0642a8: discovery
+  SCAN-02R-7044f49c95edc115: not_applicable
+  SCAN-02R-708cf4d83a29d78f: discovery
+  SCAN-02R-7118d0dce593edea: discovery
+  SCAN-02R-71f68f9554b93f6c: not_applicable
+  SCAN-02R-72904b63e5e6e883: not_applicable
+  SCAN-02R-731f452fb62a55bd: discovery
+  SCAN-02R-73adc0625f7869df: not_applicable
+  SCAN-02R-7493a417e6451013: not_applicable
+  SCAN-02R-74e2c66cfb23844c: not_applicable
+  SCAN-02R-75faa4a614a8f130: discovery
+  SCAN-02R-762111064d108c6d: discovery
+  SCAN-02R-76804d90690fee01: not_applicable
+  SCAN-02R-774f62fc1777bc6b: discovery
+  SCAN-02R-77b71bd09c7eb4b4: discovery
+  SCAN-02R-78bcb97650a5c779: not_applicable
+  SCAN-02R-79960ffd3b8a968b: holdout
+  SCAN-02R-79e659b84aa4786d: discovery
+  SCAN-02R-7a0b878c4f9bf5c8: not_applicable
+  SCAN-02R-7acd4c14a0007418: discovery
+  SCAN-02R-7bf9711c804eecbc: not_applicable
+  SCAN-02R-7d946974f8e94f38: not_applicable
+  SCAN-02R-7fc5c872db142199: not_applicable
+  SCAN-02R-8345a5938afc1084: discovery
+  SCAN-02R-84cb0b6150577fdc: not_applicable
+  SCAN-02R-8641a638f4880175: discovery
+  SCAN-02R-87a18bddebeb7046: not_applicable
+  SCAN-02R-87edbdf74d1e5fb1: holdout
+  SCAN-02R-88b013f641209af6: not_applicable
+  SCAN-02R-89614c0503a95275: discovery
+  SCAN-02R-8c948345fe20cada: not_applicable
+  SCAN-02R-8c953d28ca426172: not_applicable
+  SCAN-02R-8ca6316615b8cbae: discovery
+  SCAN-02R-8dcd5041a8a4e044: discovery
+  SCAN-02R-8e62e3b1b9deee81: discovery
+  SCAN-02R-8e9939a05c893131: not_applicable
+  SCAN-02R-91de8f7a5ce6984b: discovery
+  SCAN-02R-91f840c137c7a43c: discovery
+  SCAN-02R-920194e62af87181: not_applicable
+  SCAN-02R-93657997ed968c54: not_applicable
+  SCAN-02R-936cf3ec1b1f48e0: not_applicable
+  SCAN-02R-94943265720dfbae: not_applicable
+  SCAN-02R-957a8834d758202b: discovery
+  SCAN-02R-95f55247c2e05782: not_applicable
+  SCAN-02R-a0737ac6a3eb4604: not_applicable
+  SCAN-02R-a1d82bdc331e2df4: holdout
+  SCAN-02R-a37edad191409e00: not_applicable
+  SCAN-02R-a4d537ac569af0ba: not_applicable
+  SCAN-02R-a59dc960ac5aa7de: not_applicable
+  SCAN-02R-a88a59b9d2315a05: holdout
+  SCAN-02R-a9a9857e0e5183b2: not_applicable
+  SCAN-02R-abcd8030795bc9cb: discovery
+  SCAN-02R-ae86f327e3ed5623: discovery
+  SCAN-02R-af1610dac9676d6c: not_applicable
+  SCAN-02R-b14e49e20117cb08: holdout
+  SCAN-02R-b30351ae2c4fc24c: not_applicable
+  SCAN-02R-b654b4eb1ebe23d6: not_applicable
+  SCAN-02R-b704f6a14f738619: discovery
+  SCAN-02R-baae22000a534323: holdout
+  SCAN-02R-bc0f4f0c3548d67f: not_applicable
+  SCAN-02R-c09396a290b0d6b2: not_applicable
+  SCAN-02R-c0c9b8b4b3c0d88f: not_applicable
+  SCAN-02R-c18c53ef408b1d89: not_applicable
+  SCAN-02R-c3dcce6e5bc72678: discovery
+  SCAN-02R-c5843105fb81b54c: discovery
+  SCAN-02R-c676d8c64735e535: not_applicable
+  SCAN-02R-c74434b3ed5fc9b8: holdout
+  SCAN-02R-c74d6df747d6fccd: not_applicable
+  SCAN-02R-c7a73b4824a01210: discovery
+  SCAN-02R-c8f01d8d90de0c04: not_applicable
+  SCAN-02R-c949f2ba4994924e: not_applicable
+  SCAN-02R-cb3c11e0b8e28580: not_applicable
+  SCAN-02R-cb5dd7445a99bc3a: not_applicable
+  SCAN-02R-ccdf6f79b6e3b5fc: not_applicable
+  SCAN-02R-cfcdc3a373b26fb0: not_applicable
+  SCAN-02R-d24a90ed870ef8e6: not_applicable
+  SCAN-02R-d2b7e9ee069bd20e: discovery
+  SCAN-02R-d453265e40ec7542: not_applicable
+  SCAN-02R-d4d684343e0d7d6c: not_applicable
+  SCAN-02R-d5e00829a2a54fb6: not_applicable
+  SCAN-02R-d7af0511d4c5b96e: not_applicable
+  SCAN-02R-d934969a642de523: not_applicable
+  SCAN-02R-da644119c60690fc: not_applicable
+  SCAN-02R-dc90a5b672d54c2c: not_applicable
+  SCAN-02R-e1e2bf2dafefa081: not_applicable
+  SCAN-02R-e3abafe2717105f3: not_applicable
+  SCAN-02R-e4b1e60e94f6a5b7: not_applicable
+  SCAN-02R-e56a9b34b0768e57: not_applicable
+  SCAN-02R-e5f864cf4587fc19: not_applicable
+  SCAN-02R-e731681e22986e49: not_applicable
+  SCAN-02R-e772d925e68f4477: not_applicable
+  SCAN-02R-e7c2e1a042f607c2: not_applicable
+  SCAN-02R-e99f0bd2152d59b1: not_applicable
+  SCAN-02R-eb5b106ace121b92: not_applicable
+  SCAN-02R-eb6fd74d04998612: not_applicable
+  SCAN-02R-ebc55d8b20e3cec0: discovery
+  SCAN-02R-ebcf02322ed12a94: not_applicable
+  SCAN-02R-ed685e6e0b6d3265: not_applicable
+  SCAN-02R-eea1fadd4abbd144: discovery
+  SCAN-02R-ef6a11424f751d3f: discovery
+  SCAN-02R-f36bb8e354cf21b7: discovery
+  SCAN-02R-f380a5a0600b447a: discovery
+  SCAN-02R-f4c54e6724ab8666: not_applicable
+  SCAN-02R-f4da1c738ba8c661: not_applicable
+  SCAN-02R-f52305deb1f82a3a: not_applicable
+  SCAN-02R-f565bb6e9ffba8d0: not_applicable
+  SCAN-02R-f56f915bc229d6aa: discovery
+  SCAN-02R-f71173d3ec0c732c: discovery
+  SCAN-02R-f7776e64b8dc4ae4: not_applicable
+  SCAN-02R-f87c8c3cd06321c2: discovery
+  SCAN-02R-facac32c4f9e5032: not_applicable
+  SCAN-02R-fb555611767fe647: not_applicable
+  SCAN-02R-fb62d31e5c3c1dbf: discovery
+  SCAN-02R-fede66c26a275769: discovery
+exposure_class_per_scan:
+  SCAN-02R-022f7aa0bc71f84f: time_controlled
+  SCAN-02R-03ed38ed92271694: time_controlled
+  SCAN-02R-059bd02c78268a2b: monitor_controlled
+  SCAN-02R-05cdcdc49c83bec6: time_controlled
+  SCAN-02R-072b13029deb0fba: time_controlled
+  SCAN-02R-074afad5a6b92ea4: monitor_controlled
+  SCAN-02R-076c78acdde2d2d0: time_controlled
+  SCAN-02R-097d0c674875ad7d: time_controlled
+  SCAN-02R-0e6d00a831c04e8d: monitor_controlled
+  SCAN-02R-0f8fb12fa9acc5a9: time_controlled
+  SCAN-02R-113d971bbff5b0fe: time_controlled
+  SCAN-02R-118b7f0b82f35923: time_controlled
+  SCAN-02R-11f9a7978abc2be1: monitor_controlled
+  SCAN-02R-183e2f7a146cbdf6: monitor_controlled
+  SCAN-02R-1c3a8acc71d9e5bd: monitor_controlled
+  SCAN-02R-1d86949e1fdc12c8: time_controlled
+  SCAN-02R-1dda1db143c363ba: time_controlled
+  SCAN-02R-1e5b02c69224108d: monitor_controlled
+  SCAN-02R-20b2aca534749eb8: time_controlled
+  SCAN-02R-211255ce1a05d229: time_controlled
+  SCAN-02R-2161de9a5edbe1bf: time_controlled
+  SCAN-02R-22608464dd5aff80: time_controlled
+  SCAN-02R-251028aabdf3c3e7: time_controlled
+  SCAN-02R-26c5588a4a75efc2: monitor_controlled
+  SCAN-02R-26cdfd757f62fb5b: monitor_controlled
+  SCAN-02R-291dabeaaa79ad80: time_controlled
+  SCAN-02R-2a0e91f43e0fe127: monitor_controlled
+  SCAN-02R-2af7f44831b57311: time_controlled
+  SCAN-02R-2c07251df8824bce: time_controlled
+  SCAN-02R-2c38778fb264b3af: time_controlled
+  SCAN-02R-2f690557cfd20bec: monitor_controlled
+  SCAN-02R-306a96179bd778b6: monitor_controlled
+  SCAN-02R-31bc005deb88d4e2: time_controlled
+  SCAN-02R-325ad9a57ee92673: time_controlled
+  SCAN-02R-32cf60066cdcd074: time_controlled
+  SCAN-02R-33c7ae4485edcd17: time_controlled
+  SCAN-02R-35c1a2ccd5e9e62e: time_controlled
+  SCAN-02R-3796d374ac11519e: monitor_controlled
+  SCAN-02R-379ac295ed92a194: time_controlled
+  SCAN-02R-391364dde623200d: time_controlled
+  SCAN-02R-3d7ecf2f3c542662: time_controlled
+  SCAN-02R-3f903a520f921d83: monitor_controlled
+  SCAN-02R-403532c05321d7d2: monitor_controlled
+  SCAN-02R-41d12941c2dac178: monitor_controlled
+  SCAN-02R-42c582e4eb747d10: monitor_controlled
+  SCAN-02R-42d0a4d8bd2d58cc: monitor_controlled
+  SCAN-02R-42f2046fce901aec: time_controlled
+  SCAN-02R-432159a75d80f2b3: monitor_controlled
+  SCAN-02R-43979cdff2eef525: monitor_controlled
+  SCAN-02R-43d400370d39ebe7: time_controlled
+  SCAN-02R-45d1daf515e218b6: monitor_controlled
+  SCAN-02R-4650765ebe11f415: monitor_controlled
+  SCAN-02R-46abc72aaf86494c: monitor_controlled
+  SCAN-02R-48f6ae0dc1c99d07: monitor_controlled
+  SCAN-02R-4979cab4b4eed413: monitor_controlled
+  SCAN-02R-49c7081b477e8f3d: time_controlled
+  SCAN-02R-4a9d7177d38df4e7: time_controlled
+  SCAN-02R-4ad1398a663b7933: monitor_controlled
+  SCAN-02R-4cc04512e6886f13: time_controlled
+  SCAN-02R-4d54ea7698000638: monitor_controlled
+  SCAN-02R-4eb3495e2e32dd73: monitor_controlled
+  SCAN-02R-4ecc00c5eac2e1b4: time_controlled
+  SCAN-02R-4f5e09d1864ac832: monitor_controlled
+  SCAN-02R-4f9204b624c2d482: time_controlled
+  SCAN-02R-4fb9fc6716a3e65a: time_controlled
+  SCAN-02R-51cfd518e3a0c6ec: time_controlled
+  SCAN-02R-51f6ed2eb7632349: monitor_controlled
+  SCAN-02R-5215f80c458dc1c4: monitor_controlled
+  SCAN-02R-5467ba1e21b73319: monitor_controlled
+  SCAN-02R-54bfea84553b4c65: monitor_controlled
+  SCAN-02R-58a76874c3967085: monitor_controlled
+  SCAN-02R-59701ee4cf5ede45: time_controlled
+  SCAN-02R-598c5cedd335b846: monitor_controlled
+  SCAN-02R-59fa80474896a50b: time_controlled
+  SCAN-02R-5b1259784f010264: time_controlled
+  SCAN-02R-5b80daccf8c23dd0: time_controlled
+  SCAN-02R-5e02dde1da14be55: monitor_controlled
+  SCAN-02R-5e52d7e5fbefbc05: monitor_controlled
+  SCAN-02R-5e9a406134424e15: time_controlled
+  SCAN-02R-5ef2c24fed347fd7: monitor_controlled
+  SCAN-02R-5f553db9674e6d45: monitor_controlled
+  SCAN-02R-616075842b1e4c6e: monitor_controlled
+  SCAN-02R-643ff7e40bd97888: monitor_controlled
+  SCAN-02R-652afedf8df9a217: time_controlled
+  SCAN-02R-68a1fdbd8955d9a4: monitor_controlled
+  SCAN-02R-6d3fa023f691129f: time_controlled
+  SCAN-02R-6f7239d1961a1e4d: monitor_controlled
+  SCAN-02R-6fded6b51e0642a8: monitor_controlled
+  SCAN-02R-7044f49c95edc115: time_controlled
+  SCAN-02R-708cf4d83a29d78f: monitor_controlled
+  SCAN-02R-7118d0dce593edea: monitor_controlled
+  SCAN-02R-71f68f9554b93f6c: time_controlled
+  SCAN-02R-72904b63e5e6e883: time_controlled
+  SCAN-02R-731f452fb62a55bd: monitor_controlled
+  SCAN-02R-73adc0625f7869df: monitor_controlled
+  SCAN-02R-7493a417e6451013: time_controlled
+  SCAN-02R-74e2c66cfb23844c: time_controlled
+  SCAN-02R-75faa4a614a8f130: monitor_controlled
+  SCAN-02R-762111064d108c6d: monitor_controlled
+  SCAN-02R-76804d90690fee01: time_controlled
+  SCAN-02R-774f62fc1777bc6b: monitor_controlled
+  SCAN-02R-77b71bd09c7eb4b4: monitor_controlled
+  SCAN-02R-78bcb97650a5c779: time_controlled
+  SCAN-02R-79960ffd3b8a968b: monitor_controlled
+  SCAN-02R-79e659b84aa4786d: monitor_controlled
+  SCAN-02R-7a0b878c4f9bf5c8: monitor_controlled
+  SCAN-02R-7acd4c14a0007418: monitor_controlled
+  SCAN-02R-7bf9711c804eecbc: time_controlled
+  SCAN-02R-7d946974f8e94f38: time_controlled
+  SCAN-02R-7fc5c872db142199: monitor_controlled
+  SCAN-02R-8345a5938afc1084: monitor_controlled
+  SCAN-02R-84cb0b6150577fdc: time_controlled
+  SCAN-02R-8641a638f4880175: monitor_controlled
+  SCAN-02R-87a18bddebeb7046: monitor_controlled
+  SCAN-02R-87edbdf74d1e5fb1: monitor_controlled
+  SCAN-02R-88b013f641209af6: monitor_controlled
+  SCAN-02R-89614c0503a95275: monitor_controlled
+  SCAN-02R-8c948345fe20cada: time_controlled
+  SCAN-02R-8c953d28ca426172: time_controlled
+  SCAN-02R-8ca6316615b8cbae: monitor_controlled
+  SCAN-02R-8dcd5041a8a4e044: monitor_controlled
+  SCAN-02R-8e62e3b1b9deee81: monitor_controlled
+  SCAN-02R-8e9939a05c893131: time_controlled
+  SCAN-02R-91de8f7a5ce6984b: monitor_controlled
+  SCAN-02R-91f840c137c7a43c: monitor_controlled
+  SCAN-02R-920194e62af87181: time_controlled
+  SCAN-02R-93657997ed968c54: time_controlled
+  SCAN-02R-936cf3ec1b1f48e0: time_controlled
+  SCAN-02R-94943265720dfbae: time_controlled
+  SCAN-02R-957a8834d758202b: monitor_controlled
+  SCAN-02R-95f55247c2e05782: time_controlled
+  SCAN-02R-a0737ac6a3eb4604: monitor_controlled
+  SCAN-02R-a1d82bdc331e2df4: monitor_controlled
+  SCAN-02R-a37edad191409e00: time_controlled
+  SCAN-02R-a4d537ac569af0ba: time_controlled
+  SCAN-02R-a59dc960ac5aa7de: time_controlled
+  SCAN-02R-a88a59b9d2315a05: monitor_controlled
+  SCAN-02R-a9a9857e0e5183b2: time_controlled
+  SCAN-02R-abcd8030795bc9cb: monitor_controlled
+  SCAN-02R-ae86f327e3ed5623: monitor_controlled
+  SCAN-02R-af1610dac9676d6c: time_controlled
+  SCAN-02R-b14e49e20117cb08: monitor_controlled
+  SCAN-02R-b30351ae2c4fc24c: time_controlled
+  SCAN-02R-b654b4eb1ebe23d6: monitor_controlled
+  SCAN-02R-b704f6a14f738619: monitor_controlled
+  SCAN-02R-baae22000a534323: monitor_controlled
+  SCAN-02R-bc0f4f0c3548d67f: time_controlled
+  SCAN-02R-c09396a290b0d6b2: time_controlled
+  SCAN-02R-c0c9b8b4b3c0d88f: monitor_controlled
+  SCAN-02R-c18c53ef408b1d89: time_controlled
+  SCAN-02R-c3dcce6e5bc72678: monitor_controlled
+  SCAN-02R-c5843105fb81b54c: monitor_controlled
+  SCAN-02R-c676d8c64735e535: monitor_controlled
+  SCAN-02R-c74434b3ed5fc9b8: monitor_controlled
+  SCAN-02R-c74d6df747d6fccd: monitor_controlled
+  SCAN-02R-c7a73b4824a01210: monitor_controlled
+  SCAN-02R-c8f01d8d90de0c04: monitor_controlled
+  SCAN-02R-c949f2ba4994924e: time_controlled
+  SCAN-02R-cb3c11e0b8e28580: time_controlled
+  SCAN-02R-cb5dd7445a99bc3a: time_controlled
+  SCAN-02R-ccdf6f79b6e3b5fc: time_controlled
+  SCAN-02R-cfcdc3a373b26fb0: time_controlled
+  SCAN-02R-d24a90ed870ef8e6: time_controlled
+  SCAN-02R-d2b7e9ee069bd20e: monitor_controlled
+  SCAN-02R-d453265e40ec7542: time_controlled
+  SCAN-02R-d4d684343e0d7d6c: time_controlled
+  SCAN-02R-d5e00829a2a54fb6: time_controlled
+  SCAN-02R-d7af0511d4c5b96e: time_controlled
+  SCAN-02R-d934969a642de523: monitor_controlled
+  SCAN-02R-da644119c60690fc: time_controlled
+  SCAN-02R-dc90a5b672d54c2c: time_controlled
+  SCAN-02R-e1e2bf2dafefa081: time_controlled
+  SCAN-02R-e3abafe2717105f3: time_controlled
+  SCAN-02R-e4b1e60e94f6a5b7: time_controlled
+  SCAN-02R-e56a9b34b0768e57: monitor_controlled
+  SCAN-02R-e5f864cf4587fc19: time_controlled
+  SCAN-02R-e731681e22986e49: time_controlled
+  SCAN-02R-e772d925e68f4477: monitor_controlled
+  SCAN-02R-e7c2e1a042f607c2: monitor_controlled
+  SCAN-02R-e99f0bd2152d59b1: time_controlled
+  SCAN-02R-eb5b106ace121b92: time_controlled
+  SCAN-02R-eb6fd74d04998612: time_controlled
+  SCAN-02R-ebc55d8b20e3cec0: monitor_controlled
+  SCAN-02R-ebcf02322ed12a94: time_controlled
+  SCAN-02R-ed685e6e0b6d3265: monitor_controlled
+  SCAN-02R-eea1fadd4abbd144: monitor_controlled
+  SCAN-02R-ef6a11424f751d3f: monitor_controlled
+  SCAN-02R-f36bb8e354cf21b7: monitor_controlled
+  SCAN-02R-f380a5a0600b447a: monitor_controlled
+  SCAN-02R-f4c54e6724ab8666: time_controlled
+  SCAN-02R-f4da1c738ba8c661: time_controlled
+  SCAN-02R-f52305deb1f82a3a: monitor_controlled
+  SCAN-02R-f565bb6e9ffba8d0: time_controlled
+  SCAN-02R-f56f915bc229d6aa: monitor_controlled
+  SCAN-02R-f71173d3ec0c732c: monitor_controlled
+  SCAN-02R-f7776e64b8dc4ae4: time_controlled
+  SCAN-02R-f87c8c3cd06321c2: monitor_controlled
+  SCAN-02R-facac32c4f9e5032: time_controlled
+  SCAN-02R-fb555611767fe647: time_controlled
+  SCAN-02R-fb62d31e5c3c1dbf: monitor_controlled
+  SCAN-02R-fede66c26a275769: monitor_controlled
+Ei_Ef_status_per_scan:
+  SCAN-02R-022f7aa0bc71f84f:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-03ed38ed92271694:
+    def_x_raw: ps_bottom
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-059bd02c78268a2b:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-05cdcdc49c83bec6:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-072b13029deb0fba:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-074afad5a6b92ea4:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-076c78acdde2d2d0:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-097d0c674875ad7d:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-0e6d00a831c04e8d:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-0f8fb12fa9acc5a9:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-113d971bbff5b0fe:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-118b7f0b82f35923:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-11f9a7978abc2be1:
+    def_x_raw: ps_left
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-183e2f7a146cbdf6:
+    def_x_raw: ps_right
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-1c3a8acc71d9e5bd:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-1d86949e1fdc12c8:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-1dda1db143c363ba:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-1e5b02c69224108d:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-20b2aca534749eb8:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-211255ce1a05d229:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-2161de9a5edbe1bf:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-22608464dd5aff80:
+    def_x_raw: pa_top
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-251028aabdf3c3e7:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-26c5588a4a75efc2:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-26cdfd757f62fb5b:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-291dabeaaa79ad80:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-2a0e91f43e0fe127:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-2af7f44831b57311:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-2c07251df8824bce:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-2c38778fb264b3af:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-2f690557cfd20bec:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-306a96179bd778b6:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-31bc005deb88d4e2:
+    def_x_raw: pa_right
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-325ad9a57ee92673:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-32cf60066cdcd074:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-33c7ae4485edcd17:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-35c1a2ccd5e9e62e:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-3796d374ac11519e:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-379ac295ed92a194:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-391364dde623200d:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-3d7ecf2f3c542662:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-3f903a520f921d83:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-403532c05321d7d2:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-41d12941c2dac178:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-42c582e4eb747d10:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-42d0a4d8bd2d58cc:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-42f2046fce901aec:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-432159a75d80f2b3:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-43979cdff2eef525:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-43d400370d39ebe7:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-45d1daf515e218b6:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-4650765ebe11f415:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-46abc72aaf86494c:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-48f6ae0dc1c99d07:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-4979cab4b4eed413:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-49c7081b477e8f3d:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-4a9d7177d38df4e7:
+    def_x_raw: a1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-4ad1398a663b7933:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-4cc04512e6886f13:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-4d54ea7698000638:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-4eb3495e2e32dd73:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-4ecc00c5eac2e1b4:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-4f5e09d1864ac832:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-4f9204b624c2d482:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-4fb9fc6716a3e65a:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-51cfd518e3a0c6ec:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-51f6ed2eb7632349:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-5215f80c458dc1c4:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-5467ba1e21b73319:
+    def_x_raw: pa_top
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-54bfea84553b4c65:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-58a76874c3967085:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-59701ee4cf5ede45:
+    def_x_raw: a2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-598c5cedd335b846:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-59fa80474896a50b:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-5b1259784f010264:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-5b80daccf8c23dd0:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-5e02dde1da14be55:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-5e52d7e5fbefbc05:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-5e9a406134424e15:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-5ef2c24fed347fd7:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-5f553db9674e6d45:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-616075842b1e4c6e:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-643ff7e40bd97888:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-652afedf8df9a217:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-68a1fdbd8955d9a4:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-6d3fa023f691129f:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-6f7239d1961a1e4d:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-6fded6b51e0642a8:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-7044f49c95edc115:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-708cf4d83a29d78f:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-7118d0dce593edea:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-71f68f9554b93f6c:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-72904b63e5e6e883:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-731f452fb62a55bd:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-73adc0625f7869df:
+    def_x_raw: ps_bottom
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-7493a417e6451013:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-74e2c66cfb23844c:
+    def_x_raw: pa_bottom
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-75faa4a614a8f130:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-762111064d108c6d:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-76804d90690fee01:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-774f62fc1777bc6b:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-77b71bd09c7eb4b4:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-78bcb97650a5c779:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-79960ffd3b8a968b:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-79e659b84aa4786d:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-7a0b878c4f9bf5c8:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-7acd4c14a0007418:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-7bf9711c804eecbc:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-7d946974f8e94f38:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-7fc5c872db142199:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-8345a5938afc1084:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-84cb0b6150577fdc:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-8641a638f4880175:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-87a18bddebeb7046:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-87edbdf74d1e5fb1:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-88b013f641209af6:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-89614c0503a95275:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-8c948345fe20cada:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-8c953d28ca426172:
+    def_x_raw: ei
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-8ca6316615b8cbae:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-8dcd5041a8a4e044:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-8e62e3b1b9deee81:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-8e9939a05c893131:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-91de8f7a5ce6984b:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-91f840c137c7a43c:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-920194e62af87181:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-93657997ed968c54:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-936cf3ec1b1f48e0:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-94943265720dfbae:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-957a8834d758202b:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-95f55247c2e05782:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-a0737ac6a3eb4604:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-a1d82bdc331e2df4:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-a37edad191409e00:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-a4d537ac569af0ba:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-a59dc960ac5aa7de:
+    def_x_raw: a1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-a88a59b9d2315a05:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-a9a9857e0e5183b2:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-abcd8030795bc9cb:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-ae86f327e3ed5623:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-af1610dac9676d6c:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-b14e49e20117cb08:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-b30351ae2c4fc24c:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-b654b4eb1ebe23d6:
+    def_x_raw: ps_top
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-b704f6a14f738619:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-baae22000a534323:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-bc0f4f0c3548d67f:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-c09396a290b0d6b2:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-c0c9b8b4b3c0d88f:
+    def_x_raw: pa_bottom
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-c18c53ef408b1d89:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-c3dcce6e5bc72678:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-c5843105fb81b54c:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-c676d8c64735e535:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-c74434b3ed5fc9b8:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-c74d6df747d6fccd:
+    def_x_raw: pa_right
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-c7a73b4824a01210:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-c8f01d8d90de0c04:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-c949f2ba4994924e:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-cb3c11e0b8e28580:
+    def_x_raw: m1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-cb5dd7445a99bc3a:
+    def_x_raw: ps_left
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-ccdf6f79b6e3b5fc:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-cfcdc3a373b26fb0:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-d24a90ed870ef8e6:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-d2b7e9ee069bd20e:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-d453265e40ec7542:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-d4d684343e0d7d6c:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-d5e00829a2a54fb6:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-d7af0511d4c5b96e:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-d934969a642de523:
+    def_x_raw: pa_left
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-da644119c60690fc:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-dc90a5b672d54c2c:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e1e2bf2dafefa081:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e3abafe2717105f3:
+    def_x_raw: pa_left
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e4b1e60e94f6a5b7:
+    def_x_raw: ps_top
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e56a9b34b0768e57:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e5f864cf4587fc19:
+    def_x_raw: ei
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e731681e22986e49:
+    def_x_raw: ps_right
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e772d925e68f4477:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-e7c2e1a042f607c2:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-e99f0bd2152d59b1:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-eb5b106ace121b92:
+    def_x_raw: sgl
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-eb6fd74d04998612:
+    def_x_raw: s1
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-ebc55d8b20e3cec0:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-ebcf02322ed12a94:
+    def_x_raw: s2
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-ed685e6e0b6d3265:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-eea1fadd4abbd144:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-ef6a11424f751d3f:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-f36bb8e354cf21b7:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-f380a5a0600b447a:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-f4c54e6724ab8666:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-f4da1c738ba8c661:
+    def_x_raw: ei
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-f52305deb1f82a3a:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-f565bb6e9ffba8d0:
+    def_x_raw: sgu
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-f56f915bc229d6aa:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-f71173d3ec0c732c:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-f7776e64b8dc4ae4:
+    def_x_raw: ql
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-f87c8c3cd06321c2:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-facac32c4f9e5032:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-fb555611767fe647:
+    def_x_raw: qk
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: not_applicable
+  SCAN-02R-fb62d31e5c3c1dbf:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+  SCAN-02R-fede66c26a275769:
+    def_x_raw: en
+    energy_transfer_field_raw: e
+    energy_transfer_convention: Ei_minus_Ef
+    energy_relation_status: verified_global
+    en_e_mapping_status: verified
+model_specification:
+  likelihood: raw_count_exposure_conditioned_Poisson
+  component_family: observed_unit_area_Gaussian
+  primary_background: B1_log_linear
+  local_background_coordinate:
+  - -1.0
+  - 1.0
+  sensitivity_backgrounds:
+    B0:
+      role: sensitivity
+    B2:
+      role: sensitivity
+      lower_anchor_points_min: 3
+      upper_anchor_points_min: 3
+  background_order_bootstrap_selection: false
+  scan_specific_parameters:
+  - background
+  - integrated_area
+  - centroid
+  - observed_fwhm
+  arbitrary_per_scan_scale: forbidden
+  centroid_parameterization: softmax_gap_with_fixed_zero_reference
+  centroid_free_logits_equal_K: true
+  post_fit_centroid_sorting: forbidden
+  physical_minimum_separation_rule: none
+  parameter_domains:
+    b0: unbounded
+    b1: unbounded
+    area: nonnegative_unbounded
+    observed_fwhm: strictly_positive_unbounded
+    centroid: strictly_inside_frozen_complex_union
+component_development_result:
+  CX-01:
+    adequate_model_preparation: true
+    presence_hypothesis_registered: true
+    K0_fit:
+      fit_status: valid
+      theta:
+      - -9.83945570089848
+      - -0.10025201975370736
+      - -9.728850708986906
+      - -0.18949141298061983
+      - -9.905513535822102
+      - -0.1297850047089935
+      - -9.790110963510351
+      - -0.26397594900640936
+      - -9.694323139473678
+      - -0.12325878975079448
+      - -9.901254947945793
+      - -0.13135673532091063
+      - -8.054649145932192
+      - -0.6539922315753601
+      - -9.881127872210003
+      - -0.13788385693817162
+      - -9.946208875142238
+      - -0.20303223916786586
+      - -9.532248193891988
+      - -0.132175625029526
+      - -9.819855122110598
+      - -0.027797900215980453
+      - -9.585449022502406
+      - -0.14835150098796582
+      - -9.859369620694476
+      - -0.2962930157215522
+      - -9.737776888820843
+      - -0.06537993909844192
+      - -9.761696438420286
+      - 0.03239022027123797
+      - -7.9463995591925185
+      - -0.7376191157671519
+      - -9.844473580534006
+      - -0.16287072105331274
+      - -7.96675311264279
+      - -0.5638581171663573
+      - -9.818017754964703
+      - -0.3097032024290443
+      - -9.805512373859713
+      - -0.1790195697191827
+      - -8.017179059421597
+      - -0.6928314607460067
+      - -9.8675266090302
+      - -0.07326801333103189
+      - -7.939799217205447
+      - -0.4193778420163741
+      - -7.974794318149128
+      - -0.6810163591328477
+      - -9.81641274515493
+      - -0.13110015223587465
+      - -7.955243459961012
+      - -0.5373634197305784
+      - -9.727055130221883
+      - -0.06702477371340858
+      - -9.785592209207893
+      - 0.008734101421694678
+      - -9.982053144182949
+      - -0.0019238863894146545
+      - -9.936248208380333
+      - -0.12160334171272844
+      - -9.676645047345907
+      - -0.13291837114220317
+      - -9.734301593769844
+      - -0.020264661150905146
+      - -9.587354202433348
+      - -0.2037336709281039
+      - -9.908173981263548
+      - -0.07920114478404161
+      - -9.88678999192843
+      - -0.11987262933414132
+      - -9.872034666689494
+      - -0.08004780642348576
+      - -9.890364902297017
+      - -0.14699000716576208
+      - -9.917752474228932
+      - -0.08867654498008047
+      - -9.813780573263658
+      - -0.16401267901125463
+      - -9.54623562412303
+      - -0.2975073794642205
+      - -9.825429386286993
+      - -0.1561048566857725
+      log_likelihood: -1323.774708697667
+      start_count: 16
+      optimizer_stability_status: stable
+      projected_gradient_max: 0.0032573604817577543
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    K1_fit:
+      fit_status: numerical_failure
+      theta: null
+      log_likelihood: null
+      start_count: 16
+      optimizer_stability_status: unresolved
+      projected_gradient_max: .inf
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    final_K: 1
+    developments:
+    - child_K: 2
+      promoted: false
+      gates:
+        parent_observed_fit_stable: false
+        child_observed_fit_stable: false
+    final_fit:
+      fit_status: numerical_failure
+      theta: null
+      log_likelihood: null
+      start_count: 16
+      optimizer_stability_status: unresolved
+      projected_gradient_max: .inf
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    final_scan_ids:
+    - SCAN-02R-059bd02c78268a2b
+    - SCAN-02R-0e6d00a831c04e8d
+    - SCAN-02R-26c5588a4a75efc2
+    - SCAN-02R-2f690557cfd20bec
+    - SCAN-02R-306a96179bd778b6
+    - SCAN-02R-3f903a520f921d83
+    - SCAN-02R-43979cdff2eef525
+    - SCAN-02R-45d1daf515e218b6
+    - SCAN-02R-4ad1398a663b7933
+    - SCAN-02R-4d54ea7698000638
+    - SCAN-02R-4f5e09d1864ac832
+    - SCAN-02R-5e52d7e5fbefbc05
+    - SCAN-02R-6fded6b51e0642a8
+    - SCAN-02R-708cf4d83a29d78f
+    - SCAN-02R-7118d0dce593edea
+    - SCAN-02R-731f452fb62a55bd
+    - SCAN-02R-75faa4a614a8f130
+    - SCAN-02R-774f62fc1777bc6b
+    - SCAN-02R-77b71bd09c7eb4b4
+    - SCAN-02R-8345a5938afc1084
+    - SCAN-02R-8641a638f4880175
+    - SCAN-02R-89614c0503a95275
+    - SCAN-02R-8ca6316615b8cbae
+    - SCAN-02R-8dcd5041a8a4e044
+    - SCAN-02R-8e62e3b1b9deee81
+    - SCAN-02R-91de8f7a5ce6984b
+    - SCAN-02R-91f840c137c7a43c
+    - SCAN-02R-957a8834d758202b
+    - SCAN-02R-abcd8030795bc9cb
+    - SCAN-02R-ae86f327e3ed5623
+    - SCAN-02R-b704f6a14f738619
+    - SCAN-02R-c5843105fb81b54c
+    - SCAN-02R-c7a73b4824a01210
+    - SCAN-02R-ebc55d8b20e3cec0
+    - SCAN-02R-eea1fadd4abbd144
+    - SCAN-02R-f36bb8e354cf21b7
+    - SCAN-02R-f380a5a0600b447a
+    - SCAN-02R-f56f915bc229d6aa
+    - SCAN-02R-f87c8c3cd06321c2
+    - SCAN-02R-fb62d31e5c3c1dbf
+    - SCAN-02R-fede66c26a275769
+    final_background_sensitivity: []
+    final_ambiguity_status: ambiguous
+    final_profiles:
+      required: true
+      performed: false
+      records: []
+    uncertainty_status:
+      centroid: profile_where_required
+      area: not_estimated_explicit_no_frozen_method
+      observed_fwhm: not_estimated_explicit_no_frozen_method
+    resolution_status: resolution_not_established
+  CX-02:
+    adequate_model_preparation: true
+    presence_hypothesis_registered: true
+    K0_fit:
+      fit_status: valid
+      theta:
+      - -10.123662953020713
+      - -0.19302055208460603
+      - -10.024933280053606
+      - -0.209310677182794
+      - -10.236497508480463
+      - -0.21007555310011378
+      - -10.184679325590993
+      - -0.002986441603618257
+      - -9.95307821103328
+      - -0.0600238849622986
+      - -10.329670223270417
+      - -0.3170853859370619
+      - -8.586204602322992
+      - -0.008408705989663834
+      - -10.304933801899262
+      - -0.4073572323706327
+      - -10.22342784307931
+      - -0.1801994595058058
+      - -9.668615245706185
+      - 0.004515596179939099
+      - -9.646279501752023
+      - 0.08166136762964123
+      - -9.711156803445242
+      - -0.10827260441180453
+      - -10.086245653813284
+      - -0.02437079431743639
+      - -10.144935460210153
+      - -0.25624754099172975
+      - -10.019388897673988
+      - -0.1535419857207234
+      - -8.485711071556889
+      - -0.041519168700204834
+      - -10.273165191165802
+      - -0.2005180736463663
+      - -8.521226098665096
+      - -0.030838320438445206
+      - -9.96487927898295
+      - -0.04860374242163569
+      - -10.124454198182793
+      - -0.08431501635788603
+      - -8.624925578161271
+      - -0.033414402089513906
+      - -10.242898650220559
+      - -0.3206449949838683
+      - -8.506845010221213
+      - -0.0005567747370250007
+      - -8.561119540172044
+      - -0.023139769097657144
+      - -10.43618668783793
+      - -0.10932808688324394
+      - -8.577382501315821
+      - -0.038675540565676944
+      - -9.973086126986017
+      - -0.05206376111355438
+      - -10.338769509621798
+      - -0.28288884685898624
+      - -10.333317226434046
+      - 0.0745922417118836
+      - -10.321124751795258
+      - -0.01713358171248748
+      - -10.138017474595207
+      - -0.13782837072194729
+      - -10.094058486747937
+      - -0.031090486691401385
+      - -10.253169972710722
+      - -0.10863724338255037
+      - -10.196305454160674
+      - -0.12038666424956701
+      - -10.18879263969677
+      - -0.12231679537718174
+      - -10.184541496278628
+      - -0.1133408413569737
+      - -10.17289274939588
+      - -0.3076080353253298
+      - -10.151115612408228
+      - -0.08661177295939773
+      log_likelihood: -923.5806558763995
+      start_count: 8
+      optimizer_stability_status: stable
+      projected_gradient_max: 9.265477274311706e-05
+      numerical_convergence_status: within_reference
+      KKT_role: diagnostic_only
+    K1_fit:
+      fit_status: valid
+      theta:
+      - -11.87725081416394
+      - -2.3656777565288736
+      - 2.2270522055045847e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.935995613269776
+      - -1.6920238064237458
+      - 2.461117328157473e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.220791439747426
+      - -3.2303371757093347
+      - 1.9940112323530806e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.750046295394737
+      - -2.4290704568803023
+      - 2.0783047284936426e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.57768258135922
+      - -2.4943831024897998
+      - 2.622049262778533e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.241504030726018
+      - -3.0314038289515812
+      - 1.8386562114638483e-06
+      - -4.0
+      - 0.06000699999999995
+      - -9.546412767098365
+      - 0.5926004671563156
+      - 1.0263154816562915e-05
+      - -4.0
+      - 0.06000699999999995
+      - -12.279769681531329
+      - -2.855944581913128
+      - 1.9115822713563122e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.183390632407722
+      - -3.185406807992473
+      - 2.0149495714610543e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.189251246688672
+      - -1.3039262212961147
+      - 3.480354183160303e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.014149320750917
+      - -1.1407425664741409
+      - 3.5640974591381173e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.434641890059847
+      - -1.5607486198480018
+      - 3.3442878290572113e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.615029550008646
+      - -2.1305318770711663
+      - 2.2931561893589977e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.976687766999621
+      - -2.4631846583673105
+      - 2.193992678467798e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.772819848667524
+      - -2.748936096728156
+      - 2.4650389162990346e-06
+      - -4.0
+      - 0.06000699999999995
+      - -7.953539532867913
+      - -0.9851933912350347
+      - 1.1351754858439031e-05
+      - -4.0
+      - 0.06000699999999995
+      - -12.048132562633919
+      - -2.68812168480356
+      - 1.9194338087102253e-06
+      - -4.0
+      - 0.06000699999999995
+      - -8.167097926652632
+      - -0.6732355464853564
+      - 1.0953986060591923e-05
+      - -4.0
+      - 0.06000699999999995
+      - -11.587686305916202
+      - -2.518123892209104
+      - 2.5906474752003476e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.741399062459456
+      - -2.3092028756017458
+      - 2.2105229219564585e-06
+      - -4.0
+      - 0.06000699999999995
+      - -9.727216289270787
+      - 1.396760204827563
+      - 9.875858431121339e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.140478450678026
+      - -2.6412627446096857
+      - 2.005789563610405e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.053050943621844
+      - 1.0963114530620777
+      - 0.0023005476144394798
+      - 2.8875728756778187
+      - 111.73545269423272
+      - -8.730334642947115
+      - 0.003610227900708751
+      - 1.0524824451070503e-05
+      - -4.0
+      - 0.06000699999999995
+      - -12.2819542208385
+      - -2.995221864248219
+      - 1.621118518857303e-06
+      - -4.0
+      - 0.06000699999999995
+      - -8.575271534933801
+      - 0.3076587621787641
+      - 1.035733259572096e-05
+      - -4.0
+      - 0.06000699999999995
+      - -11.60571630206906
+      - -2.543914829094387
+      - 2.5697163764243256e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.234950958080432
+      - -3.033244448107621
+      - 1.8138669777617387e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.349641410743615
+      - -3.1009988644607516
+      - 1.7951327877890961e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.040065818207653
+      - -2.7808909730191425
+      - 1.8138645229156184e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.822208030025623
+      - -2.2035375886906374
+      - 2.1863520629218576e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.832941433865393
+      - -2.8143272049705197
+      - 2.2766265639273874e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.969296326265246
+      - -2.7074451848777614
+      - 1.9460836085967908e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.86275977691495
+      - -2.402319489224264
+      - 2.0607435855122513e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.854979678975964
+      - -2.37848231644759
+      - 2.07644300585179e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.839025868658876
+      - -2.3584892915543825
+      - 2.084296727309941e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.09063784663472
+      - -2.379136740404695
+      - 2.147096714446816e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.781315921234707
+      - -2.3989582229174973
+      - 2.1526787571575317e-06
+      - -4.0
+      - 0.06000699999999995
+      log_likelihood: -11991.208729518832
+      start_count: 16
+      optimizer_stability_status: unresolved
+      projected_gradient_max: 94568.53148276423
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    final_K: 1
+    developments:
+    - child_K: 2
+      promoted: false
+      gates:
+        parent_observed_fit_stable: true
+        child_observed_fit_stable: false
+    final_fit:
+      fit_status: valid
+      theta:
+      - -11.87725081416394
+      - -2.3656777565288736
+      - 2.2270522055045847e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.935995613269776
+      - -1.6920238064237458
+      - 2.461117328157473e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.220791439747426
+      - -3.2303371757093347
+      - 1.9940112323530806e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.750046295394737
+      - -2.4290704568803023
+      - 2.0783047284936426e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.57768258135922
+      - -2.4943831024897998
+      - 2.622049262778533e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.241504030726018
+      - -3.0314038289515812
+      - 1.8386562114638483e-06
+      - -4.0
+      - 0.06000699999999995
+      - -9.546412767098365
+      - 0.5926004671563156
+      - 1.0263154816562915e-05
+      - -4.0
+      - 0.06000699999999995
+      - -12.279769681531329
+      - -2.855944581913128
+      - 1.9115822713563122e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.183390632407722
+      - -3.185406807992473
+      - 2.0149495714610543e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.189251246688672
+      - -1.3039262212961147
+      - 3.480354183160303e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.014149320750917
+      - -1.1407425664741409
+      - 3.5640974591381173e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.434641890059847
+      - -1.5607486198480018
+      - 3.3442878290572113e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.615029550008646
+      - -2.1305318770711663
+      - 2.2931561893589977e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.976687766999621
+      - -2.4631846583673105
+      - 2.193992678467798e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.772819848667524
+      - -2.748936096728156
+      - 2.4650389162990346e-06
+      - -4.0
+      - 0.06000699999999995
+      - -7.953539532867913
+      - -0.9851933912350347
+      - 1.1351754858439031e-05
+      - -4.0
+      - 0.06000699999999995
+      - -12.048132562633919
+      - -2.68812168480356
+      - 1.9194338087102253e-06
+      - -4.0
+      - 0.06000699999999995
+      - -8.167097926652632
+      - -0.6732355464853564
+      - 1.0953986060591923e-05
+      - -4.0
+      - 0.06000699999999995
+      - -11.587686305916202
+      - -2.518123892209104
+      - 2.5906474752003476e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.741399062459456
+      - -2.3092028756017458
+      - 2.2105229219564585e-06
+      - -4.0
+      - 0.06000699999999995
+      - -9.727216289270787
+      - 1.396760204827563
+      - 9.875858431121339e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.140478450678026
+      - -2.6412627446096857
+      - 2.005789563610405e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.053050943621844
+      - 1.0963114530620777
+      - 0.0023005476144394798
+      - 2.8875728756778187
+      - 111.73545269423272
+      - -8.730334642947115
+      - 0.003610227900708751
+      - 1.0524824451070503e-05
+      - -4.0
+      - 0.06000699999999995
+      - -12.2819542208385
+      - -2.995221864248219
+      - 1.621118518857303e-06
+      - -4.0
+      - 0.06000699999999995
+      - -8.575271534933801
+      - 0.3076587621787641
+      - 1.035733259572096e-05
+      - -4.0
+      - 0.06000699999999995
+      - -11.60571630206906
+      - -2.543914829094387
+      - 2.5697163764243256e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.234950958080432
+      - -3.033244448107621
+      - 1.8138669777617387e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.349641410743615
+      - -3.1009988644607516
+      - 1.7951327877890961e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.040065818207653
+      - -2.7808909730191425
+      - 1.8138645229156184e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.822208030025623
+      - -2.2035375886906374
+      - 2.1863520629218576e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.832941433865393
+      - -2.8143272049705197
+      - 2.2766265639273874e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.969296326265246
+      - -2.7074451848777614
+      - 1.9460836085967908e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.86275977691495
+      - -2.402319489224264
+      - 2.0607435855122513e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.854979678975964
+      - -2.37848231644759
+      - 2.07644300585179e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.839025868658876
+      - -2.3584892915543825
+      - 2.084296727309941e-06
+      - -4.0
+      - 0.06000699999999995
+      - -12.09063784663472
+      - -2.379136740404695
+      - 2.147096714446816e-06
+      - -4.0
+      - 0.06000699999999995
+      - -11.781315921234707
+      - -2.3989582229174973
+      - 2.1526787571575317e-06
+      - -4.0
+      - 0.06000699999999995
+      log_likelihood: -11991.208729518832
+      start_count: 16
+      optimizer_stability_status: unresolved
+      projected_gradient_max: 94568.53148276423
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    final_scan_ids:
+    - SCAN-02R-059bd02c78268a2b
+    - SCAN-02R-0e6d00a831c04e8d
+    - SCAN-02R-26c5588a4a75efc2
+    - SCAN-02R-2f690557cfd20bec
+    - SCAN-02R-306a96179bd778b6
+    - SCAN-02R-3f903a520f921d83
+    - SCAN-02R-43979cdff2eef525
+    - SCAN-02R-45d1daf515e218b6
+    - SCAN-02R-4ad1398a663b7933
+    - SCAN-02R-4eb3495e2e32dd73
+    - SCAN-02R-51f6ed2eb7632349
+    - SCAN-02R-68a1fdbd8955d9a4
+    - SCAN-02R-6fded6b51e0642a8
+    - SCAN-02R-708cf4d83a29d78f
+    - SCAN-02R-7118d0dce593edea
+    - SCAN-02R-731f452fb62a55bd
+    - SCAN-02R-75faa4a614a8f130
+    - SCAN-02R-774f62fc1777bc6b
+    - SCAN-02R-77b71bd09c7eb4b4
+    - SCAN-02R-8345a5938afc1084
+    - SCAN-02R-8641a638f4880175
+    - SCAN-02R-89614c0503a95275
+    - SCAN-02R-8ca6316615b8cbae
+    - SCAN-02R-8dcd5041a8a4e044
+    - SCAN-02R-8e62e3b1b9deee81
+    - SCAN-02R-91de8f7a5ce6984b
+    - SCAN-02R-91f840c137c7a43c
+    - SCAN-02R-957a8834d758202b
+    - SCAN-02R-abcd8030795bc9cb
+    - SCAN-02R-ae86f327e3ed5623
+    - SCAN-02R-c5843105fb81b54c
+    - SCAN-02R-ebc55d8b20e3cec0
+    - SCAN-02R-eea1fadd4abbd144
+    - SCAN-02R-f36bb8e354cf21b7
+    - SCAN-02R-f380a5a0600b447a
+    - SCAN-02R-f56f915bc229d6aa
+    - SCAN-02R-f87c8c3cd06321c2
+    - SCAN-02R-fede66c26a275769
+    final_background_sensitivity:
+    - scan_id: SCAN-02R-059bd02c78268a2b
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-0e6d00a831c04e8d
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-26c5588a4a75efc2
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-2f690557cfd20bec
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-306a96179bd778b6
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-3f903a520f921d83
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-43979cdff2eef525
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 17
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-45d1daf515e218b6
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-4ad1398a663b7933
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-4eb3495e2e32dd73
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 13
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-51f6ed2eb7632349
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 8
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-68a1fdbd8955d9a4
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 13
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-6fded6b51e0642a8
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-708cf4d83a29d78f
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-7118d0dce593edea
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-731f452fb62a55bd
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 17
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-75faa4a614a8f130
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-774f62fc1777bc6b
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 17
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-77b71bd09c7eb4b4
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-8345a5938afc1084
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-8641a638f4880175
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 17
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-89614c0503a95275
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-8ca6316615b8cbae
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 33
+        window_upper_anchors: 10
+        window_point_count: 12
+    - scan_id: SCAN-02R-8dcd5041a8a4e044
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 17
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-8e62e3b1b9deee81
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-91de8f7a5ce6984b
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 17
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-91f840c137c7a43c
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-957a8834d758202b
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-abcd8030795bc9cb
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-ae86f327e3ed5623
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-c5843105fb81b54c
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-ebc55d8b20e3cec0
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 35
+        window_point_count: 9
+    - scan_id: SCAN-02R-eea1fadd4abbd144
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-f36bb8e354cf21b7
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-f380a5a0600b447a
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-f56f915bc229d6aa
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-f87c8c3cd06321c2
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    - scan_id: SCAN-02R-fede66c26a275769
+      status: material
+      refits:
+      - background: B0
+        status: unstable
+        material: true
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 7
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 18
+        window_upper_anchors: 5
+        window_point_count: 9
+    final_ambiguity_status: ambiguous
+    final_profiles:
+      required: true
+      performed: true
+      records:
+      - scan_id: SCAN-02R-059bd02c78268a2b
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-0e6d00a831c04e8d
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-26c5588a4a75efc2
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-2f690557cfd20bec
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-306a96179bd778b6
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-3f903a520f921d83
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-43979cdff2eef525
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-45d1daf515e218b6
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-4ad1398a663b7933
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-4eb3495e2e32dd73
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-51f6ed2eb7632349
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-68a1fdbd8955d9a4
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-6fded6b51e0642a8
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-708cf4d83a29d78f
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-7118d0dce593edea
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-731f452fb62a55bd
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-75faa4a614a8f130
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-774f62fc1777bc6b
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-77b71bd09c7eb4b4
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-8345a5938afc1084
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-8641a638f4880175
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-89614c0503a95275
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-8ca6316615b8cbae
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-8dcd5041a8a4e044
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-8e62e3b1b9deee81
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-91de8f7a5ce6984b
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-91f840c137c7a43c
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-957a8834d758202b
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-abcd8030795bc9cb
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-ae86f327e3ed5623
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-c5843105fb81b54c
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-ebc55d8b20e3cec0
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-eea1fadd4abbd144
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-f36bb8e354cf21b7
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-f380a5a0600b447a
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-f56f915bc229d6aa
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-f87c8c3cd06321c2
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-fede66c26a275769
+        centroid_profiles:
+        - lower: 17.569436904761904
+          upper: 20.426913095238092
+          finite_in_domain_crossings: false
+    uncertainty_status:
+      centroid: profile_where_required
+      area: not_estimated_explicit_no_frozen_method
+      observed_fwhm: not_estimated_explicit_no_frozen_method
+    resolution_status: resolution_not_established
+  CX-03:
+    adequate_model_preparation: true
+    presence_hypothesis_registered: true
+    K0_fit:
+      fit_status: valid
+      theta:
+      - -9.251937176119718
+      - 0.13167440169821992
+      - -9.33555014593336
+      - 0.19733490730794978
+      - -9.457679236915592
+      - 0.4005598548236491
+      - -9.314960274631378
+      - 0.05975296780646319
+      - -9.44163802317468
+      - 0.12401146673935161
+      - -9.174731751311239
+      - 0.15504354382385158
+      - -9.40123984557155
+      - 0.1361172310376011
+      - -9.346911753192071
+      - 0.1140544235159441
+      - -9.55999602390483
+      - 0.24126736350467265
+      - -9.51603814465419
+      - 0.17704578788922956
+      - -9.518630887432668
+      - 0.1877759574148396
+      - -9.240866451633934
+      - 0.3014635009112066
+      - -9.560476958130836
+      - 0.07164990802153094
+      - -9.383438651000349
+      - 0.18049031422296682
+      - -9.561948736518382
+      - 0.22247026639170228
+      - -9.424193571697986
+      - 0.22732485814698256
+      - -9.028445436490639
+      - 0.4488941826759014
+      - -9.707909884892487
+      - 0.10334888134316335
+      - -9.188600307742393
+      - 0.3864797253877008
+      - -8.81505136946085
+      - 0.15378002512444489
+      log_likelihood: -1467.1528124897736
+      start_count: 8
+      optimizer_stability_status: stable
+      projected_gradient_max: 7.787548383930698e-05
+      numerical_convergence_status: within_reference
+      KKT_role: diagnostic_only
+    K1_fit:
+      fit_status: valid
+      theta:
+      - -9.251937080520918
+      - 0.1316742870234812
+      - 1.047925482683554e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.33555011936094
+      - 0.19733482376775258
+      - 9.779535297264247e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.457679135217727
+      - 0.4005594063620236
+      - 8.936309220035095e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.314960259942795
+      - 0.059752998106889416
+      - 9.905694763556659e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.441638061323989
+      - 0.12401135609053344
+      - 8.748330192933813e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.174731722227703
+      - 0.15504338702163062
+      - 1.138809987969396e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.40123986739983
+      - 0.13611733222826258
+      - 9.185379950356609e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.346911701722243
+      - 0.1140543305881078
+      - 9.495674686772274e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.559996035212185
+      - 0.24126722444160284
+      - 7.901623749756508e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.516038098100834
+      - 0.17704535251180936
+      - 8.206562071683958e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.518630868677809
+      - 0.187775215153913
+      - 8.13863969788186e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.240866517798143
+      - 0.3014634992047975
+      - 1.0863711395737212e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.560476953070197
+      - 0.07165004838294667
+      - 7.757703958151808e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.383438703034573
+      - 0.18049071807182065
+      - 9.366714762120835e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.561948816835542
+      - 0.22247074039960918
+      - 7.869531429471411e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.42419360683916
+      - 0.22732488862124617
+      - 8.900783442516395e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.028445481266129
+      - 0.448894331763996
+      - 1.373878944621322e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.707909735589729
+      - 0.1033488852105305
+      - 6.823982497650243e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.188600397707495
+      - 0.3864801086835849
+      - 1.1581600793188683e-05
+      - -4.0
+      - 0.11998800000000003
+      - -8.81505135360608
+      - 0.1537800000540637
+      - 1.6401788980596328e-05
+      - -4.0
+      - 0.11998800000000003
+      log_likelihood: -1467.152812489857
+      start_count: 16
+      optimizer_stability_status: unresolved
+      projected_gradient_max: 0.00014017587091075256
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    final_K: 1
+    developments:
+    - child_K: 2
+      promoted: false
+      gates:
+        parent_observed_fit_stable: false
+        child_observed_fit_stable: false
+    final_fit:
+      fit_status: valid
+      theta:
+      - -9.251937080520918
+      - 0.1316742870234812
+      - 1.047925482683554e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.33555011936094
+      - 0.19733482376775258
+      - 9.779535297264247e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.457679135217727
+      - 0.4005594063620236
+      - 8.936309220035095e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.314960259942795
+      - 0.059752998106889416
+      - 9.905694763556659e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.441638061323989
+      - 0.12401135609053344
+      - 8.748330192933813e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.174731722227703
+      - 0.15504338702163062
+      - 1.138809987969396e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.40123986739983
+      - 0.13611733222826258
+      - 9.185379950356609e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.346911701722243
+      - 0.1140543305881078
+      - 9.495674686772274e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.559996035212185
+      - 0.24126722444160284
+      - 7.901623749756508e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.516038098100834
+      - 0.17704535251180936
+      - 8.206562071683958e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.518630868677809
+      - 0.187775215153913
+      - 8.13863969788186e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.240866517798143
+      - 0.3014634992047975
+      - 1.0863711395737212e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.560476953070197
+      - 0.07165004838294667
+      - 7.757703958151808e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.383438703034573
+      - 0.18049071807182065
+      - 9.366714762120835e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.561948816835542
+      - 0.22247074039960918
+      - 7.869531429471411e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.42419360683916
+      - 0.22732488862124617
+      - 8.900783442516395e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.028445481266129
+      - 0.448894331763996
+      - 1.373878944621322e-05
+      - -4.0
+      - 0.11998800000000003
+      - -9.707909735589729
+      - 0.1033488852105305
+      - 6.823982497650243e-06
+      - -4.0
+      - 0.11998800000000003
+      - -9.188600397707495
+      - 0.3864801086835849
+      - 1.1581600793188683e-05
+      - -4.0
+      - 0.11998800000000003
+      - -8.81505135360608
+      - 0.1537800000540637
+      - 1.6401788980596328e-05
+      - -4.0
+      - 0.11998800000000003
+      log_likelihood: -1467.152812489857
+      start_count: 16
+      optimizer_stability_status: unresolved
+      projected_gradient_max: 0.00014017587091075256
+      numerical_convergence_status: warning
+      KKT_role: diagnostic_only
+    final_scan_ids:
+    - SCAN-02R-074afad5a6b92ea4
+    - SCAN-02R-1e5b02c69224108d
+    - SCAN-02R-26c5588a4a75efc2
+    - SCAN-02R-2a0e91f43e0fe127
+    - SCAN-02R-306a96179bd778b6
+    - SCAN-02R-432159a75d80f2b3
+    - SCAN-02R-4ad1398a663b7933
+    - SCAN-02R-4eb3495e2e32dd73
+    - SCAN-02R-51f6ed2eb7632349
+    - SCAN-02R-68a1fdbd8955d9a4
+    - SCAN-02R-7118d0dce593edea
+    - SCAN-02R-762111064d108c6d
+    - SCAN-02R-77b71bd09c7eb4b4
+    - SCAN-02R-79e659b84aa4786d
+    - SCAN-02R-91f840c137c7a43c
+    - SCAN-02R-abcd8030795bc9cb
+    - SCAN-02R-d2b7e9ee069bd20e
+    - SCAN-02R-ebc55d8b20e3cec0
+    - SCAN-02R-ef6a11424f751d3f
+    - SCAN-02R-f71173d3ec0c732c
+    final_background_sensitivity:
+    - scan_id: SCAN-02R-074afad5a6b92ea4
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 21
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-1e5b02c69224108d
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-26c5588a4a75efc2
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-2a0e91f43e0fe127
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-306a96179bd778b6
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-432159a75d80f2b3
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-4ad1398a663b7933
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-4eb3495e2e32dd73
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 36
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-51f6ed2eb7632349
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 31
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-68a1fdbd8955d9a4
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 36
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-7118d0dce593edea
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-762111064d108c6d
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-77b71bd09c7eb4b4
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-79e659b84aa4786d
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-91f840c137c7a43c
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-abcd8030795bc9cb
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-d2b7e9ee069bd20e
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-ebc55d8b20e3cec0
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 41
+        window_upper_anchors: 9
+        window_point_count: 12
+    - scan_id: SCAN-02R-ef6a11424f751d3f
+      status: acceptable
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: valid
+        material: false
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    - scan_id: SCAN-02R-f71173d3ec0c732c
+      status: material
+      refits:
+      - background: B0
+        status: valid
+        material: false
+        window_lower_anchors: 2
+        window_upper_anchors: 2
+        window_point_count: 10
+      - background: B2
+        status: unstable
+        material: true
+        window_lower_anchors: 21
+        window_upper_anchors: 4
+        window_point_count: 12
+    final_ambiguity_status: ambiguous
+    final_profiles:
+      required: true
+      performed: true
+      records:
+      - scan_id: SCAN-02R-074afad5a6b92ea4
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-1e5b02c69224108d
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-26c5588a4a75efc2
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-2a0e91f43e0fe127
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-306a96179bd778b6
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-432159a75d80f2b3
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-4ad1398a663b7933
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-4eb3495e2e32dd73
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-51f6ed2eb7632349
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-68a1fdbd8955d9a4
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-7118d0dce593edea
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-762111064d108c6d
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-77b71bd09c7eb4b4
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-79e659b84aa4786d
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-91f840c137c7a43c
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-abcd8030795bc9cb
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-d2b7e9ee069bd20e
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-ebc55d8b20e3cec0
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-ef6a11424f751d3f
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+      - scan_id: SCAN-02R-f71173d3ec0c732c
+        centroid_profiles:
+        - lower: 40.64119285714286
+          upper: 46.354907142857144
+          finite_in_domain_crossings: false
+    uncertainty_status:
+      centroid: profile_where_required
+      area: not_estimated_explicit_no_frozen_method
+      observed_fwhm: not_estimated_explicit_no_frozen_method
+    resolution_status: resolution_not_established
+background_sensitivity_status:
+  CX-01: []
+  CX-02:
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - acceptable
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - acceptable
+  - acceptable
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - material
+  - acceptable
+  - material
+  - material
+  - material
+  CX-03:
+  - material
+  - acceptable
+  - acceptable
+  - material
+  - acceptable
+  - material
+  - material
+  - material
+  - acceptable
+  - acceptable
+  - material
+  - acceptable
+  - acceptable
+  - material
+  - acceptable
+  - acceptable
+  - material
+  - acceptable
+  - acceptable
+  - material
+resolution_status:
+  CX-01: resolution_not_established
+  CX-02: resolution_not_established
+  CX-03: resolution_not_established
+bootstrap_B: 1024
+bootstrap_seed_payload: []
+bootstrap_seed_sha256: []
+holdout_detector_access_count: 0
+C002_executed: false
+input_artifact_identities:
+  B001_catalogue_path:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+    sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+  scan_classification_path:
+    path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+    sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
+  scan_inventory_path:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+    sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  scan_points_path:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+    sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  scan_selection_path:
+    path: 04_Results/Stage02R/W02-02R-B-001/scan_selection.csv
+    sha256: 0aa57b2e214c9b7dc8dc00ce50b4dcabd75bd03e545fa36dc7c223818aeab96f
+  split_metadata_path:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_split.csv
+    sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+output_artifact_identities:
+  background_sensitivity.csv: b8d0f8b797dda05f937360f88879f00c89211867a2487d474c7848cc0432138b
+  component_development.yaml: 962be6e580a999783997181a86db9dd4486f024ce5e6338e629649709260ec15
+  confirmatory_complexes.yaml: 962be6e580a999783997181a86db9dd4486f024ce5e6338e629649709260ec15
+  confirmatory_hypotheses.yaml: 38fd01e53d539bc877a36f7cd8152faf372905ddf9ce68b1c3779874654f555b
+  count_control_assessment.yaml: 396b8c5b302693432b3775c7316e2684958280f299f9a66a88a32064cc30581d
+  discovery_final_fits.csv: 3def5f840bfc35d7e1ba3a5c1a2368b17406bbede233679e8263e84ff0a71a00
+  experimental_context_assessment.yaml: 9fe71a59f9649aaca8d77bfeca7dcb97b4e64791ddddf64f6bf639d10d7eb3d7
+  future_C002_spec.yaml: 38fd01e53d539bc877a36f7cd8152faf372905ddf9ce68b1c3779874654f555b
+  holdout_coverage_summary.yaml: 4a817916bee986a1f389aebf3b882da2ea7c461c97741d3f3b1664dad20a3813
+  holdout_field_access_log.csv: e0868b06c180b35e378ebf40ce4b7176a4b4fb8b125ffd8c65c340ad5d467101
+  holdout_metadata_eligibility.csv: 91d6ef3c201fe9d36305991e12e206a703cb86bf6381144a628b7ab3bec77bce
+  numerical_diagnostics.yaml: a26ffcd1b892fef5fc0e9d2f7ac6e62a4bb5a7c34ec12d12a76a8d3c4b31058c
+  parameter_uncertainty.csv: 11b559712b4798fda7f0be815ce2c7c50d0d1baa332c4968ce5a6293c8e007a6
+  phenomenological_model_spec.yaml: 6cd9d30fe7b99e52921a0554c12f277cbb58b17345d0569ae8bb2d4d2a9a04ae
+  reproducibility_assessment.csv: 42b15f376560c90d46552699c69ca8359a5dd83d9740f4f1d714ab545c2c5565
+  resolution_evidence.yaml: a9cee3ad43aff8312fb72e63178c304c4eb5698e565d23a8f3f8cd57a6be1b77
+  resolution_status.csv: ef2b43bcbebef1aa1875b03ac4203f37362519a4f0ca3f41a4141a9a8703b098
+  scan_eligibility.csv: b26ed831081becd6bd97b053306f9201ed991dfaaa0c6612d94f67a2d6bd6684
+  test_report.yaml: aa63b01db9a7e9a65fcb62bd861e84a8042e960c63016df943a193693e003068
+output_identity_policy:
+  algorithm: sha256_of_final_file_bytes
+  provenance_manifest.yaml: excluded_from_internal_map_to_avoid_recursive_self_hash
+spectral_completeness_claim: forbidden
+algorithm_stop: A22_STOP_before_holdout_detector_access

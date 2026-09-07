@@ -1,0 +1,188 @@
+scientific_execution: true
+tests:
+- test_id: C001V11-T01
+  status: PASS
+  evidence:
+    canonical_head: a8f5605177470d55de982227d9a9f36a7c801562
+    source_sha256: edd1ae2d4144660353d9e07c1d82e1878100d69f0b61ba8ed0f287ca474ebca0
+    config_sha256: 7f1ef3dca5901e1865151cea19271c68575c45f06640cc7417d06ca3a02b7459
+  reason: null
+- test_id: C001V11-T02
+  status: PASS
+  evidence:
+    B001_catalogue_sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+  reason: null
+- test_id: C001V11-T03
+  status: PASS
+  evidence:
+    holdout_detector_access_count: 0
+  reason: null
+- test_id: C001V11-T04
+  status: PASS
+  evidence:
+    scope:
+      CEF_assignment: forbidden
+      magnon_assignment: forbidden
+      phonon_assignment: forbidden
+      F002_F004_mapping: forbidden
+      historical_target_comparison: forbidden
+      Stage03R_inference: forbidden
+      Stage03D_inference: forbidden
+      private_material_input: forbidden
+  reason: null
+- test_id: C001V11-T05
+  status: PASS
+  evidence:
+    complex_count: 3
+    scan_count: 201
+  reason: null
+- test_id: C001V11-T06
+  status: PASS
+  evidence:
+    exposure_classes:
+    - monitor_controlled
+    - time_controlled
+  reason: null
+- test_id: C001V11-T07
+  status: PASS
+  evidence:
+    likelihood: raw_count_exposure_conditioned_Poisson
+    component_family: observed_unit_area_Gaussian
+    primary_background: B1_log_linear
+    local_background_coordinate:
+    - -1.0
+    - 1.0
+    sensitivity_backgrounds:
+      B0:
+        role: sensitivity
+      B2:
+        role: sensitivity
+        lower_anchor_points_min: 3
+        upper_anchor_points_min: 3
+    background_order_bootstrap_selection: false
+    scan_specific_parameters:
+    - background
+    - integrated_area
+    - centroid
+    - observed_fwhm
+    arbitrary_per_scan_scale: forbidden
+    centroid_parameterization: softmax_gap_with_fixed_zero_reference
+    centroid_free_logits_equal_K: true
+    post_fit_centroid_sorting: forbidden
+    physical_minimum_separation_rule: none
+    parameter_domains:
+      b0: unbounded
+      b1: unbounded
+      area: nonnegative_unbounded
+      observed_fwhm: strictly_positive_unbounded
+      centroid: strictly_inside_frozen_complex_union
+  reason: null
+- test_id: C001V11-T08
+  status: PASS
+  evidence:
+    CX-01: 16
+    CX-02: 16
+    CX-03: 16
+  reason: null
+- test_id: C001V11-T09
+  status: PASS
+  evidence:
+    model_local_starts: 4
+    adaptive_start_escalation: forbidden
+    parent_child_embedding: forbidden
+    child_parent_projection: forbidden
+    KKT_bootstrap_gate: false
+    failed_replicate_statistic: positive_infinity
+    fixed_failure_fraction_scientific_gate: none
+  reason: null
+- test_id: C001V11-T10
+  status: PASS
+  evidence:
+    bootstrap_B: 1024
+    executed_seed_count: 0
+  reason: null
+- test_id: C001V11-T11
+  status: PASS
+  evidence:
+    CX-01:
+    - child_K: 2
+      promoted: false
+      gates:
+        parent_observed_fit_stable: false
+        child_observed_fit_stable: false
+    CX-02:
+    - child_K: 2
+      promoted: false
+      gates:
+        parent_observed_fit_stable: true
+        child_observed_fit_stable: false
+    CX-03:
+    - child_K: 2
+      promoted: false
+      gates:
+        parent_observed_fit_stable: false
+        child_observed_fit_stable: false
+  reason: null
+- test_id: C001V11-T12
+  status: PASS
+  evidence:
+    CX-01: resolution_not_established
+    CX-02: resolution_not_established
+    CX-03: resolution_not_established
+  reason: null
+- test_id: C001V11-T13
+  status: PASS
+  evidence:
+    role: final_observed_fit_diagnostic_only
+    finite_difference_relative_step: 1.0e-06
+    active_bound_relative_tolerance: 1.0e-08
+    projected_gradient_reference: 0.0001
+    bootstrap_validity_gate: false
+    component_selection_gate: false
+    theta_modification: forbidden
+  reason: null
+- test_id: C001V11-T14
+  status: PASS
+  evidence:
+    records: 54
+    energy_semantics_valid: 54
+  reason: null
+- test_id: C001V11-T15
+  status: PASS
+  evidence:
+    future_C002_family_size: 3
+    C002_executed: false
+  reason: null
+- test_id: C001V11-T16
+  status: PASS
+  evidence:
+    provenance_fields:
+    - B001_catalogue_sha256
+    - C002_executed
+    - Ei_Ef_status_per_scan
+    - algorithm_stop
+    - background_sensitivity_status
+    - bootstrap_B
+    - bootstrap_seed_payload
+    - bootstrap_seed_sha256
+    - canonical_main
+    - component_development_result
+    - config_sha256
+    - dataset_id
+    - exposure_class_per_scan
+    - holdout_detector_access_count
+    - implementation_preparation_baseline
+    - input_artifact_identities
+    - model_specification
+    - output_artifact_identities
+    - output_identity_policy
+    - resolution_status
+    - scan_ids_per_complex
+    - source_sha256
+    - spectral_completeness_claim
+    - split_role_per_scan
+    STOP_CONDITION: A22_STOP_before_holdout_detector_access
+  reason: null
+passed: 16
+failed: 0
+all_mandatory_tests_pass: true

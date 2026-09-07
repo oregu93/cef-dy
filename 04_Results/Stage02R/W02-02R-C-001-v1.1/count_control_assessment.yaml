@@ -1,0 +1,8 @@
+verified_classes:
+  monitor_controlled: monitor_raw
+  time_controlled: time_raw
+shared_monitor_time_normalization: forbidden
+global_fixed_Ef_assumption: forbidden
+Ei_Ef_semantics: per_scan_or_independently_verified_homogeneous_block
+cross_scan_intensity_comparability: not_established
+cross_mode_intensity_comparability: not_established
