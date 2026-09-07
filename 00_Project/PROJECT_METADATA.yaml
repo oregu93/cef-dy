@@ -162,7 +162,14 @@ scientific_facade:
   c002:
     job_id: W02-02R-C-002
     freeze_ready: true
-    readiness_recommendation: ready_for_project_control_review
+    readiness_recommendation: implementation_preparation_authorized
+    execution_specification_version: '1.0'
+    execution_specification_status: frozen
+    execution_specification_path: 03_Protocols/STAGE02R_T02R05_C002_EXECUTION_SPEC_V1_0.md
+    execution_specification_sha256: 49372420338753828be53bd4f04ca80369bc19951ad40b6223f9dc7a80f2a279
+    scientific_design_status: accepted
+    implementation_status: not_started
+    implementation_preparation_authorized: true
     family_status: frozen_before_detector_access
     family_size: 3
     family_members:
@@ -194,17 +201,19 @@ scientific_facade:
     - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
   next_scientific_step:
-    id: W02-02R-C-002-authorization-review
+    id: W02_C002_implementation_preparation
     job_id: W02-02R-C-002
-    specification_version: '1.1'
-    specification_status: frozen
+    execution_specification_version: '1.0'
+    execution_specification_status: frozen
     scientific_design_status: accepted
     C001_execution_status: completed
     C001_scientific_result_status: accepted_with_limitations
     C001_canonical_scientific_result_status: established
     C002_family_size: 3
     C002_family_frozen_before_detector_access: true
-    next_governance_action: project_control_C002_execution_authorization_review
+    implementation_status: not_started
+    implementation_preparation_authorized: true
+    next_governance_action: W02_C002_implementation_preparation
     execution_authorized: false
     A2_authorized: false
     holdout_detector_access_authorized: false
@@ -264,11 +273,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: Project-Control-C002-execution-authorization-review
+  id: W02_C002_implementation_preparation
   text: >-
-    Передать принятый с ограничениями canonical результат C-001 v1.1 и замороженную семью из трёх
-    C002 K0→K1 presence hypotheses в «00 - Project Control» для отдельного C002 execution-authorization review.
-    C002 и детекторный доступ к отложенной выборке не авторизованы.
+    Подготовить реализацию C002 строго по замороженной и принятой execution specification v1.0.
+    Разрешена только implementation preparation; C002 execution и detector access к отложенной выборке
+    не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -283,19 +292,20 @@ do_not_assume:
 
 control:
   now: >-
-    Corrected rerun C-001 v1.1 завершён и принят по Decision A с scientific_result_status:
-    accepted_with_limitations; его canonical scientific result установлен. Первый production execution
-    остаётся diagnostic_noncanonical_execution с correction_required.
+    C002 execution specification v1.0 заморожена и принята; реализация ещё не подготовлена.
+    Разрешена только implementation preparation. C002 не выполнялся, detector access к отложенной
+    выборке не разрешён.
   why: >-
-    Ни один комплекс не дал надёжного centroid/FWHM, K>=2 splits не продвинуты, а resolution не установлено.
-    При этом C001 корректно заморозил до detector access три C002 K0→K1 presence hypotheses и их eligible scan membership.
+    До доступа к detector data зафиксированы три K0→K1 presence hypotheses, точные eligible scan memberships,
+    B=4096, seed policy, plus-one raw p-values и глобальная Holm correction. Научный дизайн принят без
+    физического назначения и без spectral-completeness claim.
   next: >-
-    После ручного commit/push materialization вернуть результат в «00 - Project Control» для отдельного
-    C002 execution-authorization review. C002 и holdout detector access остаются запрещены.
+    W02_C002_implementation_preparation: подготовить implementation строго по frozen execution specification v1.0
+    и вернуть её на review. C002 execution и holdout detector access остаются запрещены.
   next_work_job:
 
   blocked:
-    - W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
+    - C002 execution и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
     - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
     - Использование F004 около 44.4 meV как обязательного CEF-перехода.

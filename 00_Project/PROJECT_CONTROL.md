@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.0"
+version: "3.1"
 updated: 2026-09-07
 control_chat: "00 - Project Control"
 ---
@@ -25,16 +25,16 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Corrected rerun C-001 v1.1 завершён и принят по Decision A с scientific_result_status: accepted_with_limitations; его canonical scientific result установлен. Первый production execution остаётся diagnostic_noncanonical_execution с correction_required.
+**Сейчас.** C002 execution specification v1.0 заморожена и принята; реализация ещё не подготовлена. Разрешена только implementation preparation. C002 не выполнялся, detector access к отложенной выборке не разрешён.
 
-**Почему.** Ни один комплекс не дал надёжного centroid/FWHM, K>=2 splits не продвинуты, а resolution не установлено. При этом C001 корректно заморозил до detector access три C002 K0→K1 presence hypotheses и их eligible scan membership.
+**Почему.** До доступа к detector data зафиксированы три K0→K1 presence hypotheses, точные eligible scan memberships, B=4096, seed policy, plus-one raw p-values и глобальная Holm correction. Научный дизайн принят без физического назначения и без spectral-completeness claim.
 
-**Следующий шаг.** После ручного commit/push materialization вернуть результат в «00 - Project Control» для отдельного C002 execution-authorization review. C002 и holdout detector access остаются запрещены.
+**Следующий шаг.** W02_C002_implementation_preparation: подготовить implementation строго по frozen execution specification v1.0 и вернуть её на review. C002 execution и holdout detector access остаются запрещены.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
 **Заблокировано.**
-- W02-02R-C-002 и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
+- C002 execution и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
 - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
 - Использование F004 около 44.4 meV как обязательного CEF-перехода.
@@ -95,7 +95,7 @@ control_chat: "00 - Project Control"
 | `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
 | `T-02R-04` | completed | Слепое обнаружение и рецензирование B-001 завершены; результат принят с ограничениями, без физического назначения. |
 | `W02-02R-B-001` | completed | Выполнение завершено; scientific review: reviewed; outcome: accepted_with_limitations. Восемь monitor-controlled Tier-1 BF, 16/16 тестов PASS; каталог заморожен, holdout закрыт. |
-| `T-02R-05` | active | C-001 v1.1 завершён и принят с ограничениями; frozen C002 family содержит три K0→K1 presence hypotheses. C-002 и детекторный доступ к отложенной выборке не авторизованы. |
+| `T-02R-05` | active | C-001 v1.1 завершён и принят с ограничениями; C002 execution specification v1.0 заморожена и принята. Разрешена только implementation preparation; C-002 execution и детекторный доступ к отложенной выборке не авторизованы. |
 | `W02-02R-C-001` | completed | Corrected rerun принят по Decision A: `accepted_with_limitations`, canonical result established. Первый production result остаётся `correction_required`, diagnostic и noncanonical. |
 
 
