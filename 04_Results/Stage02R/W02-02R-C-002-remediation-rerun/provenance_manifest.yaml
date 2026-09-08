@@ -1,0 +1,95 @@
+canonical_main: 6fc059ac8f2d45b944e95486c16c61f2e49fb188
+design_freeze_main: 122691ae7e69e40458509feec0dd2135aeb4108f
+c001_execution_baseline: a8f5605177470d55de982227d9a9f36a7c801562
+future_C002_spec_path: 04_Results/Stage02R/W02-02R-C-001-v1.1/future_C002_spec.yaml
+future_C002_spec_sha256: 38fd01e53d539bc877a36f7cd8152faf372905ddf9ce68b1c3779874654f555b
+source_sha256: d48186f00c2e2496a312284dd588f40b28834c1e4aa2e471b1c6f663ea0439a7
+config_sha256: dffed321474c3371a71f2fad3a21f13e1f2c84d2f172d505e4956b06eb8fb40a
+family_size: 3
+family_members:
+- C002-CX-01-K0-K1
+- C002-CX-02-K0-K1
+- C002-CX-03-K0-K1
+Holm_global_alpha: 0.05
+family_membership:
+  C002-CX-01-K0-K1:
+  - SCAN-02R-26cdfd757f62fb5b
+  - SCAN-02R-41d12941c2dac178
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-4650765ebe11f415
+  - SCAN-02R-48f6ae0dc1c99d07
+  - SCAN-02R-54bfea84553b4c65
+  - SCAN-02R-58a76874c3967085
+  - SCAN-02R-5e02dde1da14be55
+  - SCAN-02R-79960ffd3b8a968b
+  - SCAN-02R-87edbdf74d1e5fb1
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-b14e49e20117cb08
+  - SCAN-02R-c74434b3ed5fc9b8
+  C002-CX-02-K0-K1:
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-48f6ae0dc1c99d07
+  - SCAN-02R-54bfea84553b4c65
+  - SCAN-02R-58a76874c3967085
+  - SCAN-02R-5e02dde1da14be55
+  - SCAN-02R-5f553db9674e6d45
+  - SCAN-02R-79960ffd3b8a968b
+  - SCAN-02R-87edbdf74d1e5fb1
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-b14e49e20117cb08
+  - SCAN-02R-baae22000a534323
+  - SCAN-02R-c74434b3ed5fc9b8
+  C002-CX-03-K0-K1:
+  - SCAN-02R-42d0a4d8bd2d58cc
+  - SCAN-02R-5f553db9674e6d45
+  - SCAN-02R-a1d82bdc331e2df4
+  - SCAN-02R-a88a59b9d2315a05
+  - SCAN-02R-baae22000a534323
+input_artifact_identities:
+  execution_specification:
+    path: 03_Protocols/STAGE02R_T02R05_C002_EXECUTION_SPEC_V1_0.md
+    sha256: 49372420338753828be53bd4f04ca80369bc19951ad40b6223f9dc7a80f2a279
+  future_C002_spec:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/future_C002_spec.yaml
+    sha256: 38fd01e53d539bc877a36f7cd8152faf372905ddf9ce68b1c3779874654f555b
+  a002_provenance:
+    path: 04_Results/Stage02R/W02-02R-A-002/provenance_manifest.yaml
+    sha256: 79f0e63dafd8fc1468c26ed09716fb633976c6461cd61f6b22d967d34ebcd237
+  scan_points:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+    sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  scan_inventory:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+    sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  holdout_metadata_eligibility:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/holdout_metadata_eligibility.csv
+    sha256: 91d6ef3c201fe9d36305991e12e206a703cb86bf6381144a628b7ab3bec77bce
+  c001_provenance:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/provenance_manifest.yaml
+    sha256: 4be9a51bd4f39949eb12d8e931816315f767a0ada0e285c6b0384e49f0852494
+  B001_catalogue:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+    sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+output_artifact_identities:
+  c002_bootstrap_summary.csv: c8666fa41cfceffb1271f90ec64713a1713fb8e36e80f4b9b6bbb6eaaa902036
+  c002_holm_decisions.csv: 46b3ef6eefbca0722d39f22181a208190a6f344a67a15536a15e13eb151aae29
+  c002_numerical_diagnostics.yaml: c71aacc8ff9014615f0bb7da9d89c66aaaebbfe21cfcf01f0ce16ad8d2c69dce
+  c002_observed_fits.csv: f5fa9c178319eca88b6f8eacd40ff833292f56c4da0bba00a6f8984c70ba2ffb
+  holdout_field_access_log.csv: 7fd62060af5f31853f215cbd87aa67f4287fb77ac96d94ab672e5b425cd9b933
+  test_report.yaml: 8325df3cabd5dcb8e4c4759757d8ab4f310386e16f9770137147972a6acca2df
+output_identity_policy:
+  algorithm: sha256_of_final_file_bytes
+  provenance_manifest.yaml: excluded_to_avoid_recursive_self_hash
+field_access_log:
+  artifact: holdout_field_access_log.csv
+  events: 279
+  detector_materializations: 249
+test_report:
+  artifact: test_report.yaml
+  mandatory_tests: C002-T01..C002-T13
+C002_executed: true
+holdout_detector_access_count: 249
+resolution_status: resolution_not_established
+physical_assignment_performed: false
+spectral_completeness_claim: forbidden
+STOP_CONDITION: C002_STOP_after_frozen_outputs_before_combined_reestimation_or_interpretation

@@ -1,0 +1,6 @@
+numerical_failures: []
+observed_numerical_failures:
+- C002-CX-01-K0-K1
+- C002-CX-02-K0-K1
+- C002-CX-03-K0-K1
+resolution_status: resolution_not_established

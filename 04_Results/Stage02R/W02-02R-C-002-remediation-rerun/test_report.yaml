@@ -1,0 +1,147 @@
+mode: production_runtime
+C002_executed: true
+holdout_detector_access_count: 249
+tests:
+- test_id: C002-T01
+  status: PASS
+  evidence:
+    spec_sha256: 49372420338753828be53bd4f04ca80369bc19951ad40b6223f9dc7a80f2a279
+    family_sha256: 38fd01e53d539bc877a36f7cd8152faf372905ddf9ce68b1c3779874654f555b
+    source_sha256: d48186f00c2e2496a312284dd588f40b28834c1e4aa2e471b1c6f663ea0439a7
+    config_sha256: dffed321474c3371a71f2fad3a21f13e1f2c84d2f172d505e4956b06eb8fb40a
+  reason: null
+- test_id: C002-T02
+  status: PASS
+  evidence:
+    family_members:
+    - C002-CX-01-K0-K1
+    - C002-CX-02-K0-K1
+    - C002-CX-03-K0-K1
+  reason: null
+- test_id: C002-T03
+  status: PASS
+  evidence:
+    C002-CX-01-K0-K1: 13
+    C002-CX-02-K0-K1: 12
+    C002-CX-03-K0-K1: 5
+  reason: null
+- test_id: C002-T04
+  status: PASS
+  evidence:
+    authorization_denied_before_decode: true
+    detector_materializations: 0
+    synthetic_authorized_materializations: 1
+    audit_events: 5
+    runtime_access_events: 279
+  reason: null
+- test_id: C002-T05
+  status: PASS
+  evidence:
+    factorized_joint_likelihood: true
+    parent_K: 0
+    child_K: 1
+  reason: null
+- test_id: C002-T06
+  status: PASS
+  evidence:
+    start_count: 8
+    KKT_role: final_observed_fit_diagnostic_only
+  reason: null
+- test_id: C002-T07
+  status: PASS
+  evidence:
+    B: 4096
+    model_local_starts: 4
+    failure_statistic: +infinity
+  reason: null
+- test_id: C002-T08
+  status: PASS
+  evidence:
+    C002-CX-01-K0-K1: abde54d98da2396b269daf9d0f26effabc79ba6e90ff96e4edc9ec0c3e860712
+    C002-CX-02-K0-K1: afeed89848a6527dbbff1efa9bb00127aa22e59e778c2bcf441ece63f066a0da
+    C002-CX-03-K0-K1: 6fe2650a2d8dcca2081d63497512d3fb7df1a47a732849b755402913202269b1
+  reason: null
+- test_id: C002-T09
+  status: PASS
+  evidence:
+    tail: '>='
+    denominator: 4097
+    example_p: 0.000488162069807176
+  reason: null
+- test_id: C002-T10
+  status: PASS
+  evidence:
+  - hypothesis_id: C002-CX-01-K0-K1
+    raw_p_value: 0.001
+    Holm_rank: 1
+    Holm_threshold: 0.016666666666666666
+    Holm_rejected: true
+    test_status: numerically_valid
+    scientific_result_semantics: presence_confirmed_internal_holdout
+  - hypothesis_id: C002-CX-02-K0-K1
+    raw_p_value: 0.001
+    Holm_rank: 2
+    Holm_threshold: 0.025
+    Holm_rejected: true
+    test_status: numerically_valid
+    scientific_result_semantics: presence_confirmed_internal_holdout
+  - hypothesis_id: C002-CX-03-K0-K1
+    raw_p_value: 0.06
+    Holm_rank: 3
+    Holm_threshold: 0.05
+    Holm_rejected: false
+    test_status: numerically_valid
+    scientific_result_semantics: presence_not_confirmed
+  reason: null
+- test_id: C002-T11
+  status: PASS
+  evidence:
+    hypothesis_id: C002-CX-01-K0-K1
+    raw_p_value: 1.0
+    Holm_rank: 3
+    Holm_threshold: 0.05
+    Holm_rejected: false
+    test_status: numerical_failure
+    scientific_result_semantics: numerical_failure
+  reason: null
+- test_id: C002-T12
+  status: PASS
+  evidence:
+    allowed_result_semantics:
+    - presence_confirmed_internal_holdout
+    - presence_not_confirmed
+    - numerical_failure
+    resolution_status: resolution_not_established
+    physical_assignment_performed: false
+    spectral_completeness_claim: forbidden
+    absence_outside_measured_regions: not_inferable
+  reason: null
+- test_id: C002-T13
+  status: PASS
+  evidence:
+    outputs:
+    - c002_bootstrap_summary.csv
+    - c002_holm_decisions.csv
+    - c002_numerical_diagnostics.yaml
+    - c002_observed_fits.csv
+    - holdout_field_access_log.csv
+    - provenance_manifest.yaml
+    - test_report.yaml
+    STOP_CONDITION: C002_STOP_after_frozen_outputs_before_combined_reestimation_or_interpretation
+    missing_authorization_fails_closed: true
+    provenance_fields:
+    - STOP_CONDITION
+    - c001_execution_baseline
+    - config_sha256
+    - design_freeze_main
+    - field_access_log
+    - future_C002_spec_path
+    - future_C002_spec_sha256
+    - input_artifact_identities
+    - output_artifact_identities
+    - source_sha256
+    - test_report
+  reason: null
+passed: 13
+failed: 0
+all_mandatory_tests_pass: true

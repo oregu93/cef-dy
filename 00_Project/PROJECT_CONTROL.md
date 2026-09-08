@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.3"
+version: "3.4"
 updated: 2026-09-08
 control_chat: "00 - Project Control"
 ---
@@ -25,11 +25,11 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Numerical-only remediation C002 принята по Decision A; NR01...NR05 и T01...T13 PASS. Frozen design, family, config и statistical contract не изменены. Remediated rerun не выполнялся и не авторизован; detector access к отложенной выборке не разрешён.
+**Сейчас.** Единственный авторизованный remediation rerun C002 завершён с frozen numerical failure для всех трёх hypotheses. Terminal scientific result принят как accepted_with_frozen_numerical_failure; ни одного numerically valid holdout test не получено.
 
-**Почему.** Исправлена только finite-safe evaluation того же unit-area Gaussian kernel. Scientific/contract и algorithmic/control-flow defects отсутствуют; прежняя authorization identity стала stale из-за нового source SHA.
+**Почему.** Все parent K0 fits valid/stable, но все child K1 fits valid с unresolved optimizer stability; поэтому T_observed не определён, bootstrap не запускался, а raw_p_value=1.0 является только консервативным numerical-failure значением и не свидетельствует об отсутствии компоненты или возбуждения.
 
-**Следующий шаг.** project_control_C002_single_remediation_rerun_authorization: отдельно решить вопрос об одном remediated rerun. Rerun и holdout detector access остаются запрещены.
+**Следующий шаг.** project_control_post_C002_stage02r_transition_review: отдельно определить post-C002 путь Stage02R. Numerical-remediation branch закрыта; дополнительные C002 reruns, C003 и Stage03 не авторизованы.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
@@ -95,8 +95,9 @@ control_chat: "00 - Project Control"
 | `W02-02R-A-003` | completed | Acquisition/configuration and normalization-compatibility classification completed; scientific review ACCEPT, 16/16 tests PASS, STOP_CONDITION satisfied. |
 | `T-02R-04` | completed | Слепое обнаружение и рецензирование B-001 завершены; результат принят с ограничениями, без физического назначения. |
 | `W02-02R-B-001` | completed | Выполнение завершено; scientific review: reviewed; outcome: accepted_with_limitations. Восемь monitor-controlled Tier-1 BF, 16/16 тестов PASS; каталог заморожен, holdout закрыт. |
-| `T-02R-05` | active | C-001 v1.1 завершён и принят с ограничениями; numerical-only remediation C002 принята по Decision A. Для возможной отдельной будущей авторизации установлен ceiling в один rerun; сейчас rerun и holdout detector access запрещены. |
+| `T-02R-05` | active | C-001 v1.1 завершён; C002 terminal result принят как `accepted_with_frozen_numerical_failure`. C002 не дал numerically valid holdout tests; следующий путь Stage02R требует отдельного Project Control decision. |
 | `W02-02R-C-001` | completed | Corrected rerun принят по Decision A: `accepted_with_limitations`, canonical result established. Первый production result остаётся `correction_required`, diagnostic и noncanonical. |
+| `W02-02R-C-002` | completed | Единственный remediation rerun завершён conformingly; три hypotheses имеют `numerical_failure`, branch закрыта, дополнительные reruns не авторизованы. |
 
 
 # 3. Roadmap после Stage 00C

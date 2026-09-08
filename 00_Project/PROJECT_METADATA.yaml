@@ -162,7 +162,7 @@ scientific_facade:
   c002:
     job_id: W02-02R-C-002
     freeze_ready: true
-    readiness_recommendation: ready_for_single_remediation_rerun_authorization_review
+    readiness_recommendation: terminal_result_accepted
     execution_specification_version: '1.0'
     execution_specification_status: frozen
     execution_specification_path: 03_Protocols/STAGE02R_T02R05_C002_EXECUTION_SPEC_V1_0.md
@@ -186,7 +186,11 @@ scientific_facade:
       passed: 5
       failed: 0
     numerical_remediation_attempt_limit: 1
-    numerical_remediation_reruns_completed: 0
+    numerical_remediation_reruns_completed: 1
+    numerical_remediation_branch_status: closed
+    additional_numerical_remediation_justified: false
+    additional_numerical_remediation_authorized: false
+    additional_C002_reruns_authorized: false
     prior_execution_authorization_status: stale_against_remediated_source_identity
     prior_execution_authorization_reuse_authorized: false
     family_status: frozen_before_detector_access
@@ -199,11 +203,62 @@ scientific_facade:
       - hypothesis_id: C002-CX-03-K0-K1
         eligible_holdout_scan_count: 5
     family_spec_path: 04_Results/Stage02R/W02-02R-C-001-v1.1/future_C002_spec.yaml
-    execution_status: not_started_for_remediated_rerun
+    execution_status: completed_with_frozen_numerical_failure
     execution_authorized: false
     rerun_authorized: false
-    executed: false
+    executed: true
     holdout_detector_access_authorized: false
+    terminal_scientific_status: accepted_with_frozen_numerical_failure
+    execution_conformance: accepted
+    implementation_defect_established: false
+    scientific_review_status: completed
+    scientific_review_decision: ACCEPT
+    canonical_scientific_result_status: established
+    canonical_result_path: 04_Results/Stage02R/W02-02R-C-002-remediation-rerun
+    terminal_review_bundle_sha256: 6cdfb4ef3fcd1949469d1bd2ec16b671195ba82e5065ebe797b6b4a807e85e68
+    execution_authorization_artifact_sha256: 838ca3d35b188039d76655f6e2b18fbf5b427eb95769a731b14df614d0bd5034
+    execution_authorization_status: consumed
+    presence_confirmed_internal_holdout: 0
+    presence_not_confirmed: 0
+    numerically_valid_holdout_tests: 0
+    physical_absence_inference_authorized: false
+    physical_assignment_performed: false
+    resolution_status: resolution_not_established
+    spectral_completeness_claim: forbidden
+    terminal_hypothesis_results:
+      C002-CX-01-K0-K1:
+        scientific_result_status: numerical_failure
+        parent_K0_fit_status: valid
+        parent_K0_optimizer_stability: stable
+        child_K1_fit_status: valid
+        child_K1_optimizer_stability: unresolved
+        T_observed: null
+        bootstrap_completed_replicates: 0
+        raw_p_value: 1.0
+      C002-CX-02-K0-K1:
+        scientific_result_status: numerical_failure
+        parent_K0_fit_status: valid
+        parent_K0_optimizer_stability: stable
+        child_K1_fit_status: valid
+        child_K1_optimizer_stability: unresolved
+        T_observed: null
+        bootstrap_completed_replicates: 0
+        raw_p_value: 1.0
+      C002-CX-03-K0-K1:
+        scientific_result_status: numerical_failure
+        parent_K0_fit_status: valid
+        parent_K0_optimizer_stability: stable
+        child_K1_fit_status: valid
+        child_K1_optimizer_stability: unresolved
+        T_observed: null
+        bootstrap_completed_replicates: 0
+        raw_p_value: 1.0
+    Holm_family_status:
+      family_size: 3
+      family_shrinkage: false
+      all_hypotheses_retained: true
+    C003_authorized: false
+    Stage03_authorized: false
   t02r05_architecture:
     - W02-02R-C-001
     - project_control_freeze
@@ -222,7 +277,7 @@ scientific_facade:
     - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
   next_scientific_step:
-    id: project_control_C002_single_remediation_rerun_authorization
+    id: project_control_post_C002_stage02r_transition_review
     job_id: W02-02R-C-002
     execution_specification_version: '1.0'
     execution_specification_status: frozen
@@ -244,9 +299,19 @@ scientific_facade:
     numerical_remediation_tests_passed: 5
     numerical_remediation_tests_failed: 0
     numerical_remediation_attempt_limit: 1
-    numerical_remediation_reruns_completed: 0
+    numerical_remediation_reruns_completed: 1
+    numerical_remediation_branch_status: closed
     prior_execution_authorization_status: stale_against_remediated_source_identity
-    next_governance_action: project_control_C002_single_remediation_rerun_authorization
+    C002_terminal_scientific_status: accepted_with_frozen_numerical_failure
+    C002_execution_conformance: accepted
+    presence_confirmed_internal_holdout: 0
+    presence_not_confirmed: 0
+    numerically_valid_holdout_tests: 0
+    additional_numerical_remediation_authorized: false
+    additional_C002_reruns_authorized: false
+    C003_authorized: false
+    Stage03_authorized: false
+    next_governance_action: project_control_post_C002_stage02r_transition_review
     execution_authorized: false
     rerun_authorized: false
     A2_authorized: false
@@ -307,11 +372,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: project_control_C002_single_remediation_rerun_authorization
+  id: project_control_post_C002_stage02r_transition_review
   text: >-
-    Передать принятую по Decision A numerical-only remediation C002 и результаты NR01...NR05 = 5/5 PASS,
-    T01...T13 = 13/13 PASS в «00 - Project Control» для отдельного single-remediation-rerun authorization review.
-    Rerun и detector access к отложенной выборке не авторизованы.
+    Передать terminal C002 result со статусом accepted_with_frozen_numerical_failure в «00 - Project Control»
+    для отдельного post-C002 Stage02R transition review. C002 не дал ни одного numerically valid holdout test;
+    C003 и Stage03 не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -326,15 +391,16 @@ do_not_assume:
 
 control:
   now: >-
-    Numerical-only remediation C002 принята по Decision A; NR01...NR05 и T01...T13 PASS. Frozen design,
-    family, config и statistical contract не изменены. Remediated rerun не выполнялся и не авторизован;
-    detector access к отложенной выборке не разрешён.
+    Единственный авторизованный remediation rerun C002 завершён с frozen numerical failure для всех трёх
+    hypotheses. Terminal scientific result принят как accepted_with_frozen_numerical_failure; ни одного
+    numerically valid holdout test не получено.
   why: >-
-    Исправлена только finite-safe evaluation того же unit-area Gaussian kernel. Scientific/contract и
-    algorithmic/control-flow defects отсутствуют; прежняя authorization identity стала stale из-за нового source SHA.
+    Все parent K0 fits valid/stable, но все child K1 fits valid с unresolved optimizer stability; поэтому
+    T_observed не определён, bootstrap не запускался, а raw_p_value=1.0 является только консервативным
+    numerical-failure значением и не свидетельствует об отсутствии компоненты или возбуждения.
   next: >-
-    project_control_C002_single_remediation_rerun_authorization: отдельно решить вопрос об одном remediated rerun.
-    Rerun и holdout detector access остаются запрещены.
+    project_control_post_C002_stage02r_transition_review: отдельно определить post-C002 путь Stage02R.
+    Numerical-remediation branch закрыта; дополнительные C002 reruns, C003 и Stage03 не авторизованы.
   next_work_job:
 
   blocked:

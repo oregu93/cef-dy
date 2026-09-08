@@ -4,7 +4,7 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "4.1"
+version: "4.2"
 updated: 2026-09-08
 language_content: ru
 language_metadata: en
@@ -75,7 +75,7 @@ CEF-гамильтониан содержит 15 независимых пара
 - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
 - Уникальный набор параметров и волновых функций CEF-гамильтониана.
 
-**Следующий научный шаг.** `project_control_C002_single_remediation_rerun_authorization`: Передать принятую по Decision A numerical-only remediation C002 и результаты NR01...NR05 = 5/5 PASS, T01...T13 = 13/13 PASS в «00 - Project Control» для отдельного single-remediation-rerun authorization review. Rerun и detector access к отложенной выборке не авторизованы.
+**Следующий научный шаг.** `project_control_post_C002_stage02r_transition_review`: Передать terminal C002 result со статусом accepted_with_frozen_numerical_failure в «00 - Project Control» для отдельного post-C002 Stage02R transition review. C002 не дал ни одного numerically valid holdout test; C003 и Stage03 не авторизованы.
 
 **Дорожная карта.** Stage 02R — независимый повторный анализ TAIPAN → Stage 03R — CEF landscape и идентифицируемость → Stage 03D — совместное ограниченное моделирование энергий и интенсивностей → Stage 05 — независимая магнитная проверка → Последующая структурная и микроскопическая интерпретация.
 
