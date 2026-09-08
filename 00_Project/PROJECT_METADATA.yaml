@@ -460,10 +460,7 @@ control:
 pending_technical_work:
   status: preserved_not_started
   items:
-    - Project Control migration to a fresh continuation chat
-    - careful migration/re-entry package
-    - CHAT_BOOTSTRAPS role reconciliation
-    - dedicated Research Software & Infrastructure chat
+    - dedicated Research Software & Infrastructure chat instance
     - W00-HANDOFF-001 local-to-cloud handoff bridge
     - repository-wide language cleanup
     - repository-wide Markdown/LaTeX rendering cleanup
@@ -496,10 +493,18 @@ pending_technical_work:
       - Obsidian_rendering_compatibility
       - GitHub_Markdown_rendering_compatibility
     chat_bootstrap_architecture:
-      reconcile_active_and_planned_roles: pending
-      remove_stale_role_descriptions: pending
+      reconcile_active_and_planned_roles: completed
+      remove_stale_role_descriptions: reviewed_no_changes_required
       preserve_historical_architecture: true
       avoid_numbering_conflicts: true
+      role_definition_implies_chat_instance_exists: false
+      infrastructure_role: 07 - Research Software & Infrastructure
+      infrastructure_role_definition_status: defined
+      infrastructure_chat_instance_status: not_created
+      infrastructure_execution_role: WKB-R1
+      infrastructure_execution_role_mode: on_demand_work
+      persistent_WKB_R1_chat_required: false
   chat_role_numbering_constraint:
     existing_role: 04 - Structure & Conventions
     reuse_04_for_infrastructure: forbidden
+    infrastructure_role: 07 - Research Software & Infrastructure
