@@ -471,6 +471,17 @@ pending_technical_work:
     - lightweight CI
     - disaster-recovery test
     - future reusable research-project framework extraction
+  infra_cleanup:
+    specification_id: INFRA-CLEANUP-SPEC
+    specification_version: "1.0"
+    specification_path: 03_Protocols/INFRA_CLEANUP_SPEC_V1_0.md
+    specification_status: frozen
+    scientific_design_status: accepted
+    design_baseline_commit: 83232bfc301859bf93099086768b1d18b163a28b
+    execution_baseline_policy: canonical_execution_authorization_commit
+    execution_status: not_started
+    execution_authorized: false
+    execution_role: WKB-R1
   cleanup_scope:
     human_readable_prose:
       language: natural_professional_Russian
