@@ -1,5 +1,5 @@
 ---
-title: "CEF DFO -- база знаний исследования"
+title: "CEF DFO — база знаний исследования"
 type: project_index
 project_id: CEF-Dy
 status: active
@@ -15,7 +15,7 @@ language_metadata: en
 Исследовательская база знаний (*knowledge base, KB*) проекта по кристаллическому полю
 $\rm{Dy}^{3+}$ в ортоферрите $\rm{DyFeO}_3$.
 
-Проект объединяет анализ INS-данных трехосного спектрометра [TAIPAN](https://www.ansto.gov.au/facilities/australian-centre-for-neutron-scattering/neutron-scattering-instruments/taipan), моделирование эффективного
+Проект объединяет анализ INS-данных трёхосного спектрометра [TAIPAN](https://www.ansto.gov.au/facilities/australian-centre-for-neutron-scattering/neutron-scattering-instruments/taipan), моделирование эффективного
 CEF-гамильтониана, структурно обусловленные модели кристаллического поля,
 проверку соглашений между вычислительными пакетами и последующую
 независимую верификацию по данным макроскопических измерений ($M(H), M(T), \chi(T), \dots$).
@@ -272,14 +272,14 @@ refresh
 
 ## Работа на нескольких компьютерах
 
-Каждая машина использует собственный clone репозитория и собственный
-ignored:
+Каждая машина использует собственный клон репозитория и собственный
+игнорируемый Git файл:
 
 ```text
 configs/local_paths.yaml
 ```
 
-Machine-specific absolute paths не входят в каноническую Knowledge Base.
+Абсолютные пути, зависящие от конкретной машины, не входят в каноническую базу знаний.
 
 Типичный цикл:
 
@@ -302,12 +302,12 @@ git push
 
 ## External data
 
-Raw TAIPAN data, крупные optimizer outputs, промежуточные массивы,
-приватные материалы и другие большие binary artifacts хранятся отдельно
-от Git repository.
+Необработанные данные TAIPAN, крупные результаты оптимизации, промежуточные
+массивы, приватные материалы и другие большие бинарные артефакты хранятся
+отдельно от Git-репозитория.
 
-В Knowledge Base они идентифицируются устойчивыми `dataset_id`,
-`artifact_id` или checkpoint references вместо абсолютных локальных путей.
+В базе знаний они идентифицируются устойчивыми `dataset_id`, `artifact_id`
+или ссылками на checkpoint вместо абсолютных локальных путей.
 
 
 ## Literature workflow
