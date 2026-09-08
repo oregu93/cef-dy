@@ -478,9 +478,10 @@ pending_technical_work:
     specification_status: frozen
     scientific_design_status: accepted
     design_baseline_commit: 83232bfc301859bf93099086768b1d18b163a28b
+    specification_freeze_commit: 3a815a3e85ca684f87bb9793ff634795ae70a372
     execution_baseline_policy: canonical_execution_authorization_commit
     execution_status: not_started
-    execution_authorized: false
+    execution_authorized: true
     execution_role: WKB-R1
   cleanup_scope:
     human_readable_prose:
