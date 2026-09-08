@@ -11,9 +11,10 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Подтвердит ли будущий C-002 на замороженной отложенной выборке три заранее
-    зарегистрированные K0→K1 presence hypotheses, сохранив антициркулярную границу
-    и не переоценивая неоднозначные результаты C-001?
+    Как спроектировать Stage 03R review CEF landscape, идентифицируемости,
+    допустимых экспериментальных ограничений и иерархии моделей, сохранив
+    terminal numerical-failure context C002 и не превращая экспериментальные
+    BF-признаки в физические назначения?
   stage02r_purpose: >
     Stage 02R формирует независимый от CEF-модели слой экспериментальных
     свидетельств до нового цикла физического назначения и CEF-моделирования.
@@ -259,6 +260,49 @@ scientific_facade:
       all_hypotheses_retained: true
     C003_authorized: false
     Stage03_authorized: false
+  stage02r:
+    status: completed_with_limitations
+    C002_terminal_scientific_status: accepted_with_frozen_numerical_failure
+    C002_canonical_scientific_result_status: established
+    presence_confirmed_internal_holdout: 0
+    presence_not_confirmed: 0
+    numerically_valid_holdout_tests: 0
+    physical_absence_inference_authorized: false
+    resolution_status: resolution_not_established
+    physical_linewidth_claims_authorized: false
+    physical_assignment_performed: false
+    spectral_completeness_claim: forbidden
+  c003:
+    job_id: W02-02R-C-003
+    status: deferred_not_authorized
+    authorized: false
+    automatic_continuation: rejected
+    role: optional_post_confirmatory_combined_reestimation
+    prerequisite_for_any_future_reopening:
+      - explicit_scientific_justification
+      - explicit_epistemic_role
+      - separate_Project_Control_review
+  combined_discovery_holdout_reestimation:
+    authorized: false
+  stage03r_transition:
+    status: design_review_pending
+    authorized_now: false
+    role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
+    discovery_features:
+      allowed_as_experimental_constraints: true
+      interpretation: unconfirmed_experimental_features
+    C002:
+      use: terminal_numerical_failure_context
+    physical_assignments:
+      established: false
+    spectral_completeness:
+      established: false
+    F004_as_mandatory_CEF_level:
+      forbidden: true
+    exchange:
+      included_now: false
+    Stage03D_production_execution:
+      authorized: false
   t02r05_architecture:
     - W02-02R-C-001
     - project_control_freeze
@@ -271,51 +315,27 @@ scientific_facade:
     - Один скан для поиска (`discovery`) исключён по замороженному численному правилу, а отказы подгонки отдельных окон ограничивают выводы о численной устойчивости.
     - Внутрискановый контроль FWER не задаёт автоматически глобальную частоту ложных открытий для всего каталога.
     - Не определены подтверждённые центры, физические ширины, абсолютные интенсивности и общая межрежимная шкала.
+    - C002 не дал ни одного численно валидного holdout confirmation test; все три hypotheses завершились numerical_failure, что не является отрицательным физическим результатом.
+    - Resolution остаётся not established; физические linewidth claims и physical assignment не авторизованы.
   not_established:
     - Число различных физических возбуждений, соответствующих восьми BF-ID.
     - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
     - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
   next_scientific_step:
-    id: project_control_post_C002_stage02r_transition_review
-    job_id: W02-02R-C-002
-    execution_specification_version: '1.0'
-    execution_specification_status: frozen
-    scientific_design_status: accepted
-    C001_execution_status: completed
-    C001_scientific_result_status: accepted_with_limitations
-    C001_canonical_scientific_result_status: established
-    C002_family_size: 3
-    C002_family_frozen_before_detector_access: true
-    implementation_status: accepted
-    implementation_preparation_authorized: true
-    implementation_review_status: completed
-    implementation_review_decision: A
-    static_synthetic_tests_passed: 13
-    static_synthetic_tests_failed: 0
-    numerical_remediation_status: accepted
-    numerical_remediation_review_status: completed
-    numerical_remediation_review_decision: A
-    numerical_remediation_tests_passed: 5
-    numerical_remediation_tests_failed: 0
-    numerical_remediation_attempt_limit: 1
-    numerical_remediation_reruns_completed: 1
-    numerical_remediation_branch_status: closed
-    prior_execution_authorization_status: stale_against_remediated_source_identity
-    C002_terminal_scientific_status: accepted_with_frozen_numerical_failure
-    C002_execution_conformance: accepted
-    presence_confirmed_internal_holdout: 0
-    presence_not_confirmed: 0
-    numerically_valid_holdout_tests: 0
-    additional_numerical_remediation_authorized: false
-    additional_C002_reruns_authorized: false
+    id: Stage03R_design_review
+    stage_id: M03R
+    role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
+    discovery_features_allowed_as_experimental_constraints: true
+    discovery_features_interpretation: unconfirmed_experimental_features
+    C002_use: terminal_numerical_failure_context
+    physical_assignments_established: false
+    spectral_completeness_established: false
+    F004_as_mandatory_CEF_level_forbidden: true
+    exchange_included_now: false
+    Stage03D_production_execution_authorized: false
     C003_authorized: false
-    Stage03_authorized: false
-    next_governance_action: project_control_post_C002_stage02r_transition_review
-    execution_authorized: false
-    rerun_authorized: false
-    A2_authorized: false
-    holdout_detector_access_authorized: false
+    Stage03_authorized_now: false
   roadmap:
     - Stage 02R — независимый повторный анализ TAIPAN
     - Stage 03R — CEF landscape и идентифицируемость
@@ -369,14 +389,14 @@ main_uncertainties:
 current_milestone:
   id: M02R
   title: Stage 02R — независимый повторный анализ TAIPAN
-  status: active
+  status: completed_with_limitations
 
 immediate_next_step:
-  id: project_control_post_C002_stage02r_transition_review
+  id: Stage03R_design_review
   text: >-
-    Передать terminal C002 result со статусом accepted_with_frozen_numerical_failure в «00 - Project Control»
-    для отдельного post-C002 Stage02R transition review. C002 не дал ни одного numerically valid holdout test;
-    C003 и Stage03 не авторизованы.
+    Провести отдельный design review CEF landscape, идентифицируемости, допустимых экспериментальных
+    constraints, model hierarchy и inference design до любой production Stage03D fitting. C003,
+    combined discovery+holdout re-estimation и Stage03 production execution не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -391,27 +411,30 @@ do_not_assume:
 
 control:
   now: >-
-    Единственный авторизованный remediation rerun C002 завершён с frozen numerical failure для всех трёх
-    hypotheses. Terminal scientific result принят как accepted_with_frozen_numerical_failure; ни одного
-    numerically valid holdout test не получено.
+    Stage02R завершён со статусом completed_with_limitations. Terminal C002 result остаётся
+    accepted_with_frozen_numerical_failure; ни одного numerically valid holdout test не получено,
+    numerical-remediation branch закрыта.
   why: >-
     Все parent K0 fits valid/stable, но все child K1 fits valid с unresolved optimizer stability; поэтому
     T_observed не определён, bootstrap не запускался, а raw_p_value=1.0 является только консервативным
     numerical-failure значением и не свидетельствует об отсутствии компоненты или возбуждения.
   next: >-
-    project_control_post_C002_stage02r_transition_review: отдельно определить post-C002 путь Stage02R.
-    Numerical-remediation branch закрыта; дополнительные C002 reruns, C003 и Stage03 не авторизованы.
+    Stage03R_design_review: отдельно рассмотреть CEF landscape, идентифицируемость, допустимые
+    experimental constraints, model hierarchy и inference design до любой production Stage03D fitting.
+    C003 и Stage03 production execution не авторизованы.
   next_work_job:
 
   blocked:
-    - C002 execution и детекторный доступ к отложенной выборке до отдельной последующей авторизации.
-    - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 02R и последующего Stage 03R review.
+    - Любые дополнительные C002 reruns и повторный доступ к holdout detector data.
+    - C003 и combined discovery + holdout re-estimation до отдельного Project Control review.
+    - W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 03R design review и отдельной авторизации.
     - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
     - Использование F004 около 44.4 meV как обязательного CEF-перехода.
     - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
     - Production CEF fitting внутри Stage 02R.
 
   deferred:
+    - C003 optional post-confirmatory combined re-estimation.
     - Production Stage 03D M0/M1 inference.
     - Magnetic exchange modelling.
     - Свободный 15-параметрический CEF fit как production inference.
@@ -433,3 +456,50 @@ control:
     - RSK-008
     - RSK-007
     - RSK-003
+
+pending_technical_work:
+  status: preserved_not_started
+  items:
+    - Project Control migration to a fresh continuation chat
+    - careful migration/re-entry package
+    - CHAT_BOOTSTRAPS role reconciliation
+    - dedicated Research Software & Infrastructure chat
+    - W00-HANDOFF-001 local-to-cloud handoff bridge
+    - repository-wide language cleanup
+    - repository-wide Markdown/LaTeX rendering cleanup
+    - terminology cleanup
+    - documentation architecture selection
+    - beginner-friendly documentation
+    - portable environment baseline
+    - backup/recovery baseline
+    - lightweight CI
+    - disaster-recovery test
+    - future reusable research-project framework extraction
+  cleanup_scope:
+    human_readable_prose:
+      language: natural_professional_Russian
+      awkward_literal_translations_removed: pending
+      machine_readable_English_fields_statuses_IDs_preserved: true
+    terminology:
+      alignment_pending: true
+      scientific_semantics_change_authorized: false
+    Markdown_and_LaTeX:
+      - heading_syntax
+      - inline_math
+      - display_math
+      - malformed_delimiters
+      - escaped_characters
+      - tables
+      - code_fences
+      - internal_links
+      - heading_anchors
+      - Obsidian_rendering_compatibility
+      - GitHub_Markdown_rendering_compatibility
+    chat_bootstrap_architecture:
+      reconcile_active_and_planned_roles: pending
+      remove_stale_role_descriptions: pending
+      preserve_historical_architecture: true
+      avoid_numbering_conflicts: true
+  chat_role_numbering_constraint:
+    existing_role: 04 - Structure & Conventions
+    reuse_04_for_infrastructure: forbidden
