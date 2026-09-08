@@ -460,7 +460,6 @@ control:
 pending_technical_work:
   status: preserved_not_started
   items:
-    - dedicated Research Software & Infrastructure chat instance
     - W00-HANDOFF-001 local-to-cloud handoff bridge
     - repository-wide language cleanup
     - repository-wide Markdown/LaTeX rendering cleanup
@@ -500,7 +499,7 @@ pending_technical_work:
       role_definition_implies_chat_instance_exists: false
       infrastructure_role: 07 - Research Software & Infrastructure
       infrastructure_role_definition_status: defined
-      infrastructure_chat_instance_status: not_created
+      infrastructure_chat_instance_creation: completed
       infrastructure_execution_role: WKB-R1
       infrastructure_execution_role_mode: on_demand_work
       persistent_WKB_R1_chat_required: false
