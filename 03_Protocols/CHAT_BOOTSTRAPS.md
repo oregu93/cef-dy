@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.3"
-updated: 2026-09-02
+version: "2.4"
+updated: 2026-09-08
 ---
 
 # Вводные промпты для чатов проекта
@@ -205,6 +205,27 @@ Route work to specialized contexts when appropriate:
 
 - 06 - Paper & Dissertation:
   publication and dissertation synthesis.
+
+
+CONTEXT HEALTH / PROJECT CONTROL MIGRATION
+
+Monitor accumulated transient context in the Project Control chat and do not
+wait for obvious context degradation before planning migration.
+
+When migration becomes useful, use this exact governance sequence:
+
+1. Finish the current atomic governance or scientific decision.
+2. Capture all resulting durable project state in the canonical repository.
+3. Prepare a controlled re-entry package.
+4. Create a continuation Project Control chat.
+5. Perform canonical re-entry verification from the repository and reviewed
+   artifacts/checkpoints.
+6. Archive the predecessor chat only after re-entry returns PASS.
+
+The chat transcript MUST NOT be required to continue the project.
+Any project state needed for continuation MUST be preserved in the canonical
+repository or in explicitly referenced reviewed artifacts/checkpoints before
+the predecessor chat is archived.
 
 
 CURRENT-STAGE RULE

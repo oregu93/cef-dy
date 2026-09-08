@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.5"
+version: "3.6"
 updated: 2026-09-08
 control_chat: "00 - Project Control"
 ---
@@ -289,10 +289,12 @@ MOD-ECM-MALKIN
 | `Q-008` | deferred | Как переносить structural-coordinate uncertainty в CEF inference? | Structure / Modelling |
 | `Q-009` | deferred | Как переносить structural CEF trends по Dy/Ho/Tb/Tm через $A_l^m$ и local multipoles? | Stage 06 / Structure |
 | `Q-010` | high | Каков первичный литературный источник historical targets 6.45 и 27.90 meV? | `01 - Literature & Physics` |
-| `Q-011` | high | Какие spectral features воспроизводимо возникают в независимом blind Stage 02R? | `02 - TAIPAN Data Reduction` |
 | `Q-012` | high | Какова полная uncertainty энергии особенности около 18.25 meV с учётом calibration systematic? | Stage 02R |
 | `Q-013` | high | Какие относительные INS-интенсивности могут использоваться как независимые CEF constraints? | Stage 02R / 03R |
 | `Q-014` | high | Требуют ли очищенные данные изменения CEF wavefunctions относительно M0? | Stage 03R |
+| `Q-015` | high | Какие из BF-001...BF-008 соответствуют различным физическим возбуждениям или неразрешённым спектральным структурам, и какие BF могут представлять одну и ту же физическую структуру? | Stage 03R / TAIPAN / Physics |
+
+**Закрытый / superseded вопрос.** `Q-011` — какие спектральные особенности воспроизводимо возникают в независимом слепом Stage 02R — закрыт результатом `W02-02R-B-001` (`R-012` / `EV-007`): установлен каталог `BF-001...BF-008`. Этот результат не устанавливает число различных физических возбуждений и не выполняет физическое назначение. `Q-011` superseded by `Q-015`.
 
 
 # 10. Контексты чатов
