@@ -3,7 +3,7 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "4.3"
+version: "4.4"
 updated: 2026-09-08
 review_status: working
 ---
@@ -70,7 +70,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — независимый повторный анализ TAIPAN
 
-**Следующий шаг.** `project_control_C002_execution_authorization_review`: Передать принятую по Decision A реализацию C002 и результаты 13/13 static/synthetic tests в «00 - Project Control» для отдельного execution-authorization review. C002 execution и detector access к отложенной выборке не авторизованы.
+**Следующий шаг.** `project_control_C002_single_remediation_rerun_authorization`: Передать принятую по Decision A numerical-only remediation C002 и результаты NR01...NR05 = 5/5 PASS, T01...T13 = 13/13 PASS в «00 - Project Control» для отдельного single-remediation-rerun authorization review. Rerun и detector access к отложенной выборке не авторизованы.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.

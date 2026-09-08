@@ -295,7 +295,41 @@ def ordered_centroids(eta, lower, upper):
 def gaussian_unit_area(energy, centroid, fwhm):
     require(fwhm > 0.0, "nonpositive observed FWHM")
     sigma = fwhm / (2.0 * math.sqrt(2.0 * math.log(2.0)))
-    return np.exp(-0.5 * ((energy - centroid) / sigma) ** 2) / (sigma * math.sqrt(2.0 * math.pi))
+    values = np.asarray(energy, dtype=float)
+    density = np.zeros_like(values)
+    if not math.isfinite(sigma) or sigma <= 0.0 or not math.isfinite(float(centroid)):
+        return np.full_like(values, np.nan)
+    log_prefactor = -math.log(sigma) - 0.5 * math.log(2.0 * math.pi)
+    log_minimum = math.log(np.nextafter(0.0, 1.0))
+    log_maximum = math.log(np.finfo(float).max)
+    tail_budget = 2.0 * max(0.0, log_prefactor - log_minimum)
+    log_tail_limit = (0.5 * math.log(tail_budget)
+                      if tail_budget > 0.0 else float("-inf"))
+    for index, value in np.ndenumerate(values):
+        point = float(value)
+        if not math.isfinite(point):
+            density[index] = np.nan
+            continue
+        delta = abs(point - float(centroid))
+        if math.isinf(delta):
+            density[index] = 0.0
+            continue
+        if delta == 0.0:
+            log_density = log_prefactor
+        else:
+            log_ratio = math.log(delta) - math.log(sigma)
+            if log_ratio > log_tail_limit:
+                density[index] = 0.0
+                continue
+            ratio = delta / sigma
+            log_density = log_prefactor - 0.5 * ratio * ratio
+        if log_density < log_minimum:
+            density[index] = 0.0
+        elif log_density > log_maximum or not math.isfinite(log_density):
+            density[index] = np.nan
+        else:
+            density[index] = math.exp(log_density)
+    return density
 
 
 def block_expectation(theta, scan, union, component_count):
@@ -975,6 +1009,88 @@ def test_runner(config, runtime=None):
             "all_mandatory_tests_pass": all(item["status"] == "PASS" for item in tests)}
 
 
+def numerical_remediation_tests(config, frozen_contract_report):
+    tests = []
+    def test(test_id, function):
+        try:
+            evidence = function()
+            tests.append({"test_id": test_id, "status": "PASS", "evidence": evidence,
+                          "reason": None})
+        except Exception as error:
+            tests.append({"test_id": test_id, "status": "FAIL", "evidence": None,
+                          "reason": f"{type(error).__name__}: {error}"})
+
+    def nr01():
+        energy = np.linspace(-2.0, 2.0, 17)
+        centroid, fwhm = 0.25, 0.7
+        sigma = fwhm / (2.0 * math.sqrt(2.0 * math.log(2.0)))
+        reference = np.exp(-0.5 * ((energy - centroid) / sigma) ** 2) / (
+            sigma * math.sqrt(2.0 * math.pi))
+        actual = gaussian_unit_area(energy, centroid, fwhm)
+        require(np.allclose(actual, reference, rtol=2.0e-14, atol=0.0),
+                "ordinary Gaussian changed")
+        return {"maximum_absolute_difference": float(np.max(np.abs(actual - reference))),
+                "centroid": centroid, "fwhm": fwhm}
+
+    def nr02():
+        representable = gaussian_unit_area(np.asarray([-1.0, 0.0, 1.0]), 0.0, 1.0e-307)
+        require(np.isfinite(representable).all() and representable[1] > 0.0,
+                "representable narrow central density invalid")
+        smallest = np.nextafter(0.0, 1.0)
+        unrepresentable = gaussian_unit_area(np.asarray([0.0]), 0.0, smallest)
+        scan = ScanData("S", ("0", "1", "2"), np.asarray([-1.0, 0.0, 1.0]),
+                        np.ones(3), np.ones(3))
+        objective = block_nll(np.asarray([0.0, 0.0, 1.0, 0.0, smallest]),
+                              scan, [-1.0, 1.0], 1)
+        require(np.isnan(unrepresentable[0]) and math.isinf(objective),
+                "unrepresentable center bypassed invalid-trial path")
+        return {"representable_density_finite": True,
+                "unrepresentable_center_trial_invalid": True}
+
+    def nr03():
+        values = gaussian_unit_area(np.asarray([-1.0e200, 0.0, 1.0e200]), 0.0, 0.5)
+        maximum = np.finfo(float).max
+        overflow_distance = gaussian_unit_area(np.asarray([-maximum, maximum]), maximum, 0.5)
+        require(values[0] == 0.0 and values[2] == 0.0
+                and math.isfinite(values[1]) and values[1] > 0.0
+                and overflow_distance[0] == 0.0 and math.isfinite(overflow_distance[1]),
+                "Gaussian tail underflow policy")
+        return {"left_tail": float(values[0]), "central_density": float(values[1]),
+                "right_tail": float(values[2])}
+
+    def nr04():
+        policy = config["observed_optimizer"]
+        require(policy["method"] == "L-BFGS-B" and policy["initial_starts"] == 8
+                and policy["escalated_starts"] == 16
+                and policy["post_optimizer_polishing"] == "forbidden"
+                and policy["secondary_optimizer"] == "forbidden", "optimizer policy changed")
+        scan = synthetic_scans()[0]
+        def reproduced_fit(_scans, _union, _count, start, index, _config):
+            return Candidate(index, np.asarray(start), 0.0, True, True, True, 0)
+        stable = observed_fit([scan], [-1.0, 1.0], 0, config, reproduced_fit)
+        def unreproduced_fit(_scans, _union, _count, start, index, _config):
+            return Candidate(index, np.asarray(start), float(index), True, True, True, 0)
+        unresolved = observed_fit([scan], [-1.0, 1.0], 0, config, unreproduced_fit)
+        require(stable["start_count"] == 8 and unresolved["start_count"] == 16,
+                "8 to 16 dispatch changed")
+        return {"reproduced_start_count": 8, "unreproduced_start_count": 16,
+                "method": policy["method"]}
+
+    def nr05():
+        require(frozen_contract_report["passed"] == 13
+                and frozen_contract_report["failed"] == 0
+                and frozen_contract_report["all_mandatory_tests_pass"],
+                "frozen C002 contract regression")
+        return {"C002_T01_T13_passed": 13, "C002_T01_T13_failed": 0,
+                "family_sha256": FAMILY_SHA256,
+                "seed_hashes": config["seed_policy"]["frozen_sha256"]}
+
+    for index, function in enumerate((nr01, nr02, nr03, nr04, nr05), 1):
+        test(f"C002-NR{index:02d}", function)
+    return {"tests": tests, "passed": sum(item["status"] == "PASS" for item in tests),
+            "failed": sum(item["status"] == "FAIL" for item in tests)}
+
+
 def synthetic_scans():
     scans = []
     for scan_id, shift in (("S1", 0.0), ("S2", 0.1)):
@@ -1051,7 +1167,13 @@ def main():
     arguments = parser.parse_args()
     config = load_config()
     if arguments.self_test:
-        report = test_runner(config)
+        contract = test_runner(config)
+        remediation = numerical_remediation_tests(config, contract)
+        report = {"mode": "static_and_synthetic_numerical_remediation",
+                  "C002_executed": False, "holdout_detector_access_count": 0,
+                  "C002_T01_T13": contract, "C002_NR_tests": remediation,
+                  "passed": contract["passed"] + remediation["passed"],
+                  "failed": contract["failed"] + remediation["failed"]}
         print(json.dumps(report, indent=2, default=serializable))
         raise SystemExit(0 if report["failed"] == 0 else 1)
     result = execute_candidate(config)
