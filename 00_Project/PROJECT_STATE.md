@@ -3,8 +3,8 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "4.2"
-updated: 2026-09-07
+version: "4.3"
+updated: 2026-09-08
 review_status: working
 ---
 
@@ -70,7 +70,7 @@ review_status: working
 
 **Текущий этап.** `M02R` (`active`): Stage 02R — независимый повторный анализ TAIPAN
 
-**Следующий шаг.** `W02_C002_implementation_preparation`: Подготовить реализацию C002 строго по замороженной и принятой execution specification v1.0. Разрешена только implementation preparation; C002 execution и detector access к отложенной выборке не авторизованы.
+**Следующий шаг.** `project_control_C002_execution_authorization_review`: Передать принятую по Decision A реализацию C002 и результаты 13/13 static/synthetic tests в «00 - Project Control» для отдельного execution-authorization review. C002 execution и detector access к отложенной выборке не авторизованы.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.

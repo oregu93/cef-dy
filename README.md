@@ -4,8 +4,8 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "3.9"
-updated: 2026-09-07
+version: "4.0"
+updated: 2026-09-08
 language_content: ru
 language_metadata: en
 ---
@@ -75,13 +75,13 @@ CEF-гамильтониан содержит 15 независимых пара
 - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
 - Уникальный набор параметров и волновых функций CEF-гамильтониана.
 
-**Следующий научный шаг.** `W02_C002_implementation_preparation`: Подготовить реализацию C002 строго по замороженной и принятой execution specification v1.0. Разрешена только implementation preparation; C002 execution и detector access к отложенной выборке не авторизованы.
+**Следующий научный шаг.** `project_control_C002_execution_authorization_review`: Передать принятую по Decision A реализацию C002 и результаты 13/13 static/synthetic tests в «00 - Project Control» для отдельного execution-authorization review. C002 execution и detector access к отложенной выборке не авторизованы.
 
 **Дорожная карта.** Stage 02R — независимый повторный анализ TAIPAN → Stage 03R — CEF landscape и идентифицируемость → Stage 03D — совместное ограниченное моделирование энергий и интенсивностей → Stage 05 — независимая магнитная проверка → Последующая структурная и микроскопическая интерпретация.
 
 **Происхождение B-001.** [Научное рецензирование B-001](04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md); [Замороженный каталог BF](04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml); [Контрольная запись B-001](02_Work_Checkpoints/W02-02R-B-001.md); [R-012](00_Project/RESULT_REGISTER.yaml); [EV-007](00_Project/EVIDENCE_REGISTER.yaml); [Активная замороженная спецификация C-001 v1.1](03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md); [canonical commit `21506b7`](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
 
-**Метаданные обновлены:** `2026-09-07`.
+**Метаданные обновлены:** `2026-09-08`.
 <!-- AUTO:README_STATUS:END -->
 
 

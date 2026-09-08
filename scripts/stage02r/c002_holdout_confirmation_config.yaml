@@ -1,0 +1,140 @@
+configuration_version: stage02r_c002_v1_0_candidate_v1
+job_id: W02-02R-C-002
+dataset_id: EXP-TAIPAN-001
+
+execution_specification:
+  version: "1.0"
+  path: 03_Protocols/STAGE02R_T02R05_C002_EXECUTION_SPEC_V1_0.md
+  sha256: 49372420338753828be53bd4f04ca80369bc19951ad40b6223f9dc7a80f2a279
+  design_freeze_main: 122691ae7e69e40458509feec0dd2135aeb4108f
+  c001_execution_baseline: a8f5605177470d55de982227d9a9f36a7c801562
+
+frozen_family:
+  path: 04_Results/Stage02R/W02-02R-C-001-v1.1/future_C002_spec.yaml
+  sha256: 38fd01e53d539bc877a36f7cd8152faf372905ddf9ce68b1c3779874654f555b
+  family_size: 3
+  hypothesis_ids:
+    - C002-CX-01-K0-K1
+    - C002-CX-02-K0-K1
+    - C002-CX-03-K0-K1
+  eligible_scan_counts:
+    C002-CX-01-K0-K1: 13
+    C002-CX-02-K0-K1: 12
+    C002-CX-03-K0-K1: 5
+
+input_artifacts:
+  a002_provenance:
+    path: 04_Results/Stage02R/W02-02R-A-002/provenance_manifest.yaml
+    sha256: 79f0e63dafd8fc1468c26ed09716fb633976c6461cd61f6b22d967d34ebcd237
+    scan_points_sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  scan_points:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+    sha256_from_upstream_manifest: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  scan_inventory:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+    sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  holdout_metadata_eligibility:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/holdout_metadata_eligibility.csv
+    sha256: 91d6ef3c201fe9d36305991e12e206a703cb86bf6381144a628b7ab3bec77bce
+  c001_provenance:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/provenance_manifest.yaml
+    sha256: 4be9a51bd4f39949eb12d8e931816315f767a0ada0e285c6b0384e49f0852494
+  B001_catalogue:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+    sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+
+complexes:
+  CX-01: {frozen_union_meV: [2.49870, 6.99865]}
+  CX-02: {frozen_union_meV: [17.49800, 20.49835]}
+  CX-03: {frozen_union_meV: [40.49835, 46.49775]}
+
+metadata_window:
+  lower_background_anchor_points: 2
+  upper_background_anchor_points: 2
+  energy_field: e_raw
+  exposure_by_class:
+    monitor_controlled: monitor_raw
+    time_controlled: time_raw
+
+authorization:
+  C002_execution_authorized: false
+  holdout_detector_access_authorized: false
+  external_authorization_path: 00_Project/C002_EXECUTION_AUTHORIZATION.yaml
+
+model:
+  likelihood: raw_count_exposure_conditioned_Poisson
+  parent: {K: 0, background_family: B1_log_linear}
+  child: {K: 1, background_family: B1_log_linear, component_family: observed_unit_area_Gaussian}
+  parameters: fully_scan_specific
+  arbitrary_per_scan_scale: forbidden
+  physical_minimum_separation_rule: none
+  parameter_domains:
+    b0: unbounded
+    b1: unbounded
+    area: nonnegative_unbounded
+    observed_fwhm: strictly_positive_unbounded
+    centroid: strictly_inside_frozen_complex_union
+
+observed_optimizer:
+  implementation: scipy.optimize.minimize
+  method: L-BFGS-B
+  parameter_coordinates: physical_model_coordinates
+  initial_starts: 8
+  escalated_starts: 16
+  escalation_trigger: best_optimum_not_reproduced
+  reproduction_required_distinct_starts: 2
+  reproduction_relative_likelihood_tolerance: 1.0e-6
+  deterministic_tie_absolute_likelihood_tolerance: 1.0e-8
+  deterministic_tie_parameter_round_decimals: 12
+  post_optimizer_polishing: forbidden
+  secondary_optimizer: forbidden
+  KKT_role: final_observed_fit_diagnostic_only
+  options: {maxiter: 4000, ftol: 1.0e-12, gtol: 1.0e-8, maxls: 50}
+
+bootstrap:
+  replicates: 4096
+  rng: numpy.random.PCG64
+  design: fixed
+  adaptive_extension: forbidden
+  model_local_starts: 4
+  failed_replicate_statistic: positive_infinity
+  p_value_convention: plus_one
+  denominator: 4097
+
+seed_policy:
+  encoding: UTF-8
+  canonical_json_sort_keys: true
+  canonical_json_separators: [",", ":"]
+  ensure_ascii: true
+  frozen_sha256:
+    C002-CX-01-K0-K1: abde54d98da2396b269daf9d0f26effabc79ba6e90ff96e4edc9ec0c3e860712
+    C002-CX-02-K0-K1: afeed89848a6527dbbff1efa9bb00127aa22e59e778c2bcf441ece63f066a0da
+    C002-CX-03-K0-K1: 6fe2650a2d8dcca2081d63497512d3fb7df1a47a732849b755402913202269b1
+
+holm:
+  procedure: Holm
+  global_alpha: 0.05
+  family_size: 3
+  primary_order: raw_p_value_ascending
+  tie_break: hypothesis_id_lexical_ascending
+  family_shrinkage_after_detector_access: forbidden
+
+scientific_boundary:
+  allowed_result_semantics: [presence_confirmed_internal_holdout, presence_not_confirmed, numerical_failure]
+  resolution_status: resolution_not_established
+  physical_assignment_performed: false
+  spectral_completeness_claim: forbidden
+  absence_outside_measured_regions: not_inferable
+
+output_contract:
+  directory: 04_Results/Stage02R/W02-02R-C-002
+  names:
+    - c002_observed_fits.csv
+    - c002_bootstrap_summary.csv
+    - c002_holm_decisions.csv
+    - c002_numerical_diagnostics.yaml
+    - holdout_field_access_log.csv
+    - provenance_manifest.yaml
+    - test_report.yaml
+  stop_condition: C002_STOP_after_frozen_outputs_before_combined_reestimation_or_interpretation
+  resume_policy: deterministic_full_restart_of_unpromoted_partial_directory

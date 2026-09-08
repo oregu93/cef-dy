@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-07'
+updated: '2026-09-08'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -162,14 +162,23 @@ scientific_facade:
   c002:
     job_id: W02-02R-C-002
     freeze_ready: true
-    readiness_recommendation: implementation_preparation_authorized
+    readiness_recommendation: ready_for_project_control_execution_authorization_review
     execution_specification_version: '1.0'
     execution_specification_status: frozen
     execution_specification_path: 03_Protocols/STAGE02R_T02R05_C002_EXECUTION_SPEC_V1_0.md
     execution_specification_sha256: 49372420338753828be53bd4f04ca80369bc19951ad40b6223f9dc7a80f2a279
     scientific_design_status: accepted
-    implementation_status: not_started
+    implementation_status: accepted
     implementation_preparation_authorized: true
+    implementation_review_status: completed
+    implementation_review_decision: A
+    source_path: scripts/stage02r/c002_holdout_confirmation.py
+    source_sha256: 461b2de3715f20b2c81036a822fbef42818e25df02324cc01a47755e8ab44dd5
+    config_path: scripts/stage02r/c002_holdout_confirmation_config.yaml
+    config_sha256: dffed321474c3371a71f2fad3a21f13e1f2c84d2f172d505e4956b06eb8fb40a
+    static_synthetic_tests:
+      passed: 13
+      failed: 0
     family_status: frozen_before_detector_access
     family_size: 3
     family_members:
@@ -180,6 +189,7 @@ scientific_facade:
       - hypothesis_id: C002-CX-03-K0-K1
         eligible_holdout_scan_count: 5
     family_spec_path: 04_Results/Stage02R/W02-02R-C-001-v1.1/future_C002_spec.yaml
+    execution_status: not_started
     execution_authorized: false
     executed: false
     holdout_detector_access_authorized: false
@@ -201,7 +211,7 @@ scientific_facade:
     - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
   next_scientific_step:
-    id: W02_C002_implementation_preparation
+    id: project_control_C002_execution_authorization_review
     job_id: W02-02R-C-002
     execution_specification_version: '1.0'
     execution_specification_status: frozen
@@ -211,9 +221,13 @@ scientific_facade:
     C001_canonical_scientific_result_status: established
     C002_family_size: 3
     C002_family_frozen_before_detector_access: true
-    implementation_status: not_started
+    implementation_status: accepted
     implementation_preparation_authorized: true
-    next_governance_action: W02_C002_implementation_preparation
+    implementation_review_status: completed
+    implementation_review_decision: A
+    static_synthetic_tests_passed: 13
+    static_synthetic_tests_failed: 0
+    next_governance_action: project_control_C002_execution_authorization_review
     execution_authorized: false
     A2_authorized: false
     holdout_detector_access_authorized: false
@@ -273,11 +287,11 @@ current_milestone:
   status: active
 
 immediate_next_step:
-  id: W02_C002_implementation_preparation
+  id: project_control_C002_execution_authorization_review
   text: >-
-    Подготовить реализацию C002 строго по замороженной и принятой execution specification v1.0.
-    Разрешена только implementation preparation; C002 execution и detector access к отложенной выборке
-    не авторизованы.
+    Передать принятую по Decision A реализацию C002 и результаты 13/13 static/synthetic tests
+    в «00 - Project Control» для отдельного execution-authorization review. C002 execution и detector
+    access к отложенной выборке не авторизованы.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -292,16 +306,16 @@ do_not_assume:
 
 control:
   now: >-
-    C002 execution specification v1.0 заморожена и принята; реализация ещё не подготовлена.
-    Разрешена только implementation preparation. C002 не выполнялся, detector access к отложенной
-    выборке не разрешён.
+    C002 execution specification v1.0 остаётся замороженной и принятой. Реализация принята по Decision A;
+    13/13 static/synthetic tests PASS. Production C002 не выполнялся, detector access к отложенной выборке
+    не разрешён.
   why: >-
     До доступа к detector data зафиксированы три K0→K1 presence hypotheses, точные eligible scan memberships,
     B=4096, seed policy, plus-one raw p-values и глобальная Holm correction. Научный дизайн принят без
     физического назначения и без spectral-completeness claim.
   next: >-
-    W02_C002_implementation_preparation: подготовить implementation строго по frozen execution specification v1.0
-    и вернуть её на review. C002 execution и holdout detector access остаются запрещены.
+    project_control_C002_execution_authorization_review: провести отдельный Project Control review принятой
+    реализации. C002 execution и holdout detector access остаются запрещены.
   next_work_job:
 
   blocked:
