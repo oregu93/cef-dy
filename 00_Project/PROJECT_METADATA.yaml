@@ -551,11 +551,12 @@ pending_technical_work:
     specification_status: frozen
 
     design_baseline_commit: 1c9c1fec22e0a7f598a9d3bd86f599c5751b7414
+    specification_freeze_commit: be0906d78bc1a168c9e1658cb472bbce89589e3d
 
     design_status: accepted
 
     implementation_status: not_started
-    implementation_authorized: false
+    implementation_authorized: true
 
     workflow_path: .github/workflows/infrastructure-ci.yml
 
