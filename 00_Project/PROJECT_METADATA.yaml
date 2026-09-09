@@ -513,6 +513,7 @@ pending_technical_work:
     specification_status: frozen
 
     design_baseline_commit: a106cd10152211ff5bd4a97943113d406e1c5620
+    specification_freeze_commit: f178d853e33beb29400412ba573f46b1cf9f5099
 
     execution_environment:
       class: local_tier1_linux_sandbox
@@ -520,7 +521,7 @@ pending_technical_work:
 
     execution_baseline_policy: canonical_execution_authorization_commit
     execution_status: not_started
-    execution_authorized: false
+    execution_authorized: true
 
     fresh_clone_test_passed: false
   cleanup_scope:
