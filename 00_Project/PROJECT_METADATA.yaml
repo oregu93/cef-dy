@@ -496,8 +496,14 @@ pending_technical_work:
     design_baseline_commit: fec1d643db70c602290cdc29a1b069f43330b447
     specification_freeze_commit: 221a6823d7730fedcb8a144262801e62b670557f
     execution_baseline_policy: canonical_execution_authorization_commit
-    execution_status: not_started
-    execution_authorized: true
+    execution_status: completed
+    execution_authorized: false
+    execution_commit: 92df6ce5aad0c1acaa9d5ea28114f28cebcead6b
+    technical_review_status: completed
+    technical_review_decision: A
+    acceptance_status: accepted
+    implementation_ready_for_fresh_clone_test: true
+    fresh_clone_test_passed: false
     execution_role: WKB-R1
   cleanup_scope:
     human_readable_prose:
