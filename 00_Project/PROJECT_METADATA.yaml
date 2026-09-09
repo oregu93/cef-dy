@@ -520,10 +520,28 @@ pending_technical_work:
       platform_family: Linux Mint / Ubuntu-family Linux
 
     execution_baseline_policy: canonical_execution_authorization_commit
-    execution_status: not_started
-    execution_authorized: true
+    tested_commit: 0ee2b963f8d3608481b61c3d3f9d37dcbdcc1043
 
-    fresh_clone_test_passed: false
+    execution_status: completed
+    execution_authorized: false
+    execution_result: PASS
+
+    technical_review_status: completed
+    technical_review_decision: A
+    acceptance_status: accepted
+
+    fresh_clone_test_passed: true
+
+    evidence:
+      review_bundle_sha256: faa8fd7c1cead8dab4e0718e1e50a88307ae7f8b195d82b82964ade93b10be1d
+      fc07_expected_files: 201
+      fc07_actual_files: 201
+      fc07_missing: 0
+      fc07_extra: 0
+      fc07_size_mismatch: 0
+      fc07_sha256_mismatch: 0
+      checksum_entries_verified: 20
+      checksum_mismatches: 0
   cleanup_scope:
     human_readable_prose:
       language: natural_professional_Russian
