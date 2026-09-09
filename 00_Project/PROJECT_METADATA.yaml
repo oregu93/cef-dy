@@ -505,6 +505,24 @@ pending_technical_work:
     implementation_ready_for_fresh_clone_test: true
     fresh_clone_test_passed: false
     execution_role: WKB-R1
+  fresh_clone_test:
+    test_id: FC-PORTABILITY-001
+    specification_id: FRESH-CLONE-ACCEPTANCE-SPEC
+    specification_version: "1.0"
+    specification_path: 03_Protocols/FRESH_CLONE_ACCEPTANCE_SPEC_V1_0.md
+    specification_status: frozen
+
+    design_baseline_commit: a106cd10152211ff5bd4a97943113d406e1c5620
+
+    execution_environment:
+      class: local_tier1_linux_sandbox
+      platform_family: Linux Mint / Ubuntu-family Linux
+
+    execution_baseline_policy: canonical_execution_authorization_commit
+    execution_status: not_started
+    execution_authorized: false
+
+    fresh_clone_test_passed: false
   cleanup_scope:
     human_readable_prose:
       language: natural_professional_Russian
