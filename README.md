@@ -175,6 +175,7 @@ DECISION_REGISTER
 | Проверить execution checkpoint | `02_Work_Checkpoints/` |
 | Проверить scientific terminology | [SCIENTIFIC_TERMINOLOGY](03_Protocols/SCIENTIFIC_TERMINOLOGY.md) |
 | Проверить Knowledge Base rules | [RESEARCH_KB_GUIDE](03_Protocols/RESEARCH_KB_GUIDE.md) |
+| Восстановить рабочую инфраструктуру на другой машине | [RESEARCH_INFRASTRUCTURE_GUIDE](03_Protocols/RESEARCH_INFRASTRUCTURE_GUIDE.md) |
 | Проверить data contracts | [DATA_CONTRACTS](03_Protocols/DATA_CONTRACTS.md) |
 | Восстановить роли project chats | [CHAT_BOOTSTRAPS](03_Protocols/CHAT_BOOTSTRAPS.md) |
 

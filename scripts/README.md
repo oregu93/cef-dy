@@ -48,3 +48,6 @@ python scripts/work_recovery.py selftest
 
 Хранилище: `CEF_Dy_Backup/work_recovery/` (должно уже игнорироваться Git).
 Полный порядок действий и ограничения: [WORK_RECOVERY_PROTOCOL](../03_Protocols/WORK_RECOVERY_PROTOCOL.md).
+
+Настройка окружения, локальных путей и внешних данных описана в
+[RESEARCH_INFRASTRUCTURE_GUIDE](../03_Protocols/RESEARCH_INFRASTRUCTURE_GUIDE.md).

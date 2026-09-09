@@ -1,14 +1,14 @@
-# Скопируйте этот файл как local_paths.yaml и укажите локальные пути.
+# Скопируйте этот файл как local_paths.yaml и укажите пути для своей машины.
 # local_paths.yaml является machine-specific и не должен попадать в Git.
 
 EXP-TAIPAN-001:
-  path: "/home/oleg/Документы/CEF/CEF_Dy_Data/TAIPAN_raw"
+  path: "/path/to/CEF_Dy_Data/TAIPAN_raw"
 
 EXP-XRD-001:
-  path: "/home/oleg/Документы/CEF/CEF_Dy_Data/XRD_raw"
+  path: "/path/to/CEF_Dy_Data/XRD_raw"
 
 WORK-OUTPUTS:
-  path: "/home/oleg/Документы/CEF/CEF_Dy_Data/Work_outputs_large"
+  path: "/path/to/CEF_Dy_Data/Work_outputs_large"
 
 PRIVATE-DATA:
-  path: "/home/oleg/Документы/CEF/CEF_Dy_Data/private"
+  path: "/path/to/CEF_Dy_Data/private"
