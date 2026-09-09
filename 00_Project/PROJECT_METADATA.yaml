@@ -494,9 +494,10 @@ pending_technical_work:
     specification_status: frozen
     infrastructure_design_status: accepted
     design_baseline_commit: fec1d643db70c602290cdc29a1b069f43330b447
+    specification_freeze_commit: 221a6823d7730fedcb8a144262801e62b670557f
     execution_baseline_policy: canonical_execution_authorization_commit
     execution_status: not_started
-    execution_authorized: false
+    execution_authorized: true
     execution_role: WKB-R1
   cleanup_scope:
     human_readable_prose:
