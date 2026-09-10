@@ -292,6 +292,7 @@ class Materializer:
         packet_id = packet.get("packet_id")
         if packet_id != self.packet_path.stem or not isinstance(packet_id, str) or not PACKET_RE.fullmatch(packet_id):
             fail("INVALID_PACKET_ID", "packet_id/filename mismatch")
+        self.prevalidate()
         ledger = load_yaml(self.root / "05_Literature/MATERIALIZATION_LOG.yaml")
         applications = mapping(ledger.get("applications"), "ledger applications must be mapping")
         previous = applications.get(packet_id)
@@ -304,7 +305,6 @@ class Materializer:
                 plan.plan_sha256 = str(previous.get("plan_sha256", ""))
                 return "ALREADY_APPLIED", plan
             fail("MATERIALIZATION_SCHEMA_FAILURE", "unsupported ledger result")
-        self.prevalidate()
         plan = self.build_plan(packet, packet_hash, ledger)
         self.validate_shadow(plan)
         if not self.apply:
@@ -1062,9 +1062,24 @@ def selftest(repository_root: Path) -> int:
         replay_status, replay_plan, replay_code = attempt(root, path)
         replay_ok = replay_status == "ALREADY_APPLIED" and replay_code is None and replay_plan is not None and not replay_plan.writes
         record(["T-LIT02-39", "T-LIT02-40", "T-LIT02-45", "T-LIT02-46"], applied_ok and replay_ok)
+
+        corrupted_registry = load_yaml(root / "05_Literature/SOURCE_REGISTRY.yaml")
+        corrupted_registry["schema_version"] = "corrupted"
+        write(root / "05_Literature/SOURCE_REGISTRY.yaml", corrupted_registry)
+        snapshot_commit(root, "corrupted canonical pre-state")
+        invalid_replay_status, _, invalid_replay_code = attempt(root, path)
+        record(
+            ["T-LIT02-58"],
+            invalid_replay_status is None and invalid_replay_code == "STOP_SCHEMA_DIVERGENCE",
+        )
+
+        # Restore a healthy retained-packet fixture for the packet-ID/hash conflict check.
+        root, path, head = fixture(packet([create_operation("OP-001", "SRC-PENDING-x", 1)]))
+        status, _, applied_code = attempt(root, path, True, head)
+        snapshot_commit(root, "applied fixture for hash conflict")
         changed_packet = load_yaml(path); changed_packet["validation_status"] = "changed"; write(path, changed_packet)
         snapshot_commit(root, "changed retained packet")
-        record(["T-LIT02-41"], attempt(root, path)[2] == "MATERIALIZATION_SCHEMA_FAILURE")
+        record(["T-LIT02-41"], status == "APPLIED" and applied_code is None and attempt(root, path)[2] == "MATERIALIZATION_SCHEMA_FAILURE")
 
         # Rollback paths use injected deterministic failures.
         for name, fault, expected_code in (
@@ -1125,7 +1140,7 @@ def selftest(repository_root: Path) -> int:
         path_ok = attempt(root, escape)[2] == "MATERIALIZATION_SCHEMA_FAILURE"
         record(["T-LIT02-54", "T-LIT02-55", "T-LIT02-56"], cwd_ok and network_free and privacy_ok and path_ok)
 
-    names = [f"T-LIT02-{number:02d}" for number in range(1, 58)]
+    names = [f"T-LIT02-{number:02d}" for number in range(1, 59)]
     missing = [name for name in names if name not in results]
     for name in missing:
         results[name] = False
