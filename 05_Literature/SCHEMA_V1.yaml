@@ -1,0 +1,312 @@
+repository_schema_version: "1.0"
+specification:
+  specification_id: LIT-INFRA-SCHEMA-SPEC
+  specification_version: "1.0"
+  specification_path: 03_Protocols/LITERATURE_KNOWLEDGE_SCHEMA_V1_0.md
+
+authority:
+  git:
+    - source_identity
+    - search_provenance
+    - scientific_evidence
+    - project_workflow_state
+  zotero:
+    - bibliographic_metadata
+    - pdf_attachments
+    - supplements
+  references_bib: derived-but-tracked
+
+id_patterns:
+  SOURCE_ID: '^SRC-[0-9]{6}$'
+  GAP_ID: '^GAP-[0-9]{6}$'
+  SEARCH_PASS_ID: '^SP-[0-9]{8}-[A-Z0-9]+-[0-9]{2}$'
+  EDGE_ID: '^EDGE-[0-9]{6}$'
+  WORK_FAMILY_ID: '^WF-[0-9]{6}$'
+  PACKET_ID: '^MP-[0-9]{8}-01A-[0-9]{2}$'
+  EVIDENCE_ID: '^EV-SRC[0-9]{6}-[0-9]{3,}$'
+  PENDING_SOURCE_ID: '^SRC-PENDING-[A-Za-z0-9][A-Za-z0-9._-]*$'
+
+enumerations:
+  record_status:
+    - active
+    - merged
+  bibliographic_status:
+    - verified
+    - partial
+    - unresolved
+  primary_source_status:
+    - primary_verified
+    - primary_found_not_read
+    - secondary_only
+    - citation_only
+    - unresolved
+  full_text_status:
+    - obtained
+    - accessible_online
+    - abstract_only
+    - metadata_only
+    - unavailable
+  zotero_link_status:
+    - unlinked
+    - linked
+    - stale
+    - needs_review
+  workflow_state:
+    - DISCOVERED
+    - PROVENANCE_VERIFIED
+    - READY_FOR_01
+    - 01_REVIEWED
+    - CANONICAL_PROJECT_USE
+    - HOLD
+    - REJECTED
+  hold_scope:
+    - provenance
+    - scientific
+  evidence_category:
+    - MEASURED
+    - DERIVED
+    - FITTED
+    - ASSUMED
+    - CALCULATED
+    - INTERPRETED_BY_AUTHORS
+    - INFERENCE_FOR_DyFeO3
+  evidence_review_state:
+    - preliminary_01A
+    - reviewed_01
+    - held
+  gap_status:
+    - open
+    - partially_resolved
+    - resolved
+    - blocked
+    - probably_unrecoverable
+  gap_importance:
+    - low
+    - medium
+    - high
+    - critical
+  relation_type:
+    - cites
+    - independent_confirmation
+    - derivative_citation
+    - historical_reference
+    - parameter_reuse
+    - level_scheme_reuse
+    - method_reference
+    - contradiction
+    - translation
+    - work_version
+    - conference_precursor
+    - expanded_version
+  evidence_independence:
+    - independent
+    - partially_independent
+    - not_independent
+    - unknown
+  work_version_role:
+    - original
+    - translation
+    - preprint
+    - publisher_version
+    - conference_precursor
+    - technical_report
+    - thesis_version
+    - thesis_chapter
+    - expanded_journal_version
+    - later_reanalysis
+  search_mode:
+    - GLOBAL_BASELINE
+    - INCREMENTAL_WATCH
+    - RETROSPECTIVE_MIGRATION
+  search_result_state:
+    - FOUND
+    - SEARCHED_NOT_FOUND
+    - NOT_SEARCHED
+    - INACCESSIBLE
+    - BIBLIOGRAPHY_UNRESOLVED
+  branch_saturation_state:
+    - OPEN
+    - DEVELOPING
+    - NEAR_SATURATION
+    - SATURATED_V1
+  packet_operation_type:
+    - SOURCE_CREATE
+    - SOURCE_UPDATE
+    - EVIDENCE_ADD
+    - EVIDENCE_UPDATE
+    - SEARCH_PASS_ADD
+    - ADD_CITATION_EDGE
+    - GAP_CREATE
+    - GAP_UPDATE
+    - WORK_FAMILY_LINK
+    - ZOTERO_CREATE
+    - ZOTERO_LINK_EXISTING
+    - ADD_COLLECTION
+    - ADD_TAG
+
+branches:
+  B01: DyFeO3 direct
+  B02: stoichiometric RFeO3
+  B03: Soviet/Russian historical
+  B04: optical/Zeeman/FIR/EPR
+  B05: neutron CEF / INS
+  B06: CEF inverse problem / identifiability
+  B07: CEF conventions / transforms
+  B08: structure → CEF
+  B09: exchange-aware CEF
+  B10: magnetoelastic / phonon–CEF
+  B11: neutron cross section / intensity methodology
+  B12: software/reproducibility
+  B13: Fe-only controls
+  B14: substituted orthoferrites
+  B15: RCrO3 comparators
+  B16: RGaO3 / RAlO3 structural comparators
+
+required_fields:
+  source:
+    - record_version
+    - record_status
+    - source_slug
+    - bibliographic_identity
+    - bibliographic_status
+    - primary_source_status
+    - full_text_status
+    - compounds
+    - techniques
+    - branches
+    - workflow_state
+    - search_passes
+  bibliographic_identity:
+    - title_short
+    - first_author
+    - year
+    - doi
+    - other_ids
+  evidence_record:
+    - source_id
+    - evidence_record_version
+    - evidence
+  evidence_item:
+    - evidence_id
+    - category
+    - claim
+  gap:
+    - question
+    - importance
+    - status
+    - gap_type
+    - current_evidence
+    - search_passes_attempted
+    - next_search
+    - blocked_reason
+    - resolved_by
+  search_pass:
+    - search_pass_id
+    - mode
+    - objective
+    - scope
+    - executed_at
+    - executed_by_role
+    - sources
+    - queries
+    - seed_sources
+    - sources_found
+    - sources_rejected
+    - duplicates
+    - citation_chains_followed
+    - unresolved_targets
+    - termination_reason
+    - result_state
+  citation_edge:
+    - edge_id
+    - from_source
+    - to_source
+    - relation_type
+    - evidence_independence
+  packet:
+    - packet_id
+    - packet_schema_version
+    - producer_role
+    - source_search_passes
+    - operations
+    - unresolved_ambiguities
+    - validation_status
+  packet_operation:
+    - operation_id
+    - type
+    - payload
+
+conditional_invariants:
+  SOURCE_ID_IMMUTABLE:
+    rule: canonical SOURCE_ID values are never renamed, recycled, or reassigned
+  CANONICAL_PENDING_SOURCE_ID:
+    rule: SRC-PENDING identifiers are forbidden outside materialization packets
+    failure_code: CANONICAL_PENDING_SOURCE_ID
+  MERGED_REQUIRES_TARGET:
+    when: record_status == merged
+    require:
+      - merged_into
+  LINKED_ZOTERO_REQUIRES_IDENTITY:
+    when: zotero.link_status == linked
+    require:
+      - zotero.library_alias
+      - zotero.item_key
+  HOLD_REQUIRES_SCOPE:
+    when: workflow_state == HOLD
+    require:
+      - hold_scope
+  RESOLVED_GAP_REQUIRES_EVIDENCE:
+    when: status == resolved
+    require_nonempty:
+      - resolved_by
+  CEF_PARAMETER_CONTEXT:
+    when: numerical B_lm values are present
+    require:
+      - cef.coordinate_convention.local_axes
+      - cef.coordinate_convention.formalism
+      - cef.coordinate_convention.normalization
+      - cef.coordinate_convention.parameter_units
+    failure_code: CEF_PARAMETER_CONTEXT_INCOMPLETE
+  CITATION_ENDPOINTS_RESOLVE:
+    rule: from_source and to_source resolve to canonical SOURCE_ID records
+    failure_code: CITATION_EDGE_DANGLING
+  AMBIGUITY_FAILS_CLOSED:
+    rule: unresolved ambiguity never causes automatic create, update, or merge
+  DUPLICATE_DOI_FAILS_CLOSED:
+    rule: duplicate normalized DOI is a duplicate candidate and is never auto-merged
+    failure_code: DUPLICATE_CANDIDATE
+
+failure_codes:
+  - SOURCE_ID_COLLISION
+  - SEARCH_PASS_ID_COLLISION
+  - BIBLIOGRAPHIC_AMBIGUITY
+  - DUPLICATE_CANDIDATE
+  - PRIMARY_SOURCE_UNRESOLVED
+  - MATERIALIZATION_SCHEMA_FAILURE
+  - PACKET_PRECONDITION_FAILURE
+  - CITATION_EDGE_DANGLING
+  - EVIDENCE_REFERENCE_DANGLING
+  - UNKNOWN_BRANCH_ID
+  - INVALID_EVIDENCE_CATEGORY
+  - INVALID_GAP_STATUS
+  - BIBTEX_KEY_COLLISION
+  - BIBTEX_EXPORT_MISMATCH
+  - ZOTERO_UNAVAILABLE
+  - ZOTERO_AUTHORIZATION_REQUIRED
+  - ZOTERO_WRITE_DENIED
+  - ZOTERO_IDENTITY_MISMATCH
+  - ZOTERO_SERVER_ID_CHANGED
+  - ZOTERO_WRITE_CONFLICT
+  - LOCAL_CONFIG_MISSING
+  - INVALID_SOURCE_ID
+  - CANONICAL_PENDING_SOURCE_ID
+  - INVALID_WORKFLOW_STATE
+  - INVALID_SEARCH_PASS_ID
+  - INVALID_EDGE_ID
+  - INVALID_PACKET_ID
+  - INVALID_RELATION_TYPE
+  - INVALID_EVIDENCE_INDEPENDENCE
+  - INVALID_SEARCH_MODE
+  - INVALID_SEARCH_RESULT_STATE
+  - CEF_PARAMETER_CONTEXT_INCOMPLETE
+  - STOP_SCHEMA_DIVERGENCE

@@ -1,0 +1,66 @@
+schema_version: "1.0"
+branches:
+  B01:
+    label: DyFeO3 direct
+    status: OPEN
+    assessment_status: not_assessed
+  B02:
+    label: stoichiometric RFeO3
+    status: OPEN
+    assessment_status: not_assessed
+  B03:
+    label: Soviet/Russian historical
+    status: OPEN
+    assessment_status: not_assessed
+  B04:
+    label: optical/Zeeman/FIR/EPR
+    status: OPEN
+    assessment_status: not_assessed
+  B05:
+    label: neutron CEF / INS
+    status: OPEN
+    assessment_status: not_assessed
+  B06:
+    label: CEF inverse problem / identifiability
+    status: OPEN
+    assessment_status: not_assessed
+  B07:
+    label: CEF conventions / transforms
+    status: OPEN
+    assessment_status: not_assessed
+  B08:
+    label: structure → CEF
+    status: OPEN
+    assessment_status: not_assessed
+  B09:
+    label: exchange-aware CEF
+    status: OPEN
+    assessment_status: not_assessed
+  B10:
+    label: magnetoelastic / phonon–CEF
+    status: OPEN
+    assessment_status: not_assessed
+  B11:
+    label: neutron cross section / intensity methodology
+    status: OPEN
+    assessment_status: not_assessed
+  B12:
+    label: software/reproducibility
+    status: OPEN
+    assessment_status: not_assessed
+  B13:
+    label: Fe-only controls
+    status: OPEN
+    assessment_status: not_assessed
+  B14:
+    label: substituted orthoferrites
+    status: OPEN
+    assessment_status: not_assessed
+  B15:
+    label: RCrO3 comparators
+    status: OPEN
+    assessment_status: not_assessed
+  B16:
+    label: RGaO3 / RAlO3 structural comparators
+    status: OPEN
+    assessment_status: not_assessed
