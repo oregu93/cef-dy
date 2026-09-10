@@ -578,8 +578,21 @@ pending_technical_work:
       repository_schema_version: "1.0"
 
     implementation_stage: LIT-INFRA-01
-    implementation_status: not_started
+    implementation_status: accepted
     implementation_authorized: true
+
+    implementation_commit: 23d082de13d7f6e5f55ffd2107d44dec5295c925
+    correction_commits:
+      - 5ddeeccd57e8c4446a5e7601b0478419c7c1aa61
+      - 15b27a65756f5485059f74d4eecf778c4878bb5e
+
+    technical_review:
+      status: completed
+      final_decision: A
+      final_review_id: LIT-INFRA-01-TECH-REVIEW-003
+
+    project_control_acceptance:
+      status: accepted
 
     zotero_configuration_authorized: false
     zotero_write_authorized: false
