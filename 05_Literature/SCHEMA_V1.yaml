@@ -169,13 +169,19 @@ required_fields:
     - source_slug
     - bibliographic_identity
     - bibliographic_status
+    - citation_key
+    - zotero
+    - work_family_id
     - primary_source_status
     - full_text_status
     - compounds
     - techniques
     - branches
     - workflow_state
+    - hold_scope
     - search_passes
+    - evidence_record
+    - last_materialization_packet
   bibliographic_identity:
     - title_short
     - first_author
@@ -255,6 +261,10 @@ conditional_invariants:
     when: workflow_state == HOLD
     require:
       - hold_scope
+  NON_HOLD_REQUIRES_NULL_SCOPE:
+    when: workflow_state != HOLD
+    require_null:
+      - hold_scope
   RESOLVED_GAP_REQUIRES_EVIDENCE:
     when: status == resolved
     require_nonempty:
@@ -270,6 +280,9 @@ conditional_invariants:
   CITATION_ENDPOINTS_RESOLVE:
     rule: from_source and to_source resolve to canonical SOURCE_ID records
     failure_code: CITATION_EDGE_DANGLING
+  PACKET_REFERENCES_RESOLVE:
+    rule: structured source, gap, and search-pass references resolve canonically or to exactly one same-packet create operation
+    failure_code: MATERIALIZATION_SCHEMA_FAILURE
   AMBIGUITY_FAILS_CLOSED:
     rule: unresolved ambiguity never causes automatic create, update, or merge
   DUPLICATE_DOI_FAILS_CLOSED:

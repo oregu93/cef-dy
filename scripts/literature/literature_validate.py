@@ -7,8 +7,9 @@ import argparse
 import re
 import shutil
 import tempfile
+from collections import Counter
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Iterable
 
 import yaml
@@ -18,6 +19,189 @@ SPECIFICATION_ID = "LIT-INFRA-SCHEMA-SPEC"
 SPECIFICATION_VERSION = "1.0"
 SPECIFICATION_PATH = "03_Protocols/LITERATURE_KNOWLEDGE_SCHEMA_V1_0.md"
 SCHEMA_VERSION = "1.0"
+
+FROZEN_PATTERNS = {
+    "SOURCE_ID": r"^SRC-[0-9]{6}$",
+    "GAP_ID": r"^GAP-[0-9]{6}$",
+    "SEARCH_PASS_ID": r"^SP-[0-9]{8}-[A-Z0-9]+-[0-9]{2}$",
+    "EDGE_ID": r"^EDGE-[0-9]{6}$",
+    "WORK_FAMILY_ID": r"^WF-[0-9]{6}$",
+    "PACKET_ID": r"^MP-[0-9]{8}-01A-[0-9]{2}$",
+    "EVIDENCE_ID": r"^EV-SRC[0-9]{6}-[0-9]{3,}$",
+    "PENDING_SOURCE_ID": r"^SRC-PENDING-[A-Za-z0-9][A-Za-z0-9._-]*$",
+}
+
+FROZEN_ENUMERATIONS = {
+    "record_status": ("active", "merged"),
+    "bibliographic_status": ("verified", "partial", "unresolved"),
+    "primary_source_status": (
+        "primary_verified", "primary_found_not_read", "secondary_only",
+        "citation_only", "unresolved",
+    ),
+    "full_text_status": (
+        "obtained", "accessible_online", "abstract_only", "metadata_only", "unavailable",
+    ),
+    "zotero_link_status": ("unlinked", "linked", "stale", "needs_review"),
+    "workflow_state": (
+        "DISCOVERED", "PROVENANCE_VERIFIED", "READY_FOR_01", "01_REVIEWED",
+        "CANONICAL_PROJECT_USE", "HOLD", "REJECTED",
+    ),
+    "hold_scope": ("provenance", "scientific"),
+    "evidence_category": (
+        "MEASURED", "DERIVED", "FITTED", "ASSUMED", "CALCULATED",
+        "INTERPRETED_BY_AUTHORS", "INFERENCE_FOR_DyFeO3",
+    ),
+    "evidence_review_state": ("preliminary_01A", "reviewed_01", "held"),
+    "gap_status": ("open", "partially_resolved", "resolved", "blocked", "probably_unrecoverable"),
+    "gap_importance": ("low", "medium", "high", "critical"),
+    "relation_type": (
+        "cites", "independent_confirmation", "derivative_citation", "historical_reference",
+        "parameter_reuse", "level_scheme_reuse", "method_reference", "contradiction",
+        "translation", "work_version", "conference_precursor", "expanded_version",
+    ),
+    "evidence_independence": ("independent", "partially_independent", "not_independent", "unknown"),
+    "work_version_role": (
+        "original", "translation", "preprint", "publisher_version", "conference_precursor",
+        "technical_report", "thesis_version", "thesis_chapter", "expanded_journal_version",
+        "later_reanalysis",
+    ),
+    "search_mode": ("GLOBAL_BASELINE", "INCREMENTAL_WATCH", "RETROSPECTIVE_MIGRATION"),
+    "search_result_state": (
+        "FOUND", "SEARCHED_NOT_FOUND", "NOT_SEARCHED", "INACCESSIBLE",
+        "BIBLIOGRAPHY_UNRESOLVED",
+    ),
+    "branch_saturation_state": ("OPEN", "DEVELOPING", "NEAR_SATURATION", "SATURATED_V1"),
+    "packet_operation_type": (
+        "SOURCE_CREATE", "SOURCE_UPDATE", "EVIDENCE_ADD", "EVIDENCE_UPDATE",
+        "SEARCH_PASS_ADD", "ADD_CITATION_EDGE", "GAP_CREATE", "GAP_UPDATE",
+        "WORK_FAMILY_LINK", "ZOTERO_CREATE", "ZOTERO_LINK_EXISTING",
+        "ADD_COLLECTION", "ADD_TAG",
+    ),
+}
+
+FROZEN_BRANCHES = {
+    "B01": "DyFeO3 direct",
+    "B02": "stoichiometric RFeO3",
+    "B03": "Soviet/Russian historical",
+    "B04": "optical/Zeeman/FIR/EPR",
+    "B05": "neutron CEF / INS",
+    "B06": "CEF inverse problem / identifiability",
+    "B07": "CEF conventions / transforms",
+    "B08": "structure → CEF",
+    "B09": "exchange-aware CEF",
+    "B10": "magnetoelastic / phonon–CEF",
+    "B11": "neutron cross section / intensity methodology",
+    "B12": "software/reproducibility",
+    "B13": "Fe-only controls",
+    "B14": "substituted orthoferrites",
+    "B15": "RCrO3 comparators",
+    "B16": "RGaO3 / RAlO3 structural comparators",
+}
+
+FROZEN_REQUIRED_FIELDS = {
+    "source": (
+        "record_version", "record_status", "source_slug", "bibliographic_identity",
+        "bibliographic_status", "citation_key", "zotero", "work_family_id",
+        "primary_source_status", "full_text_status", "compounds", "techniques",
+        "branches", "workflow_state", "hold_scope", "search_passes",
+        "evidence_record", "last_materialization_packet",
+    ),
+    "bibliographic_identity": ("title_short", "first_author", "year", "doi", "other_ids"),
+    "evidence_record": ("source_id", "evidence_record_version", "evidence"),
+    "evidence_item": ("evidence_id", "category", "claim"),
+    "gap": (
+        "question", "importance", "status", "gap_type", "current_evidence",
+        "search_passes_attempted", "next_search", "blocked_reason", "resolved_by",
+    ),
+    "search_pass": (
+        "search_pass_id", "mode", "objective", "scope", "executed_at", "executed_by_role",
+        "sources", "queries", "seed_sources", "sources_found", "sources_rejected",
+        "duplicates", "citation_chains_followed", "unresolved_targets",
+        "termination_reason", "result_state",
+    ),
+    "citation_edge": (
+        "edge_id", "from_source", "to_source", "relation_type", "evidence_independence",
+    ),
+    "packet": (
+        "packet_id", "packet_schema_version", "producer_role", "source_search_passes",
+        "operations", "unresolved_ambiguities", "validation_status",
+    ),
+    "packet_operation": ("operation_id", "type", "payload"),
+}
+
+FROZEN_CONDITIONAL_INVARIANTS = {
+    "SOURCE_ID_IMMUTABLE": {
+        "rule": "canonical SOURCE_ID values are never renamed, recycled, or reassigned",
+    },
+    "CANONICAL_PENDING_SOURCE_ID": {
+        "rule": "SRC-PENDING identifiers are forbidden outside materialization packets",
+        "failure_code": "CANONICAL_PENDING_SOURCE_ID",
+    },
+    "MERGED_REQUIRES_TARGET": {
+        "when": "record_status == merged",
+        "require": ["merged_into"],
+    },
+    "LINKED_ZOTERO_REQUIRES_IDENTITY": {
+        "when": "zotero.link_status == linked",
+        "require": ["zotero.library_alias", "zotero.item_key"],
+    },
+    "HOLD_REQUIRES_SCOPE": {
+        "when": "workflow_state == HOLD",
+        "require": ["hold_scope"],
+    },
+    "NON_HOLD_REQUIRES_NULL_SCOPE": {
+        "when": "workflow_state != HOLD",
+        "require_null": ["hold_scope"],
+    },
+    "RESOLVED_GAP_REQUIRES_EVIDENCE": {
+        "when": "status == resolved",
+        "require_nonempty": ["resolved_by"],
+    },
+    "CEF_PARAMETER_CONTEXT": {
+        "when": "numerical B_lm values are present",
+        "require": [
+            "cef.coordinate_convention.local_axes",
+            "cef.coordinate_convention.formalism",
+            "cef.coordinate_convention.normalization",
+            "cef.coordinate_convention.parameter_units",
+        ],
+        "failure_code": "CEF_PARAMETER_CONTEXT_INCOMPLETE",
+    },
+    "CITATION_ENDPOINTS_RESOLVE": {
+        "rule": "from_source and to_source resolve to canonical SOURCE_ID records",
+        "failure_code": "CITATION_EDGE_DANGLING",
+    },
+    "PACKET_REFERENCES_RESOLVE": {
+        "rule": (
+            "structured source, gap, and search-pass references resolve canonically "
+            "or to exactly one same-packet create operation"
+        ),
+        "failure_code": "MATERIALIZATION_SCHEMA_FAILURE",
+    },
+    "AMBIGUITY_FAILS_CLOSED": {
+        "rule": "unresolved ambiguity never causes automatic create, update, or merge",
+    },
+    "DUPLICATE_DOI_FAILS_CLOSED": {
+        "rule": "duplicate normalized DOI is a duplicate candidate and is never auto-merged",
+        "failure_code": "DUPLICATE_CANDIDATE",
+    },
+}
+
+FROZEN_FAILURE_CODES = (
+    "SOURCE_ID_COLLISION", "SEARCH_PASS_ID_COLLISION", "BIBLIOGRAPHIC_AMBIGUITY",
+    "DUPLICATE_CANDIDATE", "PRIMARY_SOURCE_UNRESOLVED",
+    "MATERIALIZATION_SCHEMA_FAILURE", "PACKET_PRECONDITION_FAILURE",
+    "CITATION_EDGE_DANGLING", "EVIDENCE_REFERENCE_DANGLING", "UNKNOWN_BRANCH_ID",
+    "INVALID_EVIDENCE_CATEGORY", "INVALID_GAP_STATUS", "BIBTEX_KEY_COLLISION",
+    "BIBTEX_EXPORT_MISMATCH", "ZOTERO_UNAVAILABLE", "ZOTERO_AUTHORIZATION_REQUIRED",
+    "ZOTERO_WRITE_DENIED", "ZOTERO_IDENTITY_MISMATCH", "ZOTERO_SERVER_ID_CHANGED",
+    "ZOTERO_WRITE_CONFLICT", "LOCAL_CONFIG_MISSING", "INVALID_SOURCE_ID",
+    "CANONICAL_PENDING_SOURCE_ID", "INVALID_WORKFLOW_STATE", "INVALID_SEARCH_PASS_ID",
+    "INVALID_EDGE_ID", "INVALID_PACKET_ID", "INVALID_RELATION_TYPE",
+    "INVALID_EVIDENCE_INDEPENDENCE", "INVALID_SEARCH_MODE",
+    "INVALID_SEARCH_RESULT_STATE", "CEF_PARAMETER_CONTEXT_INCOMPLETE",
+    "STOP_SCHEMA_DIVERGENCE",
+)
 
 
 class DuplicateKeyError(ValueError):
@@ -68,6 +252,7 @@ class Validator:
         self.schema: dict[str, Any] = {}
         self.sources: dict[str, Any] = {}
         self.gaps: dict[str, Any] = {}
+        self.search_passes: dict[str, Path] = {}
         self.patterns: dict[str, re.Pattern[str]] = {}
         self.enums: dict[str, set[str]] = {}
         self.seen_evidence_ids: set[str] = set()
@@ -162,36 +347,42 @@ class Validator:
             self.add("STOP_SCHEMA_DIVERGENCE", path, "", f"schema identity mismatch: {actual!r}")
 
         raw_patterns = self.mapping(value.get("id_patterns"))
-        for name in (
-            "SOURCE_ID", "GAP_ID", "SEARCH_PASS_ID", "EDGE_ID",
-            "WORK_FAMILY_ID", "PACKET_ID", "EVIDENCE_ID", "PENDING_SOURCE_ID",
-        ):
+        if raw_patterns != FROZEN_PATTERNS:
+            self.add("STOP_SCHEMA_DIVERGENCE", path, "id_patterns", "ID patterns differ from frozen v1")
+        for name, frozen_expression in FROZEN_PATTERNS.items():
             expression = raw_patterns.get(name)
             try:
                 self.patterns[name] = re.compile(expression)
             except (TypeError, re.error):
                 self.add("STOP_SCHEMA_DIVERGENCE", path, name, "missing or invalid ID pattern")
+                self.patterns[name] = re.compile(frozen_expression)
 
         raw_enums = self.mapping(value.get("enumerations"))
-        required_enums = (
-            "record_status", "bibliographic_status", "primary_source_status",
-            "full_text_status", "zotero_link_status", "workflow_state", "hold_scope",
-            "evidence_category", "evidence_review_state", "gap_status", "gap_importance",
-            "relation_type", "evidence_independence", "work_version_role", "search_mode",
-            "search_result_state", "branch_saturation_state", "packet_operation_type",
-        )
-        for name in required_enums:
+        if set(raw_enums) != set(FROZEN_ENUMERATIONS):
+            self.add("STOP_SCHEMA_DIVERGENCE", path, "enumerations", "enumeration names differ from frozen v1")
+        for name, frozen_values in FROZEN_ENUMERATIONS.items():
             values = raw_enums.get(name)
-            if not isinstance(values, list) or not values or not all(isinstance(x, str) for x in values):
-                self.add("STOP_SCHEMA_DIVERGENCE", path, name, "missing or invalid enumeration")
-                self.enums[name] = set()
-            else:
-                self.enums[name] = set(values)
+            if values != list(frozen_values):
+                self.add("STOP_SCHEMA_DIVERGENCE", path, name, "enumeration differs from frozen v1")
+            self.enums[name] = set(values) if isinstance(values, list) else set()
 
         branches = self.mapping(value.get("branches"))
-        expected_branches = {f"B{i:02d}" for i in range(1, 17)}
-        if set(branches) != expected_branches:
-            self.add("STOP_SCHEMA_DIVERGENCE", path, "", "schema must define exactly B01-B16")
+        if branches != FROZEN_BRANCHES:
+            self.add("STOP_SCHEMA_DIVERGENCE", path, "branches", "branch IDs or labels differ from frozen v1")
+
+        required_fields = self.mapping(value.get("required_fields"))
+        if set(required_fields) != set(FROZEN_REQUIRED_FIELDS):
+            self.add("STOP_SCHEMA_DIVERGENCE", path, "required_fields", "required-field groups differ from frozen v1")
+        for name, frozen_fields in FROZEN_REQUIRED_FIELDS.items():
+            if required_fields.get(name) != list(frozen_fields):
+                self.add("STOP_SCHEMA_DIVERGENCE", path, name, "required fields differ from frozen v1")
+
+        invariants = self.mapping(value.get("conditional_invariants"))
+        if invariants != FROZEN_CONDITIONAL_INVARIANTS:
+            self.add("STOP_SCHEMA_DIVERGENCE", path, "conditional_invariants", "conditional invariants differ from frozen v1")
+
+        if value.get("failure_codes") != list(FROZEN_FAILURE_CODES):
+            self.add("STOP_SCHEMA_DIVERGENCE", path, "failure_codes", "failure vocabulary differs from frozen v1")
 
     def validate_source_registry(self) -> None:
         path = self.root / "05_Literature/SOURCE_REGISTRY.yaml"
@@ -263,6 +454,13 @@ class Validator:
 
             if record.get("workflow_state") == "HOLD":
                 self.enum("hold_scope", record.get("hold_scope"), "INVALID_WORKFLOW_STATE", path, source_id)
+            elif record.get("hold_scope") is not None:
+                self.add(
+                    "INVALID_WORKFLOW_STATE",
+                    path,
+                    source_id,
+                    "non-HOLD source requires hold_scope: null",
+                )
 
             zotero = record.get("zotero")
             if zotero is not None:
@@ -285,11 +483,74 @@ class Validator:
                 if not isinstance(evidence_record, str):
                     self.add("EVIDENCE_REFERENCE_DANGLING", path, source_id, "evidence_record must be path or null")
                 else:
-                    target = self.root / "05_Literature" / evidence_record
-                    if not target.is_file():
-                        self.add("EVIDENCE_REFERENCE_DANGLING", path, source_id, f"missing {evidence_record}")
+                    self.validate_evidence_reference(evidence_record, source_id, path)
+
+            search_passes = record.get("search_passes")
+            if not isinstance(search_passes, list):
+                self.add("INVALID_SEARCH_PASS_ID", path, source_id, "search_passes must be a list")
+            else:
+                for search_id in search_passes:
+                    if not self.pattern(
+                        "SEARCH_PASS_ID", search_id, "INVALID_SEARCH_PASS_ID", path, source_id
+                    ):
+                        continue
+                    if search_id not in self.search_passes:
+                        self.add(
+                            "EVIDENCE_REFERENCE_DANGLING",
+                            path,
+                            source_id,
+                            f"search pass does not resolve: {search_id}",
+                        )
 
         self.reject_pending(document, path)
+
+    def validate_evidence_reference(self, reference: str, source_id: str, path: Path) -> None:
+        logical = PurePosixPath(reference)
+        expected_name = f"{source_id}.yaml"
+        malformed = (
+            not reference
+            or "\\" in reference
+            or logical.is_absolute()
+            or ".." in logical.parts
+            or reference != f"EVIDENCE/{expected_name}"
+            or logical.parts != ("EVIDENCE", expected_name)
+            or not self.patterns["SOURCE_ID"].fullmatch(logical.stem)
+        )
+        if malformed:
+            self.add(
+                "MATERIALIZATION_SCHEMA_FAILURE",
+                path,
+                source_id,
+                f"invalid evidence_record logical path: {reference!r}",
+            )
+            return
+
+        evidence_root = (self.root / "05_Literature/EVIDENCE").resolve()
+        logical_target = self.root / "05_Literature" / Path(*logical.parts)
+        target = logical_target.resolve(strict=False)
+        if not target.is_relative_to(evidence_root) or target.parent != evidence_root:
+            self.add(
+                "MATERIALIZATION_SCHEMA_FAILURE",
+                path,
+                source_id,
+                "evidence_record resolves outside canonical EVIDENCE directory",
+            )
+            return
+        if logical_target.is_symlink():
+            self.add(
+                "MATERIALIZATION_SCHEMA_FAILURE",
+                path,
+                source_id,
+                "evidence_record must not be a symbolic link",
+            )
+            return
+        if not target.is_file():
+            self.add(
+                "EVIDENCE_REFERENCE_DANGLING",
+                path,
+                source_id,
+                f"canonical evidence file is missing or not regular: {reference}",
+            )
 
     def reject_pending(self, value: Any, path: Path) -> None:
         def walk(node: Any) -> Iterable[str]:
@@ -306,6 +567,27 @@ class Validator:
         for token in walk(value):
             if token.startswith("SRC-PENDING-"):
                 self.add("CANONICAL_PENDING_SOURCE_ID", path, token, "pending source ID in canonical store")
+
+    def discover_search_passes(self) -> None:
+        directory = self.root / "05_Literature/SEARCH_LOG"
+        owners: dict[str, Path] = {}
+        for path in sorted(directory.glob("*.yaml")):
+            if path.name == "BRANCH_STATUS.yaml":
+                continue
+            document = self.mapping(self.load(path, "SEARCH_PASS_ID_COLLISION"))
+            search_id = document.get("search_pass_id")
+            if not isinstance(search_id, str):
+                continue
+            if search_id in owners:
+                self.add(
+                    "SEARCH_PASS_ID_COLLISION",
+                    path,
+                    search_id,
+                    f"search_pass_id also declared in {self.rel(owners[search_id])}",
+                )
+            else:
+                owners[search_id] = path
+        self.search_passes = owners
 
     def validate_gaps(self) -> None:
         path = self.root / "05_Literature/GAPS.yaml"
@@ -328,7 +610,55 @@ class Validator:
             self.enum("gap_importance", record.get("importance"), "INVALID_GAP_STATUS", path, gap_id)
             if record.get("status") == "resolved" and not self.sequence(record.get("resolved_by")):
                 self.add("INVALID_GAP_STATUS", path, gap_id, "resolved gap requires resolved_by")
+            self.validate_reference_list(
+                record.get("current_evidence"),
+                self.sources,
+                "SOURCE_ID",
+                "EVIDENCE_REFERENCE_DANGLING",
+                path,
+                gap_id,
+                "current_evidence",
+            )
+            self.validate_reference_list(
+                record.get("search_passes_attempted"),
+                self.search_passes,
+                "SEARCH_PASS_ID",
+                "INVALID_SEARCH_PASS_ID",
+                path,
+                gap_id,
+                "search_passes_attempted",
+            )
+            resolved_by = record.get("resolved_by")
+            if isinstance(resolved_by, list):
+                for reference in resolved_by:
+                    if not isinstance(reference, str):
+                        continue
+                    if reference.startswith("SRC-") and reference not in self.sources:
+                        self.add("EVIDENCE_REFERENCE_DANGLING", path, gap_id, f"resolved_by source does not resolve: {reference}")
+                    elif reference.startswith("SP-") and reference not in self.search_passes:
+                        self.add("INVALID_SEARCH_PASS_ID", path, gap_id, f"resolved_by search pass does not resolve: {reference}")
+                    elif reference.startswith("GAP-") and reference not in gaps:
+                        self.add("INVALID_GAP_STATUS", path, gap_id, f"resolved_by gap does not resolve: {reference}")
         self.reject_pending(document, path)
+
+    def validate_reference_list(
+        self,
+        value: Any,
+        targets: dict[str, Any],
+        pattern_name: str,
+        code: str,
+        path: Path,
+        record_id: str,
+        field_name: str,
+    ) -> None:
+        if not isinstance(value, list):
+            self.add("MATERIALIZATION_SCHEMA_FAILURE", path, record_id, f"{field_name} must be a list")
+            return
+        for reference in value:
+            if not self.pattern(pattern_name, reference, code, path, record_id):
+                continue
+            if reference not in targets:
+                self.add(code, path, record_id, f"{field_name} reference does not resolve: {reference}")
 
     def validate_branch_status(self) -> None:
         path = self.root / "05_Literature/SEARCH_LOG/BRANCH_STATUS.yaml"
@@ -374,6 +704,14 @@ class Validator:
                     if evidence_id in self.seen_evidence_ids:
                         self.add("MATERIALIZATION_SCHEMA_FAILURE", path, evidence_id, "duplicate evidence_id")
                     self.seen_evidence_ids.add(evidence_id)
+                    expected_prefix = f"EV-{str(source_id).replace('-', '')}-"
+                    if not evidence_id.startswith(expected_prefix):
+                        self.add(
+                            "MATERIALIZATION_SCHEMA_FAILURE",
+                            path,
+                            evidence_id,
+                            f"evidence_id does not belong to owning source {source_id}",
+                        )
                 self.enum("evidence_category", item.get("category"), "INVALID_EVIDENCE_CATEGORY", path, str(evidence_id or ""))
                 review_state = item.get("review_state")
                 if review_state is not None:
@@ -465,7 +803,36 @@ class Validator:
                         path,
                         str(search_id or ""),
                     )
+            for field_name in ("seed_sources", "sources_found"):
+                for source_ref in self.structured_ids(document.get(field_name), "source_id"):
+                    if source_ref.startswith("SRC-") and source_ref not in self.sources:
+                        self.add(
+                            "EVIDENCE_REFERENCE_DANGLING",
+                            path,
+                            str(search_id or ""),
+                            f"{field_name} source does not resolve: {source_ref}",
+                        )
+            for gap_ref in self.structured_ids(document.get("unresolved_targets"), "gap_id"):
+                if gap_ref.startswith("GAP-") and gap_ref not in self.gaps:
+                    self.add(
+                        "INVALID_GAP_STATUS",
+                        path,
+                        str(search_id or ""),
+                        f"unresolved_targets gap does not resolve: {gap_ref}",
+                    )
             self.reject_pending(document, path)
+
+    @staticmethod
+    def structured_ids(value: Any, mapping_key: str) -> Iterable[str]:
+        if not isinstance(value, list):
+            return ()
+        result: list[str] = []
+        for item in value:
+            if isinstance(item, str):
+                result.append(item)
+            elif isinstance(item, dict) and isinstance(item.get(mapping_key), str):
+                result.append(item[mapping_key])
+        return result
 
     def validate_packets(self) -> None:
         directory = self.root / "05_Literature/PACKETS"
@@ -485,6 +852,8 @@ class Validator:
             if not isinstance(operations, list):
                 self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, "operations must be a list")
                 operations = []
+            typed_operations = [operation for operation in operations if isinstance(operation, dict)]
+            definitions = self.packet_definitions(typed_operations, path, str(packet_id or ""))
             operation_ids: set[str] = set()
             for operation in operations:
                 if not isinstance(operation, dict):
@@ -504,12 +873,109 @@ class Validator:
                     path,
                     str(operation_id or ""),
                 )
-                self.validate_packet_references(operation, path, str(operation_id or packet_id or ""))
+                self.validate_packet_references(
+                    operation,
+                    definitions,
+                    path,
+                    str(operation_id or packet_id or ""),
+                )
 
-    def validate_packet_references(self, operation: dict[str, Any], path: Path, operation_id: str) -> None:
-        reference_keys = {
-            "source_id", "source_ref", "from_source", "to_source",
-            "merged_into", "current_evidence",
+            packet_search_passes = document.get("source_search_passes")
+            if not isinstance(packet_search_passes, list):
+                self.add(
+                    "MATERIALIZATION_SCHEMA_FAILURE",
+                    path,
+                    packet_id,
+                    "source_search_passes must be a list",
+                )
+            else:
+                for search_id in packet_search_passes:
+                    self.validate_packet_search_reference(
+                        search_id,
+                        definitions["search"],
+                        path,
+                        str(packet_id or ""),
+                    )
+
+    @staticmethod
+    def operation_field(operation: dict[str, Any], field: str) -> Any:
+        if field in operation:
+            return operation[field]
+        payload = operation.get("payload")
+        return payload.get(field) if isinstance(payload, dict) else None
+
+    def packet_definitions(
+        self,
+        operations: list[dict[str, Any]],
+        path: Path,
+        packet_id: str,
+    ) -> dict[str, Counter[str]]:
+        definitions: dict[str, Counter[str]] = {
+            "pending": Counter(),
+            "source": Counter(),
+            "gap": Counter(),
+            "search": Counter(),
+        }
+        for operation in operations:
+            operation_type = operation.get("type")
+            if operation_type == "SOURCE_CREATE":
+                temporary_ref = operation.get("temporary_ref")
+                if temporary_ref is not None:
+                    if not isinstance(temporary_ref, str) or not self.patterns["PENDING_SOURCE_ID"].fullmatch(temporary_ref):
+                        self.add("INVALID_SOURCE_ID", path, packet_id, f"invalid temporary_ref {temporary_ref!r}")
+                    else:
+                        definitions["pending"][temporary_ref] += 1
+                source_id = self.operation_field(operation, "source_id")
+                if source_id is not None:
+                    if not isinstance(source_id, str) or not self.patterns["SOURCE_ID"].fullmatch(source_id):
+                        self.add("INVALID_SOURCE_ID", path, packet_id, f"invalid SOURCE_CREATE source_id {source_id!r}")
+                    else:
+                        definitions["source"][source_id] += 1
+                        if source_id in self.sources:
+                            self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"SOURCE_CREATE already exists: {source_id}")
+            elif operation_type == "GAP_CREATE":
+                gap_id = self.operation_field(operation, "gap_id")
+                if not isinstance(gap_id, str) or not self.patterns["GAP_ID"].fullmatch(gap_id):
+                    self.add("INVALID_GAP_STATUS", path, packet_id, f"invalid GAP_CREATE gap_id {gap_id!r}")
+                else:
+                    definitions["gap"][gap_id] += 1
+                    if gap_id in self.gaps:
+                        self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"GAP_CREATE already exists: {gap_id}")
+            elif operation_type == "SEARCH_PASS_ADD":
+                search_id = self.operation_field(operation, "search_pass_id")
+                if not isinstance(search_id, str) or not self.patterns["SEARCH_PASS_ID"].fullmatch(search_id):
+                    self.add("INVALID_SEARCH_PASS_ID", path, packet_id, f"invalid SEARCH_PASS_ADD ID {search_id!r}")
+                else:
+                    definitions["search"][search_id] += 1
+                    if search_id in self.search_passes:
+                        self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"SEARCH_PASS_ADD already exists: {search_id}")
+
+        for kind, counts in definitions.items():
+            for reference, count in sorted(counts.items()):
+                if count != 1:
+                    self.add(
+                        "MATERIALIZATION_SCHEMA_FAILURE",
+                        path,
+                        packet_id,
+                        f"duplicate or ambiguous packet-local {kind} definition: {reference}",
+                    )
+        return definitions
+
+    def validate_packet_references(
+        self,
+        operation: dict[str, Any],
+        definitions: dict[str, Counter[str]],
+        path: Path,
+        operation_id: str,
+    ) -> None:
+        source_keys = {
+            "source_id", "source_ref", "from_source", "to_source", "merged_into",
+            "current_evidence", "seed_sources", "sources_found",
+        }
+        gap_keys = {"gap_id", "unresolved_targets"}
+        search_keys = {
+            "search_pass_id", "search_passes", "search_passes_attempted",
+            "source_search_passes",
         }
 
         def walk(node: Any, key: str = "") -> None:
@@ -519,19 +985,100 @@ class Validator:
             elif isinstance(node, list):
                 for child in node:
                     walk(child, key)
-            elif key in reference_keys and isinstance(node, str) and node.startswith("SRC-"):
-                if node.startswith("SRC-PENDING-"):
-                    if not self.patterns["PENDING_SOURCE_ID"].fullmatch(node):
-                        self.add("INVALID_SOURCE_ID", path, operation_id, f"invalid pending source reference {node}")
-                elif node not in self.sources:
-                    self.add("EVIDENCE_REFERENCE_DANGLING", path, operation_id, f"unresolved source reference {node}")
+            elif isinstance(node, str):
+                if key in source_keys and node.startswith("SRC-"):
+                    self.validate_packet_source_reference(
+                        node,
+                        definitions,
+                        path,
+                        operation_id,
+                    )
+                elif key in gap_keys and node.startswith("GAP-"):
+                    self.validate_packet_gap_reference(
+                        node,
+                        definitions["gap"],
+                        path,
+                        operation_id,
+                    )
+                elif key in search_keys and node.startswith("SP-"):
+                    self.validate_packet_search_reference(
+                        node,
+                        definitions["search"],
+                        path,
+                        operation_id,
+                    )
 
         walk(operation)
+
+        preconditions = operation.get("preconditions")
+        expected_version = (
+            preconditions.get("expected_record_version")
+            if isinstance(preconditions, dict)
+            else None
+        )
+        source_ref = self.operation_field(operation, "source_ref")
+        if expected_version is not None and isinstance(source_ref, str) and source_ref in self.sources:
+            actual_version = self.mapping(self.sources[source_ref]).get("record_version")
+            if expected_version != actual_version:
+                self.add(
+                    "PACKET_PRECONDITION_FAILURE",
+                    path,
+                    operation_id,
+                    f"expected record_version {expected_version!r}, found {actual_version!r}",
+                )
+
+    def validate_packet_source_reference(
+        self,
+        reference: str,
+        definitions: dict[str, Counter[str]],
+        path: Path,
+        operation_id: str,
+    ) -> None:
+        if reference.startswith("SRC-PENDING-"):
+            if not self.patterns["PENDING_SOURCE_ID"].fullmatch(reference):
+                self.add("INVALID_SOURCE_ID", path, operation_id, f"invalid pending source reference {reference}")
+            elif definitions["pending"].get(reference, 0) != 1:
+                self.add(
+                    "MATERIALIZATION_SCHEMA_FAILURE",
+                    path,
+                    operation_id,
+                    f"pending source reference does not resolve exactly once: {reference}",
+                )
+            return
+        if not self.patterns["SOURCE_ID"].fullmatch(reference):
+            self.add("INVALID_SOURCE_ID", path, operation_id, f"invalid source reference {reference}")
+        elif reference not in self.sources and definitions["source"].get(reference, 0) != 1:
+            self.add("EVIDENCE_REFERENCE_DANGLING", path, operation_id, f"unresolved source reference {reference}")
+
+    def validate_packet_gap_reference(
+        self,
+        reference: str,
+        definitions: Counter[str],
+        path: Path,
+        operation_id: str,
+    ) -> None:
+        if not self.patterns["GAP_ID"].fullmatch(reference):
+            self.add("INVALID_GAP_STATUS", path, operation_id, f"invalid gap reference {reference}")
+        elif reference not in self.gaps and definitions.get(reference, 0) != 1:
+            self.add("INVALID_GAP_STATUS", path, operation_id, f"unresolved gap reference {reference}")
+
+    def validate_packet_search_reference(
+        self,
+        reference: Any,
+        definitions: Counter[str],
+        path: Path,
+        operation_id: str,
+    ) -> None:
+        if not isinstance(reference, str) or not self.patterns["SEARCH_PASS_ID"].fullmatch(reference):
+            self.add("INVALID_SEARCH_PASS_ID", path, operation_id, f"invalid search-pass reference {reference!r}")
+        elif reference not in self.search_passes and definitions.get(reference, 0) != 1:
+            self.add("INVALID_SEARCH_PASS_ID", path, operation_id, f"unresolved search-pass reference {reference}")
 
     def run(self) -> list[Issue]:
         self.validate_schema()
         if not self.schema:
             return sorted(set(self.issues))
+        self.discover_search_passes()
         self.validate_source_registry()
         self.validate_gaps()
         self.validate_branch_status()
@@ -553,39 +1100,435 @@ def print_result(issues: list[Issue]) -> int:
 
 def selftest(repository_root: Path) -> int:
     with tempfile.TemporaryDirectory(prefix="lit-infra-selftest-") as temporary:
-        root = Path(temporary)
-        (root / "05_Literature/SEARCH_LOG").mkdir(parents=True)
-        shutil.copy2(
-            repository_root / "05_Literature/SCHEMA_V1.yaml",
-            root / "05_Literature/SCHEMA_V1.yaml",
+        workspace = Path(temporary)
+
+        def write_yaml(path: Path, value: Any) -> None:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                yaml.safe_dump(value, sort_keys=False, allow_unicode=True),
+                encoding="utf-8",
+            )
+
+        def build(root: Path, representative: bool) -> None:
+            (root / "05_Literature/SEARCH_LOG").mkdir(parents=True)
+            shutil.copy2(
+                repository_root / "05_Literature/SCHEMA_V1.yaml",
+                root / "05_Literature/SCHEMA_V1.yaml",
+            )
+            shutil.copy2(
+                repository_root / "05_Literature/SEARCH_LOG/BRANCH_STATUS.yaml",
+                root / "05_Literature/SEARCH_LOG/BRANCH_STATUS.yaml",
+            )
+            sources: dict[str, Any] = {}
+            gaps: dict[str, Any] = {}
+            if representative:
+                source_id = "SRC-000001"
+                search_id = "SP-20260910-TEST-01"
+                gap_id = "GAP-000001"
+                sources[source_id] = {
+                    "record_version": 1,
+                    "record_status": "active",
+                    "source_slug": "representative-source",
+                    "bibliographic_identity": {
+                        "title_short": "Representative source",
+                        "first_author": "Example",
+                        "year": 2026,
+                        "doi": "10.1234/example",
+                        "other_ids": {},
+                    },
+                    "bibliographic_status": "verified",
+                    "citation_key": None,
+                    "zotero": {
+                        "library_alias": None,
+                        "item_key": None,
+                        "link_status": "unlinked",
+                    },
+                    "work_family_id": None,
+                    "primary_source_status": "primary_verified",
+                    "full_text_status": "obtained",
+                    "compounds": ["DyFeO3"],
+                    "techniques": ["test"],
+                    "branches": ["B01"],
+                    "workflow_state": "READY_FOR_01",
+                    "hold_scope": None,
+                    "search_passes": [search_id],
+                    "evidence_record": f"EVIDENCE/{source_id}.yaml",
+                    "last_materialization_packet": None,
+                }
+                gaps[gap_id] = {
+                    "question": "Representative gap",
+                    "importance": "high",
+                    "status": "resolved",
+                    "gap_type": "test",
+                    "current_evidence": [source_id],
+                    "search_passes_attempted": [search_id],
+                    "next_search": [],
+                    "blocked_reason": None,
+                    "resolved_by": [source_id],
+                }
+                write_yaml(
+                    root / f"05_Literature/EVIDENCE/{source_id}.yaml",
+                    {
+                        "source_id": source_id,
+                        "evidence_record_version": 1,
+                        "evidence": [
+                            {
+                                "evidence_id": "EV-SRC000001-001",
+                                "category": "MEASURED",
+                                "claim": "Representative evidence",
+                            }
+                        ],
+                        "relations": [],
+                        "cef": None,
+                    },
+                )
+                write_yaml(
+                    root / f"05_Literature/SEARCH_LOG/{search_id}.yaml",
+                    {
+                        "search_pass_id": search_id,
+                        "mode": "GLOBAL_BASELINE",
+                        "objective": "Representative validation",
+                        "scope": {},
+                        "executed_at": "2026-09-10",
+                        "executed_by_role": "01A",
+                        "sources": {},
+                        "queries": [{"source": "test", "query": "test", "result": "FOUND"}],
+                        "seed_sources": [source_id],
+                        "sources_found": [source_id],
+                        "sources_rejected": [],
+                        "duplicates": [],
+                        "citation_chains_followed": [],
+                        "unresolved_targets": [gap_id],
+                        "termination_reason": "test_complete",
+                        "result_state": "FOUND",
+                    },
+                )
+                write_yaml(
+                    root / "05_Literature/PACKETS/MP-20260910-01A-01.yaml",
+                    {
+                        "packet_id": "MP-20260910-01A-01",
+                        "packet_schema_version": "1.0",
+                        "producer_role": "01A",
+                        "source_search_passes": [search_id],
+                        "operations": [
+                            {
+                                "operation_id": "OP-001",
+                                "type": "SOURCE_UPDATE",
+                                "source_ref": source_id,
+                                "preconditions": {"expected_record_version": 1},
+                                "payload": {},
+                            },
+                            {
+                                "operation_id": "OP-002",
+                                "type": "GAP_UPDATE",
+                                "gap_id": gap_id,
+                                "payload": {"search_pass_id": search_id},
+                            },
+                        ],
+                        "unresolved_ambiguities": [],
+                        "validation_status": "valid",
+                    },
+                )
+            write_yaml(
+                root / "05_Literature/SOURCE_REGISTRY.yaml",
+                {"schema_version": "1.0", "sources": sources},
+            )
+            write_yaml(
+                root / "05_Literature/GAPS.yaml",
+                {"schema_version": "1.0", "gaps": gaps},
+            )
+
+        def mutate(path: Path, callback: Any) -> None:
+            value = yaml.safe_load(path.read_text(encoding="utf-8"))
+            callback(value)
+            write_yaml(path, value)
+
+        results: list[tuple[str, bool]] = []
+
+        def positive(name: str, representative: bool) -> None:
+            root = workspace / name
+            build(root, representative)
+            results.append((name, not Validator(root).run()))
+
+        def negative(
+            name: str,
+            modifier: Any,
+            expected_code: str,
+            representative: bool = True,
+        ) -> None:
+            root = workspace / name
+            build(root, representative)
+            modifier(root)
+            codes = {issue.failure_code for issue in Validator(root).run()}
+            results.append((name, expected_code in codes))
+
+        positive("T-CORR-15", representative=False)
+        positive("T-CORR-16", representative=True)
+
+        same_packet_root = workspace / "T-CORR-SAME-PACKET"
+        build(same_packet_root, representative=True)
+        mutate(
+            same_packet_root / "05_Literature/PACKETS/MP-20260910-01A-01.yaml",
+            lambda value: value.update(
+                {
+                    "source_search_passes": ["SP-20260910-NEW-01"],
+                    "operations": [
+                        {
+                            "operation_id": "OP-001",
+                            "type": "SOURCE_CREATE",
+                            "temporary_ref": "SRC-PENDING-new",
+                            "payload": {},
+                        },
+                        {
+                            "operation_id": "OP-002",
+                            "type": "EVIDENCE_ADD",
+                            "source_ref": "SRC-PENDING-new",
+                            "payload": {},
+                        },
+                        {
+                            "operation_id": "OP-003",
+                            "type": "SOURCE_CREATE",
+                            "payload": {"source_id": "SRC-000002"},
+                        },
+                        {
+                            "operation_id": "OP-004",
+                            "type": "EVIDENCE_ADD",
+                            "source_ref": "SRC-000002",
+                            "payload": {},
+                        },
+                        {
+                            "operation_id": "OP-005",
+                            "type": "GAP_CREATE",
+                            "payload": {"gap_id": "GAP-000002"},
+                        },
+                        {
+                            "operation_id": "OP-006",
+                            "type": "GAP_UPDATE",
+                            "gap_id": "GAP-000002",
+                            "payload": {},
+                        },
+                        {
+                            "operation_id": "OP-007",
+                            "type": "SEARCH_PASS_ADD",
+                            "payload": {"search_pass_id": "SP-20260910-NEW-01"},
+                        },
+                    ],
+                }
+            ),
         )
-        shutil.copy2(
-            repository_root / "05_Literature/SEARCH_LOG/BRANCH_STATUS.yaml",
-            root / "05_Literature/SEARCH_LOG/BRANCH_STATUS.yaml",
+        results.append(
+            ("T-CORR-SAME-PACKET", not Validator(same_packet_root).run())
         )
-        (root / "05_Literature/SOURCE_REGISTRY.yaml").write_text(
-            'schema_version: "1.0"\nsources: {}\n',
-            encoding="utf-8",
+
+        negative(
+            "T-CORR-01",
+            lambda root: mutate(
+                root / "05_Literature/SOURCE_REGISTRY.yaml",
+                lambda value: value["sources"]["SRC-000001"].update(
+                    {"evidence_record": "EVIDENCE/../../README.md"}
+                ),
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
         )
-        (root / "05_Literature/GAPS.yaml").write_text(
-            'schema_version: "1.0"\ngaps: {}\n',
-            encoding="utf-8",
+        negative(
+            "T-CORR-02",
+            lambda root: mutate(
+                root / "05_Literature/SOURCE_REGISTRY.yaml",
+                lambda value: value["sources"]["SRC-000001"].update(
+                    {"evidence_record": "EVIDENCE/SRC-000002.yaml"}
+                ),
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
         )
-        positive = Validator(root).run()
-        (root / "05_Literature/SOURCE_REGISTRY.yaml").write_text(
-            'schema_version: "1.0"\nsources:\n  BAD-ID: {}\n',
-            encoding="utf-8",
+
+        def replace_evidence_with_escaping_symlink(root: Path) -> None:
+            target = root / "outside-evidence.yaml"
+            target.write_text("source_id: SRC-000001\n", encoding="utf-8")
+            evidence = root / "05_Literature/EVIDENCE/SRC-000001.yaml"
+            evidence.unlink()
+            evidence.symlink_to(target)
+
+        negative(
+            "T-CORR-SYMLINK",
+            replace_evidence_with_escaping_symlink,
+            "MATERIALIZATION_SCHEMA_FAILURE",
         )
-        negative = Validator(root).run()
-        negative_codes = {issue.failure_code for issue in negative}
-        passed = not positive and "INVALID_SOURCE_ID" in negative_codes
+        negative(
+            "T-CORR-03",
+            lambda root: mutate(
+                root / "05_Literature/SOURCE_REGISTRY.yaml",
+                lambda value: value["sources"]["SRC-000001"].pop("citation_key"),
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
+        )
+        negative(
+            "T-CORR-04",
+            lambda root: mutate(
+                root / "05_Literature/SOURCE_REGISTRY.yaml",
+                lambda value: value["sources"]["SRC-000001"].update(
+                    {"workflow_state": "HOLD", "hold_scope": None}
+                ),
+            ),
+            "INVALID_WORKFLOW_STATE",
+        )
+        negative(
+            "T-CORR-05",
+            lambda root: mutate(
+                root / "05_Literature/SOURCE_REGISTRY.yaml",
+                lambda value: value["sources"]["SRC-000001"].update(
+                    {"hold_scope": "provenance"}
+                ),
+            ),
+            "INVALID_WORKFLOW_STATE",
+        )
+
+        def packet_mutator(callback: Any) -> Any:
+            return lambda root: mutate(
+                root / "05_Literature/PACKETS/MP-20260910-01A-01.yaml",
+                callback,
+            )
+
+        negative(
+            "T-CORR-06",
+            packet_mutator(
+                lambda value: value["operations"].append(
+                    {
+                        "operation_id": "OP-003",
+                        "type": "EVIDENCE_ADD",
+                        "source_ref": "SRC-PENDING-undefined",
+                        "payload": {},
+                    }
+                )
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
+        )
+        negative(
+            "T-CORR-07",
+            packet_mutator(
+                lambda value: value["operations"].extend(
+                    [
+                        {
+                            "operation_id": "OP-003",
+                            "type": "SOURCE_CREATE",
+                            "temporary_ref": "SRC-PENDING-duplicate",
+                            "payload": {},
+                        },
+                        {
+                            "operation_id": "OP-004",
+                            "type": "SOURCE_CREATE",
+                            "temporary_ref": "SRC-PENDING-duplicate",
+                            "payload": {},
+                        },
+                    ]
+                )
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
+        )
+        negative(
+            "T-CORR-08",
+            packet_mutator(
+                lambda value: value["operations"].append(
+                    {
+                        "operation_id": "OP-003",
+                        "type": "SOURCE_UPDATE",
+                        "source_ref": "SRC-999999",
+                        "payload": {},
+                    }
+                )
+            ),
+            "EVIDENCE_REFERENCE_DANGLING",
+        )
+        negative(
+            "T-CORR-09",
+            packet_mutator(
+                lambda value: value["operations"].append(
+                    {
+                        "operation_id": "OP-003",
+                        "type": "GAP_UPDATE",
+                        "gap_id": "GAP-999999",
+                        "payload": {},
+                    }
+                )
+            ),
+            "INVALID_GAP_STATUS",
+        )
+        negative(
+            "T-CORR-10",
+            packet_mutator(
+                lambda value: value.update(
+                    {"source_search_passes": ["SP-20260910-TEST-99"]}
+                )
+            ),
+            "INVALID_SEARCH_PASS_ID",
+        )
+        negative(
+            "T-CORR-11",
+            lambda root: mutate(
+                root / "05_Literature/SCHEMA_V1.yaml",
+                lambda value: value["enumerations"]["evidence_category"].append("OBSERVED"),
+            ),
+            "STOP_SCHEMA_DIVERGENCE",
+        )
+        negative(
+            "T-CORR-12",
+            lambda root: mutate(
+                root / "05_Literature/SCHEMA_V1.yaml",
+                lambda value: value["id_patterns"].update(
+                    {"SOURCE_ID": "^SRC-.+$"}
+                ),
+            ),
+            "STOP_SCHEMA_DIVERGENCE",
+        )
+        negative(
+            "T-CORR-13",
+            lambda root: mutate(
+                root / "05_Literature/SCHEMA_V1.yaml",
+                lambda value: value["branches"].update({"B01": "changed"}),
+            ),
+            "STOP_SCHEMA_DIVERGENCE",
+        )
+        negative(
+            "T-CORR-14",
+            lambda root: mutate(
+                root / "05_Literature/EVIDENCE/SRC-000001.yaml",
+                lambda value: value["evidence"][0].update(
+                    {"evidence_id": "EV-SRC000002-001"}
+                ),
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
+        )
+        negative(
+            "T-CORR-CEF",
+            lambda root: mutate(
+                root / "05_Literature/EVIDENCE/SRC-000001.yaml",
+                lambda value: value.update({"cef": {"B_lm": [{"value": 0.0}]}}),
+            ),
+            "CEF_PARAMETER_CONTEXT_INCOMPLETE",
+        )
+        negative(
+            "T-CORR-PACKET-DUPLICATE-OP",
+            packet_mutator(
+                lambda value: value["operations"].append(
+                    {
+                        "operation_id": "OP-001",
+                        "type": "SOURCE_UPDATE",
+                        "source_ref": "SRC-000001",
+                        "payload": {},
+                    }
+                )
+            ),
+            "MATERIALIZATION_SCHEMA_FAILURE",
+        )
+        negative(
+            "T-CORR-PACKET-ID",
+            packet_mutator(lambda value: value.update({"packet_id": "BAD"})),
+            "INVALID_PACKET_ID",
+        )
+
+        passed = all(result for _, result in results)
         print("LITERATURE_VALIDATOR_SELFTEST")
-        print("positive_empty_foundation=PASS" if not positive else "positive_empty_foundation=FAIL")
-        print(
-            "negative_invalid_source_id=PASS"
-            if "INVALID_SOURCE_ID" in negative_codes
-            else "negative_invalid_source_id=FAIL"
-        )
+        for name, result in results:
+            print(f"{name}={'PASS' if result else 'FAIL'}")
         print(f"status={'PASS' if passed else 'FAIL'}")
         return 0 if passed else 1
 
