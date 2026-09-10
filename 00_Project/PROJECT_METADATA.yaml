@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-08'
+updated: '2026-09-10'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -320,7 +320,6 @@ scientific_facade:
   not_established:
     - Число различных физических возбуждений, соответствующих восьми BF-ID.
     - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
-    - Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
   next_scientific_step:
     id: Stage03R_design_review

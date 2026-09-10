@@ -4,8 +4,8 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "4.3"
-updated: 2026-09-08
+version: "4.4"
+updated: 2026-09-10
 language_content: ru
 language_metadata: en
 ---
@@ -74,7 +74,6 @@ CEF-гамильтониан содержит 15 независимых пара
 **Что не установлено.**
 - Число различных физических возбуждений, соответствующих восьми BF-ID.
 - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
-- Эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
 - Уникальный набор параметров и волновых функций CEF-гамильтониана.
 
 **Следующий научный шаг.** `Stage03R_design_review`: Провести отдельный design review CEF landscape, идентифицируемости, допустимых экспериментальных constraints, model hierarchy и inference design до любой production Stage03D fitting. C003, combined discovery+holdout re-estimation и Stage03 production execution не авторизованы.
@@ -83,7 +82,7 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Происхождение B-001.** [Научное рецензирование B-001](04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md); [Замороженный каталог BF](04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml); [Контрольная запись B-001](02_Work_Checkpoints/W02-02R-B-001.md); [R-012](00_Project/RESULT_REGISTER.yaml); [EV-007](00_Project/EVIDENCE_REGISTER.yaml); [Активная замороженная спецификация C-001 v1.1](03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md); [canonical commit `21506b7`](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
 
-**Метаданные обновлены:** `2026-09-08`.
+**Метаданные обновлены:** `2026-09-10`.
 <!-- AUTO:README_STATUS:END -->
 
 
@@ -92,17 +91,18 @@ CEF-гамильтониан содержит 15 независимых пара
 Основной собственный experimental dataset — INS измерения монокристалла
 $\rm{DyFeO}_3$ на трёхосном спектрометре TAIPAN.
 
-Текущий evidence audit различает:
+Stage 02R завершён со статусом `completed_with_limitations`. Его текущий
+экспериментальный фасад содержит восемь BF-кластеров воспроизводимости;
+BF-ID не являются физическими назначениями. CEF-принадлежность и уникальная
+схема уровней Dy3+ пока не установлены. Следующий научный шаг — отдельный
+Stage 03R design review; его execution не авторизован.
 
-| Объект | Текущий смысл |
-|---|---|
-| `F002` | sequential feature ID Stage 02 blind analysis около 18.2–18.3 meV |
-| $\approx18.25\pm0.12$ meV | experiment-derived peak centroid; CEF assignment остаётся гипотезой |
-| `F004` | sequential feature ID broad structure около 44.4 meV |
-| 6.45 meV | historical target energy, не blind detection |
-| 27.90 meV | historical target energy, не blind detection |
+Ранее использованные project-specific feature labels и исторические target
+energies сохранены в checkpoints и specifications, но не входят в текущий
+observation vocabulary.
 
-`F002` и `F004` не являются индексами кристаллографических отражений.
+Литературная инфраструктура `LIT-INFRA-01` и `LIT-INFRA-02` принята и закрыта;
+это не авторизует автоматический переход к `LIT-INFRA-03`.
 
 Подробное текущее научное состояние:
 [PROJECT_STATE](00_Project/PROJECT_STATE.md).

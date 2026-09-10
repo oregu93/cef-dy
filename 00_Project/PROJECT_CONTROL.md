@@ -3,8 +3,8 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.6"
-updated: 2026-09-08
+version: "3.7"
+updated: 2026-09-10
 control_chat: "00 - Project Control"
 ---
 
@@ -168,7 +168,7 @@ Stage 02R не выполняет production CEF fit.
 - peak centroids / areas / widths с uncertainty semantics;
 - non-detections и upper limits;
 - явный provenance каждого observation;
-- independent verification семантики F002/F004;
+- явное разграничение текущего BF observation vocabulary и сохранённых historical labels;
 - оценка instrument-energy uncertainty;
 - specification данных для Stage 03R/03D.
 
