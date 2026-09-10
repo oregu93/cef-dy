@@ -525,8 +525,20 @@ class Validator:
             )
             return
 
-        evidence_root = (self.root / "05_Literature/EVIDENCE").resolve()
-        logical_target = self.root / "05_Literature" / Path(*logical.parts)
+        literature_root = self.root / "05_Literature"
+        logical_evidence_root = literature_root / "EVIDENCE"
+        logical_target = literature_root / Path(*logical.parts)
+        for component in (literature_root, logical_evidence_root, logical_target):
+            if component.is_symlink():
+                self.add(
+                    "MATERIALIZATION_SCHEMA_FAILURE",
+                    path,
+                    source_id,
+                    "canonical evidence path component must not be a symbolic link",
+                )
+                return
+
+        evidence_root = logical_evidence_root.resolve()
         target = logical_target.resolve(strict=False)
         if not target.is_relative_to(evidence_root) or target.parent != evidence_root:
             self.add(
@@ -680,9 +692,25 @@ class Validator:
 
     def validate_evidence(self) -> None:
         directory = self.root / "05_Literature/EVIDENCE"
+        if (self.root / "05_Literature").is_symlink() or directory.is_symlink():
+            self.add(
+                "MATERIALIZATION_SCHEMA_FAILURE",
+                directory,
+                "",
+                "canonical evidence path component must not be a symbolic link",
+            )
+            return
         if not directory.exists():
             return
         for path in sorted(directory.glob("*.yaml")):
+            if path.is_symlink():
+                self.add(
+                    "MATERIALIZATION_SCHEMA_FAILURE",
+                    path,
+                    path.stem,
+                    "canonical evidence path component must not be a symbolic link",
+                )
+                continue
             document = self.mapping(self.load(path))
             source_id = document.get("source_id")
             self.require_fields("evidence_record", document, path, str(source_id or ""))
@@ -1351,6 +1379,20 @@ def selftest(repository_root: Path) -> int:
         negative(
             "T-CORR-SYMLINK",
             replace_evidence_with_escaping_symlink,
+            "MATERIALIZATION_SCHEMA_FAILURE",
+        )
+
+        def replace_evidence_directory_with_escaping_symlink(root: Path) -> None:
+            evidence = root / "05_Literature/EVIDENCE"
+            external = workspace / "T-CORR-17-external-evidence"
+            external.mkdir()
+            shutil.copy2(evidence / "SRC-000001.yaml", external / "SRC-000001.yaml")
+            shutil.rmtree(evidence)
+            evidence.symlink_to(external, target_is_directory=True)
+
+        negative(
+            "T-CORR-17",
+            replace_evidence_directory_with_escaping_symlink,
             "MATERIALIZATION_SCHEMA_FAILURE",
         )
         negative(
