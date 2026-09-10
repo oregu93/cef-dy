@@ -594,6 +594,21 @@ pending_technical_work:
     project_control_acceptance:
       status: accepted
 
+    materializer:
+      stage: LIT-INFRA-02
+
+      design_id: LIT-INFRA-02-DESIGN
+      design_version: "1.0"
+      design_status: accepted
+
+      specification_id: LIT-INFRA-MATERIALIZER-SPEC
+      specification_version: "1.0"
+      specification_path: 03_Protocols/LITERATURE_PACKET_MATERIALIZER_SPEC_V1_0.md
+      specification_status: frozen
+
+      implementation_status: not_started
+      implementation_authorized: false
+
     zotero_configuration_authorized: false
     zotero_write_authorized: false
     web_api_implementation_authorized: false
