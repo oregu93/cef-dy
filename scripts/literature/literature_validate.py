@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import shutil
 import tempfile
@@ -259,6 +260,7 @@ class Validator:
         self.seen_edge_ids: set[str] = set()
         self.seen_search_ids: set[str] = set()
         self.seen_packet_ids: set[str] = set()
+        self.applied_packets: dict[str, dict[str, Any]] = {}
 
     def rel(self, path: Path) -> str:
         try:
@@ -869,6 +871,7 @@ class Validator:
         for path in sorted(directory.glob("*.yaml")):
             document = self.mapping(self.load(path))
             packet_id = document.get("packet_id")
+            applied = isinstance(packet_id, str) and packet_id in self.applied_packets
             self.require_fields("packet", document, path, str(packet_id or ""))
             if self.pattern("PACKET_ID", packet_id, "INVALID_PACKET_ID", path, str(packet_id or "")):
                 if packet_id in self.seen_packet_ids:
@@ -881,7 +884,9 @@ class Validator:
                 self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, "operations must be a list")
                 operations = []
             typed_operations = [operation for operation in operations if isinstance(operation, dict)]
-            definitions = self.packet_definitions(typed_operations, path, str(packet_id or ""))
+            definitions = self.packet_definitions(
+                typed_operations, path, str(packet_id or ""), applied=applied
+            )
             operation_ids: set[str] = set()
             for operation in operations:
                 if not isinstance(operation, dict):
@@ -906,6 +911,7 @@ class Validator:
                     definitions,
                     path,
                     str(operation_id or packet_id or ""),
+                    applied=applied,
                 )
 
             packet_search_passes = document.get("source_search_passes")
@@ -937,6 +943,7 @@ class Validator:
         operations: list[dict[str, Any]],
         path: Path,
         packet_id: str,
+        applied: bool = False,
     ) -> dict[str, Counter[str]]:
         definitions: dict[str, Counter[str]] = {
             "pending": Counter(),
@@ -959,7 +966,7 @@ class Validator:
                         self.add("INVALID_SOURCE_ID", path, packet_id, f"invalid SOURCE_CREATE source_id {source_id!r}")
                     else:
                         definitions["source"][source_id] += 1
-                        if source_id in self.sources:
+                        if source_id in self.sources and not applied:
                             self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"SOURCE_CREATE already exists: {source_id}")
             elif operation_type == "GAP_CREATE":
                 gap_id = self.operation_field(operation, "gap_id")
@@ -967,7 +974,7 @@ class Validator:
                     self.add("INVALID_GAP_STATUS", path, packet_id, f"invalid GAP_CREATE gap_id {gap_id!r}")
                 else:
                     definitions["gap"][gap_id] += 1
-                    if gap_id in self.gaps:
+                    if gap_id in self.gaps and not applied:
                         self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"GAP_CREATE already exists: {gap_id}")
             elif operation_type == "SEARCH_PASS_ADD":
                 search_id = self.operation_field(operation, "search_pass_id")
@@ -975,7 +982,7 @@ class Validator:
                     self.add("INVALID_SEARCH_PASS_ID", path, packet_id, f"invalid SEARCH_PASS_ADD ID {search_id!r}")
                 else:
                     definitions["search"][search_id] += 1
-                    if search_id in self.search_passes:
+                    if search_id in self.search_passes and not applied:
                         self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"SEARCH_PASS_ADD already exists: {search_id}")
 
         for kind, counts in definitions.items():
@@ -995,6 +1002,7 @@ class Validator:
         definitions: dict[str, Counter[str]],
         path: Path,
         operation_id: str,
+        applied: bool = False,
     ) -> None:
         source_keys = {
             "source_id", "source_ref", "from_source", "to_source", "merged_into",
@@ -1045,7 +1053,7 @@ class Validator:
             else None
         )
         source_ref = self.operation_field(operation, "source_ref")
-        if expected_version is not None and isinstance(source_ref, str) and source_ref in self.sources:
+        if not applied and expected_version is not None and isinstance(source_ref, str) and source_ref in self.sources:
             actual_version = self.mapping(self.sources[source_ref]).get("record_version")
             if expected_version != actual_version:
                 self.add(
@@ -1112,8 +1120,89 @@ class Validator:
         self.validate_branch_status()
         self.validate_evidence()
         self.validate_search_passes()
+        self.validate_materialization_log()
         self.validate_packets()
         return sorted(set(self.issues))
+
+    def validate_materialization_log(self) -> None:
+        path = self.root / "05_Literature/MATERIALIZATION_LOG.yaml"
+        document = self.mapping(self.load(path))
+        if document.get("schema_version") != "1.0":
+            self.add("MATERIALIZATION_SCHEMA_FAILURE", path, "", "ledger schema_version must be '1.0'")
+        applications = document.get("applications")
+        if not isinstance(applications, dict):
+            self.add("MATERIALIZATION_SCHEMA_FAILURE", path, "", "ledger applications must be a mapping")
+            return
+
+        hex64 = re.compile(r"[0-9a-f]{64}")
+        hex40 = re.compile(r"[0-9a-f]{40}")
+        allocation_patterns = {
+            "allocated_source_ids": self.patterns.get("SOURCE_ID"),
+            "allocated_gap_ids": self.patterns.get("GAP_ID"),
+            "allocated_evidence_ids": self.patterns.get("EVIDENCE_ID"),
+            "allocated_edge_ids": self.patterns.get("EDGE_ID"),
+            "allocated_work_family_ids": self.patterns.get("WORK_FAMILY_ID"),
+        }
+
+        def safe_repo_path(value: Any) -> bool:
+            if not isinstance(value, str) or not value or "\\" in value:
+                return False
+            logical = PurePosixPath(value)
+            return not logical.is_absolute() and ".." not in logical.parts and "." not in logical.parts
+
+        packet_root = self.root / "05_Literature/PACKETS"
+        for packet_id in sorted(applications):
+            entry = applications[packet_id]
+            if not isinstance(packet_id, str) or not self.patterns.get("PACKET_ID", re.compile(r"(?!)")).fullmatch(packet_id):
+                self.add("INVALID_PACKET_ID", path, packet_id, "invalid ledger packet ID")
+            if not isinstance(entry, dict):
+                self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, "ledger application must be a mapping")
+                continue
+            for field, expression in (("packet_sha256", hex64), ("plan_sha256", hex64), ("base_head", hex40)):
+                if not isinstance(entry.get(field), str) or not expression.fullmatch(entry[field]):
+                    self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"invalid ledger {field}")
+            if entry.get("result") != "applied":
+                self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, "ledger result must be applied")
+            for field, expression in allocation_patterns.items():
+                values = entry.get(field)
+                if not isinstance(values, list):
+                    self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"{field} must be a list")
+                    continue
+                if len(values) != len(set(str(item) for item in values)):
+                    self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"duplicate ID in {field}")
+                if expression is not None:
+                    for value in values:
+                        if not isinstance(value, str) or not expression.fullmatch(value):
+                            self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"invalid ID in {field}: {value!r}")
+            for field in ("files_created", "files_modified"):
+                values = entry.get(field)
+                if not isinstance(values, list) or any(not safe_repo_path(item) for item in values):
+                    self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, f"{field} contains unsafe paths")
+            deferred = entry.get("deferred_zotero_requests")
+            if not isinstance(deferred, list):
+                self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, "deferred_zotero_requests must be a list")
+            else:
+                allowed = {"ZOTERO_CREATE", "ZOTERO_LINK_EXISTING", "ADD_COLLECTION", "ADD_TAG"}
+                seen: set[str] = set()
+                for item in deferred:
+                    valid = (
+                        isinstance(item, dict)
+                        and isinstance(item.get("operation_id"), str)
+                        and item.get("operation_id") not in seen
+                        and item.get("type") in allowed
+                        and item.get("status") == "deferred_not_executed"
+                    )
+                    if not valid:
+                        self.add("MATERIALIZATION_SCHEMA_FAILURE", path, packet_id, "invalid deferred Zotero ledger record")
+                    if isinstance(item, dict) and isinstance(item.get("operation_id"), str):
+                        seen.add(item["operation_id"])
+            packet_path = packet_root / f"{packet_id}.yaml"
+            if packet_path.is_file():
+                digest = hashlib.sha256(packet_path.read_bytes()).hexdigest()
+                if digest != entry.get("packet_sha256"):
+                    self.add("MATERIALIZATION_SCHEMA_FAILURE", packet_path, packet_id, "retained packet hash differs from ledger")
+            self.applied_packets[packet_id] = entry
+        self.reject_pending(document, path)
 
 
 def print_result(issues: list[Issue]) -> int:
@@ -1264,6 +1353,10 @@ def selftest(repository_root: Path) -> int:
             write_yaml(
                 root / "05_Literature/GAPS.yaml",
                 {"schema_version": "1.0", "gaps": gaps},
+            )
+            write_yaml(
+                root / "05_Literature/MATERIALIZATION_LOG.yaml",
+                {"schema_version": "1.0", "applications": {}},
             )
 
         def mutate(path: Path, callback: Any) -> None:
