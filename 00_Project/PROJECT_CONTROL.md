@@ -25,11 +25,11 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Stage02R завершён со статусом completed_with_limitations. Terminal C002 result остаётся accepted_with_frozen_numerical_failure; ни одного numerically valid holdout test не получено, numerical-remediation branch закрыта.
+**Сейчас.** SCIENCE — Stage02R завершён со статусом completed_with_limitations; следующий научный шаг — Stage03R design review, а Stage03R execution не авторизован. LITERATURE INFRASTRUCTURE — LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001 остаётся авторизованным, но отложенным.
 
-**Почему.** Все parent K0 fits valid/stable, но все child K1 fits valid с unresolved optimizer stability; поэтому T_observed не определён, bootstrap не запускался, а raw_p_value=1.0 является только консервативным numerical-failure значением и не свидетельствует об отсутствии компоненты или возбуждения.
+**Почему.** Активной production scientific Work-задачи сейчас нет. Literature schema foundation и controlled packet materializer прошли независимое technical review и Project Control acceptance; их закрытие не авторизует научное исполнение или следующий инфраструктурный этап.
 
-**Следующий шаг.** Stage03R_design_review: отдельно рассмотреть CEF landscape, идентифицируемость, допустимые experimental constraints, model hierarchy и inference design до любой production Stage03D fitting. C003 и Stage03 production execution не авторизованы.
+**Следующий шаг.** Для литературы — controlled 01A discovery/provenance work и позднее небольшой real-workflow pilot; автоматически переходить к LIT-INFRA-03 нельзя. Следующий научный шаг остаётся Stage03R design review; Stage03R execution не авторизован.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
@@ -53,7 +53,7 @@ control_chat: "00 - Project Control"
 
 **Последний научный источник.** [Рецензированный пакет W02-02R-B-001](../04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md): reviewed, accepted_with_limitations; R-012 / EV-007. Канонический переход зафиксирован в [commit 21506b7](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d). Физическое назначение не выполнялось.
 
-**Последний Work checkpoint.** `W02-02R-C-001-A1`
+**Последний Work checkpoint.** `LIT-INFRA-02`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
