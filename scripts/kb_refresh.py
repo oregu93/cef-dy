@@ -33,7 +33,7 @@ def hyp_map():
 
 def wrapped(text):
     if text is None:
-        return "—"
+        return "--"
     return " ".join(str(text).split())
 
 
@@ -62,6 +62,24 @@ def facade_source_links(meta, document):
     return "; ".join(links) + "."
 
 
+def stage03r_status_line(meta, document):
+    stage = meta["scientific_facade"]["stage03r_transition"]
+    implementation = stage["implementation_specification"]
+    inference_link = (
+        f"[`{stage['specification_id']}`]"
+        f"({relative_link(document, stage['specification_path'])})"
+    )
+    implementation_link = (
+        f"[`{implementation['specification_id']}`]"
+        f"({relative_link(document, implementation['specification_path'])})"
+    )
+    return (
+        f"{inference_link} и {implementation_link} заморожены; "
+        f"implementation имеет статус `{implementation['implementation_status']}`; "
+        "Stage03R scientific execution не авторизована."
+    )
+
+
 def b001_summary_lines(meta):
     b001 = meta["scientific_facade"]["b001"]
     return [
@@ -69,7 +87,7 @@ def b001_summary_lines(meta):
         f"все относятся к `{b001['catalogue_count_control_mode']}`; "
         f"`{b001['catalogue_tier_1_count']}` Tier-1, "
         f"`{b001['catalogue_tier_2_count']}` Tier-2; межрежимная "
-        f"повторяемость положения — "
+        f"повторяемость положения -- "
         f"`{b001['cross_mode_position_recurrence_count']}`.",
         f"- Отложенная выборка: `{b001['holdout_scan_count']}` сканов; "
         "детекторные данные не использовались на поисковом этапе.",
@@ -91,6 +109,8 @@ def state_block(meta):
         "",
         f"**Текущий научный вопрос.** "
         f"{wrapped(facade['current_scientific_question'])}",
+        "",
+        f"**Stage03R.** {stage03r_status_line(meta, STATE)}",
         "",
         f"**Зачем выполняется Stage 02R.** "
         f"{wrapped(facade['stage02r_purpose'])}",
@@ -151,6 +171,8 @@ def control_block(meta, hyps):
         "",
         f"**Почему.** {wrapped(control['why'])}",
         "",
+        f"**Stage03R specifications.** {stage03r_status_line(meta, CONTROL)}",
+        "",
         f"**Следующий шаг.** {wrapped(control['next'])}",
         "",
     ]
@@ -163,8 +185,8 @@ def control_block(meta, hyps):
         ]
     else:
         lines += [
-            "**Следующий Work job.** Не назначен. Production Work заблокирован "
-            "до завершения текущего scientific review cycle.",
+            "**Следующий Work job.** Не назначен. Следующая scientific execution "
+            "требует отдельного admission review и authorization.",
             "",
         ]
 
@@ -179,7 +201,7 @@ def control_block(meta, hyps):
     lines += [
         "",
         f"**Последний научный источник.** "
-        f"{wrapped(control.get('last_scientific_source', '—'))}",
+        f"{wrapped(control.get('last_scientific_source', '--'))}",
         "",
     ]
 
@@ -239,12 +261,14 @@ def readme_status_block(meta):
         "",
         f"**Научная цель.** {wrapped(meta['scientific_question'])}",
         "",
-        f"**Текущий этап.** `{milestone['id']}` — "
+        f"**Текущий этап.** `{milestone['id']}` -- "
         f"{wrapped(milestone['title'])} "
         f"(`{milestone['status']}`).",
         "",
         f"**Текущий научный вопрос.** "
         f"{wrapped(facade['current_scientific_question'])}",
+        "",
+        f"**Stage03R.** {stage03r_status_line(meta, README)}",
         "",
         f"**Зачем выполняется Stage 02R.** "
         f"{wrapped(facade['stage02r_purpose'])}",

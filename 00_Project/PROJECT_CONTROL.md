@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.1"
+version: "4.2"
 updated: 2026-09-11
 control_chat: "00 - Project Control"
 ---
@@ -25,18 +25,20 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** SCIENCE — Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design принят, inference specification v1.0 и implementation specification v1.0 заморожены, bounded implementation-only job авторизован, scientific execution не начат и не авторизован. LITERATURE INFRASTRUCTURE — LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001 остаётся авторизованным, но отложенным.
+**Сейчас.** SCIENCE -- Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design принят, inference specification v1.0 и implementation specification v1.0 заморожены, deterministic compatibility kernel принят после STAGE03R-IMPL-REREVIEW-001. Scientific execution не начат и не авторизован. LITERATURE INFRASTRUCTURE -- LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE -- INFRA-CI-001 остаётся авторизованным, но отложенным.
 
-**Почему.** Активной production scientific Work-задачи сейчас нет. Замороженные Stage03R specifications задают assignment-aware, interval-aware и identifiability-first архитектуру и минимальный deterministic compatibility kernel. Отдельная authorization разрешает только construction и synthetic/semantic validation этого kernel, но не CEF calculations на реальных данных, fitting, raw-detector access или возобновление Stage03D.
+**Почему.** Активной production scientific Work-задачи сейчас нет. Замороженные Stage03R specifications задают assignment-aware, interval-aware и identifiability-first архитектуру; принятый kernel реализует только deterministic compatibility и synthetic/semantic contracts. Acceptance не допускает реальные assignment families, CEF calculations на реальных данных, fitting, raw-detector access или возобновление Stage03D.
 
-**Следующий шаг.** Следующий Work-шаг — bounded Stage03R implementation-only job по замороженной implementation specification v1.0; это не Stage03R scientific execution. Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
+**Stage03R specifications.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
-**Следующий Work job.** `Stage03R implementation-only deterministic compatibility kernel`
+**Следующий шаг.** Следующий governance-вопрос -- допуск реальных входов Stage03R и design первого контролируемого compatibility execution; сама execution этим состоянием не авторизована. Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
+
+**Следующий Work job.** Не назначен. Следующая scientific execution требует отдельного admission review и authorization.
 
 **Заблокировано.**
 - Любые дополнительные C002 reruns и повторный доступ к holdout detector data.
 - C003 и combined discovery + holdout re-estimation до отдельного Project Control review.
-- W03-03D-A-001 и любая production-оптимизация Stage 03D до завершения Stage 03R design review и отдельной авторизации.
+- W03-03D-A-001 и любая production-оптимизация Stage 03D до отдельного real-input admission review и execution authorization.
 - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
 - Использование F004 около 44.4 meV как обязательного CEF-перехода.
 - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
@@ -69,7 +71,7 @@ control_chat: "00 - Project Control"
 | `M00B` | completed | Развёртывание автономной Knowledge Base, Obsidian/Git workflow и базовой automation. |
 | `M00C` | completed | Scientific re-baselining: терминология, provenance, evidence/model semantics и очистка центрального project state. |
 | `M02R` | completed_with_limitations | Независимый повторный анализ TAIPAN завершён; C002 terminal result принят с frozen numerical failure, без numerically valid holdout confirmation tests и без physical absence inference. |
-| `M03R` | planned | Повторный анализ CEF landscape и идентифицируемости на очищенном experimental observation set. |
+| `M03R` | implementation_accepted | Inference/implementation specifications заморожены и deterministic kernel принят; real inputs и scientific execution не авторизованы. |
 | `M03D` | suspended | Joint constrained M0/M1 energy + intensity inference; существующий design сохранён, но execution приостановлен. |
 | `M05` | planned | Независимая магнитная validation и, при необходимости, CEF + magnetic exchange. |
 | `M06` | later | Более глубокая structural/microscopic interpretation и перенос по ряду RFeO3. |
@@ -194,6 +196,14 @@ Stage 03R должен ответить на вопрос:
 - выбрать один minimum как финальную модель;
 - автоматически возобновить старую Stage 03D objective;
 - вводить magnetic exchange без отдельного решения.
+
+Текущий implementation-only kernel принят по
+`STAGE03R-IMPL-REREVIEW-001` (decision A). Замороженные
+[inference specification](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и
+[implementation specification](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md)
+остаются authority. Это acceptance реализации, а не допуск реальных входов или
+Stage03R scientific execution. Следующий governance-вопрос: real-input
+admission и design первого controlled compatibility execution.
 
 
 # 6. Статус Stage 03D
@@ -328,6 +338,13 @@ Project Control синхронизирует consequential decisions и authoriz
 Конфликтующие canonical writes не выполняются параллельно. При межветочном
 эффекте используется `CROSS_LANE_IMPACT`: `NONE`, `ADVISORY`,
 `REVIEW_BEFORE_NEXT_STAGE` или `BLOCKING`.
+
+Device declaration, Work/local routing, publication, Termux, exact-head sync и
+staging safety определены в
+[RESEARCH_INFRASTRUCTURE_GUIDE](../03_Protocols/RESEARCH_INFRASTRUCTURE_GUIDE.md).
+Bootstrap refresh и task-envelope vocabulary определены в
+[CHAT_BOOTSTRAPS](../03_Protocols/CHAT_BOOTSTRAPS.md). Повторяющиеся operational
+rules не должны оставаться только в chat context.
 
 
 # 12. Правила перехода между этапами

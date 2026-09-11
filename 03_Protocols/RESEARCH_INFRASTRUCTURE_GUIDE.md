@@ -5,17 +5,20 @@
 Это руководство описывает переносимый инфраструктурный слой проекта CEF Dy /
 DyFeO3: получение Git-репозитория, минимальное Python-окружение, локальные пути,
 подключение внешних данных, границы Work recovery, резервное копирование и
-процедуру будущей проверки на чистой машине.
+процедуру повторной проверки на чистой машине.
 
 Руководство не изменяет научные, provenance или authorization semantics. Оно не
-подтверждает прохождение fresh-clone test, не выполняет резервное копирование и
-не делает физическое расположение данных частью их канонической идентичности.
+выполняет fresh-clone test или резервное копирование и не делает физическое
+расположение данных частью их канонической идентичности. Каноническое принятие
+fresh-clone результата уже зафиксировано отдельно.
 
 Текущее состояние подготовки:
 
 ```yaml
-implementation_ready_for_fresh_clone_test: true
-fresh_clone_test_passed: false
+fresh_clone_test_id: FC-PORTABILITY-001
+fresh_clone_test_passed: true
+acceptance_status: accepted
+tested_commit: 0ee2b963f8d3608481b61c3d3f9d37dcbdcc1043
 ```
 
 ## Канонический tracked-слой
@@ -62,7 +65,7 @@ python scripts/kb_validate.py --strict
 
 `requirements.txt` — только KB/infrastructure dependency baseline. Он не
 описывает будущие научные fitting environments. Конкретный диапазон minor
-версий Python этим руководством не объявляется; при будущем fresh-clone test
+версий Python этим руководством не объявляется; при повторном fresh-clone test
 нужно записать фактические версии Python и PyYAML.
 
 ## Machine-local configuration
@@ -117,9 +120,9 @@ canonical provenance record
 
 ### Документированная FC-07 verification procedure
 
-Следующая команда предназначена только для будущего отдельно авторизованного
-FC-07. В текущей реализации она не запускается. Она читает mapping и данные, но
-ничего в dataset root не записывает.
+Следующая команда сохраняется как процедура отдельно контролируемой повторной
+FC-07 verification. Само наличие процедуры не авторизует её запуск. Она читает
+mapping и данные, но ничего в dataset root не записывает.
 
 ```bash
 python - <<'PY'
@@ -326,10 +329,12 @@ Synchronization переносит изменения и удаления и п�
 остаётся canonical source для tracked repository. Это руководство не выполняет
 backup и не настраивает конкретного provider.
 
-## Будущая fresh-clone проверка
+## Повторная fresh-clone проверка
 
-FC-01…FC-09 — отдельная будущая операция. Ни один этап ниже не выполнен этой
-реализацией.
+FC-01…FC-09 уже прошли каноническое acceptance в `FC-PORTABILITY-001`. Шаги ниже
+сохраняются как repeat-verification procedure. Новый запуск остаётся отдельной
+контролируемой операцией и не считается выполненным только из-за чтения этого
+руководства.
 
 ### FC-01 — чистый Tier-1 Linux context
 
@@ -434,6 +439,125 @@ Tier 2 означает reasonable compatibility tracked Markdown/YAML/Git archi
 Windows scientific workflow. Будущие scientific environments определяют свою
 platform support отдельно.
 
+## Контексты исполнения
+
+Когда физическая среда влияет на выполнение, задача объявляет один из
+контекстов:
+
+```text
+DEVICE: DESKTOP_LINUX
+DEVICE: DESKTOP_WINDOWS
+DEVICE: MOBILE_TERMUX
+DEVICE: CLOUD_WORK
+```
+
+Известные соответствия:
+
+```text
+w02-lin -> DESKTOP_LINUX
+w02-win -> DESKTOP_WINDOWS
+MOBILE_TERMUX -> Android Termux
+WKB-R1 -> CLOUD_WORK
+```
+
+Для обычного design/review, не зависящего от устройства, declaration не
+требуется. Ранее использованная локальная машина не считается автоматически
+доступной в новой задаче.
+
+## Выбор Work и локального исполнения
+
+Non-Work предпочтителен для scientific design, governance, review, inspection,
+literature analysis, подготовки точных команд и интерпретации diff/test/log.
+Локальный terminal предпочтителен для `fetch/status/diff`, небольших
+контролируемых edits, поддерживаемых validators, exact-path staging, commit и
+normal fast-forward push.
+
+Work используется для существенного многошагового bounded execution, когда
+координация edits и tests заметно снижает риск ошибки. Не следует расходовать
+Work quota только на standalone publication уже проверенного commit, если
+доступен подходящий локальный terminal.
+
+## Публикация и Android Termux
+
+При доступном desktop проверенная standalone publication выполняется из
+локального desktop terminal. Android fallback может использовать:
+
+```text
+DEVICE: MOBILE_TERMUX
+repository: ~/projects/cef-dy
+```
+
+Termux может выполнять `fetch`, `status`, `diff`, inspection, small edits,
+поддерживаемые validators, exact-path staging, commit и fast-forward push.
+Канонический worktree хранится в private filesystem Termux, а не в Android
+shared storage.
+
+Если подходящего локального пути нет, явно авторизованная Work-задача может
+включать publication. Существенная bounded Work-задача также может атомарно
+включать commit/push, если publication входит в её frozen boundary.
+
+## Контролируемая синхронизация и staging
+
+Перед controlled writes выполняется:
+
+```bash
+git fetch origin
+```
+
+Если задан exact starting HEAD, требуется:
+
+```text
+HEAD == expected_starting_head
+origin/main == expected_starting_head
+```
+
+Unexpected remote movement означает `STOP`; silent merge, rebase или adaptation
+запрещены. Для controlled operations никогда не используются `git add .` и
+`git add -A`; staging выполняется только по exact authorized paths.
+
+Перед commit/push применяются подходящие проверки:
+
+```bash
+git diff --check
+git diff --name-status
+git diff --cached --check
+git diff --cached --name-status
+```
+
+Force push в canonical `main` запрещён.
+
+## Параллельные линии и ресурсный принцип
+
+Сохраняются классы:
+
+```text
+PARALLEL_SAFE
+PARALLEL_WITH_SYNC_GATE
+SERIAL_REQUIRED
+```
+
+Конфликтующие concurrent writes в canonical `main` запрещены.
+
+```text
+MINIMIZE RESOURCE COST
+SUBJECT TO
+SCIENTIFIC + TECHNICAL + ORGANIZATIONAL QUALITY
+```
+
+Экономия ресурсов не ослабляет scientific correctness, provenance,
+reproducibility, validation или governance.
+
+## Канонизация операционных правил
+
+```text
+OPERATIONAL RULES MUST NOT LIVE ONLY IN CHAT CONTEXT.
+```
+
+Если повторяющееся правило существенно влияет на reproducibility, execution
+safety, portability, scientific integrity или resource use, Project Control
+классифицирует его как `CANONICALIZE`, `DEFER_EXPLICITLY` или
+`DISCARD_AS_LOCAL_OR_EPHEMERAL`.
+
 ## Канонические ссылки
 
 - [RESEARCH_KB_GUIDE](RESEARCH_KB_GUIDE.md)
@@ -448,8 +572,11 @@ platform support отдельно.
 
 ```yaml
 implementation_ready_for_fresh_clone_test: true
-fresh_clone_test_passed: false
+fresh_clone_test_passed: true
+acceptance_status: accepted
+tested_commit: 0ee2b963f8d3608481b61c3d3f9d37dcbdcc1043
 ```
 
-Это состояние означает готовность инструкций к отдельной проверке, а не
-фактическое прохождение FC-01…FC-09.
+Это состояние отражает уже принятое выполнение `FC-PORTABILITY-001`.
+Инструкции FC-01…FC-09 остаются доступными для отдельно контролируемой
+повторной проверки.

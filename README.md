@@ -4,7 +4,7 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "4.6"
+version: "4.7"
 updated: 2026-09-11
 language_content: ru
 language_metadata: en
@@ -50,14 +50,16 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Научная цель.** Определить воспроизводимый и физически интерпретируемый эффективный гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде всего с энергиями и интенсивностями INS-переходов, а затем проверенный независимыми магнитными наблюдаемыми.
 
-**Текущий этап.** `M02R` — Stage 02R — независимый повторный анализ TAIPAN (`completed_with_limitations`).
+**Текущий этап.** `M02R` -- Stage 02R — независимый повторный анализ TAIPAN (`completed_with_limitations`).
 
-**Текущий научный вопрос.** Как спроектировать Stage 03R review CEF landscape, идентифицируемости, допустимых экспериментальных ограничений и иерархии моделей, сохранив terminal numerical-failure context C002 и не превращая экспериментальные BF-признаки в физические назначения?
+**Текущий научный вопрос.** Как спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution на основе принятого deterministic kernel, не превращая BF-признаки в физические назначения и не авторизуя production CEF fitting?
+
+**Stage03R.** [`STAGE03R-INFERENCE-SPEC`](03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
 **Зачем выполняется Stage 02R.** Stage 02R формирует независимый от CEF-модели слой экспериментальных свидетельств до нового цикла физического назначения и CEF-моделирования. Это уменьшает риск замкнутого анализа, при котором ожидаемые энергии или предсказания модели одновременно задают искомые признаки и служат основанием для проверки той же модели.
 
 **Что установил B-001.**
-- Каталог: `8` BF-записей; все относятся к `monitor_controlled`; `8` Tier-1, `0` Tier-2; межрежимная повторяемость положения — `0`.
+- Каталог: `8` BF-записей; все относятся к `monitor_controlled`; `8` Tier-1, `0` Tier-2; межрежимная повторяемость положения -- `0`.
 - Отложенная выборка: `18` сканов; детекторные данные не использовались на поисковом этапе.
 - Численная оговорка: `1` скан для поиска (`discovery`) исключён по правилу `nuisance_field_fit_failure` без повторного расчёта и замещения.
 - BF-ID обозначают алгоритмические кластеры воспроизводимости; они не устанавливают число различных физических возбуждений; CEF-назначение не выполнялось.
@@ -76,7 +78,7 @@ CEF-гамильтониан содержит 15 независимых пара
 - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
 - Уникальный набор параметров и волновых функций CEF-гамильтониана.
 
-**Следующий научный шаг.** `Stage03R_design_review`: Провести отдельный design review CEF landscape, идентифицируемости, допустимых экспериментальных constraints, model hierarchy и inference design до любой production Stage03D fitting. C003, combined discovery+holdout re-estimation и Stage03 production execution не авторизованы.
+**Следующий научный шаг.** `Stage03R_real_input_admission_design`: Спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution на основе принятого kernel. Реальные assignment families и model bundles ещё не допущены; Stage03R scientific execution, W03 и production CEF fitting не авторизованы.
 
 **Дорожная карта.** Stage 02R — независимый повторный анализ TAIPAN → Stage 03R — CEF landscape и идентифицируемость → Stage 03D — совместное ограниченное моделирование энергий и интенсивностей → Stage 05 — независимая магнитная проверка → Последующая структурная и микроскопическая интерпретация.
 
@@ -94,8 +96,10 @@ $\rm{DyFeO}_3$ на трёхосном спектрометре TAIPAN.
 Stage 02R завершён со статусом `completed_with_limitations`. Его текущий
 экспериментальный фасад содержит восемь BF-кластеров воспроизводимости;
 BF-ID не являются физическими назначениями. CEF-принадлежность и уникальная
-схема уровней Dy3+ пока не установлены. Следующий научный шаг — отдельный
-Stage 03R design review; его execution не авторизован.
+схема уровней Dy3+ пока не установлены. Stage03R inference и implementation
+specifications заморожены, deterministic compatibility kernel принят. Следующий
+governance-вопрос -- допуск реальных входов и design первого controlled
+compatibility execution; scientific execution не авторизована.
 
 Ранее использованные project-specific feature labels и исторические target
 energies сохранены в checkpoints и specifications, но не входят в текущий

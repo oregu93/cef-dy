@@ -2,7 +2,7 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.6"
+version: "2.7"
 updated: 2026-09-11
 ---
 
@@ -42,6 +42,73 @@ Bootstrap prompts задают устойчивые роли и ограниче
 - текущие blockers.
 
 Эти данные всегда должны читаться из актуальной Knowledge Base.
+
+
+## Canonical bootstrap lifecycle
+
+Для каждого numbered project chat последняя каноническая секция этого файла
+является authority для prospective behavior. Project Control может потребовать
+refresh, не повторяя полный bootstrap, если доступен repository.
+
+Новый или migrated chat instance читает последнюю каноническую секцию до
+substantive work. Существующий chat выполняет refresh после material bootstrap
+revision перед следующей significant operation.
+
+Material revision включает изменения:
+
+- role или scope;
+- allowed/prohibited operations;
+- canonical inputs;
+- execution authorization rules;
+- Work/non-Work routing и model-selection policy;
+- cross-lane synchronization;
+- re-entry contract и task-request format;
+- device/execution-context handling.
+
+Purely cosmetic revision не требует refresh активного chat.
+
+Новый bootstrap не меняет ретроактивно уже авторизованную atomic task. Если
+material revision возник во время такой task, chat завершает её или выполняет
+`STOP` в исходной frozen boundary, затем обновляет bootstrap до следующей
+significant operation.
+
+Specialist chat может вернуть:
+
+```text
+BOOTSTRAP_REVIEW_RECOMMENDED
+```
+
+Сигналы включают repeated manual prompt patching, конфликт с текущим
+governance, повторяющиеся новые operational rules и рост re-entry prompts,
+компенсирующий отсутствующие bootstrap rules.
+
+При естественной возможности re-entry package включает:
+
+```text
+CHAT_BOOTSTRAP_VERSION
+CHAT_BOOTSTRAP_LAST_REFRESHED_AT
+BOOTSTRAP_REFRESH_REQUIRED
+```
+
+Автоматический per-chat state tracker этим правилом не вводится.
+
+Reusable task-envelope vocabulary:
+
+```text
+TASK_ID
+ROLE
+CANONICAL_HEAD
+AUTHORITATIVE_INPUTS
+TASK_TYPE
+ALLOWED_ACTIONS
+PROHIBITED_ACTIONS
+OUTPUT_CONTRACT
+STOP_CONDITION
+CROSS_LANE_IMPACT
+EXECUTION_CONTEXT
+```
+
+Это template vocabulary; тривиальная task не обязана содержать каждое поле.
 
 
 ## Common guidance for persistent specialist chats
@@ -1702,7 +1769,7 @@ MUST NOT
 - Make independent scientific decisions.
 - Expand repository-wide scope autonomously.
 - Start Stage03R or Stage03D.
-- Commit or push unless an explicit project policy later authorizes Git writes.
+- Commit or push unless the current approved task explicitly authorizes Git writes.
 - Include raw data, secrets, or private manuscript material in tracked outputs.
 
 
