@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.9"
+version: "4.0"
 updated: 2026-09-11
 control_chat: "00 - Project Control"
 ---
@@ -25,11 +25,11 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** SCIENCE — Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design принят, inference specification v1.0 заморожена, execution не начат и не авторизован. LITERATURE INFRASTRUCTURE — LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001 остаётся авторизованным, но отложенным.
+**Сейчас.** SCIENCE — Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design принят, inference specification v1.0 и implementation specification v1.0 заморожены, execution не начат и не авторизован. LITERATURE INFRASTRUCTURE — LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001 остаётся авторизованным, но отложенным.
 
-**Почему.** Активной production scientific Work-задачи сейчас нет. Замороженная Stage03R specification задаёт assignment-aware, interval-aware и identifiability-first архитектуру, но не является разрешением на CEF calculations, fitting, raw-detector access или возобновление Stage03D.
+**Почему.** Активной production scientific Work-задачи сейчас нет. Замороженные Stage03R specifications задают assignment-aware, interval-aware и identifiability-first архитектуру и минимальный deterministic compatibility kernel, но не являются разрешением на implementation, CEF calculations, fitting, raw-detector access или возобновление Stage03D.
 
-**Следующий шаг.** Следующий научный governance-шаг — отдельный Stage03R implementation design/review, не execution. Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
+**Следующий шаг.** Следующий научный governance-шаг — отдельный Stage03R implementation authorization review, не execution. Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 

@@ -297,6 +297,27 @@ scientific_facade:
     freeze_review:
       id: STAGE03R-SPEC-REVIEW-001
       decision: A
+    implementation_specification:
+      specification_id: STAGE03R-IMPLEMENTATION-SPEC
+      specification_version: '1.0'
+      specification_status: frozen
+      specification_path: 03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md
+      source_draft:
+        id: STAGE03R-IMPLEMENTATION-SPEC-DRAFT-001
+        version: 0.1-draft
+      parent_implementation_design_review:
+        id: STAGE03R-IMPL-DR-001
+        decision: A
+      accepted_corrections:
+        - STAGE03R-IMPLEMENTATION-SPEC-CORR-001
+        - STAGE03R-IMPLEMENTATION-SPEC-CORR-002
+      freeze_review:
+        id: STAGE03R-IMPL-SPEC-REVIEW-001
+        decision: B
+        corrections_resolved: true
+        remaining_freeze_blockers: []
+      implementation_status: not_started
+      implementation_authorized: false
     scientific_design_status: accepted
     execution_status: not_started
     W03_authorized: false
@@ -304,7 +325,7 @@ scientific_facade:
     production_CEF_fit_authorized: false
     raw_detector_access_authorized: false
     holdout_reanalysis_authorized: false
-    next_governance_action: Stage03R_implementation_design_review
+    next_governance_action: Stage03R_implementation_authorization_review
     role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
     discovery_features:
       allowed_as_experimental_constraints: true
@@ -429,15 +450,17 @@ do_not_assume:
 control:
   now: >-
     SCIENCE — Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design
-    принят, inference specification v1.0 заморожена, execution не начат и не авторизован. LITERATURE INFRASTRUCTURE —
+    принят, inference specification v1.0 и implementation specification v1.0 заморожены,
+    execution не начат и не авторизован. LITERATURE INFRASTRUCTURE —
     LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001
     остаётся авторизованным, но отложенным.
   why: >-
-    Активной production scientific Work-задачи сейчас нет. Замороженная Stage03R specification задаёт
-    assignment-aware, interval-aware и identifiability-first архитектуру, но не является разрешением
-    на CEF calculations, fitting, raw-detector access или возобновление Stage03D.
+    Активной production scientific Work-задачи сейчас нет. Замороженные Stage03R specifications задают
+    assignment-aware, interval-aware и identifiability-first архитектуру и минимальный deterministic
+    compatibility kernel, но не являются разрешением на implementation, CEF calculations, fitting,
+    raw-detector access или возобновление Stage03D.
   next: >-
-    Следующий научный governance-шаг — отдельный Stage03R implementation design/review, не execution.
+    Следующий научный governance-шаг — отдельный Stage03R implementation authorization review, не execution.
     Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к
     LIT-INFRA-03 нельзя.
   next_work_job:
