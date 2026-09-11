@@ -206,25 +206,40 @@ class Stage03RCompatibilityTests(unittest.TestCase):
     def test_STAGE03R_T11_convention_equivalence(self) -> None:
         comparison = self.tol["hamiltonian_comparison"]
         transform = synthetic_transform()
-        h = [[0.0, 0.25], [0.25, 1.0]]
-        equivalent = [[0.0, 0.25 + 1e-13], [0.25 + 1e-13, 1.0]]
-        self.assertTrue(kernel.registered_hamiltonian_equivalence(h, equivalent, transform, comparison))
+        h = [[0.0, 0.0], [0.0, 1.0]]
+        theta = math.pi / 5
+        unitary = [[math.cos(theta), -math.sin(theta)],
+                   [math.sin(theta), math.cos(theta)]]
+        transformed = kernel.unitary_similarity_transform(h, unitary)
+        self.assertFalse(kernel.frobenius_equivalent(h, transformed, 1e-12))
+        common_frame = kernel.unitary_similarity_transform(
+            transformed, kernel.conjugate_transpose(unitary),
+        )
+        self.assertTrue(kernel.registered_hamiltonian_equivalence(
+            h, common_frame, transform, comparison,
+        ))
         isospectral_distinct = [[1.0, 0.0], [0.0, 0.0]]
         self.assertFalse(kernel.registered_hamiltonian_equivalence(
-            [[0.0, 0.0], [0.0, 1.0]], isospectral_distinct, transform, comparison))
+            h, isospectral_distinct, transform, comparison))
 
     def test_STAGE03R_T12_Kramers_gauge(self) -> None:
-        identity = [[1 + 0j, 0j], [0j, 1 + 0j]]
-        phase = complex(0, 1) / math.sqrt(2)
-        rotation = [[1 / math.sqrt(2), phase], [phase, 1 / math.sqrt(2)]]
-        self.assertNotEqual(identity, rotation)
-        p1 = kernel.projector_from_columns(identity)
-        p2 = kernel.projector_from_columns(rotation)
+        vectors = [[1 + 0j, 0j], [0j, 1 + 0j], [0j, 0j], [0j, 0j]]
+        unitary = [[1 / math.sqrt(2), 1j / math.sqrt(2)],
+                   [1j / math.sqrt(2), 1 / math.sqrt(2)]]
+        rotated_vectors = kernel.matmul(vectors, unitary)
+        self.assertNotEqual(vectors, rotated_vectors)
+        p1 = kernel.projector_from_columns(vectors)
+        p2 = kernel.projector_from_columns(rotated_vectors)
+        self.assertEqual((len(p1), len(p1[0])), (4, 4))
         projector_tol = self.tol["projector_comparison"]["absolute_frobenius"]
         self.assertTrue(kernel.frobenius_equivalent(p1, p2, projector_tol))
-        operators = [[[0, 1], [1, 0]], [[0, -1j], [1j, 0]], [[1, 0], [0, -1]]]
-        t1 = kernel.transition_tensor(p1, p1, operators)
-        t2 = kernel.transition_tensor(p2, p2, operators)
+        other_vectors = [[0j, 0j], [0j, 0j], [1 + 0j, 0j], [0j, 1 + 0j]]
+        p_other = kernel.projector_from_columns(other_vectors)
+        coupling = [[0, 0, 1, 0], [0, 0, 0, 2],
+                    [1, 0, 0, 0], [0, 2, 0, 0]]
+        t1 = kernel.transition_tensor(p1, p_other, [coupling])
+        t2 = kernel.transition_tensor(p2, p_other, [coupling])
+        self.assertGreater(abs(t1[0][0]), 0)
         invariant = self.tol["invariant_comparison"]
         self.assertTrue(kernel.frobenius_equivalent(t1, t2,
                                                     invariant["absolute"], invariant["relative"]))
@@ -259,9 +274,61 @@ class Stage03RCompatibilityTests(unittest.TestCase):
             zero, supports, {"T1": 2.0}, self.tol["interval_merge"])["status"],
             "NOT_TESTABLE")
 
+    def test_RC_01_tolerance_aware_M0_intersections(self) -> None:
+        tolerance = self.tol["interval_merge"]
+        absolute, relative = tolerance["absolute"], tolerance["relative"]
+        overlap = kernel.intersect_interval_sets(
+            [(1.0, 2.0)], [(1.5, 3.0)], absolute=absolute, relative=relative,
+        )
+        self.assertEqual(overlap, [(1.5, 2.0)])
+        touching = kernel.intersect_interval_sets(
+            [(1.0, 2.0)], [(2.0, 3.0)], absolute=absolute, relative=relative,
+        )
+        self.assertEqual(touching, [(2.0, 2.0)])
+        numerical_gap = absolute / 2
+        near_touch = kernel.intersect_interval_sets(
+            [(1.0, 2.0)], [(2.0 + numerical_gap, 3.0)],
+            absolute=absolute, relative=relative,
+        )
+        expected_touch = 2.0 + numerical_gap / 2
+        self.assertEqual(near_touch, [(expected_touch, expected_touch)])
+        finite_gap = 10 * (absolute + relative * 3.0)
+        self.assertEqual(kernel.intersect_interval_sets(
+            [(1.0, 2.0)], [(2.0 + finite_gap, 3.0)],
+            absolute=absolute, relative=relative,
+        ), [])
+        disconnected = kernel.intersect_interval_sets(
+            [(1.0, 1.5), (2.5, 3.0)], [(0.5, 3.5)],
+            absolute=absolute, relative=relative,
+        )
+        self.assertEqual(disconnected, [(1.0, 1.5), (2.5, 3.0)])
+
+    def test_RC_02_M0_strict_positive_domain(self) -> None:
+        tolerance = self.tol["interval_merge"]
+        ordinary = kernel.m0_family_compatibility(
+            family([component("C1", ["BF-901"], ["T1"])]),
+            {"BF-901": support("BF-901", 1.0, 2.0)},
+            {"T1": 2.0}, tolerance,
+        )
+        self.assertEqual(ordinary["compatible_s"], [(0.5, 1.0)])
+        self.assertTrue(all(lower > 0 for lower, _ in ordinary["compatible_s"]))
+        with self.assertRaisesRegex(kernel.ContractError, "NUMERICAL_DIAGNOSTIC_FAILURE"):
+            kernel.m0_family_compatibility(
+                family([component("C1", ["BF-901"], ["T1"])]),
+                {"BF-901": support("BF-901", 0.0, 2.0)},
+                {"T1": 2.0}, tolerance,
+            )
+
     def test_SYN_M1_E_extended_manifold(self) -> None:
-        result = kernel.m1_extended_manifold([(0.2, 0.8), (0.4, 0.6), (0.8, 0.2)])
+        result = kernel.m1_linear_sum_compatibility(
+            [(0.2, 0.8), (0.4, 0.6), (0.8, 0.2), (0.9, 0.4)],
+            (1.0, 1.0), self.tol["interval_boundary_abs_meV"],
+        )
+        self.assertEqual(result["forward_relation"], "s1_plus_s2")
+        self.assertEqual(result["compatible_points"], [(0.2, 0.8), (0.4, 0.6), (0.8, 0.2)])
+        self.assertEqual(result["compatible_observables"], [1.0, 1.0, 1.0])
         self.assertFalse(result["parameter_point_identified"])
+        self.assertIsNone(result["preferred_point"])
         self.assertEqual(result["scientific_status"], "PARAMETER_NONIDENTIFIABLE")
 
     def test_SYN_CS15_E7_rank_bound(self) -> None:
@@ -278,13 +345,14 @@ class Stage03RCompatibilityTests(unittest.TestCase):
         self.assertEqual(norms["scalar_invariant"], "absolute_plus_relative")
 
     def test_Kramers_gauge_fixture_raw_vectors_not_authoritative(self) -> None:
+        vectors = [[1.0, 0.0], [0.0, 1.0], [0.0, 0.0], [0.0, 0.0]]
         theta = math.pi / 7
-        rotation = [[math.cos(theta), -math.sin(theta)],
-                    [math.sin(theta), math.cos(theta)]]
-        identity = [[1.0, 0.0], [0.0, 1.0]]
-        self.assertNotEqual(rotation, identity)
+        unitary = [[math.cos(theta), -math.sin(theta)],
+                   [math.sin(theta), math.cos(theta)]]
+        rotated = kernel.matmul(vectors, unitary)
+        self.assertNotEqual(rotated, vectors)
         self.assertTrue(kernel.frobenius_equivalent(
-            kernel.projector_from_columns(rotation), kernel.projector_from_columns(identity), 1e-12))
+            kernel.projector_from_columns(rotated), kernel.projector_from_columns(vectors), 1e-12))
 
     def test_prediction_bundle_validation_and_partial_inventory(self) -> None:
         partial = bundle([("T1", 1.0)])
@@ -299,17 +367,35 @@ class Stage03RCompatibilityTests(unittest.TestCase):
         self.assertEqual(result["status"], "FAMILY_COMPATIBLE")
 
     def test_model_status_strict_falsification(self) -> None:
-        self.assertEqual(kernel.model_status([], real_families_admitted=False)["model_status"], "NOT_TESTABLE")
+        explicit = {"inventories_complete": True, "convention_valid": True}
+        self.assertEqual(kernel.model_status([], real_families_admitted=False,
+                                             **explicit)["model_status"], "NOT_TESTABLE")
         self.assertEqual(kernel.model_status([{"status": "NOT_TESTABLE"}],
-                                             real_families_admitted=True)["model_status"], "NOT_TESTABLE")
+                                             real_families_admitted=True,
+                                             **explicit)["model_status"], "NOT_TESTABLE")
         self.assertEqual(kernel.model_status([{"status": "FAMILY_INCOMPATIBLE"}],
-                                             real_families_admitted=True)["model_status"], "MODEL_FALSIFIED")
+                                             real_families_admitted=True,
+                                             **explicit)["model_status"], "MODEL_FALSIFIED")
+        incomplete = kernel.model_status(
+            [{"status": "FAMILY_INCOMPATIBLE"}], real_families_admitted=True,
+            inventories_complete=False, convention_valid=True,
+        )
+        self.assertEqual(incomplete["model_status"], "NOT_TESTABLE")
+        invalid_convention = kernel.model_status(
+            [{"status": "FAMILY_INCOMPATIBLE"}], real_families_admitted=True,
+            inventories_complete=True, convention_valid=False,
+        )
+        self.assertEqual(invalid_convention["model_status"], "NOT_TESTABLE")
+        with self.assertRaises(TypeError):
+            kernel.model_status([{"status": "FAMILY_INCOMPATIBLE"}],
+                                real_families_admitted=True)
         mixed = kernel.model_status([{"status": "FAMILY_COMPATIBLE"},
-                                     {"status": "FAMILY_INCOMPATIBLE"}], real_families_admitted=True)
+                                     {"status": "FAMILY_INCOMPATIBLE"}],
+                                    real_families_admitted=True, **explicit)
         self.assertEqual(mixed, {"model_status": "MODEL_COMPATIBLE", "assignment_ambiguity": True})
         compatible_with_untestable = kernel.model_status(
             [{"status": "FAMILY_COMPATIBLE"}, {"status": "NOT_TESTABLE"}],
-            real_families_admitted=True)
+            real_families_admitted=True, **explicit)
         self.assertEqual(compatible_with_untestable,
                          {"model_status": "MODEL_COMPATIBLE", "assignment_ambiguity": True})
 

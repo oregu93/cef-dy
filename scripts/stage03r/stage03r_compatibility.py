@@ -376,14 +376,24 @@ def canonicalize_intervals(
     return merged
 
 
-def intersect_interval_sets(left: Sequence[Interval], right: Sequence[Interval]) -> list[Interval]:
+def intersect_interval_sets(
+    left: Sequence[Interval], right: Sequence[Interval], *,
+    absolute: float = 0.0, relative: float = 0.0,
+) -> list[Interval]:
     intersections: list[Interval] = []
     for a0, a1 in left:
         for b0, b1 in right:
             lower, upper = max(a0, b0), min(a1, b1)
             if lower <= upper:
                 intersections.append((lower, upper))
-    return canonicalize_intervals(intersections)
+            elif _near(lower, upper, absolute, relative):
+                # The inverted bounds differ only by calibrated numerical noise.
+                # Represent their closed one-point intersection deterministically.
+                touching = (lower + upper) / 2.0
+                intersections.append((touching, touching))
+    return canonicalize_intervals(
+        intersections, absolute=absolute, relative=relative,
+    )
 
 
 def _scale_set_for_component(
@@ -399,15 +409,20 @@ def _scale_set_for_component(
     for support_id in constraint["support_ids"]:
         region = supports[support_id]["energy_region_meV"]
         lower, upper = float(region["lower"]) / delta, float(region["upper"]) / delta
-        sets.append([(max(lower, 0.0), upper)] if upper > 0 else [])
+        _require(lower > 0 and upper > 0,
+                 "NUMERICAL_DIAGNOSTIC_FAILURE",
+                 "M0 closed-interval representation requires strictly positive s")
+        sets.append([(lower, upper)])
     if constraint["mode"] == "ANY_OF":
         return canonicalize_intervals(
             [interval for interval_set in sets for interval in interval_set],
             absolute=absolute, relative=relative,
         )
-    current: list[Interval] = [(0.0, math.inf)]
-    for interval_set in sets:
-        current = intersect_interval_sets(current, interval_set)
+    current: list[Interval] = list(sets[0])
+    for interval_set in sets[1:]:
+        current = intersect_interval_sets(
+            current, interval_set, absolute=absolute, relative=relative,
+        )
     return canonicalize_intervals(current, absolute=absolute, relative=relative)
 
 
@@ -430,13 +445,15 @@ def m0_family_compatibility(
     absolute = float(merge_tolerance["absolute"])
     relative = float(merge_tolerance["relative"])
     for mapping in mappings:
-        joint: list[Interval] = [(0.0, math.inf)]
+        joint: list[Interval] | None = None
         for component_id, transition_id in mapping.items():
             current = _scale_set_for_component(
                 components[component_id], transition_id, supports, reference_gaps,
                 absolute=absolute, relative=relative,
             )
-            joint = intersect_interval_sets(joint, current)
+            joint = current if joint is None else intersect_interval_sets(
+                joint, current, absolute=absolute, relative=relative,
+            )
         if joint:
             accepted.append(mapping)
             compatible.extend(joint)
@@ -499,8 +516,11 @@ def fixed_forward_compatibility(
 
 def model_status(
     family_results: Sequence[Mapping[str, Any]], *, real_families_admitted: bool,
-    inventories_complete: bool = True, convention_valid: bool = True,
+    inventories_complete: bool, convention_valid: bool,
 ) -> dict[str, Any]:
+    _require(type(inventories_complete) is bool and type(convention_valid) is bool,
+             "INVALID_PROVENANCE",
+             "falsification requires explicit inventory and convention evidence")
     statuses = [item.get("status") for item in family_results]
     if not real_families_admitted or not statuses:
         return {"model_status": "NOT_TESTABLE", "assignment_ambiguity": False}
@@ -566,6 +586,13 @@ def matmul(left: Sequence[Sequence[complex]], right: Sequence[Sequence[complex]]
              "NUMERICAL_DIAGNOSTIC_FAILURE", "incompatible matrix dimensions")
     return [[sum(left[i][k] * right[k][j] for k in range(len(right)))
              for j in range(len(right[0]))] for i in range(len(left))]
+
+
+def unitary_similarity_transform(
+    matrix: Sequence[Sequence[complex]], unitary: Sequence[Sequence[complex]],
+) -> list[list[complex]]:
+    """Return U H U† for a registered synthetic change of basis."""
+    return matmul(matmul(unitary, matrix), conjugate_transpose(unitary))
 
 
 def projector_from_columns(vectors: Sequence[Sequence[complex]]) -> list[list[complex]]:
@@ -662,6 +689,41 @@ def m1_extended_manifold(points: Sequence[Sequence[float]]) -> dict[str, Any]:
         "compatible_points": unique,
         "parameter_point_identified": len(unique) == 1,
         "scientific_status": "PARAMETER_NONIDENTIFIABLE" if len(unique) > 1 else "MODEL_COMPATIBLE",
+    }
+
+
+def m1_linear_sum_compatibility(
+    points: Sequence[Sequence[float]], support_interval: Sequence[float],
+    boundary_tolerance: float,
+) -> dict[str, Any]:
+    """Evaluate the explicit synthetic forward relation f(s1, s2) = s1 + s2."""
+    _require(len(support_interval) == 2 and boundary_tolerance >= 0,
+             "NUMERICAL_DIAGNOSTIC_FAILURE", "invalid SYN-M1-E support contract")
+    lower, upper = map(float, support_interval)
+    _require(math.isfinite(lower) and math.isfinite(upper) and lower <= upper,
+             "NUMERICAL_DIAGNOSTIC_FAILURE", "invalid SYN-M1-E support interval")
+    compatible: list[tuple[float, float]] = []
+    for point in points:
+        _require(len(point) == 2,
+                 "NUMERICAL_DIAGNOSTIC_FAILURE", "SYN-M1-E requires two-parameter points")
+        s1, s2 = map(float, point)
+        _require(math.isfinite(s1) and math.isfinite(s2),
+                 "NUMERICAL_DIAGNOSTIC_FAILURE", "SYN-M1-E parameters must be finite")
+        predicted = s1 + s2
+        if distance_to_region(predicted, lower, upper, boundary_tolerance)["relation"] == "INSIDE":
+            compatible.append((s1, s2))
+    unique = sorted(set(compatible))
+    return {
+        "forward_relation": "s1_plus_s2",
+        "compatible_points": unique,
+        "compatible_observables": [s1 + s2 for s1, s2 in unique],
+        "parameter_point_identified": len(unique) == 1,
+        "preferred_point": None,
+        "scientific_status": (
+            "PARAMETER_NONIDENTIFIABLE" if len(unique) > 1
+            else "MODEL_COMPATIBLE" if len(unique) == 1
+            else "MODEL_INCOMPATIBLE"
+        ),
     }
 
 
