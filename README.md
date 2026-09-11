@@ -4,7 +4,7 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "4.5"
+version: "4.6"
 updated: 2026-09-11
 language_content: ru
 language_metadata: en
@@ -211,7 +211,7 @@ CEF_Dy/
 │   └── CHAT_BOOTSTRAPS.md
 │
 ├── 04_Results/
-├── 05_References/
+├── 05_Literature/          # canonical literature knowledge layer
 ├── Templates/
 ├── scripts/
 ├── configs/

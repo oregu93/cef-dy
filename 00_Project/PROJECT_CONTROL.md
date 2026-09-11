@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.8"
+version: "3.9"
 updated: 2026-09-11
 control_chat: "00 - Project Control"
 ---
@@ -313,7 +313,24 @@ MOD-ECM-MALKIN
 | `06 - Paper & Dissertation` | Publication/dissertation layer using reviewed provenance. |
 
 
-# 11. Правила перехода между этапами
+# 11. Parallel lanes and synchronization
+
+Существенная параллельная работа классифицируется как:
+
+```text
+PARALLEL_SAFE
+PARALLEL_WITH_SYNC_GATE
+SERIAL_REQUIRED
+```
+
+Project Control синхронизирует consequential decisions и authorization; он не
+является обязательным relay для каждой промежуточной аналитической операции.
+Конфликтующие canonical writes не выполняются параллельно. При межветочном
+эффекте используется `CROSS_LANE_IMPACT`: `NONE`, `ADVISORY`,
+`REVIEW_BEFORE_NEXT_STAGE` или `BLOCKING`.
+
+
+# 12. Правила перехода между этапами
 
 Новый stage начинается только после явного review предыдущего.
 
@@ -339,7 +356,7 @@ STOP_CONDITION
 ```
 
 
-# 12. Definition of Done — Stage 00C
+# 13. Definition of Done — Stage 00C
 
 Stage 00C завершён, когда:
 
@@ -360,7 +377,7 @@ Stage 00C завершён, когда:
 - [x] выполнен Stage 00C commit и push.
 
 
-# 13. Канонические управляющие объекты
+# 14. Канонические управляющие объекты
 
 - [PROJECT_STATE](PROJECT_STATE.md)
 - [PROJECT_METADATA](PROJECT_METADATA.yaml)

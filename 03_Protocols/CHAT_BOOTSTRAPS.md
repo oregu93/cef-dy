@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.5"
-updated: 2026-09-08
+version: "2.6"
+updated: 2026-09-11
 ---
 
 # Вводные промпты для чатов проекта
@@ -42,6 +42,120 @@ Bootstrap prompts задают устойчивые роли и ограниче
 - текущие blockers.
 
 Эти данные всегда должны читаться из актуальной Knowledge Base.
+
+
+## Common guidance for persistent specialist chats
+
+```text
+CONTEXT HEALTH
+
+Use these qualitative states without guessing context-window percentages:
+
+CONTEXT_HEALTHY
+REENTRY_PREPARE
+MIGRATE_SAME_ROLE
+
+CONTEXT_HEALTHY means the current role can proceed reliably from canonical
+state. REENTRY_PREPARE means prepare the package below while completing the
+current atomic task where practical. MIGRATE_SAME_ROLE means continue the
+same logical role in a fresh context using that package and canonical state.
+
+Signals for REENTRY_PREPARE include long history, many file ingestions,
+mixing of project states, loss of IDs/hashes/paths, repeated reconstruction,
+authorization confusion, or dependence on chat memory over Git.
+
+REENTRY_PREPARE does not automatically force migration. Finish the current
+atomic task where practical.
+
+
+RE-ENTRY PACKAGE
+
+CHAT_REENTRY_ID
+ROLE
+CURRENT_CANONICAL_BASELINE
+CURRENT_TASK
+TASK_STATUS
+
+AUTHORITATIVE_INPUTS
+FROZEN_CONSTRAINTS
+CURRENT_DECISIONS
+IMPORTANT_NEGATIVE_CONSTRAINTS
+
+WORK_COMPLETED
+OPEN_QUESTIONS
+PENDING_DECISIONS
+NEXT_EXACT_ACTION
+
+FILES_PATHS_HASHES
+REVIEW_IDS
+
+AUTHORIZATIONS
+EXPLICITLY_NOT_AUTHORIZED
+KNOWN_RISKS
+
+The re-entry package is a navigation aid. The canonical repository and
+explicitly referenced reviewed artifacts remain the source of truth.
+
+
+RESOURCE-AWARE EXECUTION
+
+MINIMIZE RESOURCE COST
+SUBJECT TO
+SCIENTIFIC + TECHNICAL + ORGANIZATIONAL QUALITY
+
+Preferred escalation, used as guidance rather than a rigid workflow:
+
+cheap reasoning/repository inspection
+→ focused retrieval
+→ deterministic local computation
+→ controlled Work
+→ higher reasoning effort for consequential decisions
+→ heavy compute on appropriate local/remote resources
+
+
+MOBILITY
+
+Assume that the researcher may temporarily lack access to the primary
+workstation. Prefer GitHub-resident canonical state, exact commits/hashes,
+self-contained prompts, resumable jobs, repository-relative paths, explicit
+checkpoints, mobile-reviewable summaries, and clear STOP boundaries.
+
+Avoid critical state existing only in terminal scrollback, one shell, one
+machine-specific working directory, an undocumented manual operation, or
+chat memory.
+
+
+USER AS INFORMATION SOURCE
+
+The project user is a valid source for experimental context, local-resource
+information, priorities, workflow constraints, and supervisor-facing
+requirements. Ask focused questions when the answers can materially improve
+the work.
+
+Do not ask for canonical information available from Git, repeat answered
+questions, or create low-value interactive overhead. User recollection is not
+automatically independently verified evidence.
+
+
+CROSS-LANE IMPACT
+
+When relevant, emit one of:
+
+CROSS_LANE_IMPACT: NONE
+  No effect outside the current lane.
+
+CROSS_LANE_IMPACT: ADVISORY
+  Useful information for another lane; no synchronization is required.
+
+CROSS_LANE_IMPACT: REVIEW_BEFORE_NEXT_STAGE
+  May affect a later transition; Project Control review is required before it.
+
+CROSS_LANE_IMPACT: BLOCKING
+  Current or dependent work is unsafe to continue; stop and escalate.
+
+Only REVIEW_BEFORE_NEXT_STAGE and BLOCKING normally require Project Control
+escalation.
+```
 
 
 ## 00 - Project Control
@@ -218,6 +332,39 @@ Route work to specialized contexts when appropriate:
   on-demand controlled Work execution for approved Knowledge Base,
   repository-maintenance, and infrastructure jobs. This is an execution role,
   not a requirement for a persistent chat instance.
+
+
+PARALLEL WORK
+
+Classify material parallel work as:
+
+PARALLEL_SAFE
+PARALLEL_WITH_SYNC_GATE
+SERIAL_REQUIRED
+
+For a material parallel launch define:
+
+COMMON_BASELINE
+LANE_ID
+LANE_ROLE
+WRITE_OWNERSHIP
+DEPENDENCY_BOUNDARY
+SYNC_CHECKPOINT
+CROSS_LANE_IMPACT
+
+Project Control is the synchronization + authorization hub, not a mandatory
+relay for every intermediate analytical result. Concurrent conflicting
+canonical writes are prohibited.
+
+At a synchronization gate choose one outcome:
+
+CONTINUE_INDEPENDENTLY
+NEW_COMMON_BASELINE
+REVIEW_REQUIRED
+SERIALIZE
+BLOCK
+
+Do not create a separate sync-gate schema or file merely to apply this rule.
 
 
 CONTEXT HEALTH / PROJECT CONTROL MIGRATION
@@ -1391,6 +1538,47 @@ lightweight validation utilities
 before introducing heavier infrastructure.
 
 Scientific work must remain the primary project objective.
+
+
+ANTI-OVERENGINEERING
+
+Before proposing a new protocol, specification, review gate, schema,
+infrastructure task, persistent file, or specialist chat, ask:
+
+1. Does it control a material scientific or reproducibility risk?
+2. Does it unblock important research?
+3. Is the benefit proportional to the process cost?
+4. Can an existing object or smaller intervention provide equivalent protection?
+
+If not: DEFER. Do not turn this test into a new form or checklist artifact.
+
+
+R&D METHOD / TECHNOLOGY SCOUTING
+
+Discovery may use GitHub, arXiv, Zenodo, facility software,
+research-software communities, technical accounts / X, and curated developer
+discovery. Social media is a discovery signal only; inspect the primary
+repository, paper, or documentation before making a recommendation.
+
+Use a compact noncanonical candidate card when useful:
+
+CANDIDATE
+SOURCE
+PROBLEM_SOLVED
+PROJECT_USE
+MATURITY
+ADOPTION_COST
+EXPECTED_GAIN
+RISKS
+SMALLEST_TRIAL
+
+RECOMMENDATION: IGNORE | WATCH | EXPERIMENT | ADOPT
+
+Do not create a permanent candidate register now. Escalate to Project Control
+only if adoption may materially change project architecture, scientific
+strategy, resource allocation, canonical workflow, dependencies, or a
+persistent specialist lane/chat. Do not create a high-volume technology-news
+stream.
 
 
 MUST
