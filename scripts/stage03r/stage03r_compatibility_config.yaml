@@ -1,0 +1,84 @@
+schema_type: stage03r_compatibility_config
+schema_version: "1.0"
+
+canonical_identities:
+  scientific_specification:
+    id: STAGE03R-INFERENCE-SPEC
+    version: "1.0"
+    path: 03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md
+    sha256: aa67a08bbfd1894dfaad13488cb48ab57b6cf0f44d51567a9c61191e55f2e2ac
+  implementation_specification:
+    id: STAGE03R-IMPLEMENTATION-SPEC
+    version: "1.0"
+    path: 03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md
+    sha256: 3d6ea0a6255681a29268950d14accef15028359fe845cd09dcdc1ccdbc6e95ec
+  B001_catalogue:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+    sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+
+allowed_models:
+  - MOD-PCM-FORMAL
+  - MOD-PCM-M0
+  - MOD-PCM-M1
+  - MOD-CEF-CS15
+
+active_observation_roles:
+  - SUPPORT_REGION
+
+real_assignment_families: []
+real_FORMAL_bundle: null
+real_CS15_ensemble: null
+real_convention_transformations: []
+
+numerical_tolerances:
+  interval_boundary_abs_meV: 1.0e-10
+  interval_merge:
+    absolute: 1.0e-12
+    relative: 1.0e-12
+  hamiltonian_comparison:
+    absolute_meV: 1.0e-10
+    relative: 1.0e-12
+  projector_comparison:
+    absolute_frobenius: 1.0e-10
+  invariant_comparison:
+    absolute: 1.0e-10
+    relative: 1.0e-12
+
+comparison_norms:
+  hamiltonian: Frobenius
+  projector: Frobenius
+  matrix_or_tensor_invariant: Frobenius
+  scalar_invariant: absolute_plus_relative
+
+tolerance_semantics:
+  physical_uncertainty_meaning: none
+  linewidth_meaning: none
+  TAS_resolution_meaning: none
+  statistical_confidence_meaning: none
+  calibration: smallest_values_passing_synthetic_equivalence_and_boundary_fixtures
+  real_model_compatibility_used_for_tuning: false
+
+execution_gates:
+  implementation_only: true
+  Stage03R_execution_authorized: false
+  W03_authorized: false
+  production_CEF_fit_authorized: false
+  raw_detector_access_authorized: false
+  holdout_reanalysis_authorized: false
+  Stage03D_resumed: false
+  optimizer_authorized: false
+  likelihood_authorized: false
+  normalization_authorized: false
+  exchange_authorized: false
+
+output_schemas:
+  - input_manifest.yaml
+  - observation_table.yaml
+  - assignment_families.yaml
+  - model_compatibility.yaml
+  - identifiability_summary.yaml
+
+synthetic_test_configuration:
+  explicit_only: true
+  deterministic: true
+  random_seed: null
