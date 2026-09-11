@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-10'
+updated: '2026-09-11'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -285,8 +285,26 @@ scientific_facade:
   combined_discovery_holdout_reestimation:
     authorized: false
   stage03r_transition:
-    status: design_review_pending
+    status: specification_frozen
     authorized_now: false
+    specification_id: STAGE03R-INFERENCE-SPEC
+    specification_version: '1.0'
+    specification_status: frozen
+    specification_path: 03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md
+    parent_design_review:
+      id: STAGE03R-DR-001
+      decision: A
+    freeze_review:
+      id: STAGE03R-SPEC-REVIEW-001
+      decision: A
+    scientific_design_status: accepted
+    execution_status: not_started
+    W03_authorized: false
+    Stage03D_resumed: false
+    production_CEF_fit_authorized: false
+    raw_detector_access_authorized: false
+    holdout_reanalysis_authorized: false
+    next_governance_action: Stage03R_implementation_design_review
     role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
     discovery_features:
       allowed_as_experimental_constraints: true
@@ -410,18 +428,18 @@ do_not_assume:
 
 control:
   now: >-
-    SCIENCE — Stage02R завершён со статусом completed_with_limitations; следующий научный шаг —
-    Stage03R design review, а Stage03R execution не авторизован. LITERATURE INFRASTRUCTURE —
+    SCIENCE — Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design
+    принят, inference specification v1.0 заморожена, execution не начат и не авторизован. LITERATURE INFRASTRUCTURE —
     LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001
     остаётся авторизованным, но отложенным.
   why: >-
-    Активной production scientific Work-задачи сейчас нет. Literature schema foundation и controlled
-    packet materializer прошли независимое technical review и Project Control acceptance; их закрытие
-    не авторизует научное исполнение или следующий инфраструктурный этап.
+    Активной production scientific Work-задачи сейчас нет. Замороженная Stage03R specification задаёт
+    assignment-aware, interval-aware и identifiability-first архитектуру, но не является разрешением
+    на CEF calculations, fitting, raw-detector access или возобновление Stage03D.
   next: >-
-    Для литературы — controlled 01A discovery/provenance work и позднее небольшой real-workflow pilot;
-    автоматически переходить к LIT-INFRA-03 нельзя. Следующий научный шаг остаётся Stage03R design
-    review; Stage03R execution не авторизован.
+    Следующий научный governance-шаг — отдельный Stage03R implementation design/review, не execution.
+    Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к
+    LIT-INFRA-03 нельзя.
   next_work_job:
 
   blocked:

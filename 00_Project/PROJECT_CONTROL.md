@@ -3,8 +3,8 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "3.7"
-updated: 2026-09-10
+version: "3.8"
+updated: 2026-09-11
 control_chat: "00 - Project Control"
 ---
 
@@ -25,11 +25,11 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** SCIENCE — Stage02R завершён со статусом completed_with_limitations; следующий научный шаг — Stage03R design review, а Stage03R execution не авторизован. LITERATURE INFRASTRUCTURE — LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001 остаётся авторизованным, но отложенным.
+**Сейчас.** SCIENCE — Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design принят, inference specification v1.0 заморожена, execution не начат и не авторизован. LITERATURE INFRASTRUCTURE — LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE — INFRA-CI-001 остаётся авторизованным, но отложенным.
 
-**Почему.** Активной production scientific Work-задачи сейчас нет. Literature schema foundation и controlled packet materializer прошли независимое technical review и Project Control acceptance; их закрытие не авторизует научное исполнение или следующий инфраструктурный этап.
+**Почему.** Активной production scientific Work-задачи сейчас нет. Замороженная Stage03R specification задаёт assignment-aware, interval-aware и identifiability-first архитектуру, но не является разрешением на CEF calculations, fitting, raw-detector access или возобновление Stage03D.
 
-**Следующий шаг.** Для литературы — controlled 01A discovery/provenance work и позднее небольшой real-workflow pilot; автоматически переходить к LIT-INFRA-03 нельзя. Следующий научный шаг остаётся Stage03R design review; Stage03R execution не авторизован.
+**Следующий шаг.** Следующий научный governance-шаг — отдельный Stage03R implementation design/review, не execution. Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
 
 **Следующий Work job.** Не назначен. Production Work заблокирован до завершения текущего scientific review cycle.
 
