@@ -159,3 +159,22 @@
     идентифицируемого CEF inference без преждевременного усложнения
     microscopic model.
   date: '2026-09-01'
+
+- id: D-015
+  status: active
+  decision: >
+    Допускать восстановленную STRUCTURE-A как provenance-backed
+    historical low-temperature structure только для явно diagnostic
+    structural calculations. Не использовать её как canonical
+    MOD-PCM-FORMAL structural falsification baseline или как input
+    quantitative production structure-to-CEF inference до нового
+    controlled full-range re-refinement и последующего scientific review.
+  rationale: >
+    Raw acquisition и historical refinement lineage теперь восстановлены,
+    но nov19 и mar21 дают materially different O1/O2 coordinates и используют
+    различающиеся angular ranges и nuisance/thermal treatments. Поэтому
+    provenance recovery не устанавливает достаточную structural authority
+    для fixed H0, чувствительного к low-symmetry oxygen geometry.
+  date: '2026-09-14'
+  source_review: STRUCTURE-A-RECOVERY-REVIEW-001
+

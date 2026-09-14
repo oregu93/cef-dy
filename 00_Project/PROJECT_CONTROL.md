@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.3"
+version: "4.4"
 updated: 2026-09-14
 control_chat: "00 - Project Control"
 ---
@@ -104,15 +104,18 @@ control_chat: "00 - Project Control"
 | `W02-02R-C-002` | completed | Единственный remediation rerun завершён conformingly; три hypotheses имеют `numerical_failure`, branch закрыта, дополнительные reruns не авторизованы. |
 | `W02-02R-C-003` | deferred_not_authorized | Optional post-confirmatory combined discovery+holdout re-estimation; automatic continuation rejected, отдельный Project Control review обязателен для любого reopening. |
 | `DYFEO3-XRD-PRIVATE-IMPORT-001` | completed | Восстановлены и byte-verified восемь уникальных DyFeO3 powder-XRD raw acquisitions и historical `nov19`/`mar21` FullProf provenance; normalized private campaign materialized at `oregu93/cef-dy-private` commit `c5286a0076d01ab4067655eff0102b31a7466a39`. Новый refinement не выполнялся. |
+| `STRUCTURE-A-RECOVERY-REVIEW-001` | completed | STRUCTURE-A admitted for diagnostic structural use only; canonical `MOD-PCM-FORMAL` H0 and quantitative production structural use remain blocked pending controlled full-range re-refinement and review. |
 
 
 ## 2.1. Parallel structural support lane
 
 Текущий structural support action:
 
-- `04 - Structure & Conventions` выполняет bounded `STRUCTURE-A` scientific review;
-- новый refinement автоматически не запускается;
-- Stage03R execution этим review не авторизуется.
+- `STRUCTURE-A-RECOVERY-REVIEW-001` завершён и принят;
+- STRUCTURE-A разрешена для явно diagnostic structural calculations;
+- STRUCTURE-A не допущена как canonical `MOD-PCM-FORMAL` H0;
+- перед таким допуском требуется controlled full-range re-refinement;
+- Stage03R execution этим решением не авторизуется.
 
 Восстановление `EXP-XRD-DYFEO3-CAMPAIGN-001` устранило прежний gap по
 наличию primary raw XRD и historical refinement provenance.
