@@ -178,3 +178,23 @@
   date: '2026-09-14'
   source_review: STRUCTURE-A-RECOVERY-REVIEW-001
 
+- id: D-016
+  status: active
+  decision: >
+    Для controlled STRUCTURE-A re-refinement использовать FullProf как
+    primary numerical engine с тонким project-specific orchestration layer.
+    Допускается использование только предварительно квалифицированных
+    low-level FullProfApp I/O helpers для PCR/SUM/PRF. High-level
+    FullProfApp Automatic Refinement Protocol не использовать как
+    authoritative controller scientific workflow.
+  rationale: >
+    Такая архитектура сохраняет continuity с historical FullProf provenance,
+    устраняет repetitive manual PCR editing и guessing cycle counts,
+    обеспечивает deterministic staged execution, convergence bookkeeping,
+    provenance и failure preservation, не передавая software layer
+    автономные scientific refinement decisions. Если FullProfApp PcrIO
+    не проходит regression на exact target PCR, использовать узкий
+    target-specific editing fallback вместо разработки generic PCR parser.
+  date: '2026-09-14'
+  source_review: STRUCTURE-A-REREFINEMENT-AUTOMATION-REVIEW-001
+
