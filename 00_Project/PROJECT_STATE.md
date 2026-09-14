@@ -3,8 +3,8 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "4.7"
-updated: 2026-09-11
+version: "4.8"
+updated: 2026-09-14
 review_status: working
 ---
 
@@ -153,6 +153,28 @@ DyFeO3 является редкоземельным ортоферритом с
 установка должна быть указана явно.
 
 Локальная симметрия позиции Dy рассматривается как $C_s$.
+
+### Собственная powder-XRD structural provenance
+
+Восстановлена собственная лабораторная powder-XRD серия DyFeO3 на Rigaku
+SmartLab. Подтверждены восемь уникальных ненулевых raw `.ras` acquisitions:
+семь cryostat measurements основной May 2019 series и отдельный December 2019
+standard-geometry follow-up.
+
+Private byte/provenance authority материализована как
+`EXP-XRD-DYFEO3-CAMPAIGN-001` в `oregu93/cef-dy-private`, commit
+`c5286a0076d01ab4067655eff0102b31a7466a39`.
+
+Восстановлены historical FullProf generations `nov19` и `mar21`.
+Их наличие и lineage подтверждены, но они не являются окончательной
+structural authority: historical refinements используют разные angular
+domains и показывают недостаточно устойчивые O1/O2 coordinates и
+thermal/nuisance treatment для безусловного использования в quantitative
+structure-to-CEF inference.
+
+Существующий low-temperature `ART-XRD4K-CIF-001` поэтому остаётся
+reviewed historical structural candidate, а не final validated low-temperature
+structure. Новый refinement в ходе provenance recovery не выполнялся.
 
 Для этой симметрии эффективный CEF-гамильтониан основного
 $J=15/2$ мультиплета в принятом проектном соглашении содержит

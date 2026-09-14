@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.7"
-updated: 2026-09-11
+version: "2.8"
+updated: 2026-09-14
 ---
 
 # Вводные промпты для чатов проекта
@@ -110,6 +110,33 @@ EXECUTION_CONTEXT
 
 Это template vocabulary; тривиальная task не обязана содержать каждое поле.
 
+
+## Copy-safe code delivery
+
+When giving commands or scripts intended for direct user copy/paste,
+the chat MUST optimize for literal copy safety in the ChatGPT interface.
+
+Rules:
+
+- Do not place Markdown fenced blocks inside another fenced code block.
+- Do not generate shell heredocs whose payload contains Markdown fences
+  or other delimiter patterns likely to terminate the displayed snippet.
+- For creating Markdown or other structured text files from the shell,
+  prefer a Python script that writes an explicit list of lines when the
+  content contains front matter, Markdown fences, quotes, or complex
+  shell-sensitive characters.
+- A user-facing executable snippet should normally contain only one
+  outer code fence.
+- Avoid commands with fragile nested shell quoting when a simpler
+  deterministic Python or shell formulation is available.
+- Before presenting a long copy/paste block, check that its delimiters
+  cannot collide with literal content inside the block.
+- If a previously supplied snippet was broken by rendering or quoting,
+  replace it with a simpler copy-safe form rather than adding more
+  escaping to the same fragile construction.
+
+This rule concerns delivery syntax only. It does not change scientific,
+repository, authorization, or execution boundaries.
 
 ## Common guidance for persistent specialist chats
 

@@ -2,7 +2,7 @@
 title: "CEF Dy — Research Logbook"
 type: logbook_index
 status: active
-updated: 2026-09-04
+updated: 2026-09-14
 format: hybrid
 ---
 
@@ -34,6 +34,7 @@ format: hybrid
 | 2026-08-28 | [`LOG-2026-08-28-01`](entries/2026/2026-08-28_Knowledge-base-v2.1.md) | Knowledge Base v2.1 и аудит статусов | Введены machine-readable реестры, автоматические re-entry blocks и консервативный `reviewed/validated` policy. |
 | 2026-08-31 | [`LOG-2026-08-31-01`](entries/2026/2026-08-31_Local-deployment-and-multi-machine-workflow.md) | Локальное развёртывание и multi-machine workflow | Адаптация под GitHub. |
 | 2026-09-04 | [`LOG-2026-09-04-01`](entries/2026/2026-09-04_Stage02R-B001-blind-catalogue.md) | Stage 02R B-001 — слепой каталог BF | Восемь BF в режиме `monitor_controlled`, все Tier-1; результат принят с ограничениями, физическое назначение не выполнялось. |
+| 2026-09-14 | [`LOG-2026-09-14-01`](entries/2026/2026-09-14_DyFeO3-XRD-campaign-recovery.md) | Восстановление DyFeO3 powder-XRD campaign | Восемь уникальных raw acquisitions и historical FullProf provenance нормализованы в private repo; historical structures не повышены до final authority. |
 
 ## Когда создавать отдельную запись
 
