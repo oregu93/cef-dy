@@ -1,0 +1,59 @@
+schema_version: 1.0
+config_id: STRUCTURE-A-RAS-INSTRM0-CONVERTER-CONFIG-001
+
+scope:
+  task_id: STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPLEMENTATION-001
+  real_refinement_authorized: false
+
+source:
+  artifact_id: ART-XRDDY-RAS-101-001
+  filename: 101_DyFeO3-4K.ras
+  sha256: 735578af432552d07acde0b8a378fdafe32b15f639e59e2db7210db2fd663a73
+
+ras_int_topology:
+  expected_block_count: 2
+
+  blocks:
+    - block_index: 1
+      role: primary_diffraction
+      points: 13501
+      two_theta_start_deg: 20.0000
+      two_theta_stop_deg: 155.0000
+      step_deg: 0.0100
+      require_strictly_positive_intensity: true
+
+    - block_index: 2
+      role: secondary_ignored
+      points: 11
+      two_theta_start_deg: 15.0000
+      two_theta_stop_deg: 15.1000
+      step_deg: 0.0100
+      require_strictly_positive_intensity: false
+
+selection:
+  selected_primary_block_index: 1
+  concatenate_ras_int_blocks: false
+  fail_if_topology_differs: true
+
+third_column:
+  observed_primary_value: "1.0000"
+  use_as_sigma: false
+  write_to_fullprof_input: false
+
+fullprof_input:
+  JOBTYP: 0
+  INSTRM: 0
+  IWGT: 0
+  explicit_sigma: false
+  preserve_native_observed_counts: true
+  normalization: false
+  smoothing: false
+  background_subtraction: false
+
+qualified_reference_output:
+  intensity_count: 13501
+  sha256: 7b015184850a3930ca8d61de41ae90b7375354f83a8f56958580fbe117b809c4
+  bytes: 121649
+
+fullprof_execution:
+  real_4k_pattern_authorized: false
