@@ -1,0 +1,22 @@
+{
+  "config_id": "STRUCTURE-A-ORCHESTRATOR-CONFIG-001",
+  "fullprof": {
+    "version": "8.50 - Jun2026-ILL JRC",
+    "sha256": "6f3b6c13e6c33e7a696f9ff986a9e5327e848ba2fb42d6a5e8f67949b93dc4ec"
+  },
+  "execution": {
+    "fixture_execution_authorized": true,
+    "real_4k_execution_authorized": false,
+    "ascii_runtime_path_required": true
+  },
+  "pcr_mutation": {
+    "status": "inactive_fail_closed",
+    "policy": "target_specific_whitelist_only"
+  },
+  "required_outputs": [
+    "out",
+    "sum",
+    "prf",
+    "new"
+  ]
+}
