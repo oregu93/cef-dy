@@ -198,3 +198,23 @@
   date: '2026-09-14'
   source_review: STRUCTURE-A-REREFINEMENT-AUTOMATION-REVIEW-001
 
+- id: D-017
+  status: active
+  decision: >
+    Авторизовать один bounded local-Linux implementation/preflight job
+    для STRUCTURE-A re-refinement orchestration. Разрешены FullProf
+    environment/build qualification, low-level FullProfApp I/O qualification,
+    narrow orchestration implementation, synthetic/official fixture runs,
+    deterministic real-RAS identity verification and conversion, and the
+    frozen technical test suite. Любой FullProf refinement using the real
+    4 K STRUCTURE-A diffraction pattern or its converted derivative remains
+    explicitly unauthorized.
+  rationale: >
+    STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPL-SPEC-001 defines a
+    fail-closed technical boundary that can qualify the software stack
+    without optimizing crystallographic parameters against real data.
+    This separates implementation validation from scientific refinement
+    authorization and preserves D-015/D-016.
+  date: '2026-09-14'
+  source_spec: STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPL-SPEC-001
+

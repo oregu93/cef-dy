@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.5"
+version: "4.6"
 updated: 2026-09-14
 control_chat: "00 - Project Control"
 ---
@@ -106,6 +106,7 @@ control_chat: "00 - Project Control"
 | `DYFEO3-XRD-PRIVATE-IMPORT-001` | completed | Восстановлены и byte-verified восемь уникальных DyFeO3 powder-XRD raw acquisitions и historical `nov19`/`mar21` FullProf provenance; normalized private campaign materialized at `oregu93/cef-dy-private` commit `c5286a0076d01ab4067655eff0102b31a7466a39`. Новый refinement не выполнялся. |
 | `STRUCTURE-A-RECOVERY-REVIEW-001` | completed | STRUCTURE-A admitted for diagnostic structural use only; canonical `MOD-PCM-FORMAL` H0 and quantitative production structural use remain blocked pending controlled full-range re-refinement and review. |
 | `STRUCTURE-A-REREFINEMENT-AUTOMATION-REVIEW-001` | completed | Accepted orchestration architecture: FullProf core + thin project wrapper + qualified low-level FullProfApp I/O helpers; high-level automatic FullProf workflow is not authoritative. Real STRUCTURE-A refinement remains unauthorized. |
+| `STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPLEMENTATION-001` | authorized | One bounded local-Linux implementation/preflight job is authorized for FullProf build qualification, orchestration implementation, fixture tests, low-level FullProfApp I/O qualification, and real-RAS identity/conversion verification only. FullProf execution on the real 4 K pattern remains forbidden. |
 
 
 ## 2.1. Parallel structural support lane
@@ -118,8 +119,11 @@ control_chat: "00 - Project Control"
 - перед таким допуском требуется controlled full-range re-refinement;
 - техническая архитектура re-refinement принята: FullProf core + thin
   project wrapper + qualified low-level FullProfApp I/O helpers;
-- следующий шаг - narrow implementation specification и bounded technical
-  preflight без real STRUCTURE-A refinement;
+- `STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPL-SPEC-001` принят;
+- bounded local-Linux orchestration implementation/preflight авторизован;
+- допускаются только software qualification, fixture execution и real-RAS
+  identity/conversion verification;
+- FullProf execution на real 4 K pattern остаётся запрещённым;
 - Stage03R execution этим решением не авторизуется.
 
 Восстановление `EXP-XRD-DYFEO3-CAMPAIGN-001` устранило прежний gap по
