@@ -1,0 +1,195 @@
+{
+  "authorization_scope": {
+    "automatic_transition_to_S01": false,
+    "current": "NONE",
+    "next_review_candidate": "SA4K-S00-VERIFY_ONLY"
+  },
+  "automation_compatibility": {
+    "required_before_automated_S01_plus": [
+      "relative_chi2_change",
+      "esd_aware_parameter_stability",
+      "parameter_based_oscillation",
+      "stage_specific_max_blocks"
+    ],
+    "status": "SUFFICIENT_FOR_S00_ONLY"
+  },
+  "background": {
+    "Nba": 0,
+    "S00_refined": false,
+    "S01_onward_refinable": true,
+    "family": "six_coefficient_polynomial",
+    "initial_coefficients": [
+      377.7566,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "campaign_id": "STRUCTURE-A-4K-REREFINEMENT-CAMPAIGN-001",
+  "canonical_public_baseline": "86f99f822597c0856f7b5784b30418af62d545d6",
+  "cycles_per_block": 10,
+  "diffraction_input": {
+    "converted_derivative_bytes": 121649,
+    "converted_derivative_sha256": "7b015184850a3930ca8d61de41ae90b7375354f83a8f56958580fbe117b809c4",
+    "execution_authorized": false,
+    "format": "FullProf INSTRM=0 constant-step intensity-only",
+    "points": 13501,
+    "source_raw_artifact_id": "ART-XRDDY-RAS-101-001",
+    "source_raw_sha256": "735578af432552d07acde0b8a378fdafe32b15f639e59e2db7210db2fd663a73",
+    "step_deg": 0.01,
+    "two_theta_max_deg": 155.0,
+    "two_theta_min_deg": 20.0
+  },
+  "downstream": {
+    "CEF": "forbidden_in_this_campaign",
+    "PCM": "forbidden_in_this_campaign",
+    "Stage03R": "forbidden_in_this_campaign"
+  },
+  "execution_authorized": false,
+  "hard_stop_after": "SA4K-S09-FINAL",
+  "nuisance_policy": {
+    "anisotropic_broadening": "off",
+    "asymmetry": "off_for_primary_campaign",
+    "cos_shift": "fixed_zero",
+    "masks": "none",
+    "preferred_orientation": "off",
+    "restraints": "off",
+    "sin_shift": "fixed_zero",
+    "size": "off",
+    "strain": "off",
+    "zero_shift": "fixed_zero"
+  },
+  "scientific_convergence": {
+    "Biso_absolute_floor_A2": 0.0001,
+    "Rwp_absolute_change_percentage_point": 0.01,
+    "chi2_relative_change": 0.001,
+    "esd_fraction": 0.1,
+    "fractional_coordinate_absolute_floor": 1e-05,
+    "lattice_absolute_floor_A": 1e-05,
+    "max_blocks": {
+      "SA4K-S01-SCALE-BKG": 6,
+      "SA4K-S02-LATTICE": 6,
+      "SA4K-S03-PROFILE": 6,
+      "SA4K-S04-DY": 6,
+      "SA4K-S05-O1": 6,
+      "SA4K-S06-O2": 6,
+      "SA4K-S07-O-JOINT": 6,
+      "SA4K-S08-BISO": 6,
+      "SA4K-S09-FINAL": 8
+    },
+    "minimum_consecutive_stable_blocks": 2,
+    "oscillation_window_blocks": 4,
+    "stagnation_window_blocks": 3
+  },
+  "stages": [
+    [
+      "SA4K-S00-VERIFY",
+      []
+    ],
+    [
+      "SA4K-S01-SCALE-BKG",
+      [
+        "scale",
+        "background"
+      ]
+    ],
+    [
+      "SA4K-S02-LATTICE",
+      [
+        "a",
+        "b",
+        "c"
+      ]
+    ],
+    [
+      "SA4K-S03-PROFILE",
+      [
+        "minimal_profile"
+      ]
+    ],
+    [
+      "SA4K-S04-DY",
+      [
+        "Dy.x",
+        "Dy.y"
+      ]
+    ],
+    [
+      "SA4K-S05-O1",
+      [
+        "O1.x",
+        "O1.y"
+      ]
+    ],
+    [
+      "SA4K-S06-O2",
+      [
+        "O2.x",
+        "O2.y",
+        "O2.z"
+      ]
+    ],
+    [
+      "SA4K-S07-O-JOINT",
+      [
+        "Dy",
+        "O1",
+        "O2"
+      ]
+    ],
+    [
+      "SA4K-S08-BISO",
+      [
+        "common_Biso"
+      ]
+    ],
+    [
+      "SA4K-S09-FINAL",
+      []
+    ]
+  ],
+  "starting_state": {
+    "Dy": [
+      -0.02615,
+      0.068,
+      0.25
+    ],
+    "Fe": [
+      0.0,
+      0.5,
+      0.0
+    ],
+    "O1": [
+      0.1199,
+      0.39815,
+      0.25
+    ],
+    "O2": [
+      0.71738,
+      0.3137,
+      0.07101
+    ],
+    "cell_angstrom": {
+      "a": 5.295136,
+      "b": 5.590551,
+      "c": 7.606578
+    },
+    "clean_s00_pcr": "sa4k_s00.pcr",
+    "clean_s00_pcr_sha256": "7ba6bea82b65c3d567f663b89797f2dbeadcf4f89253855f57ea04d46ad3df32",
+    "common_starting_Biso_A2": 0.00296,
+    "source": "nov19_full_range_4K",
+    "source_pcr_sha256": "fc621f2f791bc318ac05a5bc8fbc2276019d2d9c7a2894982bb47f1ee6ccbaaa",
+    "space_group": "P b n m"
+  },
+  "status": "preexecution_frozen_design",
+  "weighting": {
+    "INSTRM": 0,
+    "IWGT": 0,
+    "JOBTYP": 0,
+    "background_subtracted": false,
+    "explicit_sigma": false,
+    "normalized": false
+  }
+}

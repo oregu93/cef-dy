@@ -1,0 +1,57 @@
+COMM    DyFeO3 4K controlled STRUCTURE-A S00
+! Current global Chi2 (Bragg contrib.) =      2.990    
+! Files => DAT-file: sa4k.dat, PCR-file: sa4k_s00
+!Job Npr Nph Nba Nex Nsc Nor Dum Iwg Ilo Ias Res Ste Nre Cry Uni Cor Opt Aut
+0 5 1 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 1
+!
+!Ipr Ppl Ioc Mat Pcr Ls1 Ls2 Ls3 NLI Prf Ins Rpa Sym Hkl Fou Sho Ana
+0 0 1 2 2 1 4 0 0 3 0 -1 0 0 0 0 0
+!
+! Lambda1  Lambda2    Ratio    Bkpos    Wdt    Cthm     muR   AsyLim   Rpolarz  2nd-muR -> Patt# 1
+ 1.540593 1.544414  1.00000    2.000  5.0000  0.0000  0.0000   40.00    0.0000  0.0000
+!
+!NCY  Eps  R_at  R_an  R_pr  R_gl     Thmin       Step       Thmax    PSD    Sent0
+10 0.20 0.65 0.65 0.65 0.65 20.0000 0.010000 155.0000 0.000 0.000
+!
+!2Theta/TOF/E(Kev)   Background  for Pattern#  1
+377.7566 0.0 0.0 0.0 0.0 0.0
+0.0 0.0 0.0 0.0 0.0 0.0
+! Background coefficients/Codes for Pattern # 1
+0    !Number of refined parameters
+!
+!  Zero    Code    SyCos    Code   SySin    Code  Lambda     Code MORE ->Patt# 1
+0.00000 0.0 0.00000 0.0 0.00000 0.0 1.541800 0.00 0
+!-------------------------------------------------------------------------------
+!  Data for PHASE number:   1  ==> Current R_Bragg for Pattern#  1:    25.12
+!-------------------------------------------------------------------------------
+DyFeO3, 1.5418 A
+!
+!Nat Dis Ang Pr1 Pr2 Pr3 Jbt Irf Isy Str Furth       ATZ    Nvk Npr More
+   4   0   0 0.0 0.0 1.0   0   0   0   0   0       1065.381   0   5   0
+!
+!
+P b n m                  <--Space group symbol
+!Atom   Typ       X        Y        Z     Biso       Occ     In Fin N_t Spc /Codes
+Dy     DY     -0.02615  0.06800  0.25000  0.00296   0.50000   0   0   0    0  
+0.00 0.00 0.00 0.00 0.00
+Fe     FE      0.00000  0.50000  0.00000  0.00296   0.50000   0   0   0    0  
+0.00 0.00 0.00 0.00 0.00
+O1     O       0.11990  0.39815  0.25000  0.00296   0.50000   0   0   0    0  
+0.00 0.00 0.00 0.00 0.00
+O2     O       0.71738  0.31370  0.07101  0.00296   1.00000   0   0   0    0  
+0.00 0.00 0.00 0.00 0.00
+!-------> Profile Parameters for Pattern #  1
+!  Scale        Shape1      Bov      Str1      Str2      Str3   Strain-Model
+0.12121E-03 0.55518 0.00000 0.00000 0.00000 0.00000 0
+0.00 0.00 0.00 0.00 0.00 0.00
+!       U         V          W           X          Y        GauSiz   LorSiz Size-Model
+   0.571230  -0.435362   0.091108   0.000000   0.000000   0.000000   0.000000    0
+0.00 0.00 0.00 0.00 0.00 0.00 0.00
+!     a          b         c        alpha      beta       gamma      #Cell Info
+   5.295136   5.590551   7.606578  90.000000  90.000000  90.000000   
+0.00 0.00 0.00 0.00 0.00 0.00
+!  Pref1    Pref2      Asy1     Asy2     Asy3     Asy4  
+0.00000 0.00000 0.00000 0.00000 0.00000 0.00000
+0.00 0.00 0.00 0.00 0.00 0.00
+!  2Th1/TOF1    2Th2/TOF2  Pattern to plot
+      20.060     155.000       1
