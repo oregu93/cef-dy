@@ -1,0 +1,105 @@
+schema_type: stage03r_prediction_bundle
+schema_version: '1.0'
+prediction_bundle_id: PB-CS15-HIST-B2-R7
+model_id: MOD-CEF-CS15
+parameter_set_id: CS15-HIST-B2-R7
+parameter_source: external_candidate_ensemble
+provenance:
+  materialization_task_id: STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001
+  parent_recovery_id: STAGE03R-CS15-HISTORICAL-SOLUTION-RECOVERY-001
+  parent_design_id: STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-DESIGN-001
+  historical_source_artifacts:
+  - DyFeO3_energy_only_top3_levels.csv
+  - DyFeO3_CEF0_top3_levels.csv
+  - DyFeO3_CEF0_visibility.csv
+  - DyFeO3_intensity_screening.csv
+  - 17_joint_cef_intensity_fit_colab.py
+  source_identity:
+    mini_ensemble_id: CS15-HIST-B2-MINI-001
+    historical_restart: 7
+    historical_rank: 1
+    historical_energy_only_loss: 1.3119868688695735e-05
+    parameter_vector_sha256: 371d955a33d0d2326ce1882d098d78d4ced6a584f6994326bcea0dc7f10fa741
+  generator_name: historical CrysFieldExplorer/CMA-ES energy-only search; deterministic forward regeneration by frozen explicit Stevens implementation
+  generator_version: historical search version incompletely recovered; forward operator semantics regression-frozen
+  generation_method: historical_energy_only_global_search
+  evidence_used_to_generate:
+  - type: historical_energy_constraint
+    value_meV: 6.45
+  - type: historical_energy_constraint
+    value_meV: approximately 18.2
+  - type: historical_energy_constraint
+    value_meV: 27.9
+  generated_from_current_stage03r_observations: false
+  current_B001_used_in_generation: false
+  shared_18_meV_lineage:
+    status: possible
+    exact_identity: unresolved
+  agreement_near_18_meV_is_wholly_independent_confirmation: false
+convention:
+  cef_convention_id: DYFEO3-LEGACY-DIRECT-PCF-CFE-POSQ-V1
+  operator_implementation_id: DYFEO3-EXPLICIT-STEVENS-POSQ-J15O2-V1
+  stevens_normalization_id: PCF-StevensOp-explicit-positive-q-regression-verified
+  coefficient_units: meV
+  coefficient_unit_regression_status: PASS_UNIQUE_INTERPRETATION
+  crystallographic_setting: historical setting not independently re-canonicalized; direct frame declared explicitly
+  global_frame_id: DYFEO3-LEGACY-DIRECT-BCA
+  local_frame_id: DYFEO3-LEGACY-DIRECT-BCA
+  local_to_global_matrix:
+  - [1.0, 0.0, 0.0]
+  - [0.0, 1.0, 0.0]
+  - [0.0, 0.0, 1.0]
+  frame_definition: {X: b, Y: c, Z: a}
+  canonical_parameter_order: [B20, B21, B22, B40, B41, B42, B43, B44, B60, B61, B62, B63, B64, B65, B66]
+  operator_order: [[2,0],[2,1],[2,2],[4,0],[4,1],[4,2],[4,3],[4,4],[6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6]]
+  q_semantics: literal_positive_q
+  negative_m_aliasing: forbidden
+  canonical_Cs_renaming: forbidden
+parameters:
+  B20: 0.1457508442307452
+  B21: -0.1418632150276334
+  B22: 0.0575600748345381
+  B40: 0.0015283002288844
+  B41: -0.0026833840237145
+  B42: -0.0021293064614697
+  B43: -0.0025503006247384
+  B44: -0.0002385456765873
+  B60: -4.250617313935495e-06
+  B61: 7.782839640946001e-05
+  B62: 6.16057562517392e-05
+  B63: -3.057234124028271e-05
+  B64: -0.0001258765448456
+  B65: -0.0001330213457897
+  B66: -4.635969681616601e-05
+levels:
+- {level_id: D0, energy_meV: 0.0, degeneracy: 2}
+- {level_id: D1, energy_meV: 6.449766160382595, degeneracy: 2}
+- {level_id: D2, energy_meV: 18.19954748444907, degeneracy: 2}
+- {level_id: D3, energy_meV: 27.900032926937785, degeneracy: 2}
+- {level_id: D4, energy_meV: 38.4828849852886, degeneracy: 2}
+- {level_id: D5, energy_meV: 54.7952458590715, degeneracy: 2}
+- {level_id: D6, energy_meV: 72.36636207443364, degeneracy: 2}
+- {level_id: D7, energy_meV: 81.75387149823484, degeneracy: 2}
+transitions:
+- {transition_id: T0-1, initial_level_id: D0, final_level_id: D1, energy_meV: 6.449766160382595, strength: 0.8064273083751179, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+- {transition_id: T0-2, initial_level_id: D0, final_level_id: D2, energy_meV: 18.19954748444907, strength: 0.699042559728338, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+- {transition_id: T0-3, initial_level_id: D0, final_level_id: D3, energy_meV: 27.900032926937785, strength: 2.856004981716267, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+- {transition_id: T0-4, initial_level_id: D0, final_level_id: D4, energy_meV: 38.4828849852886, strength: 0.771776622519856, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+- {transition_id: T0-5, initial_level_id: D0, final_level_id: D5, energy_meV: 54.7952458590715, strength: 0.8844841802253344, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+- {transition_id: T0-6, initial_level_id: D0, final_level_id: D6, energy_meV: 72.36636207443364, strength: 1.4945939607369188, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+- {transition_id: T0-7, initial_level_id: D0, final_level_id: D7, energy_meV: 81.75387149823484, strength: 3.372569934234533, strength_definition: '0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2', transition_tensor: null}
+transition_inventory:
+  status: complete_for_declared_scope
+  declared_scope: ground_doublet_to_all_seven_excited_doublets
+regression:
+  max_abs_level_error_meV: 1.4210854715202004e-14
+  max_kramers_pair_splitting_meV: 4.263256414560601e-14
+  max_abs_strength_error: 9.658940314238862e-15
+  level_status: PASS
+  strength_status: PASS
+derived:
+  principal_g_values: [19.386195002247543, 0.2762292470644879, 0.1695404241422459]
+  principal_g_provenance: historical fixed-vector evaluation preserved; not required for first compatibility scope
+  other_invariants:
+    historical_energy_only_rank: 1
+    historical_energy_only_loss: 1.3119868688695735e-05
