@@ -1,0 +1,103 @@
+task_id: STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001
+canonical_start_head: c70e2fc9504759bcc2156373177011787662d262
+operator_implementation:
+  operator_implementation_id: DYFEO3-EXPLICIT-STEVENS-POSQ-J15O2-V1
+  historical_source_artifact: 17_joint_cef_intensity_fit_colab.py
+  semantics: Explicit J=15/2 positive-q Stevens matrices used in historical fixed-vector forward evaluation
+  upstream_semantic_crosscheck:
+    repository: asche1/PyCrystalField
+    commit: de5abbfbb70e53c60dd758c4ee1a3246663c8460
+    path: src/pcf_lib/StevensOperators.py
+  normalization: literal PyCrystalField-style StevensOp formulas for q>=0; no negative-m aliasing
+coefficient_unit_regression:
+  reference_member: CS15-HIST-B2-R7
+  candidate_interpretations:
+    meV:
+      factor_to_meV: 1.0
+      max_abs_level_error_meV: 1.4210854715202004e-14
+      status: PASS
+    eV:
+      factor_to_meV: 1000.0
+      max_abs_level_error_meV: 81672.1176267366
+      status: FAIL
+    cm^-1:
+      factor_to_meV: 0.12398419843320026
+      max_abs_level_error_meV: 71.61768327171532
+      status: FAIL
+    K:
+      factor_to_meV: 0.08617333262
+      max_abs_level_error_meV: 74.7088679366447
+      status: FAIL
+  accepted_interpretation: meV
+  status: PASS_UNIQUE_INTERPRETATION
+  provenance_status: REGRESSION_VERIFIED_HISTORICAL_RUNTIME_UNIT
+tolerances:
+  energy_absolute_meV: 1.0e-9
+  energy_relative: 1.0e-11
+  kramers_splitting_meV: 1.0e-10
+  strength_absolute: 1.0e-9
+  strength_relative: 1.0e-9
+  semantics: reproducibility tolerances only; not experimental uncertainties
+strength_definition: 0.5 * sum_{alpha=x,y,z} ||P_D0 J_alpha P_Di||_F^2
+member_regressions:
+  CS15-HIST-B2-R7:
+    max_abs_level_error_meV: 1.4210854715202004e-14
+    max_kramers_pair_splitting_meV: 4.263256414560601e-14
+    max_abs_strength_error: 9.658940314238862e-15
+    level_status: PASS
+    strength_status: PASS
+  CS15-HIST-B2-R5:
+    max_abs_level_error_meV: 4.263256414560601e-14
+    max_kramers_pair_splitting_meV: 3.552713678800501e-14
+    max_abs_strength_error: 8.43769498715119e-15
+    level_status: PASS
+    strength_status: PASS
+  CS15-HIST-B2-R3:
+    max_abs_level_error_meV: 4.263256414560601e-14
+    max_kramers_pair_splitting_meV: 5.684341886080802e-14
+    max_abs_strength_error: 7.993605777301127e-15
+    level_status: PASS
+    strength_status: PASS
+member_distinctness:
+  status: PASS_DISTINCT_RETAINED_PARAMETER_STATES
+  basin_identity_claim: not established
+  pairwise_metrics:
+    R7_R5:
+      parameter_vector_l2: 0.0018394493557444753
+      parameter_vector_max_abs: 0.0015063740760784955
+      upper_levels_E4_E7_max_abs_meV: 0.376415925414733
+      ground_strengths_max_abs: 0.09457853713269593
+      principal_g_max_abs: 0.02191938246399261
+    R7_R3:
+      parameter_vector_l2: 0.002506666250660224
+      parameter_vector_max_abs: 0.0019419276403298824
+      upper_levels_E4_E7_max_abs_meV: 0.28982865950734293
+      ground_strengths_max_abs: 0.12537411444844082
+      principal_g_max_abs: 0.0366911160020707
+    R5_R3:
+      parameter_vector_l2: 0.0029980672934396997
+      parameter_vector_max_abs: 0.0029905680333801032
+      upper_levels_E4_E7_max_abs_meV: 0.10667531936582009
+      ground_strengths_max_abs: 0.041150376218101914
+      principal_g_max_abs: 0.014771733538078091
+validation:
+  prediction_bundle_schema_checks: PASS
+  provenance_checks: PASS
+  unit_regression: PASS
+  all_member_level_regressions: PASS
+  all_member_strength_regressions: PASS
+  pre_B001_distinctness: PASS
+scientific_stop:
+  B001_compatibility_evaluated: false
+  BF_or_CX_inputs_accessed_for_regression: false
+  assignment_families_constructed: false
+  optimization_performed: false
+  parameters_changed: false
+  raw_or_holdout_detector_accessed: false
+  Stage03R_scientific_execution_authorized: false
+provenance_limitations:
+- exact original all-solutions CSV remains unrecovered
+- exact final historical global-search script/config for restart 7/5/3 remains incompletely recovered
+- historical CrysFieldExplorer search version/config is not fully pinned
+- exact epistemic identity of the historical approximately 18.2 meV constraint relative to legacy F002 remains unresolved
+- canonical-Cs transform is intentionally not used or required
