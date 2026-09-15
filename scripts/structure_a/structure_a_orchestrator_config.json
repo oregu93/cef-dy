@@ -1,17 +1,52 @@
 {
-  "config_id": "STRUCTURE-A-ORCHESTRATOR-CONFIG-001",
+  "config_id": "STRUCTURE-A-ORCHESTRATOR-CONFIG-002",
   "fullprof": {
     "version": "8.50 - Jun2026-ILL JRC",
     "sha256": "6f3b6c13e6c33e7a696f9ff986a9e5327e848ba2fb42d6a5e8f67949b93dc4ec"
   },
   "execution": {
     "fixture_execution_authorized": true,
-    "real_4k_execution_authorized": false,
     "ascii_runtime_path_required": true
   },
-  "pcr_mutation": {
-    "status": "inactive_fail_closed",
-    "policy": "target_specific_whitelist_only"
+  "input_authorizations": {
+    "registered_inputs": [
+      {
+        "artifact_id": "PBSO4-FIXTURE",
+        "sha256": null,
+        "input_role": "fixture",
+        "real_data": false,
+        "execution_authorized": true
+      }
+    ]
+  },
+  "pcr_targets": {},
+  "pcr_deltas": {},
+  "stage_transitions": {},
+  "convergence": {
+    "cycles_per_block": null,
+    "max_blocks": null,
+    "Rwp_change_threshold": null,
+    "chi2_change_threshold": null,
+    "parameter_change_thresholds": {},
+    "minimum_consecutive_stable_blocks": null,
+    "stagnation_window": null,
+    "oscillation_window": null,
+    "oscillation_rule": null
+  },
+  "parser_contract": {
+    "sum_required_fields_before_readiness": [
+      "rwp",
+      "chi2",
+      "bragg_r"
+    ],
+    "out_fatal_markers": [
+      "fatal error",
+      "forrtl:",
+      "segmentation fault"
+    ],
+    "prf_required_before_readiness": [
+      "numeric_profile_present"
+    ]
   },
   "required_outputs": [
     "out",
