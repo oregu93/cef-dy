@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.8"
-updated: 2026-09-14
+version: "2.9"
+updated: 2026-09-15
 ---
 
 # Вводные промпты для чатов проекта
@@ -137,6 +137,143 @@ Rules:
 
 This rule concerns delivery syntax only. It does not change scientific,
 repository, authorization, or execution boundaries.
+
+## Bounded execution, finite resources and inter-chat routing
+
+Эти правила применяются перспективно ко всем project chats; уже начатая
+atomic task сохраняет frozen boundary до завершения или STOP.
+
+### Inter-chat task envelope
+
+Межчатовые задания начинаются полями:
+
+```text
+TARGET_CHAT
+RECOMMENDED_MODEL
+WHY
+ADDRESS_GUARD
+TASK_DEDUP_GUARD
+TASK_ID
+```
+
+ADDRESS_GUARD: при несовпадении текущего чата с TARGET_CHAT не выполнять:
+
+```text
+WRONG_TARGET_CHAT
+expected_chat: <TARGET_CHAT>
+```
+
+TASK_DEDUP_GUARD / NO_REDUNDANT_EXECUTION: проверять точный TASK_ID на
+completed, accepted, materialized или fail-closed. При наличии такого
+результата без явного разрешения повторного запуска не выполнять:
+
+```text
+ALREADY_EXECUTED_NO_RERUN_AUTHORIZATION
+TASK_ID: <TASK_ID>
+previous_status: <status>
+previous_result_or_reference: <reference>
+```
+
+Повтор возможен только с `RERUN_AUTHORIZED: true` либо отдельным
+`<TASK_ID>-RERUN-###`. Failed task не является приглашением к silent rerun.
+История failure сохраняется отдельно от authoritative clean rerun.
+
+### Human time and bounded work
+
+- HUMAN_TIME_IS_PRIMARY_RESOURCE: время пользователя учитывается вместе с
+  scientific information gain, Work quota, model limits, context capacity
+  и execution cost. Scientific quality, provenance и reproducibility обязательны.
+- AI_ABSORBS_REPETITION: AI берёт repository traversal, consistency checks,
+  metadata extraction, provenance bookkeeping, cross-file/hash/ID comparison,
+  validation, summarization, deterministic formatting и state inspection.
+  Не перекладывать эти механические действия на пользователя.
+- MINIMIZE_INTERACTIVE_OVERHEAD: не запрашивать уже доступные canonical inputs,
+  accepted specialist results и ранее данные instructions. Пользователя
+  привлекать для scientific judgement, high-consequence ambiguities,
+  permissions, недоступной external information и выбора направления.
+  Новая цепочка review/authorization нужна только при material risk.
+- ONE_BOUNDED_PREFLIGHT_THEN_ACT: проверить необходимые prerequisites один
+  раз, затем выполнить; не исследовать speculative dependencies,
+  посторонние environments/files/systems.
+- SCIENCE_OVER_PROCESS: новый protocol/schema/artifact/chat/gate/task/structure
+  допустим, если снимает material scientific/reproducibility risk или прямо
+  обеспечивает следующий discriminating step; иначе DEFER.
+- WORK_IS_NOT_DEFAULT: Work нужен для substantial multi-step automation,
+  которая экономит human time, снижает execution risk или повышает
+  reproducibility. Transparent reasoning и minor checks не требуют Work.
+- ADAPTIVE_RESOURCE_USE: default GPT-5.6 Sol / Medium. Higher effort нужен
+  только при material benefit (high-consequence adjudication, broad synthesis,
+  convention-heavy physics, изменение направления). Upward switch manual;
+  выбирать lower-cost execution там, где это научно безопасно.
+- PROJECT_CONTROL_IS_NOT_A_RELAY: specialist автономен внутри frozen scope.
+  В 00 эскалируются изменения scientific priority, stage transition,
+  model-class decision, interpretation boundary, provenance authority,
+  next discriminating observable или major blocker.
+- BATCH_MAINTENANCE: объединять maintenance в meaningful checkpoints,
+  не создавать commit/governance cycle после каждого малого результата.
+- DURABLE_STATE_OVER_CHAT_MEMORY / PORTABILITY: accepted results, limits,
+  pending tasks, blockers, stage decisions и rules периодически сохраняются
+  в portable repository artifacts. Продолжение работы не должно зависеть от
+  одного model/vendor, transcript, Work environment или physical computer.
+- STOP_BOUNDARIES_AND_RESUMABILITY: существенная задача задаёт scope, STOP,
+  forbidden follow-ons, deterministic identity где практично и достаточный
+  output для продолжения без дорогого повторного setup.
+
+### Project Control r2 and context health
+
+`00 - Project Control r2` - NON-WORK scientific governance/orchestration:
+roadmap, next discriminating questions, specialist adjudication, evidence
+boundaries, circularity prevention, pending/deferred inventory, blocker
+monitoring и контроль центральной scientific goal без лишних side branches.
+Routine production writes передаются explicitly authorized bounded execution.
+
+USER_ORIENTATION_IS_A_CONTROL_LOOP: периодически объяснять where_we_are,
+why_this_step, what_it_can_decide, what_it_cannot_decide,
+what_happens_if_positive, what_happens_if_negative. Иногда спрашивать,
+понятны ли пользователю предмет проверки и его смысл; это не quiz.
+User и AI context windows - конечные ресурсы.
+
+Для 00 и при необходимости specialists:
+
+```yaml
+CONTEXT_HEALTH: GREEN | YELLOW | YELLOW_HIGH | RED
+migration_recommended: true | false
+reason: ...
+critical_context_preserved: ...
+```
+
+GREEN - контекст достаточен; YELLOW - накапливается риск; YELLOW_HIGH -
+подготовить migration checkpoint; RED - риск потери critical context,
+остановить существенную работу до восстановления. 00 следит за собственным
+и, где возможно, specialist context и рекомендует migration заранее,
+на естественном scientific checkpoint, а не произвольной token boundary.
+
+BLOCKER CLASSIFICATION: SCIENTIFIC_BLOCKER, ENGINEERING_BLOCKER,
+PROVENANCE_BLOCKER, GOVERNANCE_BLOCKER. Несcientific blockers не получают
+автоматический приоритет. Если gap не влияет на следующее решение и не
+создаёт material correctness/reproducibility risk, DEFER.
+
+EXECUTION_COST_GATE для значимых задач:
+
+```text
+scientific_information_gain: LOW | MEDIUM | HIGH
+human_time_saved: LOW | MEDIUM | HIGH
+work_quota_cost: LOW | MEDIUM | HIGH
+context_cost: LOW | MEDIUM | HIGH
+new_infrastructure_created: yes | no
+```
+
+Выбирать smallest task capable of changing the next scientific decision.
+LOW information gain при HIGH process/resource cost - основание DEFER.
+Existing-data/artifact route предпочтителен до new modelling/infrastructure,
+beamtime или broad refitting. Gate - рабочая оценка, не новый обязательный
+отдельный документ.
+
+CF-WATCH-PROJECT-ESCALATION-LAYER-001: accepted. Normal search scope неизменен;
+HIGH-relevance findings направляются в 00 только при возможном изменении
+scientific priority, stage transition, model-class decision, interpretation
+boundary, major provenance authority или next-observable choice.
+Routing сам по себе не меняет научных выводов.
 
 ## Common guidance for persistent specialist chats
 

@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-11'
+updated: '2026-09-15'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -11,10 +11,8 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Как спроектировать допуск реальных входов Stage03R и первое контролируемое
-    compatibility execution на основе принятого deterministic kernel, не
-    превращая BF-признаки в физические назначения и не авторизуя production
-    CEF fitting?
+    Какой one-sided experimental sensitivity upper limit следует из принятого fixed-window
+    observable около 38 meV до ориентационно-зависимого forward visibility и model-level вывода?
   stage02r_purpose: >
     Stage 02R формирует независимый от CEF-модели слой экспериментальных
     свидетельств до нового цикла физического назначения и CEF-моделирования.
@@ -339,13 +337,14 @@ scientific_facade:
       implementation_review_id: STAGE03R-IMPL-REREVIEW-001
       accepted_implementation_commit: 7964fc3b8101a2aa9cb81b542fa40cb48d13f818
     scientific_design_status: accepted
-    execution_status: not_started
+    execution_status: reviewed_checkpoint_materialized
+    accepted_checkpoint_path: 04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml
     W03_authorized: false
     Stage03D_resumed: false
     production_CEF_fit_authorized: false
     raw_detector_access_authorized: false
     holdout_reanalysis_authorized: false
-    next_governance_action: Stage03R_real_input_admission_and_first_controlled_compatibility_execution_design
+    next_governance_action: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
     role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
     discovery_features:
       allowed_as_experimental_constraints: true
@@ -381,9 +380,9 @@ scientific_facade:
     - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
   next_scientific_step:
-    id: Stage03R_real_input_admission_design
+    id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
     stage_id: M03R
-    role: real_input_admission_and_first_controlled_compatibility_execution_design
+    role: experimental_observable_level_sensitivity_limit_pending
     discovery_features_allowed_as_experimental_constraints: true
     discovery_features_interpretation: unconfirmed_experimental_features
     C002_use: terminal_numerical_failure_context
@@ -445,16 +444,16 @@ main_uncertainties:
   - Не определены окончательная систематическая неопределённость энергетической шкалы и модель разрешения TAS; достаточность CEF-only описания низкотемпературных данных не установлена.
 
 current_milestone:
-  id: M02R
-  title: Stage 02R — независимый повторный анализ TAIPAN
-  status: completed_with_limitations
+  id: M03R
+  title: Stage03R - compatibility и sensitivity bridge
+  status: checkpoint_materialized
 
 immediate_next_step:
-  id: Stage03R_real_input_admission_design
+  id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
   text: >-
-    Спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution
-    на основе принятого kernel. Реальные assignment families и model bundles ещё не допущены;
-    Stage03R scientific execution, W03 и production CEF fitting не авторизованы.
+    После миграции в Project Control r2 подготовить experimental sensitivity upper limit
+    для принятого fixed-window observable около 38 meV в native normalized count-rate/excess units.
+    Forward visibility условна до valid LEVEL_2; новые вычисления этим checkpoint не разрешены.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -469,22 +468,19 @@ do_not_assume:
 
 control:
   now: >-
-    SCIENCE -- Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design
-    принят, inference specification v1.0 и implementation specification v1.0 заморожены,
-    deterministic compatibility kernel принят после STAGE03R-IMPL-REREVIEW-001. Scientific
-    execution не начат и не авторизован. LITERATURE INFRASTRUCTURE -- LIT-INFRA-01 и
-    LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE -- INFRA-CI-001
-    остаётся авторизованным, но отложенным.
+    Stage02R completed_with_limitations. Принятый Stage03R checkpoint r1:
+    AF-BASE ALL_THREE_COMPATIBLE; AF-CX03-CEF NONE_COMPATIBLE для historical R7/R5/R3.
+    Authoritative clean rerun около 38 meV: NO_SIGNIFICANT_EXCESS_DETECTED, LEVEL_1.
+    Structure-A PAUSED; Stage03D suspended; exchange DEFERRED.
+    LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
   why: >-
-    Активной production scientific Work-задачи сейчас нет. Замороженные Stage03R specifications задают
-    assignment-aware, interval-aware и identifiability-first архитектуру; принятый kernel реализует
-    только deterministic compatibility и synthetic/semantic contracts. Acceptance не допускает
-    реальные assignment families, CEF calculations на реальных данных, fitting, raw-detector access
-    или возобновление Stage03D.
+    Experimental null не является model rejection без sensitivity/visibility bridge.
+    Project Control r2 остаётся NON-WORK; production Work job не назначен.
   next: >-
-    Следующий governance-вопрос -- допуск реальных входов Stage03R и design первого контролируемого
-    compatibility execution; сама execution этим состоянием не авторизована. Для литературы разрешён
-    controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
+    STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001;
+    затем только при valid LEVEL_2 условный forward visibility.
+    Тест ~54-55 meV отложен. Новые scientific executions не авторизованы.
+    Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
   next_work_job: null
 
   blocked:
@@ -506,11 +502,9 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >-
-    [Рецензированный пакет W02-02R-B-001](../04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md):
-    reviewed, accepted_with_limitations; R-012 / EV-007. Канонический переход зафиксирован в
-    [commit 21506b7](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
-    Физическое назначение не выполнялось.
-  last_work_checkpoint: LIT-INFRA-02
+    [Принятый Stage03R checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md):
+    Project Control capture, reviewed; provenance partial; без повторного расчёта.
+  last_work_checkpoint: STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001
 
   active_hypothesis_ids:
     - H-001

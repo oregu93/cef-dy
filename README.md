@@ -4,8 +4,8 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "4.7"
-updated: 2026-09-11
+version: "4.8"
+updated: 2026-09-15
 language_content: ru
 language_metadata: en
 ---
@@ -50,9 +50,9 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Научная цель.** Определить воспроизводимый и физически интерпретируемый эффективный гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде всего с энергиями и интенсивностями INS-переходов, а затем проверенный независимыми магнитными наблюдаемыми.
 
-**Текущий этап.** `M02R` -- Stage 02R — независимый повторный анализ TAIPAN (`completed_with_limitations`).
+**Текущий этап.** `M03R` -- Stage03R - compatibility и sensitivity bridge (`checkpoint_materialized`).
 
-**Текущий научный вопрос.** Как спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution на основе принятого deterministic kernel, не превращая BF-признаки в физические назначения и не авторизуя production CEF fitting?
+**Текущий научный вопрос.** Какой one-sided experimental sensitivity upper limit следует из принятого fixed-window observable около 38 meV до ориентационно-зависимого forward visibility и model-level вывода?
 
 **Stage03R.** [`STAGE03R-INFERENCE-SPEC`](03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
@@ -78,13 +78,13 @@ CEF-гамильтониан содержит 15 независимых пара
 - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
 - Уникальный набор параметров и волновых функций CEF-гамильтониана.
 
-**Следующий научный шаг.** `Stage03R_real_input_admission_design`: Спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution на основе принятого kernel. Реальные assignment families и model bundles ещё не допущены; Stage03R scientific execution, W03 и production CEF fitting не авторизованы.
+**Следующий научный шаг.** `STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001`: После миграции в Project Control r2 подготовить experimental sensitivity upper limit для принятого fixed-window observable около 38 meV в native normalized count-rate/excess units. Forward visibility условна до valid LEVEL_2; новые вычисления этим checkpoint не разрешены.
 
 **Дорожная карта.** Stage 02R — независимый повторный анализ TAIPAN → Stage 03R — CEF landscape и идентифицируемость → Stage 03D — совместное ограниченное моделирование энергий и интенсивностей → Stage 05 — независимая магнитная проверка → Последующая структурная и микроскопическая интерпретация.
 
 **Происхождение B-001.** [Научное рецензирование B-001](04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md); [Замороженный каталог BF](04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml); [Контрольная запись B-001](02_Work_Checkpoints/W02-02R-B-001.md); [R-012](00_Project/RESULT_REGISTER.yaml); [EV-007](00_Project/EVIDENCE_REGISTER.yaml); [Активная замороженная спецификация C-001 v1.1](03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md); [canonical commit `21506b7`](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
 
-**Метаданные обновлены:** `2026-09-11`.
+**Метаданные обновлены:** `2026-09-15`.
 <!-- AUTO:README_STATUS:END -->
 
 

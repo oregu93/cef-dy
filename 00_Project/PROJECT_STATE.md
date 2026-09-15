@@ -3,12 +3,34 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "4.8"
-updated: 2026-09-14
+version: "4.9"
+updated: 2026-09-15
 review_status: working
 ---
 
 # DyFeO3 — Project State
+
+## Принятый checkpoint Stage03R r1 (2026-09-15)
+
+Актуальное дополнение к историческим разделам:
+[SCIENTIFIC_DECISION_TRAIL](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md)
+и [CHECKPOINT.yaml](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml).
+AF-BASE совместима с R7/R5/R3; AF-CX03-CEF несовместима со всеми тремя.
+Последнее ограничивает только эти historical candidates при указанном
+ground-origin CEF assignment, не весь CS15 и не природу CX-03.
+
+Q diagnostic не пересёк alpha=0.05 и не устанавливает Q independence.
+Authoritative clean ~38-meV rerun: NO_SIGNIFICANT_EXCESS_DETECTED.
+Первый failed run остаётся procedural history, scientific_result NOT_ESTABLISHED.
+Текущий evidence level LEVEL_1: valid_preregistered_experimental_null.
+LEVEL_2/LEVEL_3 ещё не установлены, LEVEL_4 не установлен.
+Null не является model rejection без sensitivity/visibility bridge.
+
+Следующий pending вопрос - experimental sensitivity upper limit в native
+normalized count-rate/excess units. Forward visibility условна до valid LEVEL_2.
+~54-55 meV test и exchange DEFERRED; Structure-A PAUSED;
+Stage03D не reopened; holdout недоступен без отдельного разрешения.
+Эта запись не выдаёт follow-on scientific execution authorization.
 
 > [!abstract] Назначение
 > Этот файл содержит текущее научное состояние исследования кристаллического
@@ -44,7 +66,7 @@ review_status: working
 
 **Научная задача.** Определить воспроизводимый и физически интерпретируемый эффективный гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде всего с энергиями и интенсивностями INS-переходов, а затем проверенный независимыми магнитными наблюдаемыми.
 
-**Текущий научный вопрос.** Как спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution на основе принятого deterministic kernel, не превращая BF-признаки в физические назначения и не авторизуя production CEF fitting?
+**Текущий научный вопрос.** Какой one-sided experimental sensitivity upper limit следует из принятого fixed-window observable около 38 meV до ориентационно-зависимого forward visibility и model-level вывода?
 
 **Stage03R.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
@@ -70,9 +92,9 @@ review_status: working
 - Перекрывающиеся BF-интервалы не разрешены на отдельные физические линии; Tier-2 отсутствует, один скан для поиска исключён численно, а отказы отдельных окон ограничивают выводы об устойчивости B-001.
 - Не определены окончательная систематическая неопределённость энергетической шкалы и модель разрешения TAS; достаточность CEF-only описания низкотемпературных данных не установлена.
 
-**Текущий этап.** `M02R` (`completed_with_limitations`): Stage 02R — независимый повторный анализ TAIPAN
+**Текущий этап.** `M03R` (`checkpoint_materialized`): Stage03R - compatibility и sensitivity bridge
 
-**Следующий шаг.** `Stage03R_real_input_admission_design`: Спроектировать допуск реальных входов Stage03R и первое контролируемое compatibility execution на основе принятого kernel. Реальные assignment families и model bundles ещё не допущены; Stage03R scientific execution, W03 и production CEF fitting не авторизованы.
+**Следующий шаг.** `STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001`: После миграции в Project Control r2 подготовить experimental sensitivity upper limit для принятого fixed-window observable около 38 meV в native normalized count-rate/excess units. Forward visibility условна до valid LEVEL_2; новые вычисления этим checkpoint не разрешены.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.

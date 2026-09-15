@@ -3,8 +3,8 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.6"
-updated: 2026-09-14
+version: "4.7"
+updated: 2026-09-15
 control_chat: "00 - Project Control"
 ---
 
@@ -25,13 +25,13 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** SCIENCE -- Stage02R завершён со статусом completed_with_limitations; Stage03R scientific design принят, inference specification v1.0 и implementation specification v1.0 заморожены, deterministic compatibility kernel принят после STAGE03R-IMPL-REREVIEW-001. Scientific execution не начат и не авторизован. LITERATURE INFRASTRUCTURE -- LIT-INFRA-01 и LIT-INFRA-02 закрыты и приняты. GENERAL INFRASTRUCTURE -- INFRA-CI-001 остаётся авторизованным, но отложенным.
+**Сейчас.** Stage02R completed_with_limitations. Принятый Stage03R checkpoint r1: AF-BASE ALL_THREE_COMPATIBLE; AF-CX03-CEF NONE_COMPATIBLE для historical R7/R5/R3. Authoritative clean rerun около 38 meV: NO_SIGNIFICANT_EXCESS_DETECTED, LEVEL_1. Structure-A PAUSED; Stage03D suspended; exchange DEFERRED. LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
 
-**Почему.** Активной production scientific Work-задачи сейчас нет. Замороженные Stage03R specifications задают assignment-aware, interval-aware и identifiability-first архитектуру; принятый kernel реализует только deterministic compatibility и synthetic/semantic contracts. Acceptance не допускает реальные assignment families, CEF calculations на реальных данных, fitting, raw-detector access или возобновление Stage03D.
+**Почему.** Experimental null не является model rejection без sensitivity/visibility bridge. Project Control r2 остаётся NON-WORK; production Work job не назначен.
 
 **Stage03R specifications.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
-**Следующий шаг.** Следующий governance-вопрос -- допуск реальных входов Stage03R и design первого контролируемого compatibility execution; сама execution этим состоянием не авторизована. Для литературы разрешён controlled 01A discovery/provenance work; автоматически переходить к LIT-INFRA-03 нельзя.
+**Следующий шаг.** STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001; затем только при valid LEVEL_2 условный forward visibility. Тест ~54-55 meV отложен. Новые scientific executions не авторизованы. Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
 
 **Следующий Work job.** Не назначен. Следующая scientific execution требует отдельного admission review и authorization.
 
@@ -53,9 +53,9 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** [Рецензированный пакет W02-02R-B-001](../04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md): reviewed, accepted_with_limitations; R-012 / EV-007. Канонический переход зафиксирован в [commit 21506b7](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d). Физическое назначение не выполнялось.
+**Последний научный источник.** [Принятый Stage03R checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md): Project Control capture, reviewed; provenance partial; без повторного расчёта.
 
-**Последний Work checkpoint.** `LIT-INFRA-02`
+**Последний Work checkpoint.** `STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -64,6 +64,55 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:END -->
 
 
+## Текущий checkpoint и передача в Project Control r2
+
+Текущее принятое состояние задаёт
+[Stage03R checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md);
+[TASK_STATUS_INDEX](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/TASK_STATUS_INDEX.yaml)
+сохраняет first FAIL_CLOSED execution и authoritative clean rerun раздельно.
+Ни один scientific task этим capture не повторяется.
+
+`00 - Project Control r2` остаётся NON-WORK scientific governance/orchestration.
+Следующий вопрос: experimental observable-level sensitivity upper limit около
+38 meV (LEVEL_2). Forward visibility условна до valid LEVEL_2;
+~54-55 meV test и exchange отложены. Structure-A PAUSED,
+quantitative refinement сейчас не требуется. Stage03D не возобновлён.
+Нет активной production scientific Work job; holdout не авторизован.
+
+Эта запись supersedes прежние current/pending указания ниже о первом
+real-input admission и structural implementation/preflight. Исторические
+разрешения сохранены как provenance и не являются новым заданием.
+
+CF-WATCH-PROJECT-ESCALATION-LAYER-001: accepted. Watch сохраняет search scope
+и направляет HIGH-relevance findings в 00 только при возможном изменении
+scientific priority, stage transition, model-class decision, interpretation
+boundary, major provenance authority или next-observable choice.
+
+Правила маршрутизации, duplicate-execution guard, finite resources и context
+health: [CHAT_BOOTSTRAPS](../03_Protocols/CHAT_BOOTSTRAPS.md).
+Project Control не является relay для каждого промежуточного результата.
+Specialists работают автономно внутри frozen scope; repository writes
+передаются bounded execution context после явного разрешения.
+
+Project Control r2 поддерживает roadmap и pending/deferred inventory,
+adjudicates specialist results, предотвращает circular reasoning и потерю
+evidence/interpretation boundaries, следит за blockers и context health
+своего и доступных specialist chats. Миграция рекомендуется до потери
+существенного контекста, предпочтительно на научном checkpoint.
+
+USER_ORIENTATION_IS_A_CONTROL_LOOP: периодически кратко сообщать
+`where_we_are`, `why_this_step`, `what_it_can_decide`,
+`what_it_cannot_decide`, `what_happens_if_positive`,
+`what_happens_if_negative`; иногда спрашивать, остаётся ли научная нить
+понятной пользователю. Это контроль ориентации, а не проверка знаний.
+
+Различать SCIENTIFIC_BLOCKER, ENGINEERING_BLOCKER, PROVENANCE_BLOCKER,
+GOVERNANCE_BLOCKER. Несcientific gap, не меняющий следующего решения,
+откладывается, если не создаёт material correctness/reproducibility risk.
+Выбирать минимальную задачу, способную изменить следующее научное решение;
+приоритет existing-data/artifact route перед новым modelling,
+infrastructure, beamtime или broad refitting.
+
 # 1. Карта этапов
 
 | Milestone | Status | Назначение |
@@ -71,7 +120,7 @@ control_chat: "00 - Project Control"
 | `M00B` | completed | Развёртывание автономной Knowledge Base, Obsidian/Git workflow и базовой automation. |
 | `M00C` | completed | Scientific re-baselining: терминология, provenance, evidence/model semantics и очистка центрального project state. |
 | `M02R` | completed_with_limitations | Независимый повторный анализ TAIPAN завершён; C002 terminal result принят с frozen numerical failure, без numerically valid holdout confirmation tests и без physical absence inference. |
-| `M03R` | implementation_accepted | Inference/implementation specifications заморожены и deterministic kernel принят; real inputs и scientific execution не авторизованы. |
+| `M03R` | checkpoint_materialized | Принятые compatibility/Q/38-meV results сохранены; evidence LEVEL_1, следующий sensitivity limit pending; follow-on execution не авторизована. |
 | `M03D` | suspended | Joint constrained M0/M1 energy + intensity inference; существующий design сохранён, но execution приостановлен. |
 | `M05` | planned | Независимая магнитная validation и, при необходимости, CEF + magnetic exchange. |
 | `M06` | later | Более глубокая structural/microscopic interpretation и перенос по ряду RFeO3. |
