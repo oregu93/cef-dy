@@ -1,0 +1,169 @@
+{
+  "checkpoint_id": "STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001",
+  "date": "2026-09-15",
+  "baseline_commit": "18f5d61ff1b29f3713645d32483ddbe8db3e68c2",
+  "rerun_authorized": true,
+  "origin": {
+    "type": "accepted_project_control_instruction",
+    "review_status": "reviewed",
+    "provenance_status": "partial",
+    "limitation": "Accepted results transcribed from the authorized task; underlying execution artifacts are not recreated or independently recomputed here."
+  },
+  "compatibility": {
+    "AF-CX03-CEF": {
+      "R7": "incompatible",
+      "R5": "incompatible",
+      "R3": "incompatible",
+      "class": "NONE_COMPATIBLE",
+      "role": "stronger_out_of_generation_constraint_test"
+    },
+    "AF-BASE": {
+      "R7": "compatible",
+      "R5": "compatible",
+      "R3": "compatible",
+      "class": "ALL_THREE_COMPATIBLE",
+      "role": "historically_conditioned_consistency_test"
+    }
+  },
+  "cx03_review": {
+    "H1": "VIABLE",
+    "H2": "VIABLE_HIGH_PRIORITY",
+    "H3": "VIABLE_BUT_UNSUPPORTED",
+    "H4": "VIABLE_AND_WELL_MOTIVATED",
+    "H5": "STRONGLY_DISFAVOURED",
+    "support_scans": {
+      "BF-006": 14,
+      "BF-007": 12,
+      "BF-008": 3
+    },
+    "intrinsic_strength": "S_0i = 0.5 * sum_alpha ||P_D0 J_alpha P_Di||_F^2",
+    "legacy_visibility": "LEGACY_VISIBILITY_METRIC_SEMANTICS_UNRESOLVED",
+    "legacy_visibility_quantitative_use": false
+  },
+  "q_audit": {
+    "unique_CX03_support_scans": 18,
+    "trajectory_family": "approximately_(0,k,3)",
+    "nominal_k_span": "approximately_1.8_to_4.1",
+    "Q_topology": "MIXED_OR_UNRESOLVED",
+    "repeated_nominal_geometry": {
+      "geometry": "approximately (0,3,3)",
+      "decreasing": [
+        "BF-006",
+        "BF-008"
+      ],
+      "increasing": [
+        "BF-007"
+      ]
+    },
+    "coverage": {
+      "38.1_to_38.5_meV": {
+        "covered_scans": 18,
+        "total_scans": 18,
+        "frozen_B001_SUPPORT_REGION_overlap": "none"
+      },
+      "54.4_to_54.8_meV": {
+        "covered_scans": 10,
+        "total_scans": 18,
+        "frozen_B001_SUPPORT_REGION_overlap": "none"
+      }
+    },
+    "interpretation": "coverage != detection"
+  },
+  "q_diagnostic": {
+    "classification": "NO_DETECTED_SYSTEMATIC_TRAJECTORY_CHANGE",
+    "rho_decreasing": "-0.48333333333333334",
+    "rho_increasing": "-0.45",
+    "exact_direction_stratified_permutation_p": "0.06282991515043089",
+    "repeated_nominal_0_3_3_direction_difference_sigma": "approximately_1.9718",
+    "role": "exploratory_diagnostic_only",
+    "alpha": "0.05",
+    "threshold_crossed": false,
+    "Q_independence_established": false,
+    "post_hoc_rescue_authorized": false
+  },
+  "prediction_test": {
+    "predictions_meV": {
+      "R5_T0-4": "38.1298811227",
+      "R3_T0-4": "38.1930563258",
+      "R7_T0-4": "38.4828849853"
+    },
+    "historical_conditioning_meV": [
+      "6.45",
+      "~18.2",
+      "27.9"
+    ],
+    "prediction_region_38_meV_was_historical_fit_constraint": false,
+    "first_execution": {
+      "task_id": "STAGE03R-CS15-38MEV-PREDICTION-TEST-EXECUTION-001",
+      "status": "FAIL_CLOSED",
+      "reason": "population_freeze_before_response_ordering_violation",
+      "scientific_result": "NOT_ESTABLISHED",
+      "authoritative": false
+    },
+    "clean_rerun": {
+      "task_id": "STAGE03R-CS15-38MEV-PREDICTION-TEST-EXECUTION-001-RERUN-001",
+      "authoritative": true,
+      "eligible_scans": 21,
+      "increasing": 11,
+      "decreasing": 10,
+      "eligible_population_sha256": "e19e41e794b51dcb631dfff9a8751c7a828c37f55d063043e4807dfc45781a30",
+      "sum_X_s": "-9.263645033151e-05",
+      "Z_global": "-2.412984862019",
+      "one_sided_positive_p": "0.992088761642",
+      "outcome": "NO_SIGNIFICANT_EXCESS_DETECTED"
+    }
+  },
+  "visibility_sensitivity": {
+    "review": "STAGE03R-CS15-38MEV-VISIBILITY-SENSITIVITY-REVIEW-001",
+    "current_evidence_level": "LEVEL_1",
+    "LEVEL_1_meaning": "valid_preregistered_experimental_null",
+    "LEVEL_2": "not_yet_established",
+    "LEVEL_3": "not_yet_established",
+    "LEVEL_4": "not_established",
+    "decision": "C_EXPERIMENTAL_SENSITIVITY_LIMIT_REQUIRED_FIRST",
+    "transition_tensors": {
+      "materialized": false,
+      "deterministic_regeneration_without_new_fit": true
+    },
+    "sequence": [
+      "experimental observable-level sensitivity upper limit at ~38 meV",
+      "minimal orientation-specific forward visibility calculation",
+      "compare R7/R5/R3 predictions against experimental sensitivity",
+      "only then decide model-level constraint",
+      "~54-55 meV test deferred until this chain is clearer"
+    ]
+  },
+  "other_lanes": {
+    "Structure-A": {
+      "status": "PAUSED",
+      "quantitative_refinement_required_now": false
+    },
+    "Stage03D": {
+      "reopened": false
+    },
+    "MOD-CEF-EXCHANGE": {
+      "status": "DEFERRED",
+      "active": false
+    },
+    "temperature_dependence_branch": {
+      "blocked_by_temperature_sensor_unit_semantics": true
+    },
+    "IN20": {
+      "status": "valuable_future_independent_cross_instrument_evidence"
+    },
+    "magnetization_g_tensor": {
+      "status": "later_global_CEF_family_validation"
+    }
+  },
+  "boundaries": {
+    "scientific_calculations_performed": false,
+    "holdout_authorized": false,
+    "follow_on_execution_authorized": false
+  },
+  "cf_watch": {
+    "task_id": "CF-WATCH-PROJECT-ESCALATION-LAYER-001",
+    "status": "accepted",
+    "normal_search_scope": "unchanged",
+    "scientific_conclusion_change": false
+  }
+}

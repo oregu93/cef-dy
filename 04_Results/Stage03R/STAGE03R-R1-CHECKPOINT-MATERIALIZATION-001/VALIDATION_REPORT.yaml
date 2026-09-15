@@ -1,0 +1,57 @@
+{
+  "checkpoint_id": "STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001",
+  "validation_scope": "Transcription, provenance labels, governance boundaries, generated facade and scoped Git tree; no scientific reexecution.",
+  "baseline_commit": "18f5d61ff1b29f3713645d32483ddbe8db3e68c2",
+  "rerun_authorized": true,
+  "checks": {
+    "starting_HEAD_exact": "PASS",
+    "numerical_values_copied_exactly": "PASS",
+    "decimal_values_preserved_as_exact_strings": "PASS",
+    "prediction_energies_match_PredictionBundle_to_supplied_precision": "PASS",
+    "first_failed_run_non_authoritative": "PASS",
+    "clean_rerun_authoritative": "PASS",
+    "evidence_level_LEVEL_1": "PASS",
+    "next_action_experimental_sensitivity_limit": "PASS",
+    "forward_visibility_conditional_on_LEVEL_2": "PASS",
+    "test_54_55_meV_deferred": "PASS",
+    "exchange_DEFERRED": "PASS",
+    "Stage03D_not_reopened": "PASS",
+    "Structure_A_PAUSED": "PASS",
+    "holdout_not_authorized": "PASS",
+    "all_metadata_authorization_booleans_unchanged": "PASS",
+    "Project_Control_r2_NON_WORK": "PASS",
+    "resource_human_time_rules_existing_bootstrap": "PASS",
+    "ADDRESS_GUARD_present": "PASS",
+    "TASK_DEDUP_GUARD_present": "PASS",
+    "context_health_present": "PASS",
+    "CF_Watch_escalation_accepted": "PASS",
+    "kb_refresh_check": "PASS",
+    "new_relative_links": "PASS",
+    "whitespace_check": "PASS"
+  },
+  "artifact_sha256": {
+    "CHECKPOINT.yaml": "2de565a968ba8becee4da5bcc83fea869b66ea422bfd0f6f6a0b99b3f0abddd6",
+    "SCIENTIFIC_DECISION_TRAIL.md": "90b059d94b5ca7a8c86830fb204212d7261701753e7673658c6df205902fde62",
+    "TASK_STATUS_INDEX.yaml": "99b66ffc804bba94fc995c40e4e7fd8d6d7e7dd7b039797b37d86d0016fae73c"
+  },
+  "limitations": [
+    "Full execution artifacts for the accepted Q/38-meV tasks are not reconstructed; provenance remains partial.",
+    "No independent recalculation of statistics, model predictions or scientific reviews.",
+    "Repository-wide kb_validate and literature validation are not claimed; scoped checks and canonical kb_refresh --check were run."
+  ],
+  "planned_commit_1_paths": [
+    "04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml",
+    "04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md",
+    "04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/TASK_STATUS_INDEX.yaml",
+    "04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/VALIDATION_REPORT.yaml"
+  ],
+  "planned_commit_2_paths": [
+    "00_Project/PROJECT_METADATA.yaml",
+    "00_Project/PROJECT_CONTROL.md",
+    "00_Project/PROJECT_STATE.md",
+    "README.md",
+    "03_Protocols/CHAT_BOOTSTRAPS.md"
+  ],
+  "generator_dependency": "PROJECT_METADATA is the existing re-entry source; README update is generated synchronization only, plus version/date. Generator is unchanged.",
+  "scientific_execution_performed": false
+}

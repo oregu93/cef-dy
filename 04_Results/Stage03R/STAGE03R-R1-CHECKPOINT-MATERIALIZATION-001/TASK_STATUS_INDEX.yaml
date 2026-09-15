@@ -1,0 +1,68 @@
+{
+  "checkpoint_id": "STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001",
+  "rerun_authorized": true,
+  "previous_attempt": {
+    "status": "STOP_PREFLIGHT_INCOMPLETE",
+    "canonical_writes": false,
+    "reason": "Task-history search unavailable; explicit user rerun authorization now supplied."
+  },
+  "tasks": [
+    {
+      "task_id": "STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001",
+      "status": "materialized",
+      "scope": "checkpoint_and_operating_rules_only"
+    },
+    {
+      "task_id": "STAGE03R-CS15-38MEV-PREDICTION-TEST-EXECUTION-001",
+      "status": "FAIL_CLOSED",
+      "reason": "population_freeze_before_response_ordering_violation",
+      "scientific_result": "NOT_ESTABLISHED",
+      "authoritative": false
+    },
+    {
+      "task_id": "STAGE03R-CS15-38MEV-PREDICTION-TEST-EXECUTION-001-RERUN-001",
+      "authoritative": true,
+      "eligible_scans": 21,
+      "increasing": 11,
+      "decreasing": 10,
+      "eligible_population_sha256": "e19e41e794b51dcb631dfff9a8751c7a828c37f55d063043e4807dfc45781a30",
+      "sum_X_s": "-9.263645033151e-05",
+      "Z_global": "-2.412984862019",
+      "one_sided_positive_p": "0.992088761642",
+      "outcome": "NO_SIGNIFICANT_EXCESS_DETECTED"
+    },
+    {
+      "task_id": "STAGE03R-CS15-38MEV-VISIBILITY-SENSITIVITY-REVIEW-001",
+      "status": "accepted",
+      "decision": "C_EXPERIMENTAL_SENSITIVITY_LIMIT_REQUIRED_FIRST"
+    },
+    {
+      "task_id": "STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001",
+      "status": "pending",
+      "purpose": "one-sided upper confidence/sensitivity limit on accepted fixed-window observable in native normalized count-rate/excess units",
+      "non_inputs": [
+        "raw detector analysis",
+        "holdout",
+        "CEF refit",
+        "transition-strength input",
+        "exchange"
+      ],
+      "execution_authorized_by_this_checkpoint": false
+    },
+    {
+      "task_id": "STAGE03R-CS15-38MEV-FORWARD-VISIBILITY-001",
+      "status": "conditional",
+      "requires": "valid LEVEL_2 result",
+      "execution_authorized_by_this_checkpoint": false
+    },
+    {
+      "task_id": "CF-WATCH-PROJECT-ESCALATION-LAYER-001",
+      "status": "accepted"
+    }
+  ],
+  "deferred": [
+    "~54-55 meV test",
+    "MOD-CEF-EXCHANGE"
+  ],
+  "dedup_policy": "Completed, accepted, materialized or fail-closed tasks require RERUN_AUTHORIZED: true or a dedicated -RERUN-### TASK_ID."
+}
