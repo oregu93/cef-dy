@@ -1,8 +1,13 @@
 {
   "authorization_scope": {
+    "authorization_id": "STRUCTURE-A-S00-REAL-EXECUTION-AUTHORIZATION-001",
+    "authorized_input_sha256": "7b015184850a3930ca8d61de41ae90b7375354f83a8f56958580fbe117b809c4",
+    "authorized_pcr_sha256": "7ba6bea82b65c3d567f663b89797f2dbeadcf4f89253855f57ea04d46ad3df32",
     "automatic_transition_to_S01": false,
-    "current": "NONE",
-    "next_review_candidate": "SA4K-S00-VERIFY_ONLY"
+    "current": "SA4K-S00-VERIFY_ONLY",
+    "hard_stop_after": "SA4K-S00-VERIFY",
+    "maximum_real_fullprof_invocations": 1,
+    "s00_execution_authorized": true
   },
   "automation_compatibility": {
     "required_before_automated_S01_plus": [
@@ -33,7 +38,7 @@
   "diffraction_input": {
     "converted_derivative_bytes": 121649,
     "converted_derivative_sha256": "7b015184850a3930ca8d61de41ae90b7375354f83a8f56958580fbe117b809c4",
-    "execution_authorized": false,
+    "execution_authorized": true,
     "format": "FullProf INSTRM=0 constant-step intensity-only",
     "points": 13501,
     "source_raw_artifact_id": "ART-XRDDY-RAS-101-001",
