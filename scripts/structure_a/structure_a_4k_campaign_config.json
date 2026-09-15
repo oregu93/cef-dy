@@ -1,13 +1,12 @@
 {
   "authorization_scope": {
-    "authorization_id": "STRUCTURE-A-S00-REAL-EXECUTION-AUTHORIZATION-001",
-    "authorized_input_sha256": "7b015184850a3930ca8d61de41ae90b7375354f83a8f56958580fbe117b809c4",
-    "authorized_pcr_sha256": "7ba6bea82b65c3d567f663b89797f2dbeadcf4f89253855f57ea04d46ad3df32",
     "automatic_transition_to_S01": false,
-    "current": "SA4K-S00-VERIFY_ONLY",
-    "hard_stop_after": "SA4K-S00-VERIFY",
-    "maximum_real_fullprof_invocations": 1,
-    "s00_execution_authorized": true
+    "current": "NONE",
+    "previous_authorization_id": "STRUCTURE-A-S00-REAL-EXECUTION-AUTHORIZATION-001",
+    "previous_execution_result": "INPUT_FORMAT_FAILURE",
+    "previous_fullprof_invocations": 1,
+    "rerun_review_candidate": "SA4K-S00-VERIFY-CORRECTED-BACKGROUND",
+    "s00_execution_authorized": false
   },
   "automation_compatibility": {
     "required_before_automated_S01_plus": [
@@ -19,18 +18,12 @@
     "status": "SUFFICIENT_FOR_S00_ONLY"
   },
   "background": {
-    "Nba": 0,
+    "Nba": 112,
     "S00_refined": false,
-    "S01_onward_refinable": true,
-    "family": "six_coefficient_polynomial",
-    "initial_coefficients": [
-      377.7566,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0
-    ]
+    "S01_background_model": "DEFERRED",
+    "family": "historical_fixed_interpolation_points",
+    "point_count": 112,
+    "source": "nov19_full_range_4K_DyFeO3-4K.pcr"
   },
   "campaign_id": "STRUCTURE-A-4K-REREFINEMENT-CAMPAIGN-001",
   "canonical_public_baseline": "86f99f822597c0856f7b5784b30418af62d545d6",
@@ -38,7 +31,7 @@
   "diffraction_input": {
     "converted_derivative_bytes": 121649,
     "converted_derivative_sha256": "7b015184850a3930ca8d61de41ae90b7375354f83a8f56958580fbe117b809c4",
-    "execution_authorized": true,
+    "execution_authorized": false,
     "format": "FullProf INSTRM=0 constant-step intensity-only",
     "points": 13501,
     "source_raw_artifact_id": "ART-XRDDY-RAS-101-001",
@@ -182,7 +175,7 @@
       "c": 7.606578
     },
     "clean_s00_pcr": "sa4k_s00.pcr",
-    "clean_s00_pcr_sha256": "7ba6bea82b65c3d567f663b89797f2dbeadcf4f89253855f57ea04d46ad3df32",
+    "clean_s00_pcr_sha256": "e35530686c315c0c774bf30b2f23edc8dbec6bc527ef011784ebdf6f77239cef",
     "common_starting_Biso_A2": 0.00296,
     "source": "nov19_full_range_4K",
     "source_pcr_sha256": "fc621f2f791bc318ac05a5bc8fbc2276019d2d9c7a2894982bb47f1ee6ccbaaa",
