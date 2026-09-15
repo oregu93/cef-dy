@@ -1,0 +1,66 @@
+schema_type: stage03r_cs15_mini_ensemble
+schema_version: '1.0'
+ensemble_id: CS15-HIST-B2-MINI-001
+model_id: MOD-CEF-CS15
+materialization_task_id: STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001
+members:
+- parameter_set_id: CS15-HIST-B2-R7
+  prediction_bundle_id: PB-CS15-HIST-B2-R7
+  historical_restart: 7
+  historical_rank: 1
+  historical_energy_only_loss: 1.3119868688695735e-05
+- parameter_set_id: CS15-HIST-B2-R5
+  prediction_bundle_id: PB-CS15-HIST-B2-R5
+  historical_restart: 5
+  historical_rank: 2
+  historical_energy_only_loss: 3.197695667436539e-05
+- parameter_set_id: CS15-HIST-B2-R3
+  prediction_bundle_id: PB-CS15-HIST-B2-R3
+  historical_restart: 3
+  historical_rank: 3
+  historical_energy_only_loss: 7.086946508622116e-05
+sampling_semantics:
+  posterior_sample: false
+  probability_density_defined: false
+  preferred_member: null
+  relative_probability: undefined
+  B001_used_for_selection: false
+  description: Three pre-B001 retained historical energy-only CS15 parameter states; no probability semantics.
+selection_basis:
+- historical energy-only rank/loss
+- different retained restart identities
+- distinct exact parameter vectors
+- distinct model-derived upper-level and intrinsic-strength predictions
+basin_claim: not established; restart identity is not basin identity
+circularity:
+  historical_generation_constraints_meV:
+  - 6.45
+  - approximately 18.2
+  - 27.9
+  current_B001_used_in_generation: false
+  generated_from_current_stage03r_observations: false
+  shared_18_meV_lineage:
+    status: possible
+    exact_identity: unresolved
+  agreement_near_18_meV_is_wholly_independent_confirmation: false
+member_distinctness:
+  status: PASS_DISTINCT_RETAINED_PARAMETER_STATES
+  pairwise_metrics:
+    R7_R5:
+      parameter_vector_l2: 0.0018394493557444753
+      parameter_vector_max_abs: 0.0015063740760784955
+      upper_levels_E4_E7_max_abs_meV: 0.376415925414733
+      ground_strengths_max_abs: 0.09457853713269593
+      principal_g_max_abs: 0.02191938246399261
+    R7_R3:
+      parameter_vector_l2: 0.002506666250660224
+      parameter_vector_max_abs: 0.0019419276403298824
+      upper_levels_E4_E7_max_abs_meV: 0.28982865950734293
+      ground_strengths_max_abs: 0.12537411444844082
+      principal_g_max_abs: 0.0366911160020707
+    R5_R3:
+      parameter_vector_l2: 0.0029980672934396997
+      parameter_vector_max_abs: 0.0029905680333801032
+      upper_levels_E4_E7_max_abs_meV: 0.10667531936582009
+      ground_strengths_max_abs: 0.041150376218101914
+      principal_g_max_abs: 0.014771733538078091
