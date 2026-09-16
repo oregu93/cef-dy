@@ -1,2 +1,62 @@
-schema_version: "1.0"
-sources: {}
+schema_version: '1.0'
+sources:
+  SRC-000001:
+    source_slug: 1994-klementev-iae5822-9
+    bibliographic_identity:
+      title_short: Определение параметров кристаллического электрического поля в соединениях на основе редкоземельных элементов с низкой симметрией локального окружения
+      first_author: Klement'ev
+      year: 1994
+      doi: null
+      other_ids:
+        report_identifier: ИАЭ-5822/9
+        cover_identifier: RU9810186
+    bibliographic_status: verified
+    citation_key: null
+    zotero: null
+    work_family_id: null
+    primary_source_status: primary_verified
+    full_text_status: obtained
+    compounds: []
+    techniques:
+    - inelastic_neutron_scattering
+    branches:
+    - B03
+    - B05
+    - B06
+    - B11
+    workflow_state: 01_REVIEWED
+    hold_scope: null
+    search_passes: []
+    evidence_record: EVIDENCE/SRC-000001.yaml
+    record_version: 1
+    record_status: active
+    last_materialization_packet: MP-20260917-01A-01
+  SRC-000002:
+    source_slug: 2022-scheie-cef-uncertainty
+    bibliographic_identity:
+      title_short: Quantifying uncertainties in crystal electric field Hamiltonian fits to neutron data
+      first_author: Scheie
+      year: 2022
+      doi: 10.21468/scipostphyscore.5.1.018
+      other_ids:
+        arxiv: '2107.14164'
+    bibliographic_status: verified
+    citation_key: null
+    zotero: null
+    work_family_id: null
+    primary_source_status: primary_verified
+    full_text_status: accessible_online
+    compounds: []
+    techniques:
+    - inelastic_neutron_scattering
+    branches:
+    - B05
+    - B06
+    - B11
+    workflow_state: 01_REVIEWED
+    hold_scope: null
+    search_passes: []
+    evidence_record: EVIDENCE/SRC-000002.yaml
+    record_version: 1
+    record_status: active
+    last_materialization_packet: MP-20260917-01A-01

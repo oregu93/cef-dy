@@ -1,2 +1,26 @@
-schema_version: "1.0"
-applications: {}
+schema_version: '1.0'
+applications:
+  MP-20260917-01A-01:
+    packet_sha256: d87742c34bce2eca69393824521e2a456097a4369ec06de8414b1469ff050254
+    base_head: 93d2a943ea1089048aa06fc25e118de105953676
+    plan_sha256: 03058885113d065914c567c5b4f0a90310cae35e5075663f59aada035954cfc1
+    result: applied
+    allocated_source_ids:
+    - SRC-000001
+    - SRC-000002
+    allocated_gap_ids: []
+    allocated_evidence_ids:
+    - EV-SRC000001-001
+    - EV-SRC000001-002
+    - EV-SRC000002-001
+    - EV-SRC000002-002
+    allocated_edge_ids: []
+    allocated_work_family_ids: []
+    files_created:
+    - 05_Literature/EVIDENCE/SRC-000001.yaml
+    - 05_Literature/EVIDENCE/SRC-000002.yaml
+    files_modified:
+    - 05_Literature/GAPS.yaml
+    - 05_Literature/MATERIALIZATION_LOG.yaml
+    - 05_Literature/SOURCE_REGISTRY.yaml
+    deferred_zotero_requests: []

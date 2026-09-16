@@ -1,0 +1,135 @@
+packet_id: MP-20260917-01A-01
+packet_schema_version: "1.0"
+producer_role: 01A
+source_search_passes: []
+
+operations:
+  - operation_id: OP-001
+    type: SOURCE_CREATE
+    temporary_ref: SRC-PENDING-klementev-1994-iae5822-9
+    payload:
+      source_slug: 1994-klementev-iae5822-9
+      bibliographic_identity:
+        title_short: >-
+          Определение параметров кристаллического электрического поля
+          в соединениях на основе редкоземельных элементов
+          с низкой симметрией локального окружения
+        first_author: "Klement'ev"
+        year: 1994
+        doi: null
+        other_ids:
+          report_identifier: "ИАЭ-5822/9"
+          cover_identifier: "RU9810186"
+      bibliographic_status: verified
+      citation_key: null
+      zotero: null
+      work_family_id: null
+      primary_source_status: primary_verified
+      full_text_status: obtained
+      compounds: []
+      techniques:
+        - inelastic_neutron_scattering
+      branches:
+        - B03
+        - B05
+        - B06
+        - B11
+      workflow_state: 01_REVIEWED
+      hold_scope: null
+      search_passes: []
+      evidence_record: null
+
+  - operation_id: OP-002
+    type: SOURCE_CREATE
+    temporary_ref: SRC-PENDING-scheie-2022-cef-uncertainty
+    payload:
+      source_slug: 2022-scheie-cef-uncertainty
+      bibliographic_identity:
+        title_short: >-
+          Quantifying uncertainties in crystal electric field Hamiltonian
+          fits to neutron data
+        first_author: Scheie
+        year: 2022
+        doi: 10.21468/scipostphyscore.5.1.018
+        other_ids:
+          arxiv: "2107.14164"
+      bibliographic_status: verified
+      citation_key: null
+      zotero: null
+      work_family_id: null
+      primary_source_status: primary_verified
+      full_text_status: accessible_online
+      compounds: []
+      techniques:
+        - inelastic_neutron_scattering
+      branches:
+        - B05
+        - B06
+        - B11
+      workflow_state: 01_REVIEWED
+      hold_scope: null
+      search_passes: []
+      evidence_record: null
+
+  - operation_id: OP-003
+    type: EVIDENCE_ADD
+    source_ref: SRC-PENDING-klementev-1994-iae5822-9
+    payload:
+      category: INTERPRETED_BY_AUTHORS
+      claim: >-
+        In low-symmetry CEF determination, agreement with the available
+        experimental information does not by itself establish a unique
+        parameter set. Global search should locate all compatible regions
+        of CEF parameter space; if several regions remain compatible,
+        additional independent information is required to obtain a unique
+        solution.
+      locator:
+        page: "PDF pp. 5, 7-8; printed pp. 3, 5-6"
+        section: "Introduction; §§2.1-2.2"
+      review_state: reviewed_01
+
+  - operation_id: OP-004
+    type: EVIDENCE_ADD
+    source_ref: SRC-PENDING-klementev-1994-iae5822-9
+    payload:
+      category: INTERPRETED_BY_AUTHORS
+      claim: >-
+        INS transition energies and transition intensities provide distinct
+        information for CEF determination. The intensities depend on
+        transition matrix elements and level populations, so
+        intensity-sensitive information can constrain solutions that are
+        not distinguished by energies alone.
+      locator:
+        page: "approximately PDF pp. 7, 11-15"
+        section: "§§2.2, 2.4"
+      review_state: reviewed_01
+
+  - operation_id: OP-005
+    type: EVIDENCE_ADD
+    source_ref: SRC-PENDING-scheie-2022-cef-uncertainty
+    payload:
+      category: DERIVED
+      claim: >-
+        Numerical uncertainty mapping of CEF fits to simulated INS spectra
+        shows that CEF parameters and derived quantities can remain poorly
+        constrained even when the fitted neutron spectra are visually
+        excellent and fitted level energies have small uncertainties.
+      locator:
+        section: "Abstract; §3 Results; §4 Discussion and Conclusions"
+      review_state: reviewed_01
+
+  - operation_id: OP-006
+    type: EVIDENCE_ADD
+    source_ref: SRC-PENDING-scheie-2022-cef-uncertainty
+    payload:
+      category: INTERPRETED_BY_AUTHORS
+      claim: >-
+        When available neutron observables do not sufficiently constrain
+        the CEF Hamiltonian, additional independent constraints are required
+        for physically meaningful parameter determination.
+      locator:
+        section: "Abstract; §4 Discussion and Conclusions"
+      review_state: reviewed_01
+
+unresolved_ambiguities: []
+validation_status: valid

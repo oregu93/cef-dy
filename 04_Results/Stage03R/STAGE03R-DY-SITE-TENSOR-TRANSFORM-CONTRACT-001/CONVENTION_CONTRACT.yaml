@@ -1,0 +1,97 @@
+contract_id: STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
+status: accepted
+
+space_group:
+  number: 62
+  setting: Pbnm
+  full_symbol: "P 21/b 21/n 21/m"
+  Hall_symbol: "-P 2c 2ab"
+  setting_status: non_standard_setting_of_62
+
+Pnma_transform:
+  direct_axes: "(a,b,c)_Pnma=(b,c,a)_Pbnm"
+  origin_shift: [0, 0, 0]
+  reciprocal_indices: "(H,K,L)_Pnma=(k,l,h)_Pbnm"
+
+reference_site:
+  site_id: Dy1
+  species: Dy
+  wyckoff: 4c
+  fractional_position: ["x_Dy", "y_Dy", "1/4"]
+  site_symmetry: "m (Cs)"
+  stabilizer: "x,y,-z+1/2"
+  mirror_normal: c_Pbnm
+
+CEF_frame:
+  X: b
+  Y: c
+  Z: a
+  handedness: right_handed
+
+CEF_from_abc:
+  matrix:
+    - [0, 1, 0]
+    - [0, 0, 1]
+    - [1, 0, 0]
+  determinant: 1
+
+equivalent_sites:
+  Dy1:
+    position: ["x_Dy", "y_Dy", "1/4"]
+    R_CEF:
+      - [1, 0, 0]
+      - [0, 1, 0]
+      - [0, 0, 1]
+  Dy2:
+    position: ["x_Dy+1/2", "1/2-y_Dy", "3/4"]
+    R_CEF:
+      - [-1, 0, 0]
+      - [0, -1, 0]
+      - [0, 0, 1]
+  Dy3:
+    position: ["1/2-x_Dy", "y_Dy+1/2", "1/4"]
+    R_CEF:
+      - [1, 0, 0]
+      - [0, -1, 0]
+      - [0, 0, -1]
+  Dy4:
+    position: ["-x_Dy", "-y_Dy", "3/4"]
+    R_CEF:
+      - [-1, 0, 0]
+      - [0, 1, 0]
+      - [0, 0, -1]
+
+site_order:
+  - Dy1
+  - Dy2
+  - Dy3
+  - Dy4
+
+tensor_transport:
+  expression: "M_s = R_s M_ref R_s^T"
+  proper_representatives_used: true
+  all_R_s_determinant: 1
+  axial_vector_parity_note: >-
+    If an equivalent improper spatial representative R is used,
+    angular momentum transforms as A=det(R)R. For the rank-two
+    transition tensor the two parity factors cancel, leaving
+    M_s=R_s M_ref R_s^T.
+
+orbit_sum_regression:
+  expression: "sum_s R_s M R_s^T = 4*diag(M_XX,M_YY,M_ZZ)"
+
+TAIPAN_binding:
+  hkl_setting: Pbnm
+  TAIPAN_to_Pbnm: identity
+  Q_CEF: "2*pi*(k/b,l/c,h/a)"
+
+independent_site_sum:
+  expression: "I = sum_s I_s"
+  condition: >-
+    localized independent-site response with no inter-site dynamical
+    cross correlations
+  not_valid_automatically_for:
+    - coherent_modes
+    - exchange_coupled_modes
+    - propagating_CEF_excitons
+    - hybridized_collective_modes

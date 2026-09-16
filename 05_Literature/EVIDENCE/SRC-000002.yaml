@@ -1,0 +1,17 @@
+source_id: SRC-000002
+evidence_record_version: 1
+evidence:
+- evidence_id: EV-SRC000002-001
+  category: DERIVED
+  claim: Numerical uncertainty mapping of CEF fits to simulated INS spectra shows that CEF parameters and derived quantities can remain poorly constrained even when the fitted neutron spectra are visually excellent and fitted level energies have small uncertainties.
+  locator:
+    section: Abstract; §3 Results; §4 Discussion and Conclusions
+  review_state: reviewed_01
+- evidence_id: EV-SRC000002-002
+  category: INTERPRETED_BY_AUTHORS
+  claim: When available neutron observables do not sufficiently constrain the CEF Hamiltonian, additional independent constraints are required for physically meaningful parameter determination.
+  locator:
+    section: Abstract; §4 Discussion and Conclusions
+  review_state: reviewed_01
+relations: []
+cef: null
