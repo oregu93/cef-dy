@@ -2,7 +2,7 @@
 id: SU-000002
 title: "Kramers degeneracy and CEF doublets"
 knowledge_kind: concept
-review_status: working
+review_status: reviewed
 epistemic_basis:
   primary: GENERAL_OR_TEXTBOOK
   additional: []
@@ -13,16 +13,16 @@ scope:
 transferability:
   status: CONDITIONAL
   conditions:
-    - "The ion has half-integer total angular momentum."
-    - "Time-reversal symmetry is not broken."
+    - "The ion/effective multiplet has half-integer total angular momentum."
+    - "The Hamiltonian under consideration preserves time-reversal symmetry."
   exclusions:
     - "Integer-J non-Kramers ions are not covered by the degeneracy statement."
   facets:
     kramers_class: KRAMERS
-    magnetic_order: DISORDERED
-    exchange_treatment: NEGLECTED
+    magnetic_order: ANY
+    exchange_treatment: ANY
     temperature_regime: null
-    field_regime: "zero field or another time-reversal-symmetric condition"
+    field_regime: "Hamiltonian under consideration preserves time-reversal symmetry."
 relations:
   depends_on: []
   specializes: []
@@ -40,6 +40,8 @@ convention_binding:
 common_confusions:
   - "Kramers degeneracy does not apply to every rare-earth ion."
   - "A Kramers doublet is not a prerequisite for defining a transition tensor."
+  - "Integer-J/non-Kramers ions may have symmetry-protected or accidental doublets; these are not Kramers-protected."
+  - "Zero external field does not ensure time-reversal symmetry when an internal time-reversal-breaking exchange field is present."
 dissertation_roles:
   - theoretical_background
 ---
@@ -59,6 +61,11 @@ dissertation_roles:
 предпосылки и снять вырождение. Поэтому принадлежность соединения к семейству
 RFeO3 сама по себе не устанавливает Kramers-класс конкретного R-иона и не
 гарантирует сохранение дублетов в магнитоупорядоченном состоянии.
+
+Integer-$J$/non-Kramers ions всё же могут иметь symmetry-protected или
+accidental doublets, но эти дублеты не защищены теоремой Крамерса. Нулевое
+внешнее поле также не гарантирует time-reversal symmetry, если действует
+внутреннее нарушающее её обменное поле.
 
 ## Relation to transition physics
 

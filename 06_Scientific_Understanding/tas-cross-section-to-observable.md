@@ -2,10 +2,11 @@
 id: SU-000005
 title: "From magnetic neutron cross section to measured triple-axis intensity"
 knowledge_kind: method_explanation
-review_status: working
+review_status: reviewed
 epistemic_basis:
   primary: GENERAL_OR_TEXTBOOK
-  additional: []
+  additional:
+    - PROJECT_DERIVED
 scope:
   level: METHOD_CLASS
   method_classes:
@@ -27,7 +28,8 @@ relations:
     - SU-000004
   specializes: []
   contrasts_with: []
-  derived_from: []
+  derived_from:
+    - STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001
   project_examples:
     - STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001
   related_concepts:

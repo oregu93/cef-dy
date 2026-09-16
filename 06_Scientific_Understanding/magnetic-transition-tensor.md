@@ -2,7 +2,7 @@
 id: SU-000003
 title: "Magnetic transition matrix elements and transition tensor"
 knowledge_kind: derivation
-review_status: working
+review_status: reviewed
 epistemic_basis:
   primary: GENERAL_OR_TEXTBOOK
   additional: []
@@ -21,32 +21,23 @@ transferability:
     temperature_regime: null
     field_regime: null
 relations:
-  depends_on:
-    - SU-000001
+  depends_on: []
   specializes: []
   contrasts_with: []
   derived_from: []
   project_examples:
     - STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
   related_concepts:
+    - SU-000001
     - SU-000002
     - SU-000006
     - SU-000007
 sources:
   background: []
   claim_support: []
-convention_refs:
-  - 03_Protocols/SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0.md
+convention_refs: []
 convention_binding:
-  status: EXPLICIT
-  crystallographic_setting: null
-  origin_choice: null
-  global_frame: "All J_alpha components and projectors use one explicitly stated orthonormal frame."
-  local_frame: null
-  site:
-    species: null
-    wyckoff: null
-    site_symmetry: null
+  status: NOT_APPLICABLE
 common_confusions:
   - "nonzero J != necessarily nonzero static <J>"
   - "transition matrix element != static moment"
@@ -74,9 +65,29 @@ M_{\alpha\beta}^{(i\to f)}=
 \operatorname{Tr}\!\left(\rho_iJ_\alpha P_fJ_\beta\right).
 $$
 
-$J_\alpha$ и $J_\beta$ - компоненты магнитного углового момента в одной
-фиксированной системе координат. Тензор сохраняет информацию об анизотропии
-матричных элементов перехода между двумя подпространствами.
+$\operatorname{Tr}(\rho_i)=1$ внутри выбранного начального manifold.
+$\rho_i$ описывает нормированное статистическое состояние при условии
+нахождения системы в этом manifold; его полная thermal occupation относится
+к последующему cross-section layer, если явно не принято иное соглашение.
+
+$J_\alpha$ и $J_\beta$ - компоненты полного angular-momentum operator,
+используемого в фиксированном-$J$ Hilbert-space representation. Magnetic-moment
+prefactors, включая $g_J$, относятся к neutron-cross-section layer.
+Пространственная система координат задаёт Cartesian indices $\alpha,\beta$ и
+компоненты $J_\alpha$; $\rho_i$, $P_f$ и $J$ одновременно являются
+операторами выбранного Hilbert-space representation. Проекторы сами по себе
+не «используют Cartesian frame».
+
+Тензор удовлетворяет
+
+$$
+M_{\beta\alpha}=M_{\alpha\beta}^{*}.
+$$
+
+Для физической положительной $\rho_i$ матрица $M$ Hermitian positive
+semidefinite. В equal-population/projector representation выражение
+инвариантно относительно unitary basis changes внутри вырожденных начального
+и конечного подпространств.
 
 ## Equal-population specialization
 

@@ -2,10 +2,11 @@
 id: SU-000007
 title: "Identifiability of a CEF inverse problem"
 knowledge_kind: concept
-review_status: working
+review_status: reviewed
 epistemic_basis:
   primary: GENERAL_OR_TEXTBOOK
   additional:
+    - LITERATURE_SUPPORTED
     - PROJECT_DERIVED
 scope:
   level: GENERAL_PHYSICS
@@ -33,8 +34,14 @@ relations:
     - SU-000003
     - SU-000005
 sources:
-  background: []
-  claim_support: []
+  background:
+    - SRC-000001
+    - SRC-000002
+  claim_support:
+    - EV-SRC000001-001
+    - EV-SRC000001-002
+    - EV-SRC000002-001
+    - EV-SRC000002-002
 convention_refs: []
 common_confusions:
   - "good energy fit != unique Hamiltonian"

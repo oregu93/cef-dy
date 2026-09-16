@@ -2,7 +2,7 @@
 id: SU-000001
 title: "Effective CEF Hamiltonian in Stevens-operator form"
 knowledge_kind: concept
-review_status: working
+review_status: reviewed
 epistemic_basis:
   primary: GENERAL_OR_TEXTBOOK
   additional: []
@@ -12,6 +12,7 @@ transferability:
   status: GENERAL
   conditions:
     - "The operator normalization, parameter units and coordinate frame are stated."
+    - "The active ion/J multiplet or equivalent angular-momentum representation is stated."
   exclusions: []
   facets:
     kramers_class: ANY
@@ -37,15 +38,7 @@ sources:
 convention_refs:
   - 03_Protocols/SCIENTIFIC_TERMINOLOGY.md
 convention_binding:
-  status: EXPLICIT
-  crystallographic_setting: null
-  origin_choice: null
-  global_frame: "Application-defined; the axes and active/passive convention must be stated."
-  local_frame: "Application-defined; numerical B_l^m values are meaningful only with this binding."
-  site:
-    species: null
-    wyckoff: null
-    site_symmetry: null
+  status: NOT_APPLICABLE
 common_confusions:
   - "Hamiltonian/model object != measured observable"
   - "A numerical B_l^m list without operator normalization, units and axes is not a portable model."
@@ -78,6 +71,9 @@ $$
   изменить численные коэффициенты без изменения физического гамильтониана.
 - Для сравнения параметров необходимо фиксировать единицы, операторную
   нормировку, порядок коэффициентов, глобальные и локальные оси.
+- Эта общая заметка сама не выбирает конкретную систему координат или
+  нормировку операторов. Численные $B_l^m$ принадлежат явно указанному
+  active ion/$J$ manifold и application-specific convention binding.
 
 ## Relation to the project
 

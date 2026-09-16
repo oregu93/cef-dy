@@ -2,7 +2,7 @@
 id: SU-000004
 title: "Magnetic neutron polarization projection and intrinsic transition strength"
 knowledge_kind: derivation
-review_status: working
+review_status: reviewed
 epistemic_basis:
   primary: GENERAL_OR_TEXTBOOK
   additional: []
@@ -34,18 +34,9 @@ relations:
 sources:
   background: []
   claim_support: []
-convention_refs:
-  - 03_Protocols/SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0.md
+convention_refs: []
 convention_binding:
-  status: EXPLICIT
-  crystallographic_setting: null
-  origin_choice: null
-  global_frame: "M_alpha_beta and Qhat must be represented in one common frame."
-  local_frame: null
-  site:
-    species: null
-    wyckoff: null
-    site_symmetry: null
+  status: NOT_APPLICABLE
 common_confusions:
   - "S_if != S_if^perp(Qhat)"
   - "Intrinsic strength or polarization projection alone is not a measured TAS intensity."
@@ -58,7 +49,8 @@ dissertation_roles:
 
 ## Intrinsic scalar
 
-Из transition tensor (`SU-000003`) можно построить rotational trace:
+Из transition tensor (`SU-000003`) можно построить Cartesian trace,
+инвариантный относительно ортогональных поворотов общей системы координат:
 
 $$
 S_{if}=\operatorname{Tr}M^{(i\to f)}
@@ -82,6 +74,9 @@ $$
 Здесь $\hat{\mathbf Q}$ - единичный вектор передачи импульса, выраженный в
 той же системе координат, что и $M_{\alpha\beta}$. Эта свёртка зависит от
 направления $\mathbf Q$.
+
+Одновременное ортогональное преобразование $M$ и $\hat{\mathbf Q}$ оставляет
+скалярную polarization contraction инвариантной.
 
 ## Observable hierarchy
 
