@@ -4,7 +4,7 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "4.9"
+version: "5.0"
 updated: 2026-09-16
 language_content: ru
 language_metadata: en
@@ -182,6 +182,7 @@ DECISION_REGISTER
 | Проверить execution checkpoint | `02_Work_Checkpoints/` |
 | Проверить scientific terminology | [SCIENTIFIC_TERMINOLOGY](03_Protocols/SCIENTIFIC_TERMINOLOGY.md) |
 | Проверить Knowledge Base rules | [RESEARCH_KB_GUIDE](03_Protocols/RESEARCH_KB_GUIDE.md) |
+| Проверить Scientific Understanding schema | [SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0](03_Protocols/SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0.md) |
 | Восстановить рабочую инфраструктуру на другой машине | [RESEARCH_INFRASTRUCTURE_GUIDE](03_Protocols/RESEARCH_INFRASTRUCTURE_GUIDE.md) |
 | Проверить data contracts | [DATA_CONTRACTS](03_Protocols/DATA_CONTRACTS.md) |
 | Восстановить роли project chats | [CHAT_BOOTSTRAPS](03_Protocols/CHAT_BOOTSTRAPS.md) |
@@ -219,6 +220,7 @@ CEF_Dy/
 │
 ├── 04_Results/
 ├── 05_Literature/          # canonical literature knowledge layer
+├── 06_Scientific_Understanding/  # future SU corpus; created only by separately authorized pilot
 ├── Templates/
 ├── scripts/
 ├── configs/

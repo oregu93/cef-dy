@@ -2,20 +2,22 @@
 title: "CEF Dy — руководство по ведению базы знаний"
 type: protocol
 status: active
-version: "1.2"
-updated: 2026-09-04
+version: "1.3"
+updated: 2026-09-16
 ---
 
 # Руководство по ведению базы знаний исследования
 
 ## 1. Основной принцип
 
-База знаний должна отвечать на четыре разные группы вопросов:
+База знаний должна отвечать на пять разных групп вопросов:
 
 - **Что мы сейчас считаем научно установленным или рабочим?** → `PROJECT_STATE.md`.
 - **Что мы делаем сейчас, почему и в каком порядке?** → `PROJECT_CONTROL.md`.
 - **Что именно было выполнено вычислительно и как это воспроизвести?** → `WORK_CHECKPOINTS`.
 - **Как развивалась логика исследования?** → `RESEARCH_LOGBOOK`.
+- **Какое долговечное научное понимание должно пережить отдельный результат,
+  чат или текущий stage?** → `Scientific Understanding`.
 
 Смешивать эти функции в одном документе не следует.
 
@@ -223,6 +225,40 @@ Evidence
 Не создавать отдельную запись для каждого мелкого технического действия.
 Master-индекс должен содержать прямую относительную ссылку на файл каждой
 отдельной записи. Параллельный раздел со вторым списком тех же ссылок не нужен.
+
+## 9. Scientific Understanding
+
+`Scientific Understanding` хранит долговечные concepts, method explanations
+и derivations. Полный frozen contract: [SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0](SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0.md).
+
+Это расширение той же Research KB, а не второй project-control слой:
+
+```text
+PROJECT_STATE       = что проект считает текущим научным состоянием
+PROJECT_CONTROL     = что и почему делать дальше
+WORK_CHECKPOINTS    = что исполнялось и как воспроизвести
+RESEARCH_LOGBOOK    = как развивалась исследовательская логика
+05_Literature       = source identity и extracted literature evidence
+Scientific Understanding = переносимое концептуальное/объяснительное знание
+```
+
+Schema authority находится в `03_Protocols`; authoring template -
+[TEMPLATE_SCIENTIFIC_UNDERSTANDING](../Templates/TEMPLATE_SCIENTIFIC_UNDERSTANDING.md).
+Будущий отдельно авторизованный corpus располагается в
+`06_Scientific_Understanding/`. До pilot этот каталог отсутствует и реальные
+`SU-*` IDs не распределяются.
+
+Concept note не заменяет evidence/result/hypothesis/model/decision и не
+копирует bibliographic metadata из `05_Literature`. `origin_trail` из chat или
+archive не является научным provenance. Cross-R transfer выполняется
+fail-closed, а convention authority отделяется от active binding.
+
+Structural validation:
+
+```text
+python scripts/scientific_understanding_validate.py
+python scripts/scientific_understanding_validate.py --selftest
+```
 
 ## Promotion workflow
 

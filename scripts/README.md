@@ -26,6 +26,18 @@ python scripts/kb_validate.py --strict
 
 `kb_validate.py` проверяет YAML, IDs, статусы, evidence requirements, ссылки, основные ошибки Markdown/LaTeX и синхронизацию re-entry blocks.
 
+## Проверить Scientific Understanding schema
+
+```powershell
+python scripts/scientific_understanding_validate.py
+python scripts/scientific_understanding_validate.py --selftest
+```
+
+До отдельно авторизованного concept pilot отсутствие каталога
+`06_Scientific_Understanding/` является валидным состоянием с нулём notes.
+Frozen contract находится в
+[SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0](../03_Protocols/SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0.md).
+
 ## Восстановление после сбоя Work-сессии
 
 `work_recovery.py` — утилита для Windows/Linux, использующая только стандартную
