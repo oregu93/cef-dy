@@ -3,7 +3,7 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.8"
+version: "4.9"
 updated: 2026-09-16
 control_chat: "00 - Project Control"
 ---
@@ -398,8 +398,9 @@ MOD-ECM-MALKIN
 | Chat | Role |
 |---|---|
 | `00 - Project Control` | Scientific governance, roadmap, review, promotion и Work authorization. |
-| `Orthoferrite CF Watch` | Broad literature discovery and triage. |
-| `01 - Literature & Physics` | Curated deep literature analysis and physics integration. |
+| `Orthoferrite CF Watch` | Broad recurring literature discovery and triage. |
+| `01A - Literature Discovery & Provenance` | Targeted discovery, provenance recovery, search logging and v1 literature materialization-packet preparation. |
+| `01 - Literature & Physics` | Curated deep literature analysis, theoretical integration and scientific evidence review. |
 | `02 - TAIPAN Data Reduction` | Scientific design/review of independent TAIPAN reduction, blind feature discovery and experimental observation contract. |
 | `W02 - TAIPAN Data Reduction` | Controlled local execution of approved TAIPAN raw-data, parsing and reduction jobs. |
 | `03 - CEF Modelling & Fit Design` | CEF inference/model design before Work execution. |
@@ -407,6 +408,17 @@ MOD-ECM-MALKIN
 | `04 - Structure & Conventions` | Structure, coordinate frames and operator conventions. |
 | `05 - Validation & McPhase` | Independent magnetic / cross-code validation and exchange-aware modelling. |
 | `06 - Paper & Dissertation` | Publication/dissertation layer using reviewed provenance. |
+
+Нормальная literature-маршрутизация:
+
+```text
+Watch -> 01A -> Git Literature KB -> 01 -> Project Control
+```
+
+Project Control может направить известный источник непосредственно в `01` для
+targeted review; если нужны новые canonical objects, результат затем проходит
+через `01A`. HIGH-находка Watch может быть направлена специалисту или Project
+Control, но не обходит provenance и materialization requirements.
 
 
 # 11. Parallel lanes and synchronization

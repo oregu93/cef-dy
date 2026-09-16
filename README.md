@@ -4,7 +4,7 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "5.0"
+version: "5.1"
 updated: 2026-09-16
 language_content: ru
 language_metadata: en
@@ -322,20 +322,27 @@ git push
 
 ## Literature workflow
 
-Literature layer разделён на две роли:
+Literature layer использует три специализированные роли и канонический Git-слой:
 
 ```text
 Orthoferrite CF Watch
     discovery / triage
             ↓
+01A - Literature Discovery & Provenance
+    source recovery / provenance / packet preparation
+            ↓
+Git Literature Knowledge Layer
+    canonical sources and evidence
+            ↓
 01 - Literature & Physics
-    curated deep analysis
+    curated deep analysis / scientific evidence review
             ↓
 00 - Project Control
-    scientific review / promotion
-            ↓
-Knowledge Base
+    consequential scientific governance
 ```
+
+Подробные границы полномочий, маршрутизация и controlled bypasses определены в
+[CHAT_BOOTSTRAPS](03_Protocols/CHAT_BOOTSTRAPS.md).
 
 Основные приоритеты:
 

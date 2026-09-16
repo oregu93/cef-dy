@@ -731,7 +731,9 @@ pending_technical_work:
     better_bibtex_configuration_authorized: false
     references_bib_creation_authorized: false
     literature_migration_authorized: false
-    final_01a_bootstrap_authorized: false
+    final_01a_bootstrap:
+      status: canonical
+      authority_path: 03_Protocols/CHAT_BOOTSTRAPS.md
   cleanup_scope:
     human_readable_prose:
       language: natural_professional_Russian
