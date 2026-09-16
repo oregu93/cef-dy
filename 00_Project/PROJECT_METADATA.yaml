@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-15'
+updated: '2026-09-16'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -11,8 +11,8 @@ scientific_question: >
 
 scientific_facade:
   current_scientific_question: >
-    Какой one-sided experimental sensitivity upper limit следует из принятого fixed-window
-    observable около 38 meV до ориентационно-зависимого forward visibility и model-level вывода?
+    Как закрыть experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge,
+    необходимый для quantitative model-to-experiment comparison около 38 meV?
   stage02r_purpose: >
     Stage 02R формирует независимый от CEF-модели слой экспериментальных
     свидетельств до нового цикла физического назначения и CEF-моделирования.
@@ -337,14 +337,44 @@ scientific_facade:
       implementation_review_id: STAGE03R-IMPL-REREVIEW-001
       accepted_implementation_commit: 7964fc3b8101a2aa9cb81b542fa40cb48d13f818
     scientific_design_status: accepted
-    execution_status: reviewed_checkpoint_materialized
-    accepted_checkpoint_path: 04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml
+    execution_status: LEVEL_2_established_LEVEL_3_blocked
+    accepted_checkpoint_path: 04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml
+    prior_checkpoint_path: 04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml
+    r2_checkpoint:
+      checkpoint_id: STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001
+      evidence_levels:
+        LEVEL_0: established
+        LEVEL_1: established
+        LEVEL_2: established
+        LEVEL_3: not_established
+        LEVEL_4: not_established
+      LEVEL_2:
+        task_id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
+        meaning: experimental_observable_level_sensitivity
+        point_estimate: -9.263645033151e-05
+        standard_error: 3.839081288474e-05
+        zero_signal_expected_one_sided_95pct_sensitivity: 6.314726781508e-05
+        physical_nonnegative_signal_upper_limit: NOT_ESTABLISHED
+      LEVEL_3:
+        forward_visibility_task_id: STAGE03R-CS15-38MEV-FORWARD-VISIBILITY-001
+        forward_comparison_status: BLOCKED
+        unresolved_layers:
+          - instrument_resolution_and_acceptance
+          - cross_section_to_detector_monitor_scale
+      historical_ensemble:
+        id: CS15-HIST-B2-MINI-001
+        role: historical_exploratory_probe_ensemble
+        current_or_preferred_model_status: false
+      resolution_readiness: SENSITIVITY_ENVELOPE_ONLY
+      absolute_scale_status: CALIBRATION_REQUIRED
+      external_pending_action: request archived experiment-1296 instrument setup/log/SICS configuration from ANSTO
+      fallback_if_unavailable: preregistered assumption-transparent resolution sensitivity envelope design
     W03_authorized: false
     Stage03D_resumed: false
     production_CEF_fit_authorized: false
     raw_detector_access_authorized: false
     holdout_reanalysis_authorized: false
-    next_governance_action: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
+    next_governance_action: request_archived_ANSTO_experiment_1296_instrument_records
     role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
     discovery_features:
       allowed_as_experimental_constraints: true
@@ -375,14 +405,17 @@ scientific_facade:
     - Не определены подтверждённые центры, физические ширины, абсолютные интенсивности и общая межрежимная шкала.
     - C002 не дал ни одного численно валидного holdout confirmation test; все три hypotheses завершились numerical_failure, что не является отрицательным физическим результатом.
     - Resolution остаётся not established; физические linewidth claims и physical assignment не авторизованы.
+    - LEVEL_2 sensitivity установлена только в experimental observable units; physical upper limit и quantitative model-to-TAIPAN bridge не установлены.
   not_established:
     - Число различных физических возбуждений, соответствующих восьми BF-ID.
     - CEF-принадлежность любой BF-записи и схема уровней Dy3+.
     - Уникальный набор параметров и волновых функций CEF-гамильтониана.
+    - LEVEL_3 model-to-TAIPAN quantitative bridge и LEVEL_4 model constraint.
+    - Experiment-specific resolution/acceptance и absolute detector/monitor scale.
   next_scientific_step:
-    id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
+    id: request_archived_ANSTO_experiment_1296_instrument_records
     stage_id: M03R
-    role: experimental_observable_level_sensitivity_limit_pending
+    role: external_resolution_input_provenance_closure
     discovery_features_allowed_as_experimental_constraints: true
     discovery_features_interpretation: unconfirmed_experimental_features
     C002_use: terminal_numerical_failure_context
@@ -421,19 +454,26 @@ experimental_evidence_summary: >
   восемь monitor_controlled BF с Tier-1; Tier-2 и межрежимной повторяемости
   положения нет. Один скан для поиска (`discovery`) исключён по замороженному
   численному правилу nuisance_field_fit_failure без повторного расчёта и замещения.
+  Для accepted 21-scan population около 38 meV установлен fixed-window null
+  (LEVEL_1) и zero-signal expected one-sided 95% sensitivity
+  6.314726781508e-05 в native normalized count-rate/excess units (LEVEL_2).
 
 interpretation_summary: >
   BF-ID являются алгоритмическими кластерами воспроизводимости, а не
   физическими назначениями. B-001 не устанавливает число различных
   возбуждений и не выполняет CEF-назначение. Legacy-идентификаторы F002/F004
   принадлежат прежнему слою анализа; их связь с BF-* не установлена.
+  LEVEL_2 sensitivity не является physical upper limit или автоматическим
+  model-rejection threshold. R3/R5/R7 являются historical exploratory probes,
+  а не current/preferred model ensemble.
 
 model_status_summary: >
   Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно
   мотивированные модельные семейства. Пятнадцатипараметрическая обратная
   CEF-задача при подгонке только по энергиям существенно недоопределена.
-  Проект Stage 03D M0/M1 сохранён, но вычислительное исполнение приостановлено
-  до независимого повторного формирования набора экспериментальных наблюдаемых.
+  Quantitative model-to-TAIPAN bridge (LEVEL_3) не установлен: требуются
+  experiment-specific resolution/acceptance и cross-section-to-detector/monitor
+  scale. Stage03D suspended; McStas/RESTRAX production не авторизована.
 
 main_uncertainties:
   - Не установлен уникальный полный 15-параметрический CEF-гамильтониан и соответствующие волновые функции.
@@ -442,18 +482,19 @@ main_uncertainties:
   - Не установлена эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
   - Перекрывающиеся BF-интервалы не разрешены на отдельные физические линии; Tier-2 отсутствует, один скан для поиска исключён численно, а отказы отдельных окон ограничивают выводы об устойчивости B-001.
   - Не определены окончательная систематическая неопределённость энергетической шкалы и модель разрешения TAS; достаточность CEF-only описания низкотемпературных данных не установлена.
+  - Не установлены experiment-specific TAIPAN resolution/acceptance, intensity-scale bridge и physical nonnegative signal upper limit около 38 meV.
 
 current_milestone:
   id: M03R
   title: Stage03R - compatibility и sensitivity bridge
-  status: checkpoint_materialized
+  status: LEVEL_2_established_LEVEL_3_blocked
 
 immediate_next_step:
-  id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
+  id: request_archived_ANSTO_experiment_1296_instrument_records
   text: >-
-    После миграции в Project Control r2 подготовить experimental sensitivity upper limit
-    для принятого fixed-window observable около 38 meV в native normalized count-rate/excess units.
-    Forward visibility условна до valid LEVEL_2; новые вычисления этим checkpoint не разрешены.
+    Запросить у ANSTO архивные experiment-1296 instrument setup, log и SICS configuration.
+    Если records недоступны, отдельно спроектировать preregistered assumption-transparent
+    resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -465,21 +506,25 @@ do_not_assume:
   - Параметры effective-charge PCM являются непосредственно измеренными ионными зарядами.
   - Magnetic exchange уже включён в текущий CEF baseline.
   - Exchange-charge model Малкина является активной моделью текущего цикла.
+  - LEVEL_2 sensitivity является physical upper limit или автоматическим model-rejection threshold.
+  - R3/R5/R7 являются current, preferred, posterior или representative allowed ensemble.
+  - SUPPORT_REGION является physical excitation energy.
 
 control:
   now: >-
-    Stage02R completed_with_limitations. Принятый Stage03R checkpoint r1:
-    AF-BASE ALL_THREE_COMPATIBLE; AF-CX03-CEF NONE_COMPATIBLE для historical R7/R5/R3.
-    Authoritative clean rerun около 38 meV: NO_SIGNIFICANT_EXCESS_DETECTED, LEVEL_1.
-    Structure-A PAUSED; Stage03D suspended; exchange DEFERRED.
+    Stage02R COMPLETED_WITH_LIMITATIONS. Stage03R около 38 meV: LEVEL_0 coverage,
+    LEVEL_1 fixed-window null и LEVEL_2 experimental sensitivity установлены;
+    LEVEL_3/LEVEL_4 не установлены. R3/R5/R7 - historical exploratory probes.
+    Structure-A PAUSED; Stage03D suspended; exchange и 54-55 meV DEFERRED.
     LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
   why: >-
-    Experimental null не является model rejection без sensitivity/visibility bridge.
-    Project Control r2 остаётся NON-WORK; production Work job не назначен.
+    Quantitative forward comparison BLOCKED до experiment-specific TAIPAN
+    resolution/acceptance и intensity-scale bridge. LEVEL_2 sensitivity не является
+    physical upper limit или exclusion threshold; model rejection не установлено.
   next: >-
-    STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001;
-    затем только при valid LEVEL_2 условный forward visibility.
-    Тест ~54-55 meV отложен. Новые scientific executions не авторизованы.
+    Запросить архивные setup/log/SICS records experiment 1296 у ANSTO.
+    При недоступности records следующий отдельный design - preregistered resolution
+    sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы.
     Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
   next_work_job: null
 
@@ -502,9 +547,9 @@ control:
     - Полная магнитная validation.
 
   last_scientific_source: >-
-    [Принятый Stage03R checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md):
-    Project Control capture, reviewed; provenance partial; без повторного расчёта.
-  last_work_checkpoint: STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001
+    [Принятый Stage03R checkpoint r2](../04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md):
+    LEVEL_2 established; LEVEL_3 blocked; Project Control capture без повторного расчёта.
+  last_work_checkpoint: STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001
 
   active_hypothesis_ids:
     - H-001

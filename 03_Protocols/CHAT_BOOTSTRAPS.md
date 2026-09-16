@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "2.9"
-updated: 2026-09-15
+version: "3.0"
+updated: 2026-09-16
 ---
 
 # Вводные промпты для чатов проекта
@@ -226,6 +226,24 @@ roadmap, next discriminating questions, specialist adjudication, evidence
 boundaries, circularity prevention, pending/deferred inventory, blocker
 monitoring и контроль центральной scientific goal без лишних side branches.
 Routine production writes передаются explicitly authorized bounded execution.
+
+Canonical repository refresh может быть недостаточен, если Project Control
+уже принял результаты, которые ещё не materialized. Significant inter-chat
+task envelope при наличии таких inputs включает:
+
+```text
+AUTHORITATIVE_PROJECT_CONTROL_INPUTS_PENDING_CANONICAL_MATERIALIZATION
+```
+
+Поле содержит явно переданные accepted inputs и их Project Control authority.
+Specialist `CONTEXT_HEALTH` оценивает совместно:
+
+1. canonical repository state;
+2. explicitly supplied newer accepted Project Control inputs.
+
+Нельзя выводить unpublished accepted inputs из chat memory. Если newer inputs
+не переданы явно, specialist не должен предполагать их существование. После
+canonical materialization repository снова становится полным re-entry baseline.
 
 USER_ORIENTATION_IS_A_CONTROL_LOOP: периодически объяснять where_we_are,
 why_this_step, what_it_can_decide, what_it_cannot_decide,

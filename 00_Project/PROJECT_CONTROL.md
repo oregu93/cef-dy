@@ -3,8 +3,8 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.7"
-updated: 2026-09-15
+version: "4.8"
+updated: 2026-09-16
 control_chat: "00 - Project Control"
 ---
 
@@ -25,13 +25,13 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Stage02R completed_with_limitations. Принятый Stage03R checkpoint r1: AF-BASE ALL_THREE_COMPATIBLE; AF-CX03-CEF NONE_COMPATIBLE для historical R7/R5/R3. Authoritative clean rerun около 38 meV: NO_SIGNIFICANT_EXCESS_DETECTED, LEVEL_1. Structure-A PAUSED; Stage03D suspended; exchange DEFERRED. LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
+**Сейчас.** Stage02R COMPLETED_WITH_LIMITATIONS. Stage03R около 38 meV: LEVEL_0 coverage, LEVEL_1 fixed-window null и LEVEL_2 experimental sensitivity установлены; LEVEL_3/LEVEL_4 не установлены. R3/R5/R7 - historical exploratory probes. Structure-A PAUSED; Stage03D suspended; exchange и 54-55 meV DEFERRED. LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
 
-**Почему.** Experimental null не является model rejection без sensitivity/visibility bridge. Project Control r2 остаётся NON-WORK; production Work job не назначен.
+**Почему.** Quantitative forward comparison BLOCKED до experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge. LEVEL_2 sensitivity не является physical upper limit или exclusion threshold; model rejection не установлено.
 
 **Stage03R specifications.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
-**Следующий шаг.** STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001; затем только при valid LEVEL_2 условный forward visibility. Тест ~54-55 meV отложен. Новые scientific executions не авторизованы. Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
+**Следующий шаг.** Запросить архивные setup/log/SICS records experiment 1296 у ANSTO. При недоступности records следующий отдельный design - preregistered resolution sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы. Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
 
 **Следующий Work job.** Не назначен. Следующая scientific execution требует отдельного admission review и authorization.
 
@@ -53,9 +53,9 @@ control_chat: "00 - Project Control"
 - Exchange-charge model Малкина.
 - Полная магнитная validation.
 
-**Последний научный источник.** [Принятый Stage03R checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md): Project Control capture, reviewed; provenance partial; без повторного расчёта.
+**Последний научный источник.** [Принятый Stage03R checkpoint r2](../04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md): LEVEL_2 established; LEVEL_3 blocked; Project Control capture без повторного расчёта.
 
-**Последний Work checkpoint.** `STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001`
+**Последний Work checkpoint.** `STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001`
 
 **Активные гипотезы.**
 - `H-001` (`working`): Экспериментальная спектральная особенность около 18.25 meV рассматривается как основной кандидат проекта на переход между CEF-состояниями Dy3+.
@@ -64,24 +64,29 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:END -->
 
 
-## Текущий checkpoint и передача в Project Control r2
+## Текущий checkpoint Project Control r2
 
 Текущее принятое состояние задаёт
-[Stage03R checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md);
-[TASK_STATUS_INDEX](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/TASK_STATUS_INDEX.yaml)
-сохраняет first FAIL_CLOSED execution и authoritative clean rerun раздельно.
-Ни один scientific task этим capture не повторяется.
+[Stage03R checkpoint r2](../04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md);
+[TASK_STATUS_INDEX](../04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/TASK_STATUS_INDEX.yaml)
+фиксирует accepted sensitivity, blocked forward comparison и instrument
+provenance tasks. [Checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md)
+остаётся неизменяемой историей first FAIL_CLOSED execution и clean rerun.
 
 `00 - Project Control r2` остаётся NON-WORK scientific governance/orchestration.
-Следующий вопрос: experimental observable-level sensitivity upper limit около
-38 meV (LEVEL_2). Forward visibility условна до valid LEVEL_2;
-~54-55 meV test и exchange отложены. Structure-A PAUSED,
-quantitative refinement сейчас не требуется. Stage03D не возобновлён.
-Нет активной production scientific Work job; holdout не авторизован.
+LEVEL_0, LEVEL_1 и LEVEL_2 около 38 meV установлены. LEVEL_2 sensitivity
+6.314726781508e-05 не является physical upper limit или model exclusion
+threshold. LEVEL_3/LEVEL_4 не установлены; forward comparison BLOCKED до
+experiment-specific resolution/acceptance и intensity-scale bridge.
+R3/R5/R7 - historical exploratory probes. Stage03D suspended; exchange и
+54-55 meV deferred; Structure-A PAUSED; holdout unauthorized.
+McStas/RESTRAX production не авторизована.
 
-Эта запись supersedes прежние current/pending указания ниже о первом
-real-input admission и structural implementation/preflight. Исторические
-разрешения сохранены как provenance и не являются новым заданием.
+Главный pending external action - запросить archived experiment-1296 instrument
+setup/log/SICS configuration у ANSTO. Если records недоступны, следующий
+отдельный design может определить preregistered assumption-transparent
+resolution sensitivity envelope. Это checkpoint synchronization, без новой
+scientific execution.
 
 CF-WATCH-PROJECT-ESCALATION-LAYER-001: accepted. Watch сохраняет search scope
 и направляет HIGH-relevance findings в 00 только при возможном изменении
@@ -120,7 +125,7 @@ infrastructure, beamtime или broad refitting.
 | `M00B` | completed | Развёртывание автономной Knowledge Base, Obsidian/Git workflow и базовой automation. |
 | `M00C` | completed | Scientific re-baselining: терминология, provenance, evidence/model semantics и очистка центрального project state. |
 | `M02R` | completed_with_limitations | Независимый повторный анализ TAIPAN завершён; C002 terminal result принят с frozen numerical failure, без numerically valid holdout confirmation tests и без physical absence inference. |
-| `M03R` | checkpoint_materialized | Принятые compatibility/Q/38-meV results сохранены; evidence LEVEL_1, следующий sensitivity limit pending; follow-on execution не авторизована. |
+| `M03R` | LEVEL_2_established_LEVEL_3_blocked | Experimental sensitivity установлена; quantitative model-to-TAIPAN bridge блокирован instrument resolution/acceptance и intensity scale. |
 | `M03D` | suspended | Joint constrained M0/M1 energy + intensity inference; существующий design сохранён, но execution приостановлен. |
 | `M05` | planned | Независимая магнитная validation и, при необходимости, CEF + magnetic exchange. |
 | `M06` | later | Более глубокая structural/microscopic interpretation и перенос по ряду RFeO3. |

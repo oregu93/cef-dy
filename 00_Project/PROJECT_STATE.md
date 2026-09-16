@@ -3,34 +3,42 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "4.9"
-updated: 2026-09-15
+version: "5.0"
+updated: 2026-09-16
 review_status: working
 ---
 
 # DyFeO3 — Project State
 
-## Принятый checkpoint Stage03R r1 (2026-09-15)
+## Принятый checkpoint Stage03R r2 (2026-09-16)
 
-Актуальное дополнение к историческим разделам:
-[SCIENTIFIC_DECISION_TRAIL](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md)
-и [CHECKPOINT.yaml](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml).
-AF-BASE совместима с R7/R5/R3; AF-CX03-CEF несовместима со всеми тремя.
-Последнее ограничивает только эти historical candidates при указанном
-ground-origin CEF assignment, не весь CS15 и не природу CX-03.
+Актуальное состояние задано
+[SCIENTIFIC_DECISION_TRAIL](../04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md)
+и [CHECKPOINT.yaml](../04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml).
+[Checkpoint r1](../04_Results/Stage03R/STAGE03R-R1-CHECKPOINT-MATERIALIZATION-001/SCIENTIFIC_DECISION_TRAIL.md)
+сохраняет предшествующую compatibility/Q/null-result историю без изменений.
 
-Q diagnostic не пересёк alpha=0.05 и не устанавливает Q independence.
-Authoritative clean ~38-meV rerun: NO_SIGNIFICANT_EXCESS_DETECTED.
-Первый failed run остаётся procedural history, scientific_result NOT_ESTABLISHED.
-Текущий evidence level LEVEL_1: valid_preregistered_experimental_null.
-LEVEL_2/LEVEL_3 ещё не установлены, LEVEL_4 не установлен.
-Null не является model rejection без sensitivity/visibility bridge.
+Для области около 38 meV LEVEL_0 experimental coverage, LEVEL_1 fixed-window
+null и LEVEL_2 experimental-observable sensitivity установлены. Point estimate
+равен -9.263645033151e-05, standard error - 3.839081288474e-05, zero-signal
+expected one-sided 95% sensitivity - 6.314726781508e-05. Эта sensitivity не
+является physical upper limit или автоматическим model-rejection threshold.
 
-Следующий pending вопрос - experimental sensitivity upper limit в native
-normalized count-rate/excess units. Forward visibility условна до valid LEVEL_2.
-~54-55 meV test и exchange DEFERRED; Structure-A PAUSED;
-Stage03D не reopened; holdout недоступен без отдельного разрешения.
-Эта запись не выдаёт follow-on scientific execution authorization.
+`CS15-HIST-B2-MINI-001` является historical exploratory probe ensemble.
+R3/R5/R7 не являются current/preferred candidates, posterior ensemble или
+representative allowed parameter-space population. Forward comparison BLOCKED:
+LEVEL_3/LEVEL_4 не установлены, поскольку experiment-specific TAIPAN
+resolution/acceptance и cross-section-to-detector/monitor scale не закрыты.
+
+TAIPAN HKL contract остаётся Pbnm identity; publication Pnma mapping и
+single-ion Dy-site tensor transport зафиксированы в checkpoint. Structure-A
+для этого не возобновляется. Stage03D suspended; exchange, 54-55 meV и
+Structure-A deferred/paused; holdout unauthorized. McStas/RESTRAX production
+не авторизована.
+
+Следующий внешний шаг - запросить у ANSTO archived experiment-1296 instrument
+setup/log/SICS configuration. Если records недоступны, возможен отдельный
+preregistered design assumption-transparent resolution sensitivity envelope.
 
 > [!abstract] Назначение
 > Этот файл содержит текущее научное состояние исследования кристаллического
@@ -66,17 +74,17 @@ Stage03D не reopened; holdout недоступен без отдельного
 
 **Научная задача.** Определить воспроизводимый и физически интерпретируемый эффективный гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде всего с энергиями и интенсивностями INS-переходов, а затем проверенный независимыми магнитными наблюдаемыми.
 
-**Текущий научный вопрос.** Какой one-sided experimental sensitivity upper limit следует из принятого fixed-window observable около 38 meV до ориентационно-зависимого forward visibility и model-level вывода?
+**Текущий научный вопрос.** Как закрыть experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge, необходимый для quantitative model-to-experiment comparison около 38 meV?
 
 **Stage03R.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
 **Зачем выполняется Stage 02R.** Stage 02R формирует независимый от CEF-модели слой экспериментальных свидетельств до нового цикла физического назначения и CEF-моделирования. Это уменьшает риск замкнутого анализа, при котором ожидаемые энергии или предсказания модели одновременно задают искомые признаки и служат основанием для проверки той же модели.
 
-**Что непосредственно поддерживают экспериментальные данные.** В B-001 из 75 пригодных энергетических сканов 57 использованы для поиска, а 18 заранее отнесены к отложенной выборке. Замороженный каталог содержит восемь monitor_controlled BF с Tier-1; Tier-2 и межрежимной повторяемости положения нет. Один скан для поиска (`discovery`) исключён по замороженному численному правилу nuisance_field_fit_failure без повторного расчёта и замещения.
+**Что непосредственно поддерживают экспериментальные данные.** В B-001 из 75 пригодных энергетических сканов 57 использованы для поиска, а 18 заранее отнесены к отложенной выборке. Замороженный каталог содержит восемь monitor_controlled BF с Tier-1; Tier-2 и межрежимной повторяемости положения нет. Один скан для поиска (`discovery`) исключён по замороженному численному правилу nuisance_field_fit_failure без повторного расчёта и замещения. Для accepted 21-scan population около 38 meV установлен fixed-window null (LEVEL_1) и zero-signal expected one-sided 95% sensitivity 6.314726781508e-05 в native normalized count-rate/excess units (LEVEL_2).
 
-**Что является физической интерпретацией.** BF-ID являются алгоритмическими кластерами воспроизводимости, а не физическими назначениями. B-001 не устанавливает число различных возбуждений и не выполняет CEF-назначение. Legacy-идентификаторы F002/F004 принадлежат прежнему слою анализа; их связь с BF-* не установлена.
+**Что является физической интерпретацией.** BF-ID являются алгоритмическими кластерами воспроизводимости, а не физическими назначениями. B-001 не устанавливает число различных возбуждений и не выполняет CEF-назначение. Legacy-идентификаторы F002/F004 принадлежат прежнему слою анализа; их связь с BF-* не установлена. LEVEL_2 sensitivity не является physical upper limit или автоматическим model-rejection threshold. R3/R5/R7 являются historical exploratory probes, а не current/preferred model ensemble.
 
-**Что показывает текущая модельная картина.** Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно мотивированные модельные семейства. Пятнадцатипараметрическая обратная CEF-задача при подгонке только по энергиям существенно недоопределена. Проект Stage 03D M0/M1 сохранён, но вычислительное исполнение приостановлено до независимого повторного формирования набора экспериментальных наблюдаемых.
+**Что показывает текущая модельная картина.** Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно мотивированные модельные семейства. Пятнадцатипараметрическая обратная CEF-задача при подгонке только по энергиям существенно недоопределена. Quantitative model-to-TAIPAN bridge (LEVEL_3) не установлен: требуются experiment-specific resolution/acceptance и cross-section-to-detector/monitor scale. Stage03D suspended; McStas/RESTRAX production не авторизована.
 
 **Результат B-001.**
 - Каталог: `8` BF-записей; все относятся к `monitor_controlled`; `8` Tier-1, `0` Tier-2; межрежимная повторяемость положения -- `0`.
@@ -91,10 +99,11 @@ Stage03D не reopened; holdout недоступен без отдельного
 - Не установлена эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
 - Перекрывающиеся BF-интервалы не разрешены на отдельные физические линии; Tier-2 отсутствует, один скан для поиска исключён численно, а отказы отдельных окон ограничивают выводы об устойчивости B-001.
 - Не определены окончательная систематическая неопределённость энергетической шкалы и модель разрешения TAS; достаточность CEF-only описания низкотемпературных данных не установлена.
+- Не установлены experiment-specific TAIPAN resolution/acceptance, intensity-scale bridge и physical nonnegative signal upper limit около 38 meV.
 
-**Текущий этап.** `M03R` (`checkpoint_materialized`): Stage03R - compatibility и sensitivity bridge
+**Текущий этап.** `M03R` (`LEVEL_2_established_LEVEL_3_blocked`): Stage03R - compatibility и sensitivity bridge
 
-**Следующий шаг.** `STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001`: После миграции в Project Control r2 подготовить experimental sensitivity upper limit для принятого fixed-window observable около 38 meV в native normalized count-rate/excess units. Forward visibility условна до valid LEVEL_2; новые вычисления этим checkpoint не разрешены.
+**Следующий шаг.** `request_archived_ANSTO_experiment_1296_instrument_records`: Запросить у ANSTO архивные experiment-1296 instrument setup, log и SICS configuration. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
@@ -107,6 +116,9 @@ Stage03D не reopened; holdout недоступен без отдельного
 - Параметры effective-charge PCM являются непосредственно измеренными ионными зарядами.
 - Magnetic exchange уже включён в текущий CEF baseline.
 - Exchange-charge model Малкина является активной моделью текущего цикла.
+- LEVEL_2 sensitivity является physical upper limit или автоматическим model-rejection threshold.
+- R3/R5/R7 являются current, preferred, posterior или representative allowed ensemble.
+- SUPPORT_REGION является physical excitation energy.
 
 **Происхождение B-001.** [Научное рецензирование B-001](../04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md); [Замороженный каталог BF](../04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml); [Контрольная запись B-001](../02_Work_Checkpoints/W02-02R-B-001.md); [R-012](RESULT_REGISTER.yaml); [EV-007](EVIDENCE_REGISTER.yaml); [Активная замороженная спецификация C-001 v1.1](../03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md); [canonical commit `21506b7`](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
 <!-- AUTO:STATE_REENTRY:END -->
