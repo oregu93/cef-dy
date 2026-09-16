@@ -1,0 +1,49 @@
+validation_report_id: STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001-VALIDATION
+date: 2026-09-16
+baseline_commit: 1b187d533eff238e88e3adbbfcd60e3cfe3c563e
+scientific_reexecution_performed: false
+
+canonical_checks:
+  kb_refresh_check: PASS
+  kb_validate:
+    status: PASS
+    errors: 0
+    warnings: 0
+  kb_validate_strict:
+    status: PASS
+    errors: 0
+    warnings: 0
+  literature_validator:
+    status: PASS
+    errors: 0
+    warnings: 0
+  git_diff_check: PASS
+
+semantic_checks:
+  exact_LEVEL_2_values_copied: PASS
+  LEVEL_2_not_physical_upper_limit: PASS
+  LEVEL_2_not_model_rejection_threshold: PASS
+  historical_R3_R5_R7_role: PASS
+  LEVEL_3_and_LEVEL_4_not_established: PASS
+  no_model_rejection_implied: PASS
+  SUPPORT_REGION_not_excitation_energy: PASS
+  McStas_RESTRAX_production_not_authorized: PASS
+  Pnma_Pbnm_mapping_consistent: PASS
+  Stage03D_suspended: PASS
+  exchange_deferred: PASS
+  test_54_55_meV_deferred: PASS
+  Structure_A_paused: PASS
+  holdout_unauthorized: PASS
+  historical_r1_checkpoint_modified: false
+
+context_health_rule:
+  authoritative_pending_inputs_field_present: true
+  canonical_and_explicit_newer_inputs_required: true
+  unpublished_chat_memory_inference_forbidden: true
+
+unmaterialized_items:
+  - full_retrospective_scientific_logbook_reconstruction
+  - archived_ANSTO_experiment_1296_instrument_records
+  - preregistered_resolution_sensitivity_envelope_design
+
+result: PASS

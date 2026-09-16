@@ -1,0 +1,35 @@
+checkpoint_id: STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001
+status: materialized
+tasks:
+  - task_id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
+    status: accepted
+    result: LEVEL_2_ESTABLISHED
+  - task_id: STAGE03R-CS15-38MEV-FORWARD-VISIBILITY-001
+    status: accepted_with_correction
+    result: BLOCKED_LEVEL_3_NOT_ESTABLISHED
+  - task_id: STAGE03R-38MEV-TAIPAN-RESPONSE-SCALE-CAPSULE-001
+    status: accepted
+  - task_id: STAGE03R-38MEV-TAIPAN-INSTRUMENT-STATE-CLOSURE-001
+    status: accepted
+  - task_id: STAGE03R-38MEV-TAIPAN-RESOLUTION-INPUT-PROVENANCE-REQUEST-001
+    status: accepted
+    result: SENSITIVITY_ENVELOPE_ONLY
+  - task_id: STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
+    status: accepted
+  - task_id: STAGE03R-TAIPAN-HKL-SETTING-RECONCILIATION-001
+    status: accepted
+external_pending_action:
+  status: pending_external
+  action: request archived experiment-1296 instrument setup/log/SICS configuration from ANSTO
+future_fallback:
+  status: not_authorized_for_execution
+  action: preregistered assumption-transparent resolution sensitivity envelope design
+deferred:
+  - 54-55_meV_test
+  - MOD-CEF-EXCHANGE
+  - Stage03D
+  - Structure-A
+unauthorized:
+  - holdout_access
+  - McStas_RESTRAX_production
+  - CEF_fit

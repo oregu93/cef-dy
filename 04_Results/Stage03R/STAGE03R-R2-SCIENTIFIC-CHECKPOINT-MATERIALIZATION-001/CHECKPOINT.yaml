@@ -1,0 +1,150 @@
+checkpoint_id: STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001
+checkpoint_version: "1.0"
+date: 2026-09-16
+baseline_commit: 1b187d533eff238e88e3adbbfcd60e3cfe3c563e
+review_status: reviewed
+provenance_status: partial
+source:
+  type: accepted_Project_Control_inputs
+  scientific_reexecution_performed: false
+
+evidence_levels:
+  LEVEL_0:
+    status: ESTABLISHED
+    meaning: 38_meV_experimental_coverage
+  LEVEL_1:
+    status: ESTABLISHED
+    meaning: fixed_window_experimental_null
+  LEVEL_2:
+    status: ESTABLISHED
+    meaning: experimental_observable_level_sensitivity
+    task_id: STAGE03R-CS15-38MEV-EXPERIMENTAL-SENSITIVITY-LIMIT-001
+    point_estimate: -9.263645033151e-05
+    standard_error: 3.839081288474e-05
+    zero_signal_expected_one_sided_95pct_sensitivity: 6.314726781508e-05
+    physical_nonnegative_signal_upper_limit:
+      status: NOT_ESTABLISHED
+    interpretation_boundary: >-
+      The zero-signal expected one-sided 95% sensitivity is neither a physical
+      upper limit nor an automatic model-rejection threshold.
+  LEVEL_3:
+    status: NOT_ESTABLISHED
+    meaning: model_to_TAIPAN_quantitative_bridge
+  LEVEL_4:
+    status: NOT_ESTABLISHED
+
+historical_probe_ensemble:
+  id: CS15-HIST-B2-MINI-001
+  role: historical_exploratory_probe_ensemble
+  members:
+    - R3
+    - R5
+    - R7
+  current_model_status: false
+  preferred_candidate_status: false
+  posterior_ensemble_status: false
+  representative_allowed_parameter_space_population_status: false
+  use: methodological_probes_for_model_to_experiment_discrimination
+
+forward_visibility:
+  task_id: STAGE03R-CS15-38MEV-FORWARD-VISIBILITY-001
+  review_status: accepted_with_correction
+  forward_comparison_status: BLOCKED
+  LEVEL_3_status: NOT_ESTABLISHED
+  CEF_transition_tensors:
+    recoverable_without_refit: true
+  unresolved_layers:
+    - instrument_resolution_and_acceptance
+    - cross_section_to_detector_monitor_scale
+  sensitivity_as_exclusion_threshold: forbidden
+
+taipan_response_scale_capsule:
+  task_id: STAGE03R-38MEV-TAIPAN-RESPONSE-SCALE-CAPSULE-001
+  status: accepted
+  population_scan_count: 21
+  population_sha256: e19e41e794b51dcb631dfff9a8751c7a828c37f55d063043e4807dfc45781a30
+  kinematic_layer: substantially_recoverable
+  exact_38_meV_resolution_kernel: NOT_ESTABLISHED
+  absolute_detector_monitor_scale: NOT_ESTABLISHED
+
+instrument_state_closure:
+  task_id: STAGE03R-38MEV-TAIPAN-INSTRUMENT-STATE-CLOSURE-001
+  status: accepted
+  experiment_specific_supported:
+    monochromator: PG(002)
+    analyzer: PG(002)
+    collimation: o-40-40-o
+    fixed_Ef_meV: approximately_14.87
+    filter: downstream_PG
+    detector: point_He3
+    focus_control_channels_recorded: true
+  unresolved:
+    - experiment_specific_monochromator_analyzer_mosaic
+    - actual_focusing_autofocus_state_and_curvature
+    - apertures_slits
+    - exact_detector_geometry
+    - physical_sample_mosaic_semantics
+    - absolute_calibration
+  proposal_15702: UNVERIFIED
+
+resolution_input_provenance:
+  task_id: STAGE03R-38MEV-TAIPAN-RESOLUTION-INPUT-PROVENANCE-REQUEST-001
+  status: accepted
+  public_existing_accessible_provenance_closes_exact_reconstruction: false
+  RESOLUTION_READINESS: SENSITIVITY_ENVELOPE_ONLY
+  absolute_scale_status: CALIBRATION_REQUIRED
+  external_pending_action: >-
+    Request archived experiment-1296 instrument setup, log and SICS
+    configuration from ANSTO.
+  fallback_if_unavailable: >-
+    Design a preregistered assumption-transparent resolution sensitivity envelope.
+
+dy_site_tensor_transform_contract:
+  task_id: STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
+  status: accepted
+  space_group: "Pbnm #62"
+  Dy_orbit: 4c
+  CEF_frame:
+    X: b
+    Y: c
+    Z: a
+  tensor_transport: M_s = R_s M_ref R_s^T
+  independent_site_intensity: I = sum_s I_s
+  extension_to_coherent_or_exchange_coupled_modes: forbidden_without_separate_contract
+  Structure_A_reopening_required: false
+
+taipan_hkl_reconciliation:
+  task_id: STAGE03R-TAIPAN-HKL-SETTING-RECONCILIATION-001
+  status: accepted
+  TAIPAN_HKL_SETTING: Pbnm
+  TAIPAN_TO_PBNM: identity
+  HK0_STATUS: CONSISTENT_AFTER_EXPLICIT_TRANSFORM
+  Q_CONTRACT_STATUS: VALID_AS_WRITTEN
+  recorded_TAIPAN: (h,k,l)_TAIPAN = (h,k,l)_Pbnm
+  publication_transform: (H,K,L)_Pnma = (k,l,h)_Pbnm
+  CEF_Q_mapping: 2*pi*(k/b, l/c, h/a)
+
+current_blocker:
+  class: PROVENANCE_BLOCKER
+  statement: >-
+    Experiment-specific TAIPAN resolution/acceptance and the intensity-scale bridge
+    are not established.
+
+project_boundaries:
+  Stage02R: COMPLETED_WITH_LIMITATIONS
+  Stage03D: suspended
+  exchange: deferred
+  test_54_55_meV: deferred
+  Structure_A: paused
+  holdout: unauthorized
+  McStas_RESTRAX:
+    scientific_role: useful_later
+    production_authorized: false
+
+interpretation_safeguards:
+  - SUPPORT_REGION != physical excitation energy
+  - LEVEL_2_sensitivity != physical_nonnegative_signal_upper_limit
+  - LEVEL_2_sensitivity != automatic_model_rejection_threshold
+  - historical_probe_ensemble != current_or_preferred_models
+  - experimental_null != model_rejection_without_LEVEL_3_bridge
+  - independent_site_tensor_transport != coherent_or_exchange_coupled_mode_contract
