@@ -329,6 +329,13 @@ class Validator:
         for ref in refs:
             if not isinstance(ref, str) or Path(ref).is_absolute() or ".." in Path(ref).parts:
                 self.error(path, "CONVENTION_BINDING_VALID", f"unsafe convention ref {ref!r}")
+                continue
+            if ref:
+                try:
+                    resolved = (self.root / ref).resolve(strict=True)
+                    resolved.relative_to(self.root)
+                except (FileNotFoundError, RuntimeError, ValueError):
+                    self.error(path, "CONVENTION_REF_RESOLVES", f"unresolved/outside repository {ref!r}")
         binding = note.get("convention_binding")
         if binding is not None:
             binding = self.require_mapping(binding, path, "CONVENTION_BINDING_VALID", "convention_binding")
@@ -451,6 +458,10 @@ def run_fixture(notes: list[dict], evidence_state: str | None = None) -> Validat
     (root / "05_Literature" / "SOURCE_REGISTRY.yaml").write_text(
         'schema_version: "1.0"\nsources:\n  SRC-900001: {}\n', encoding="utf-8"
     )
+    (root / "03_Protocols").mkdir(parents=True)
+    (root / "03_Protocols" / "SCIENTIFIC_TERMINOLOGY.md").write_text(
+        "# Synthetic convention fixture\n", encoding="utf-8"
+    )
     if evidence_state:
         (root / "05_Literature" / "EVIDENCE" / "SRC-900001.yaml").write_text(
             yaml.safe_dump({"evidence": [{"evidence_id": "EV-SRC900001-001", "review_state": evidence_state}]}),
@@ -531,6 +542,8 @@ def selftest() -> bool:
     expect([bad], False, "CONVENTION_BINDING_VALID")
     good = valid_note(); good["convention_refs"] = ["03_Protocols/SCIENTIFIC_TERMINOLOGY.md"]; good["convention_binding"] = {"status": "EXPLICIT", "local_frame": "X=b, Y=c, Z=a"}
     expect([good], True)
+    bad = valid_note(); bad["convention_refs"] = ["03_Protocols/DOES_NOT_EXIST.md"]
+    expect([bad], False, "CONVENTION_REF_RESOLVES")
     bad = valid_note(); bad["convention_binding"] = {"status": "UNRESOLVED"}
     expect([bad], False, "CONVENTION_BINDING_VALID")
     bad = valid_note(); bad["convention_binding"] = {"status": "NOT_APPLICABLE", "local_frame": "X=b"}
