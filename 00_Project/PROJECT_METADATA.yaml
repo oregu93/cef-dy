@@ -731,7 +731,20 @@ pending_technical_work:
       specification_status: frozen
 
       implementation_stage: LIT-INFRA-03
-      implementation_status: not_started
+      implementation_status: accepted
+      implementation_authorized: true
+
+      implementation_commit: 8896a4f97afcd43c6703e5573fbaceb5866a8d54
+      correction_commits:
+        - d9c266c3ae2bc35cac9b4e03847cee9c0ca6fe57
+
+      technical_review:
+        status: completed
+        final_decision: A
+        final_review_id: LITERATURE-ZOTERO-INTEGRATION-PHASE2-CORRECTION-REREVIEW-001
+
+      project_control_acceptance:
+        status: accepted
 
       configuration_status: unconfigured
       connection_status: not_configured
@@ -741,7 +754,6 @@ pending_technical_work:
       bbt_compatibility_status: not_verified
       pilot_status: not_started
 
-      implementation_authorized: false
       zotero_connection_authorized: false
       zotero_write_authorized: false
       better_bibtex_configuration_authorized: false
