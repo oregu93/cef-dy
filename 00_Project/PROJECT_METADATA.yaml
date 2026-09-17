@@ -725,6 +725,28 @@ pending_technical_work:
       project_control_acceptance:
         status: accepted
 
+    zotero_integration:
+      specification_id: LIT-ZOTERO-INTEGRATION-SPEC
+      specification_version: "1.0"
+      specification_status: frozen
+
+      implementation_stage: LIT-INFRA-03
+      implementation_status: not_started
+
+      configuration_status: unconfigured
+      connection_status: not_configured
+      read_access_status: not_verified
+      write_access_status: not_authorized
+
+      bbt_compatibility_status: not_verified
+      pilot_status: not_started
+
+      implementation_authorized: false
+      zotero_connection_authorized: false
+      zotero_write_authorized: false
+      better_bibtex_configuration_authorized: false
+      references_bib_creation_authorized: false
+
     zotero_configuration_authorized: false
     zotero_write_authorized: false
     web_api_implementation_authorized: false

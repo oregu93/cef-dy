@@ -1,0 +1,46 @@
+schema_version: "1.0"
+
+configuration_status: unconfigured
+
+zotero_api:
+  version: 3
+  primary_transport: web_api
+  secondary_transport: local_api
+  local_api_role: diagnostic_interactive_fallback
+
+libraries:
+  project-main:
+    type: null
+    library_id: null
+    project_collection:
+      name: "CEF Dy"
+      key: null
+
+citation_keys:
+  generator: better-bibtex
+  formula: null
+  candidate_initial_formula: "auth.lower + shorttitle(3,3) + year"
+  candidate_formula_status: pilot_only_unverified
+  force_plain_text: true
+  regenerate_on_metadata_change: false
+  uniqueness_scope: null
+  configuration_status: unverified
+
+better_bibtex:
+  compatibility_status: not_verified
+  installed_zotero_version: null
+  installed_bbt_version: null
+  configuration_identity_status: unverified
+
+bibliography_export:
+  path: 05_Literature/references.bib
+  initial_translator: Better BibTeX
+  policy_status: pilot_only_unverified
+  scope_library_alias: project-main
+  scope_collection: "CEF Dy"
+  sort: citation_key
+  automatic_mode: Paused
+  activation_status: blocked_pending_real_compile_test
+
+security:
+  credentials_stored_in_this_file: false
