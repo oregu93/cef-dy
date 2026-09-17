@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "VALIDATION_REPORT.json"
 MANIFEST = ROOT / "PROJECT_MANIFEST.yaml"
 META = ROOT / "00_Project" / "PROJECT_METADATA.yaml"
+ZOTERO_CONFIG = ROOT / "05_Literature" / "ZOTERO_INTEGRATION_CONFIG.yaml"
 
 RESULTS = ROOT / "00_Project" / "RESULT_REGISTER.yaml"
 HYPOTHESES = ROOT / "00_Project" / "HYPOTHESIS_REGISTER.yaml"
@@ -84,6 +85,24 @@ REPRO_KINDS = {
     "artifact",
     "dataset",
     "code_run",
+}
+
+ZOTERO_SECRET_KEY_FORMS = {
+    "apikey",
+    "token",
+    "accesstoken",
+    "authorization",
+    "password",
+    "secret",
+    "clientsecret",
+    "localapikey",
+}
+
+BBT_COMPATIBILITY_STATUSES = {
+    "not_verified",
+    "verified",
+    "incompatible",
+    "needs_review",
 }
 
 
@@ -651,6 +670,123 @@ def metadata_checks(issues):
             rel(META),
             "scientific_facade must be a mapping",
         )
+
+
+def zotero_config_checks(issues):
+    document = require_mapping(
+        load_yaml(ZOTERO_CONFIG, issues),
+        ZOTERO_CONFIG,
+        issues,
+    )
+
+    if not document:
+        return
+
+    def issue(message):
+        add_issue(
+            issues,
+            "error",
+            rel(ZOTERO_CONFIG),
+            message,
+        )
+
+    def mapping(value, name):
+        if not isinstance(value, dict):
+            issue(f"{name} must be a mapping")
+            return {}
+        return value
+
+    def secret_scan(value, location="config"):
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if not isinstance(key, str):
+                    issue(f"{location} contains a non-string key")
+                    continue
+                normalized = re.sub(
+                    r"[^a-z0-9]",
+                    "",
+                    key.casefold(),
+                )
+                if normalized in ZOTERO_SECRET_KEY_FORMS:
+                    issue(
+                        f"{location} contains forbidden secret-like key: {key}"
+                    )
+                secret_scan(child, f"{location}.{key}")
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                secret_scan(child, f"{location}[{index}]")
+
+    secret_scan(document)
+
+    if str(document.get("schema_version")) != "1.0":
+        issue("schema_version must be 1.0")
+
+    configuration_status = document.get("configuration_status")
+    if configuration_status not in {"unconfigured", "configured"}:
+        issue("configuration_status must be unconfigured or configured")
+
+    api = mapping(document.get("zotero_api"), "zotero_api")
+    if api.get("version") != 3:
+        issue("zotero_api.version must be 3")
+    if api.get("primary_transport") != "web_api":
+        issue("zotero_api.primary_transport must be web_api")
+    if api.get("secondary_transport") != "local_api":
+        issue("zotero_api.secondary_transport must be local_api")
+
+    libraries = mapping(document.get("libraries"), "libraries")
+    if not libraries:
+        issue("libraries must define at least one alias")
+    for alias, library in libraries.items():
+        library = mapping(library, f"libraries.{alias}")
+        if configuration_status == "configured":
+            if library.get("type") not in {"user", "group"}:
+                issue(
+                    f"configured library {alias} type must be user or group"
+                )
+            library_id = library.get("library_id")
+            integer_like = (
+                isinstance(library_id, int)
+                and not isinstance(library_id, bool)
+                and library_id > 0
+            ) or (
+                isinstance(library_id, str)
+                and re.fullmatch(r"[1-9][0-9]*", library_id) is not None
+            )
+            if not integer_like:
+                issue(
+                    f"configured library {alias} library_id must be integer-like"
+                )
+
+    citation = mapping(document.get("citation_keys"), "citation_keys")
+    if citation.get("generator") != "better-bibtex":
+        issue("citation_keys.generator must be better-bibtex")
+    if citation.get("regenerate_on_metadata_change") is not False:
+        issue("citation_keys.regenerate_on_metadata_change must be false")
+    citation_status = citation.get("configuration_status")
+    if citation_status not in {"unverified", "verified"}:
+        issue("citation_keys.configuration_status is invalid")
+    if citation_status == "verified":
+        if not isinstance(citation.get("formula"), str) or not citation.get("formula", "").strip():
+            issue("verified citation configuration requires formula")
+        if not isinstance(citation.get("uniqueness_scope"), str) or not citation.get("uniqueness_scope", "").strip():
+            issue("verified citation configuration requires uniqueness_scope")
+
+    bbt = mapping(document.get("better_bibtex"), "better_bibtex")
+    if bbt.get("compatibility_status") not in BBT_COMPATIBILITY_STATUSES:
+        issue("better_bibtex.compatibility_status is invalid")
+
+    export = mapping(document.get("bibliography_export"), "bibliography_export")
+    if export.get("path") != "05_Literature/references.bib":
+        issue("bibliography_export.path must be 05_Literature/references.bib")
+    scope_alias = export.get("scope_library_alias")
+    if scope_alias not in libraries:
+        issue("bibliography_export.scope_library_alias does not resolve")
+    if export.get("automatic_mode") != "Paused":
+        issue("bibliography_export.automatic_mode must be Paused")
+
+    security = mapping(document.get("security"), "security")
+    if security.get("credentials_stored_in_this_file") is not False:
+        issue("security.credentials_stored_in_this_file must be false")
 
 
 def manifest_checks(issues):
@@ -1429,6 +1565,7 @@ def main():
         )
 
     metadata_checks(issues)
+    zotero_config_checks(issues)
     manifest_checks(issues)
     register_checks(issues)
     markdown_and_path_checks(issues)
