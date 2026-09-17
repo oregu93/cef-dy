@@ -15,6 +15,7 @@ import sys
 import tempfile
 import unittest
 import urllib.request
+from dataclasses import replace
 from pathlib import Path
 from unittest import mock
 
@@ -187,14 +188,20 @@ class NormalizationAndIdentityTests(unittest.TestCase):
         left = {"b": 2, "a": {"я": True, "x": None}}
         right = {"a": {"x": None, "я": True}, "b": 2}
         self.assertEqual(
-            executor.normalized_payload_sha256(left),
-            executor.normalized_payload_sha256(right),
+            executor.normalized_payload_sha256(executor.OperationType.ZOTERO_CREATE, left),
+            executor.normalized_payload_sha256(executor.OperationType.ZOTERO_CREATE, right),
         )
 
     def test_list_order_is_preserved(self) -> None:
         self.assertNotEqual(
-            executor.normalized_payload_sha256({"x": [1, 2]}),
-            executor.normalized_payload_sha256({"x": [2, 1]}),
+            executor.normalized_payload_sha256(
+                executor.OperationType.ZOTERO_CREATE,
+                {"x": [1, 2]},
+            ),
+            executor.normalized_payload_sha256(
+                executor.OperationType.ZOTERO_CREATE,
+                {"x": [2, 1]},
+            ),
         )
 
     def test_unicode_is_preserved_without_transliteration(self) -> None:
@@ -268,6 +275,18 @@ class NormalizationAndIdentityTests(unittest.TestCase):
                 with self.assertRaises(executor.ExecutorFailure) as caught:
                     request(**update)
                 self.assertEqual(caught.exception.code, "SOURCE_NOT_ELIGIBLE")
+
+    def test_unsupported_or_missing_request_schema_is_rejected(self) -> None:
+        for schema_version in ("9.9", None):
+            with self.subTest(schema_version=schema_version):
+                document = request_document()
+                if schema_version is None:
+                    document.pop("schema_version")
+                else:
+                    document["schema_version"] = schema_version
+                with self.assertRaises(executor.ExecutorFailure) as caught:
+                    executor.OperationRequest.from_mapping(document)
+                self.assertEqual(caught.exception.code, "REQUEST_INVALID")
 
 
 class PlanningTests(unittest.TestCase):
@@ -374,6 +393,58 @@ class PlanningTests(unittest.TestCase):
         payload["collection_key" if operation == "ADD_COLLECTION" else "tag"] = "VALUE"
         payload.update(payload_updates)
         return request(operation, payload=payload)
+
+    def test_collection_identity_excludes_object_version(self) -> None:
+        version_six = self.mutation_request(
+            "ADD_COLLECTION",
+            expected_zotero_object_version=6,
+            collection_key="COLL1",
+        )
+        version_seven = self.mutation_request(
+            "ADD_COLLECTION",
+            expected_zotero_object_version=7,
+            collection_key="COLL1",
+        )
+        self.assertEqual(version_six.payload_sha256, version_seven.payload_sha256)
+        self.assertEqual(
+            version_six.external_operation_identity,
+            version_seven.external_operation_identity,
+        )
+
+    def test_collection_semantic_change_changes_identity(self) -> None:
+        first = self.mutation_request("ADD_COLLECTION", collection_key="COLL1")
+        second = self.mutation_request("ADD_COLLECTION", collection_key="COLL2")
+        self.assertNotEqual(first.payload_sha256, second.payload_sha256)
+        self.assertNotEqual(
+            first.external_operation_identity,
+            second.external_operation_identity,
+        )
+
+    def test_tag_identity_excludes_object_version(self) -> None:
+        version_six = self.mutation_request(
+            "ADD_TAG",
+            expected_zotero_object_version=6,
+            tag="tag-1",
+        )
+        version_seven = self.mutation_request(
+            "ADD_TAG",
+            expected_zotero_object_version=7,
+            tag="tag-1",
+        )
+        self.assertEqual(version_six.payload_sha256, version_seven.payload_sha256)
+        self.assertEqual(
+            version_six.external_operation_identity,
+            version_seven.external_operation_identity,
+        )
+
+    def test_tag_semantic_change_changes_identity(self) -> None:
+        first = self.mutation_request("ADD_TAG", tag="tag-1")
+        second = self.mutation_request("ADD_TAG", tag="tag-2")
+        self.assertNotEqual(first.payload_sha256, second.payload_sha256)
+        self.assertNotEqual(
+            first.external_operation_identity,
+            second.external_operation_identity,
+        )
 
     def test_add_collection_already_present_is_noop(self) -> None:
         plan = executor.plan_operation(
@@ -583,6 +654,125 @@ class ReconciliationAndBoundaryTests(unittest.TestCase):
                 executor.OperationResult("FAILED_RETRYABLE", item_key="SERVERKEY"),
             )
         self.assertEqual(caught.exception.code, "GIT_RECONCILIATION_PRECONDITION_FAILED")
+
+    def assert_reconciliation_rejected(
+        self,
+        req: executor.OperationRequest,
+        plan: executor.OperationPlan,
+        item_key: str = "SERVERKEY",
+    ) -> None:
+        with self.assertRaises(executor.ExecutorFailure) as caught:
+            executor.build_git_reconciliation_payload(
+                req,
+                plan,
+                executor.OperationResult("SUCCESS", item_key=item_key),
+            )
+        self.assertEqual(caught.exception.code, "GIT_RECONCILIATION_PRECONDITION_FAILED")
+
+    def test_needs_review_plan_cannot_reconcile_success_result(self) -> None:
+        req = request()
+        plan = executor.plan_operation(
+            req,
+            self.config,
+            observation(item(doi="10.1000/example")),
+        )
+        self.assertEqual(plan.decision, "NEEDS_REVIEW")
+        self.assert_reconciliation_rejected(req, plan)
+
+    def test_safe_retry_candidate_cannot_reconcile_success_result(self) -> None:
+        req = request()
+        plan = executor.plan_operation(
+            req,
+            self.config,
+            observation(uncertain=True),
+        )
+        self.assertEqual(plan.decision, "SAFE_RETRY_CANDIDATE")
+        self.assert_reconciliation_rejected(req, plan)
+
+    def test_request_plan_source_mismatch_is_rejected(self) -> None:
+        original = request()
+        plan = executor.plan_operation(original, self.config, observation())
+        self.assert_reconciliation_rejected(request(source_id="SRC-000002"), plan)
+
+    def test_request_plan_library_mismatch_is_rejected(self) -> None:
+        original = request()
+        plan = executor.plan_operation(original, self.config, observation())
+        self.assert_reconciliation_rejected(request(library_alias="other-library"), plan)
+
+    def test_request_plan_semantic_payload_hash_mismatch_is_rejected(self) -> None:
+        req = request()
+        plan = executor.plan_operation(req, self.config, observation())
+        self.assert_reconciliation_rejected(
+            req,
+            replace(plan, normalized_payload_sha256="0" * 64),
+        )
+
+    def test_request_plan_external_identity_mismatch_is_rejected(self) -> None:
+        req = request()
+        plan = executor.plan_operation(req, self.config, observation())
+        self.assert_reconciliation_rejected(
+            req,
+            replace(plan, external_operation_identity="ZOP-" + "0" * 64),
+        )
+
+    def test_reconciliation_decision_must_match_operation_type(self) -> None:
+        req = request()
+        plan = executor.plan_operation(req, self.config, observation())
+        forged = replace(
+            plan,
+            decision="LINK_EXISTING",
+            target_item_key="SERVERKEY",
+            zotero_mutation_planned=False,
+        )
+        self.assert_reconciliation_rejected(req, forged)
+
+    def test_link_existing_result_target_must_match_plan(self) -> None:
+        req = request("ZOTERO_LINK_EXISTING")
+        plan = executor.plan_operation(
+            req,
+            self.config,
+            observation(item("ITEMA", doi="10.1000/example")),
+        )
+        self.assertEqual(plan.decision, "LINK_EXISTING")
+        self.assert_reconciliation_rejected(req, plan, item_key="ITEMB")
+
+    def test_eligible_link_existing_matching_result_reconciles(self) -> None:
+        req = request("ZOTERO_LINK_EXISTING")
+        plan = executor.plan_operation(
+            req,
+            self.config,
+            observation(item("ITEMA", doi="10.1000/example")),
+        )
+        payload = executor.build_git_reconciliation_payload(
+            req,
+            plan,
+            executor.OperationResult("SUCCESS", item_key="ITEMA"),
+        )
+        self.assertEqual(
+            payload.proposed_source_update["zotero"]["item_key"],
+            "ITEMA",
+        )
+
+    def test_eligible_recovered_existing_matching_result_reconciles(self) -> None:
+        req = request()
+        plan = executor.plan_operation(
+            req,
+            self.config,
+            observation(
+                item("ITEMA", doi="10.1000/example"),
+                uncertain=True,
+            ),
+        )
+        self.assertEqual(plan.decision, "RECOVER_EXISTING_WRITE")
+        payload = executor.build_git_reconciliation_payload(
+            req,
+            plan,
+            executor.OperationResult("SUCCESS", item_key="ITEMA"),
+        )
+        self.assertEqual(
+            payload.proposed_source_update["zotero"]["item_key"],
+            "ITEMA",
+        )
 
     def test_forbidden_transport_fails_with_frozen_code(self) -> None:
         with self.assertRaises(executor.ExecutorFailure) as caught:

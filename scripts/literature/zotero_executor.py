@@ -182,8 +182,97 @@ def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
-def normalized_payload_sha256(payload: Mapping[str, Any]) -> str:
-    return sha256_bytes(canonical_json_bytes(normalize_operation_payload(payload)))
+NON_SEMANTIC_OPERATION_PAYLOAD_KEYS = frozenset(
+    {
+        "expected_zotero_object_version",
+        "version_space",
+        "observed_version",
+        "observed_zotero_object_version",
+        "retry_metadata",
+        "replan_metadata",
+        "transport",
+        "transport_metadata",
+        "concurrency",
+        "concurrency_metadata",
+        "execution_metadata",
+        "provenance",
+        "provenance_metadata",
+        "origin_packet_id",
+        "operation_id",
+        "task_id",
+        "restart_id",
+        "recovery_session_id",
+        "attempt_metadata",
+        "timestamp",
+        "hostname",
+        "username",
+        "temporary_path",
+    }
+)
+
+
+def semantic_identity_payload(
+    operation_type: OperationType,
+    payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Project the full planner payload onto semantic idempotency content."""
+    payload_map = _require_mapping(
+        payload,
+        "REQUEST_INVALID",
+        "payload must be a mapping",
+    )
+    if operation_type == OperationType.ADD_COLLECTION:
+        target = payload_map.get("target_item_key")
+        collection = payload_map.get("collection_key")
+        if not isinstance(target, str) or not target:
+            fail("REQUEST_INVALID", "target_item_key is required")
+        if not isinstance(collection, str) or not collection:
+            fail("REQUEST_INVALID", "collection_key is required")
+        projected: dict[str, Any] = {
+            "target_item_key": target,
+            "collection_key": collection,
+        }
+    elif operation_type == OperationType.ADD_TAG:
+        target = payload_map.get("target_item_key")
+        tag = payload_map.get("tag")
+        if not isinstance(target, str) or not target:
+            fail("REQUEST_INVALID", "target_item_key is required")
+        if not isinstance(tag, str) or not tag:
+            fail("REQUEST_INVALID", "tag is required")
+        projected = {
+            "target_item_key": target,
+            "tag": tag,
+        }
+    elif operation_type == OperationType.ZOTERO_LINK_EXISTING:
+        semantic_link_fields = (
+            "target_item_key",
+            "known_item_key",
+            "human_confirmed_item_key",
+            "bibliographic_identity",
+            "doi",
+            "stable_identifiers",
+            "other_ids",
+        )
+        projected = {
+            key: payload_map[key]
+            for key in semantic_link_fields
+            if key in payload_map
+        }
+    else:
+        projected = {
+            key: value
+            for key, value in payload_map.items()
+            if key not in NON_SEMANTIC_OPERATION_PAYLOAD_KEYS
+        }
+    return normalize_operation_payload(projected)
+
+
+def normalized_payload_sha256(
+    operation_type: OperationType,
+    payload: Mapping[str, Any],
+) -> str:
+    projected = semantic_identity_payload(operation_type, payload)
+    return sha256_bytes(canonical_json_bytes(projected))
 
 
 def external_operation_identity(
@@ -375,6 +464,8 @@ class OperationRequest:
 
     @classmethod
     def from_mapping(cls, document: Mapping[str, Any]) -> "OperationRequest":
+        if document.get("schema_version") != "1.0":
+            fail("REQUEST_INVALID", "schema_version must be '1.0'")
         try:
             operation_type = OperationType(document.get("operation_type"))
         except ValueError:
@@ -437,7 +528,7 @@ class OperationRequest:
 
     @property
     def payload_sha256(self) -> str:
-        return normalized_payload_sha256(self.payload)
+        return normalized_payload_sha256(self.operation_type, self.payload)
 
     @property
     def external_operation_identity(self) -> str:
@@ -1055,6 +1146,55 @@ def build_git_reconciliation_payload(
         fail("GIT_RECONCILIATION_PRECONDITION_FAILED", "only create/link can propose linkage")
     if result.status != "SUCCESS":
         fail("GIT_RECONCILIATION_PRECONDITION_FAILED", "successful external result is required")
+    expected_payload_sha256 = normalized_payload_sha256(
+        request.operation_type,
+        request.payload,
+    )
+    expected_operation_identity = external_operation_identity(
+        request.operation_type,
+        request.source_id,
+        request.library_alias,
+        expected_payload_sha256,
+    )
+    consistency_checks = (
+        (plan.operation_type == request.operation_type.value, "operation_type"),
+        (plan.source_id == request.source_id, "source_id"),
+        (plan.library_alias == request.library_alias, "library_alias"),
+        (
+            plan.normalized_payload_sha256 == expected_payload_sha256,
+            "normalized_payload_sha256",
+        ),
+        (
+            plan.external_operation_identity == expected_operation_identity,
+            "external_operation_identity",
+        ),
+    )
+    for consistent, field_name in consistency_checks:
+        if not consistent:
+            fail(
+                "GIT_RECONCILIATION_PRECONDITION_FAILED",
+                f"request/plan {field_name} mismatch",
+            )
+    eligible_decisions = {
+        DecisionState.CREATE.value,
+        DecisionState.LINK_EXISTING.value,
+        DecisionState.RECOVER_EXISTING_WRITE.value,
+    }
+    if plan.decision not in eligible_decisions:
+        fail(
+            "GIT_RECONCILIATION_PRECONDITION_FAILED",
+            f"plan decision {plan.decision} is not reconciliation-eligible",
+        )
+    decision_operation_pairs = {
+        DecisionState.CREATE.value: OperationType.ZOTERO_CREATE.value,
+        DecisionState.LINK_EXISTING.value: OperationType.ZOTERO_LINK_EXISTING.value,
+        DecisionState.RECOVER_EXISTING_WRITE.value: OperationType.ZOTERO_CREATE.value,
+    }
+    if decision_operation_pairs[plan.decision] != plan.operation_type:
+        fail(
+            "GIT_RECONCILIATION_PRECONDITION_FAILED",
+            "plan decision is inconsistent with operation_type",
+        )
     item_key = result.item_key
     if not isinstance(item_key, str) or ITEM_KEY_RE.fullmatch(item_key) is None:
         fail("GIT_RECONCILIATION_PRECONDITION_FAILED", "a valid server item key is required")
@@ -1062,6 +1202,23 @@ def build_git_reconciliation_payload(
         fail(
             "GIT_RECONCILIATION_PRECONDITION_FAILED",
             "expected Git HEAD and source record_version are required",
+        )
+    if plan.decision in {
+        DecisionState.LINK_EXISTING.value,
+        DecisionState.RECOVER_EXISTING_WRITE.value,
+    } and plan.target_item_key != item_key:
+        fail(
+            "GIT_RECONCILIATION_PRECONDITION_FAILED",
+            "plan/result item_key mismatch",
+        )
+    if plan.decision == DecisionState.CREATE.value and (
+        not plan.server_generated_item_key_required
+        or plan.preallocated_item_key is not None
+        or plan.target_item_key is not None
+    ):
+        fail(
+            "GIT_RECONCILIATION_PRECONDITION_FAILED",
+            "CREATE plan violates server-generated item-key contract",
         )
     proposed = {
         "zotero": {
@@ -1107,8 +1264,14 @@ def self_test() -> int:
     checks: list[bool] = []
     checks.append(len(LedgerState) == 9)
     checks.append(
-        normalized_payload_sha256({"text": "Клементьев", "values": [2, 1]})
-        == normalized_payload_sha256({"values": [2, 1], "text": "Клементьев"})
+        normalized_payload_sha256(
+            OperationType.ZOTERO_CREATE,
+            {"text": "Клементьев", "values": [2, 1]},
+        )
+        == normalized_payload_sha256(
+            OperationType.ZOTERO_CREATE,
+            {"values": [2, 1], "text": "Клементьев"},
+        )
     )
     try:
         ForbiddenTransport().observe(
