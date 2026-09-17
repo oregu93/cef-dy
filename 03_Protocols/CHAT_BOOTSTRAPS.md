@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "3.1"
-updated: 2026-09-16
+version: "3.2"
+updated: 2026-09-17
 ---
 
 # Вводные промпты для чатов проекта
@@ -265,6 +265,85 @@ GREEN - контекст достаточен; YELLOW - накапливаетс
 остановить существенную работу до восстановления. 00 следит за собственным
 и, где возможно, specialist context и рекомендует migration заранее,
 на естественном scientific checkpoint, а не произвольной token boundary.
+
+### Independent health dimensions and terminal delivery
+
+Semantic context health сохраняет шкалу `GREEN`, `YELLOW`, `YELLOW_HIGH`,
+`RED`. Независимо от неё при необходимости оцениваются:
+
+```text
+FINALIZATION_HEALTH:
+  HEALTHY
+  DEGRADED
+  SEVERELY_DEGRADED
+  INSUFFICIENT_EVIDENCE
+
+DELIVERY_HEALTH:
+  NO_KNOWN_ISSUE
+  USER_REPORTED_DEGRADED
+  SEVERELY_DEGRADED
+  UNKNOWN
+```
+
+Delivery timeout не доказывает context-window exhaustion. Отсутствующий
+displayed final response сам по себе не доказывает semantic context
+degradation. Если long output не доставлен, а chunked delivery успешен, это
+поддерживает finalization/delivery mitigation, но не устанавливает причину в
+context window. Token percentages не оцениваются.
+
+TERMINAL COMPLETION RULE: остановка reasoning или tools не завершает task.
+Завершение требует user-visible terminal response:
+
+```text
+TASK_STATUS: COMPLETED
+TERMINAL_VERDICT: <verdict>
+```
+
+Если завершение недостижимо, но user-visible response ещё возможен, вернуть:
+
+```text
+TASK_STATUS: INCOMPLETE
+COMPLETED_SECTIONS: ...
+MISSING_SECTIONS: ...
+TERMINAL_VERDICT: NOT_ISSUED
+```
+
+Без требуемого terminal response задача остаётся nonterminal. Explicit
+fail-closed или negative scientific result является terminal result, если он
+явно удовлетворяет terminal contract.
+
+CHUNKED OUTPUT PROTOCOL применяется при material output/finalization risk:
+many tool calls, large source/file ingestion, long design/review reasoning,
+large REQUIRED OUTPUT или prior similar finalization failures. Для ordinary
+bounded tasks chunking не обязателен.
+
+Во всех частях сохраняется один `TASK_ID`. Нефинальная часть сообщает:
+
+```text
+TASK_STATUS: OUTPUT_IN_PROGRESS
+TERMINAL_VERDICT: NOT_YET_ISSUED
+```
+
+Она перечисляет completed и remaining sections и завершается на безопасной
+логической границе. User `continue` продолжает тот же `TASK_ID`, а не создаёт
+новую task. Только финальная часть сообщает `TASK_STATUS: COMPLETED` и
+terminal verdict. Поздняя correction явно называет superseded/corrected part.
+Chunking делит delivery, а не scientific/project authority; части одной
+atomic scientific decision не могут молча использовать несовместимые
+canonical baselines.
+
+Bounded execution roles (`WKB-R1`, `W02`, `W03` и аналогичные) не являются
+project-memory authorities. Для независимых execution families предпочитать
+fresh bounded context, если conversational continuity не даёт material
+выигрыша. Authority остаётся за canonical Git и exact authorized task
+envelope; old execution-chat history не требуется для re-entry. Повторное
+использование контекста внутри одной тесно связанной execution family
+допустимо только при material setup benefit без context/governance risk.
+
+При необходимости chunk the REPORT; не делить и не ослаблять atomic
+repository transaction ради delivery. Эти diagnostic axes дополняют, а не
+заменяют существующие `CONTEXT_HEALTHY`, `REENTRY_PREPARE` и
+`MIGRATE_SAME_ROLE` guidance.
 
 BLOCKER CLASSIFICATION: SCIENTIFIC_BLOCKER, ENGINEERING_BLOCKER,
 PROVENANCE_BLOCKER, GOVERNANCE_BLOCKER. Несcientific blockers не получают
