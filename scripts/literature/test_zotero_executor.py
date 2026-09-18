@@ -99,9 +99,18 @@ def item(
 
 
 class ConfigTests(unittest.TestCase):
-    def test_canonical_unconfigured_config_is_valid(self) -> None:
+    def test_canonical_configured_config_is_valid(self) -> None:
         config = executor.IntegrationConfig.load(CONFIG_PATH)
-        self.assertEqual(config.configuration_status, "unconfigured")
+        self.assertEqual(config.configuration_status, "configured")
+        self.assertEqual(config.libraries["project-main"]["type"], "user")
+        self.assertEqual(
+            str(config.libraries["project-main"]["library_id"]),
+            "4580223",
+        )
+        self.assertEqual(
+            config.libraries["project-main"]["project_collection"]["key"],
+            "NFT8TF2B",
+        )
         self.assertTrue(config.offline_plan_allowed)
         self.assertFalse(config.external_execution_eligible)
 
@@ -815,10 +824,24 @@ class ReconciliationAndBoundaryTests(unittest.TestCase):
             root = Path(temporary)
             request_path = root / "request.yaml"
             fixture_path = root / "fixture.yaml"
+            config_path = root / "config.yaml"
+
             request_path.write_text(
                 yaml.safe_dump(request_document(), sort_keys=False), encoding="utf-8"
             )
             fixture_path.write_text("items: []\n", encoding="utf-8")
+
+            config_document = canonical_config_document()
+            config_document["configuration_status"] = "unconfigured"
+            library = config_document["libraries"]["project-main"]
+            library["type"] = None
+            library["library_id"] = None
+            library["project_collection"]["key"] = None
+            config_path.write_text(
+                yaml.safe_dump(config_document, sort_keys=False),
+                encoding="utf-8",
+            )
+
             stdout = io.StringIO()
             stderr = io.StringIO()
             with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
@@ -830,7 +853,7 @@ class ReconciliationAndBoundaryTests(unittest.TestCase):
                         "--fixture",
                         str(fixture_path),
                         "--config",
-                        str(CONFIG_PATH),
+                        str(config_path),
                     ]
                 )
         self.assertEqual(return_code, 0)
