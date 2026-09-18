@@ -405,7 +405,7 @@ def _json_response(
         fail("NETWORK_ERROR")
 
     response_version = _header(response.headers, "Zotero-API-Version")
-    if response_version is not None and response_version != str(API_VERSION):
+    if response_version != str(API_VERSION):
         fail("API_VERSION_MISMATCH")
 
     if 300 <= response.status < 400:
@@ -622,14 +622,21 @@ def resolve_collection(
                 fail("RESPONSE_INVALID")
             total_hint = observed_total
 
-        next_start = start + len(document)
-        if next_start > MAX_COLLECTION_RECORDS:
+        retrieved_count = start + len(document)
+        if retrieved_count > MAX_COLLECTION_RECORDS:
             fail("NEEDS_REVIEW")
+        if total_hint is not None:
+            if retrieved_count > total_hint:
+                fail("RESPONSE_INVALID")
+            if retrieved_count == total_hint:
+                break
+            if not document:
+                fail("RESPONSE_INVALID")
+            start = retrieved_count
+            continue
         if not document or len(document) < COLLECTION_PAGE_SIZE:
             break
-        if total_hint is not None and next_start >= total_hint:
-            break
-        start = next_start
+        start = retrieved_count
 
     if not exact_keys:
         fail("COLLECTION_NOT_FOUND")

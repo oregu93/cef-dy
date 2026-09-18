@@ -546,6 +546,122 @@ class CollectionAndItemProofTests(unittest.TestCase):
         self.assertEqual(result.candidate_collection_key, "COLL0001")
         self.assertEqual(len(transport.calls), 4)
 
+    def test_38a_short_page_before_declared_total_continues(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (preflight.keys_current_endpoint(), response(user_key())),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response([collection("Other", "COLL0002")], headers={"Total-Results": "2"}),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 1),
+                    response([collection()], headers={"Total-Results": "2"}),
+                ),
+                (preflight.user_collection_items_endpoint("101", "COLL0001"), response([])),
+            ]
+        )
+        result = run_user(transport)
+        self.assertEqual(result.candidate_collection_key, "COLL0001")
+        self.assertEqual(len(transport.calls), 4)
+
+    def test_38b_second_page_second_exact_match_is_ambiguous(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (preflight.keys_current_endpoint(), response(user_key())),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response([collection(key="COLL0001")], headers={"Total-Results": "2"}),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 1),
+                    response([collection(key="COLL0002")], headers={"Total-Results": "2"}),
+                ),
+            ]
+        )
+        with self.assertRaises(preflight.PreflightError) as caught:
+            run_user(transport)
+        self.assertEqual(caught.exception.code, "COLLECTION_AMBIGUOUS")
+
+    def test_38c_premature_empty_page_before_total_is_invalid(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (preflight.keys_current_endpoint(), response(user_key())),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response([collection()], headers={"Total-Results": "2"}),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 1),
+                    response([], headers={"Total-Results": "2"}),
+                ),
+            ]
+        )
+        with self.assertRaises(preflight.PreflightError) as caught:
+            run_user(transport)
+        self.assertEqual(caught.exception.code, "RESPONSE_INVALID")
+
+    def test_38d_retrieved_count_exceeding_total_is_invalid(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (preflight.keys_current_endpoint(), response(user_key())),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response(
+                        [collection(), collection("Other", "COLL0002")],
+                        headers={"Total-Results": "1"},
+                    ),
+                ),
+            ]
+        )
+        with self.assertRaises(preflight.PreflightError) as caught:
+            run_user(transport)
+        self.assertEqual(caught.exception.code, "RESPONSE_INVALID")
+
+    def test_38e_total_results_changing_between_pages_is_invalid(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (preflight.keys_current_endpoint(), response(user_key())),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response([collection()], headers={"Total-Results": "2"}),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 1),
+                    response(
+                        [collection("Other", "COLL0002")],
+                        headers={"Total-Results": "3"},
+                    ),
+                ),
+            ]
+        )
+        with self.assertRaises(preflight.PreflightError) as caught:
+            run_user(transport)
+        self.assertEqual(caught.exception.code, "RESPONSE_INVALID")
+
+    def test_38f_unique_match_on_later_short_page_is_found(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (preflight.keys_current_endpoint(), response(user_key())),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response([collection("Other 1", "COLL0002")], headers={"Total-Results": "3"}),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 1),
+                    response([collection()], headers={"Total-Results": "3"}),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 2),
+                    response([collection("Other 2", "COLL0003")], headers={"Total-Results": "3"}),
+                ),
+                (preflight.user_collection_items_endpoint("101", "COLL0001"), response([])),
+            ]
+        )
+        result = run_user(transport)
+        self.assertEqual(result.candidate_collection_key, "COLL0001")
+        self.assertEqual(len(transport.calls), 5)
+
     def test_39_nonempty_item_read_is_verified_and_redacted(self) -> None:
         private_item = {
             "key": "ITEM0001",
@@ -633,6 +749,26 @@ class CollectionAndItemProofTests(unittest.TestCase):
                 (
                     preflight.keys_current_endpoint(),
                     response(user_key(), headers={"Zotero-API-Version": "2"}),
+                )
+            ]
+        )
+        with self.assertRaises(preflight.PreflightError) as caught:
+            run_user(transport)
+        self.assertEqual(caught.exception.code, "API_VERSION_MISMATCH")
+
+    def test_47a_api_version_three_is_accepted(self) -> None:
+        self.assertEqual(run_user(user_success_transport()).status, "PASS")
+
+    def test_47b_missing_api_version_header_is_rejected(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (
+                    preflight.keys_current_endpoint(),
+                    preflight.TransportResponse(
+                        200,
+                        {},
+                        json.dumps(user_key()).encode("utf-8"),
+                    ),
                 )
             ]
         )
@@ -769,26 +905,31 @@ class CliAndRepositoryBoundaryTests(unittest.TestCase):
         ):
             self.assertFalse((ROOT / relative).exists(), relative)
 
-    def test_56_worktree_scope_contains_only_the_two_new_files(self) -> None:
-        process = subprocess.run(
+    def test_56_offline_self_test_does_not_mutate_worktree(self) -> None:
+        status_before = subprocess.run(
             ["git", "status", "--porcelain"],
             cwd=ROOT,
             capture_output=True,
             text=True,
             check=True,
-        )
-        changed = {
-            line[3:]
-            for line in process.stdout.splitlines()
-            if line.strip()
-        }
-        self.assertEqual(
-            changed,
-            {
-                "scripts/literature/zotero_readonly_preflight.py",
-                "scripts/literature/test_zotero_readonly_preflight.py",
-            },
-        )
+        ).stdout
+        stdout = io.StringIO()
+        with mock.patch.object(
+            preflight,
+            "read_api_key",
+            side_effect=AssertionError("credential read"),
+        ), contextlib.redirect_stdout(stdout):
+            code = preflight.main(["self-test"])
+        status_after = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+        self.assertEqual(code, 0)
+        self.assertEqual(json.loads(stdout.getvalue())["status"], "PASS")
+        self.assertEqual(status_after, status_before)
 
 
 def network_forbidden(*args: object, **kwargs: object) -> None:
