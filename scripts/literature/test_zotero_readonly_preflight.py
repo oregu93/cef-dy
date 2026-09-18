@@ -68,10 +68,13 @@ def response(
     return preflight.TransportResponse(status, response_headers, body)
 
 
-def user_key(*, read: bool = True, write: bool = False) -> dict:
+def user_key(*, read: bool = True, write: bool | None = False) -> dict:
+    permission: dict[str, object] = {"library": read}
+    if write is not None:
+        permission["write"] = write
     return {
         "userID": 101,
-        "access": {"user": {"library": read, "write": write}},
+        "access": {"user": permission},
     }
 
 
@@ -79,13 +82,16 @@ def group_key(
     *,
     group_id: str = "202",
     read: bool = True,
-    write: bool = False,
+    write: bool | None = False,
     use_all: bool = False,
 ) -> dict:
     key = "all" if use_all else group_id
+    permission: dict[str, object] = {"library": read}
+    if write is not None:
+        permission["write"] = write
     return {
         "userID": 101,
-        "access": {"groups": {key: {"library": read, "write": write}}},
+        "access": {"groups": {key: permission}},
     }
 
 
@@ -358,6 +364,34 @@ class PermissionAndLibraryBindingTests(unittest.TestCase):
         self.assertTrue(result.write_access_verified_false)
         self.assertTrue(result.principal_relation_verified)
 
+    def test_21a_user_permission_with_omitted_write_is_read_only(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (
+                    preflight.keys_current_endpoint(),
+                    response(user_key(write=None)),
+                ),
+                (
+                    preflight.user_collections_endpoint("101", 0),
+                    response([collection()]),
+                ),
+                (
+                    preflight.user_collection_items_endpoint(
+                        "101", "COLL0001"
+                    ),
+                    response([]),
+                ),
+            ]
+        )
+        result = run_user(transport)
+        self.assertTrue(result.read_access_verified)
+        self.assertTrue(result.write_access_verified_false)
+
+    def test_21b_user_explicit_write_false_remains_read_only(self) -> None:
+        result = run_user(user_success_transport())
+        self.assertTrue(result.read_access_verified)
+        self.assertTrue(result.write_access_verified_false)
+
     def test_22_user_write_permission_stops_before_library_request(self) -> None:
         transport = preflight.FixtureTransport(
             [(preflight.keys_current_endpoint(), response(user_key(write=True)))]
@@ -393,6 +427,37 @@ class PermissionAndLibraryBindingTests(unittest.TestCase):
             ]
         )
         self.assertEqual(run_group(transport).status, "PASS")
+
+    def test_24a_group_permission_with_omitted_write_is_read_only(self) -> None:
+        transport = preflight.FixtureTransport(
+            [
+                (
+                    preflight.keys_current_endpoint(),
+                    response(group_key(write=None)),
+                ),
+                (
+                    preflight.user_groups_endpoint("101"),
+                    response({"202": 7}),
+                ),
+                (
+                    preflight.group_metadata_endpoint("202"),
+                    response({"id": 202}),
+                ),
+                (
+                    preflight.group_collections_endpoint("202", 0),
+                    response([collection()]),
+                ),
+                (
+                    preflight.group_collection_items_endpoint(
+                        "202", "COLL0001"
+                    ),
+                    response([]),
+                ),
+            ]
+        )
+        result = run_group(transport)
+        self.assertTrue(result.read_access_verified)
+        self.assertTrue(result.write_access_verified_false)
 
     def test_25_group_write_permission_stops_before_relation_request(self) -> None:
         transport = preflight.FixtureTransport(
@@ -431,7 +496,15 @@ class PermissionAndLibraryBindingTests(unittest.TestCase):
         self.assertEqual(caught.exception.code, "READ_ACCESS_DENIED")
 
     def test_29_malformed_permission_structure_fails_closed(self) -> None:
-        malformed = {"userID": 101, "access": {"user": {"library": True}}}
+        malformed = {
+            "userID": 101,
+            "access": {
+                "user": {
+                    "library": True,
+                    "write": None,
+                }
+            },
+        }
         transport = preflight.FixtureTransport(
             [(preflight.keys_current_endpoint(), response(malformed))]
         )

@@ -446,12 +446,34 @@ def _parse_principal(document: Any) -> tuple[str, dict[str, Any]]:
     return user_id, access
 
 
-def _require_read_only(permission: Any) -> None:
+def _permission_values(permission: Any) -> tuple[bool, bool]:
+    """Return explicit read access and effective write grant.
+
+    Zotero read-only key records may omit the ``write`` field entirely.
+    Absence therefore means that no write grant is present.  If ``write`` is
+    present, it must still be an explicit boolean so malformed responses fail
+    closed.
+    """
+
     record = _mapping(permission)
+
     read_value = record.get("library")
-    write_value = record.get("write")
-    if not isinstance(read_value, bool) or not isinstance(write_value, bool):
+    if not isinstance(read_value, bool):
         fail("RESPONSE_INVALID")
+
+    if "write" not in record:
+        write_value = False
+    else:
+        write_value = record["write"]
+        if not isinstance(write_value, bool):
+            fail("RESPONSE_INVALID")
+
+    return read_value, write_value
+
+
+def _require_read_only(permission: Any) -> None:
+    read_value, write_value = _permission_values(permission)
+
     if write_value:
         fail("UNEXPECTED_WRITE_CAPABILITY")
     if not read_value:
@@ -469,16 +491,11 @@ def _require_group_permission(access: Mapping[str, Any], group_id: str) -> None:
     applicable = [groups[key] for key in ("all", group_id) if key in groups]
     if not applicable:
         fail("READ_ACCESS_DENIED")
-    parsed: list[tuple[bool, bool]] = []
-    for permission in applicable:
-        record = _mapping(permission)
-        read_value = record.get("library")
-        write_value = record.get("write")
-        if not isinstance(read_value, bool) or not isinstance(write_value, bool):
-            fail("RESPONSE_INVALID")
-        parsed.append((read_value, write_value))
+
+    parsed = [_permission_values(permission) for permission in applicable]
     if any(write for _, write in parsed):
         fail("UNEXPECTED_WRITE_CAPABILITY")
+
     selected = groups.get(group_id, groups.get("all"))
     _require_read_only(selected)
 
