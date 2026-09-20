@@ -282,8 +282,18 @@ blind experimental search.
 Энергии около 6.45 и 27.90 meV в настоящее время относятся именно к
 этому классу.
 
-До восстановления первичного библиографического источника их не следует
-называть литературно установленными уровнями DyFeO3.
+Lineage 6.447/18.226/27.896 meV (52/147/225 cm^-1) прослежен до
+Schuchert et al. 1969; полная постраничная проверка недоступна. Для
+6.447/27.896 meV независимое прямое подтверждение не установлено: только
+historical/context role, без baseline Stage03D likelihood/ranking.
+LaForge даёт независимое, но модельно-зависимое оптическое corroboration
+18.226 meV: только external consistency check. TAIPAN
+18.247178 ± 0.119021 meV остаётся текущим experimental candidate, не
+окончательным Dy3+ CEF-назначением; тождество с 147 cm^-1 не предполагается.
+Два independent likelihood terms запрещены без separately reviewed contract
+общей transition identity и корректной independent-measurement likelihood.
+Совместное воспроизведение 52/147/225 cm^-1 не является основанием preference.
+См. [Stage03D addendum](STAGE03D_HISTORICAL_ENERGY_ADMISSIBILITY_ADDENDUM_V1_0.md).
 
 Термин `landmark` допустим только в историческом описании и не является
 предпочтительным научным термином.

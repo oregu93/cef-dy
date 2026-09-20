@@ -31,7 +31,7 @@ control_chat: "00 - Project Control"
 
 **Stage03R specifications.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
-**Следующий шаг.** Запросить архивные setup/log/SICS records experiment 1296 у ANSTO. При недоступности records следующий отдельный design - preregistered resolution sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы. Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
+**Следующий шаг.** Запрос архивных setup/log/SICS records experiment 1296 в ANSTO отправлен; статус awaiting_response, архивный ответ не допущен. При недоступности records следующий отдельный design - preregistered resolution sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы. Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 Phase 3 read-only integration closed/accepted. Phase 4, Phase 5 и BBT activation не авторизованы.
 
 **Следующий Work job.** Не назначен. Следующая scientific execution требует отдельного admission review и authorization.
 
@@ -39,7 +39,7 @@ control_chat: "00 - Project Control"
 - Любые дополнительные C002 reruns и повторный доступ к holdout detector data.
 - C003 и combined discovery + holdout re-estimation до отдельного Project Control review.
 - W03-03D-A-001 и любая production-оптимизация Stage 03D до отдельного real-input admission review и execution authorization.
-- Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
+- Включение historical 6.447/27.896 meV в baseline Stage03D likelihood/ranking; двойной учёт historical/LaForge 18.226 и TAIPAN 18.247178 meV без отдельного reviewed contract.
 - Использование F004 около 44.4 meV как обязательного CEF-перехода.
 - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
 - Production CEF fitting внутри Stage 02R.
@@ -82,8 +82,9 @@ R3/R5/R7 - historical exploratory probes. Stage03D suspended; exchange и
 54-55 meV deferred; Structure-A PAUSED; holdout unauthorized.
 McStas/RESTRAX production не авторизована.
 
-Главный pending external action - запросить archived experiment-1296 instrument
-setup/log/SICS configuration у ANSTO. Если records недоступны, следующий
+Запрос archived experiment-1296 instrument setup/log/SICS configuration в ANSTO
+отправлен (`request_sent: true`, `status: awaiting_response`); архивный ответ
+пока не допущен. Главный blocker остаётся resolution/acceptance и intensity-scale bridge. Если records недоступны, следующий
 отдельный design может определить preregistered assumption-transparent
 resolution sensitivity envelope. Это checkpoint synchronization, без новой
 scientific execution.
@@ -373,6 +374,14 @@ MOD-ECM-MALKIN
 
 # 9. Open questions
 
+Для будущего Stage03D re-entry действует
+[historical energy admissibility addendum](../03_Protocols/STAGE03D_HISTORICAL_ENERGY_ADMISSIBILITY_ADDENDUM_V1_0.md).
+6.447/27.896 meV исключены из baseline likelihood/ranking; historical/LaForge
+18.226 meV — external consistency check only. Двойной учёт с TAIPAN запрещён
+без отдельно reviewed common-transition identity и independent-measurement
+likelihood contract. Совпадение всех 52/147/225 cm^-1 не даёт model preference.
+Это наследование принятой интерпретации, не возобновление Stage03D.
+
 | ID | Priority | Вопрос | Контекст |
 |---|---|---|---|
 | `Q-001` | deferred | Какова корректная форма censored likelihood для недетектированных spectral components? | Stage 03R / 03D |
@@ -384,7 +393,7 @@ MOD-ECM-MALKIN
 | `Q-007` | deferred | Каково минимальное exchange-aware расширение CEF model после single-ion baseline? | Stage 05 |
 | `Q-008` | deferred | Как переносить structural-coordinate uncertainty в CEF inference? | Structure / Modelling |
 | `Q-009` | deferred | Как переносить structural CEF trends по Dy/Ho/Tb/Tm через $A_l^m$ и local multipoles? | Stage 06 / Structure |
-| `Q-010` | high | Каков первичный литературный источник historical targets 6.45 и 27.90 meV? | `01 - Literature & Physics` |
+| `Q-010` | deferred | Как закрыть полную постраничную проверку Schuchert et al. 1969 для historical 6.447/27.896 meV при уже прослеженном lineage? | `01 - Literature & Physics` |
 | `Q-012` | high | Какова полная uncertainty энергии особенности около 18.25 meV с учётом calibration systematic? | Stage 02R |
 | `Q-013` | high | Какие относительные INS-интенсивности могут использоваться как независимые CEF constraints? | Stage 02R / 03R |
 | `Q-014` | high | Требуют ли очищенные данные изменения CEF wavefunctions относительно M0? | Stage 03R |

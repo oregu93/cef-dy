@@ -51,7 +51,10 @@
   statement: >
     Энергии 6.45 и 27.90 meV использовались в historical B1/B2 assignment
     tracks, однако они не являются blind experimental detections текущего
-    TAIPAN analysis, а их первичный литературный provenance пока не восстановлен.
+    TAIPAN analysis. Их lineage прослежен до Schuchert et al. 1969; полная
+    постраничная проверка недоступна, независимое прямое подтверждение не установлено.
+    Значения 6.447/27.896 meV имеют только historical/context role и исключены
+    из baseline Stage03D likelihood и ranking.
   supporting_evidence: []
   supporting_results: []
   historical_target_evidence:
@@ -63,10 +66,9 @@
   completed_prerequisites:
     - B-001 завершил слепой поиск спектральных особенностей как R-012 / EV-007 без исторического сопоставления и без CEF-назначения.
   tests_required:
-    - Восстановить первичные литературные источники обеих энергий.
-    - До отдельного design review T-02R-05 не сопоставлять historical target energies с каталогом BF-*.
-    - В отдельном design review заранее определить targeted sensitivity / upper-limit tests; не выполнять их без разрешения.
-    - Проверить возможные transition strengths в admissible CEF models.
+    - Любой будущий conditional test historical 6.447/27.896 meV требует отдельного Project Control admission и заранее заданного observation/likelihood contract.
+    - Не использовать historical-energy agreement для baseline Stage03D likelihood, ranking или accepted-solution ordering.
+    - Проверять transition strengths только внутри отдельно допущенного scientific task.
   notes: >
     Отсутствие таких переходов в conditioned PCM R-006 не доказывает их
     физическое отсутствие. Поэтому прежний status disfavored заменён на candidate.

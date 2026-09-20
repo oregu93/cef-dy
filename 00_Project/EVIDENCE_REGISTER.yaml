@@ -47,6 +47,12 @@
     background families; does not include final absolute instrument-energy
     calibration systematic.
 
+  current_project_role: operative_experimental_candidate
+  final_Dy3_CEF_assignment: not_established
+  identity_with_historical_147_cm_inverse: not_assumed
+  historical_18_226_meV_role: external_consistency_check_only
+  independent_second_likelihood_term_authorized: false
+
   validation_required:
     - independent TAIPAN re-analysis
     - explicit source scan IDs
@@ -78,12 +84,15 @@
   title: Historical 6.45 meV B1/B2 landmark
   origin_type: literature
   review_status: candidate
-  provenance_status: missing
+  provenance_status: partial
 
   statement: >
     The 6.45 meV energy was used in legacy B1/B2 energy-only assignment
     tracks and was labelled in legacy code as a literature prior. The primary
-    bibliographic source has not yet been recovered.
+    lineage is traced to Schuchert et al. 1969 (52 cm^-1 / 6.447 meV).
+    Full Schuchert page-level verification remains unavailable; independent
+    direct confirmation is not established. Historical/context role only;
+    excluded from baseline Stage03D likelihood and ranking.
 
   experimental_role:
     blind_detection: false
@@ -95,12 +104,15 @@
   title: Historical 27.90 meV B2 landmark
   origin_type: literature
   review_status: candidate
-  provenance_status: missing
+  provenance_status: partial
 
   statement: >
     The 27.90 meV energy was used in the legacy B2 energy-only assignment
     track and was labelled in legacy code as a literature prior. The primary
-    bibliographic source has not yet been recovered.
+    lineage is traced to Schuchert et al. 1969 (225 cm^-1 / 27.896 meV).
+    Full Schuchert page-level verification remains unavailable; independent
+    direct confirmation is not established. Historical/context role only;
+    excluded from baseline Stage03D likelihood and ranking.
 
   experimental_role:
     blind_detection: false

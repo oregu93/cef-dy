@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-16'
+updated: '2026-09-20'
 
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
@@ -10,6 +10,33 @@ scientific_question: >
   независимыми магнитными наблюдаемыми.
 
 scientific_facade:
+  historical_energy_admissibility:
+    scientific_review_id: STAGE03R-DYFEO3-HISTORICAL-CEF-SCIENTIFIC-REVIEW-001
+    scientific_review_status: ACCEPTED_WITH_LIMITATIONS
+    inheritance_id: STAGE03R-HISTORICAL-ENERGY-ADMISSIBILITY-INHERITANCE-001
+    inheritance_status: ACCEPT_WITH_INTERPRETIVE_CORRECTION
+    review_path: 04_Results/Stage03R/STAGE03R-DYFEO3-HISTORICAL-CEF-SCIENTIFIC-REVIEW-001/SCIENTIFIC_REVIEW.md
+    addendum_path: 03_Protocols/STAGE03D_HISTORICAL_ENERGY_ADMISSIBILITY_ADDENDUM_V1_0.md
+    schuchert_lineage: traced
+    full_schuchert_page_level_verification: unavailable
+    historical_6_447_and_27_896_meV:
+      independent_direct_confirmation: not_established
+      role: historical_context_only
+      baseline_likelihood: excluded
+      baseline_ranking: excluded
+    historical_18_226_meV:
+      corroboration: independent_model_dependent_LaForge_optical
+      role: external_consistency_check_only
+      second_likelihood_term: forbidden_without_separately_reviewed_contract
+    taipan_candidate:
+      energy_meV: 18.247178
+      uncertainty_meV: 0.119021
+      final_Dy3_CEF_assignment: not_established
+      identity_with_historical_147_cm_inverse: not_assumed
+    common_transition_identity_and_independent_measurement_contract_required: true
+    preference_for_reproducing_52_147_225_cm_inverse: false
+    stage03d_reopened: false
+    scientific_execution_authorized: false
   current_scientific_question: >
     Как закрыть experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge,
     необходимый для quantitative model-to-experiment comparison около 38 meV?
@@ -367,14 +394,18 @@ scientific_facade:
         current_or_preferred_model_status: false
       resolution_readiness: SENSITIVITY_ENVELOPE_ONLY
       absolute_scale_status: CALIBRATION_REQUIRED
-      external_pending_action: request archived experiment-1296 instrument setup/log/SICS configuration from ANSTO
+      external_pending_action: await ANSTO experiment-1296 archive response
+      ansto_archive_request:
+        request_sent: true
+        status: awaiting_response
+        archive_response_admitted: false
       fallback_if_unavailable: preregistered assumption-transparent resolution sensitivity envelope design
     W03_authorized: false
     Stage03D_resumed: false
     production_CEF_fit_authorized: false
     raw_detector_access_authorized: false
     holdout_reanalysis_authorized: false
-    next_governance_action: request_archived_ANSTO_experiment_1296_instrument_records
+    next_governance_action: await_ANSTO_experiment_1296_archive_response
     role: CEF_landscape_identifiability_constraints_model_hierarchy_and_inference_design_review
     discovery_features:
       allowed_as_experimental_constraints: true
@@ -413,7 +444,7 @@ scientific_facade:
     - LEVEL_3 model-to-TAIPAN quantitative bridge и LEVEL_4 model constraint.
     - Experiment-specific resolution/acceptance и absolute detector/monitor scale.
   next_scientific_step:
-    id: request_archived_ANSTO_experiment_1296_instrument_records
+    id: await_ANSTO_experiment_1296_archive_response
     stage_id: M03R
     role: external_resolution_input_provenance_closure
     discovery_features_allowed_as_experimental_constraints: true
@@ -478,7 +509,7 @@ model_status_summary: >
 main_uncertainties:
   - Не установлен уникальный полный 15-параметрический CEF-гамильтониан и соответствующие волновые функции.
   - Окончательное CEF-назначение особенности около 18.25 meV не подтверждено интенсивностями и другими независимыми наблюдаемыми.
-  - Первичный литературный provenance энергий 6.45 и 27.90 meV не восстановлен; физическая природа особенности около 44.4 meV остаётся открытой.
+  - Provenance исторических энергий прослежен до Schuchert et al. 1969; полная постраничная проверка Schuchert недоступна. Это не прямые экспериментальные constraints проекта; природа особенности около 44.4 meV остаётся открытой.
   - Не установлена эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
   - Перекрывающиеся BF-интервалы не разрешены на отдельные физические линии; Tier-2 отсутствует, один скан для поиска исключён численно, а отказы отдельных окон ограничивают выводы об устойчивости B-001.
   - Не определены окончательная систематическая неопределённость энергетической шкалы и модель разрешения TAS; достаточность CEF-only описания низкотемпературных данных не установлена.
@@ -490,9 +521,9 @@ current_milestone:
   status: LEVEL_2_established_LEVEL_3_blocked
 
 immediate_next_step:
-  id: request_archived_ANSTO_experiment_1296_instrument_records
+  id: await_ANSTO_experiment_1296_archive_response
   text: >-
-    Запросить у ANSTO архивные experiment-1296 instrument setup, log и SICS configuration.
+    Запрос архивных experiment-1296 instrument setup, log и SICS configuration в ANSTO отправлен; ожидать ответа. Ни один архивный ответ пока не допущен.
     Если records недоступны, отдельно спроектировать preregistered assumption-transparent
     resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
 do_not_assume:
@@ -522,17 +553,17 @@ control:
     resolution/acceptance и intensity-scale bridge. LEVEL_2 sensitivity не является
     physical upper limit или exclusion threshold; model rejection не установлено.
   next: >-
-    Запросить архивные setup/log/SICS records experiment 1296 у ANSTO.
+    Запрос архивных setup/log/SICS records experiment 1296 в ANSTO отправлен; статус awaiting_response, архивный ответ не допущен.
     При недоступности records следующий отдельный design - preregistered resolution
     sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы.
-    Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 не авторизован.
+    Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 Phase 3 read-only integration closed/accepted. Phase 4, Phase 5 и BBT activation не авторизованы.
   next_work_job: null
 
   blocked:
     - Любые дополнительные C002 reruns и повторный доступ к holdout detector data.
     - C003 и combined discovery + holdout re-estimation до отдельного Project Control review.
     - W03-03D-A-001 и любая production-оптимизация Stage 03D до отдельного real-input admission review и execution authorization.
-    - Использование 6.45 и 27.90 meV как обязательных экспериментальных CEF constraints до восстановления provenance и независимого анализа.
+    - Включение historical 6.447/27.896 meV в baseline Stage03D likelihood/ranking; двойной учёт historical/LaForge 18.226 и TAIPAN 18.247178 meV без отдельного reviewed contract.
     - Использование F004 около 44.4 meV как обязательного CEF-перехода.
     - Promotion новых численных CEF solutions до validated без воспроизводимого evidence.
     - Production CEF fitting внутри Stage 02R.
@@ -746,9 +777,16 @@ pending_technical_work:
       project_control_acceptance:
         status: accepted
 
-      configuration_status: unconfigured
-      connection_status: not_configured
-      read_access_status: not_verified
+      configuration_status: configured
+      connection_status: verified_read_only
+      read_access_status: verified
+      phase3:
+        status: closed
+        acceptance_status: accepted
+        accepted_canonical_baseline: ef6793cd9c9223f962a5b500a379f5514696867c
+      phase4_authorized: false
+      phase5_authorized: false
+      bbt_activation_authorized: false
       write_access_status: not_authorized
 
       bbt_compatibility_status: not_verified

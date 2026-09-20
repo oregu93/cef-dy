@@ -36,8 +36,8 @@ single-ion Dy-site tensor transport зафиксированы в checkpoint. St
 Structure-A deferred/paused; holdout unauthorized. McStas/RESTRAX production
 не авторизована.
 
-Следующий внешний шаг - запросить у ANSTO archived experiment-1296 instrument
-setup/log/SICS configuration. Если records недоступны, возможен отдельный
+Запрос archived experiment-1296 instrument setup/log/SICS configuration в ANSTO
+отправлен: `request_sent: true`, `status: awaiting_response`; архивный ответ не допущен. Если records недоступны, возможен отдельный
 preregistered design assumption-transparent resolution sensitivity envelope.
 
 > [!abstract] Назначение
@@ -95,7 +95,7 @@ preregistered design assumption-transparent resolution sensitivity envelope.
 **Основные неопределённости.**
 - Не установлен уникальный полный 15-параметрический CEF-гамильтониан и соответствующие волновые функции.
 - Окончательное CEF-назначение особенности около 18.25 meV не подтверждено интенсивностями и другими независимыми наблюдаемыми.
-- Первичный литературный provenance энергий 6.45 и 27.90 meV не восстановлен; физическая природа особенности около 44.4 meV остаётся открытой.
+- Provenance исторических энергий прослежен до Schuchert et al. 1969; полная постраничная проверка Schuchert недоступна. Это не прямые экспериментальные constraints проекта; природа особенности около 44.4 meV остаётся открытой.
 - Не установлена эпистемическая связь legacy-идентификаторов F002/F004 с новым каталогом BF-*.
 - Перекрывающиеся BF-интервалы не разрешены на отдельные физические линии; Tier-2 отсутствует, один скан для поиска исключён численно, а отказы отдельных окон ограничивают выводы об устойчивости B-001.
 - Не определены окончательная систематическая неопределённость энергетической шкалы и модель разрешения TAS; достаточность CEF-only описания низкотемпературных данных не установлена.
@@ -103,7 +103,7 @@ preregistered design assumption-transparent resolution sensitivity envelope.
 
 **Текущий этап.** `M03R` (`LEVEL_2_established_LEVEL_3_blocked`): Stage03R - compatibility и sensitivity bridge
 
-**Следующий шаг.** `request_archived_ANSTO_experiment_1296_instrument_records`: Запросить у ANSTO архивные experiment-1296 instrument setup, log и SICS configuration. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
+**Следующий шаг.** `await_ANSTO_experiment_1296_archive_response`: Запрос архивных experiment-1296 instrument setup, log и SICS configuration в ANSTO отправлен; ожидать ответа. Ни один архивный ответ пока не допущен. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
@@ -528,23 +528,36 @@ $$
 заранее заданные candidate energies и в старом коде обозначались как
 литературные priors.
 
-На текущем этапе первичный библиографический источник этих двух
-значений ещё не восстановлен.
+Provenance lineage прослежен до Schuchert et al. 1969, но полная постраничная
+проверка Schuchert остаётся недоступной. Независимое прямое подтверждение
+6.447 meV / 52 cm^-1 и 27.896 meV / 225 cm^-1 не установлено.
+Они имеют только historical/context role и исключены из baseline Stage03D
+likelihood и ranking.
+
+Историческое назначение 18.226 meV / 147 cm^-1 имеет независимое, но
+модельно-зависимое оптическое corroboration LaForge: только external
+consistency check, не второй likelihood term рядом с TAIPAN
+18.247178 ± 0.119021 meV. TAIPAN остаётся operative experimental candidate;
+окончательное Dy3+ CEF-назначение и тождество с 147 cm^-1 не установлены.
+Совместное воспроизведение 52/147/225 cm^-1 не даёт модели преимущества.
+Применим [Stage03D addendum](../03_Protocols/STAGE03D_HISTORICAL_ENERGY_ADMISSIBILITY_ADDENDUM_V1_0.md);
+Stage03D не возобновлён.
 
 Поэтому их статус:
 
 ```yaml
 origin_type: literature
 review_status: candidate
-provenance_status: missing
+provenance_status: partial
 ```
 
 Экспериментальные upper limits, вычисленные в окрестности этих энергий,
 являются отдельными `experiment_derived` наблюдаемыми и не превращают
 сами target energies в экспериментальные пики.
 
-До завершения provenance audit эти значения не следует использовать как
-обязательные уровни DyFeO3.
+В текущем inference эти значения не используются как обязательные
+экспериментальные уровни DyFeO3. Любой будущий conditional test этих
+historical assignments требует отдельного admission/design contract.
 
 ## 4.4. Особенность около 44.4 meV
 
@@ -916,8 +929,8 @@ Legacy direct PCF/CFE basis использовал другой набор opera
 4. уникальный полный набор CEF-параметров $B_l^m$;
 5. уникальная CEF level scheme и волновые функции;
 6. окончательное назначение особенности около $18.25~\mathrm{meV}$;
-7. первичный литературный provenance энергий $6.45$ и
-   $27.90~\mathrm{meV}$;
+7. полная постраничная проверка Schuchert et al. 1969 и независимое прямое
+   подтверждение исторических 6.447/27.896 meV; lineage уже прослежен;
 8. физическая природа особенности около $44.4~\mathrm{meV}$;
 9. полный экспериментальный absolute/relative intensity contract
    для будущего joint fit;

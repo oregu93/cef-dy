@@ -81,13 +81,13 @@ CEF-гамильтониан содержит 15 независимых пара
 - LEVEL_3 model-to-TAIPAN quantitative bridge и LEVEL_4 model constraint.
 - Experiment-specific resolution/acceptance и absolute detector/monitor scale.
 
-**Следующий научный шаг.** `request_archived_ANSTO_experiment_1296_instrument_records`: Запросить у ANSTO архивные experiment-1296 instrument setup, log и SICS configuration. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
+**Следующий научный шаг.** `await_ANSTO_experiment_1296_archive_response`: Запрос архивных experiment-1296 instrument setup, log и SICS configuration в ANSTO отправлен; ожидать ответа. Ни один архивный ответ пока не допущен. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
 
 **Дорожная карта.** Stage 02R — независимый повторный анализ TAIPAN → Stage 03R — CEF landscape и идентифицируемость → Stage 03D — совместное ограниченное моделирование энергий и интенсивностей → Stage 05 — независимая магнитная проверка → Последующая структурная и микроскопическая интерпретация.
 
 **Происхождение B-001.** [Научное рецензирование B-001](04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md); [Замороженный каталог BF](04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml); [Контрольная запись B-001](02_Work_Checkpoints/W02-02R-B-001.md); [R-012](00_Project/RESULT_REGISTER.yaml); [EV-007](00_Project/EVIDENCE_REGISTER.yaml); [Активная замороженная спецификация C-001 v1.1](03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md); [canonical commit `21506b7`](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
 
-**Метаданные обновлены:** `2026-09-16`.
+**Метаданные обновлены:** `2026-09-20`.
 <!-- AUTO:README_STATUS:END -->
 
 
@@ -108,8 +108,16 @@ compatibility execution; scientific execution не авторизована.
 energies сохранены в checkpoints и specifications, но не входят в текущий
 observation vocabulary.
 
-Литературная инфраструктура `LIT-INFRA-01` и `LIT-INFRA-02` принята и закрыта;
-это не авторизует автоматический переход к `LIT-INFRA-03`.
+Литературная инфраструктура `LIT-INFRA-01` и `LIT-INFRA-02` принята и закрыта.
+`LIT-INFRA-03` Phase 3 read-only integration closed/accepted на baseline
+`ef6793cd9c9223f962a5b500a379f5514696867c`; Phase 4, Phase 5 и BBT activation
+не авторизованы. Новое подключение или запись в Zotero не выполнялись.
+
+Historical 52/147/225 cm^-1 не являются набором independent likelihood terms:
+6.447/27.896 meV — context only; historical/LaForge 18.226 meV — external
+consistency check, без двойного учёта с TAIPAN 18.247178 ± 0.119021 meV.
+Применим [Stage03D addendum](03_Protocols/STAGE03D_HISTORICAL_ENERGY_ADMISSIBILITY_ADDENDUM_V1_0.md);
+Stage03D остаётся suspended.
 
 Подробное текущее научное состояние:
 [PROJECT_STATE](00_Project/PROJECT_STATE.md).
