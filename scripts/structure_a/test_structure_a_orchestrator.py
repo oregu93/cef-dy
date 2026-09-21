@@ -482,6 +482,9 @@ class Tests(unittest.TestCase):
 
             pcr = root / "x.pcr"
             pcr.write_text("x")
+            input_pcr_identity = (
+                m.freeze_pcr_identity(pcr)
+            )
 
             data = root / "x.dat"
             data.write_text("d")
@@ -506,7 +509,10 @@ class Tests(unittest.TestCase):
                     argv=["fp"],
                     fp2k_sha256="f",
                     config_path=config,
-                    input_pcr_path=pcr,
+                    input_pcr_identity=(
+                        input_pcr_identity
+                    ),
+                    updated_pcr=None,
                     diffraction_input=identity,
                     return_code=0,
                     stdout="",
@@ -546,6 +552,195 @@ class Tests(unittest.TestCase):
             self.assertFalse(
                 required - set(manifest)
             )
+
+    def test_T19_pcr1_in_place_update_accepted(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pcr = root / "x.pcr"
+            pcr.write_text(
+                "!Ipr Ppl Ioc Mat Pcr Ls1\n"
+                "0 0 1 0 1 0\n"
+                "before\n"
+            )
+            frozen = m.freeze_pcr_identity(pcr)
+            mode = m.parse_pcr_output_mode(pcr)
+
+            pcr.write_text(
+                "!Ipr Ppl Ioc Mat Pcr Ls1\n"
+                "0 0 1 0 1 0\n"
+                "after\n"
+            )
+            result = m.validate_pcr_output_contract(
+                mode,
+                frozen,
+                pcr,
+                root / "x.new",
+            )
+
+            self.assertEqual(
+                result["output_mode"],
+                "Pcr=1_in_place",
+            )
+            self.assertEqual(
+                result["sha256"],
+                m.sha256_file(pcr),
+            )
+
+    def test_T20_pcr2_new_required(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pcr = root / "x.pcr"
+            pcr.write_text("unchanged\n")
+            frozen = m.freeze_pcr_identity(pcr)
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "MISSING_EXPECTED_OUTPUT",
+            ):
+                m.validate_pcr_output_contract(
+                    2,
+                    frozen,
+                    pcr,
+                    root / "x.new",
+                )
+
+    def test_T21_manifest_preserves_pre_execution_pcr(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            config = root / "config.json"
+            config.write_text(
+                json.dumps({"config_id": "C"})
+            )
+            pcr = root / "x.pcr"
+            pcr.write_text("before\n")
+            frozen = m.freeze_pcr_identity(pcr)
+            pcr.write_text("after\n")
+            data = root / "x.dat"
+            data.write_text("d")
+            identity = m.build_input_identity(
+                "X",
+                data,
+                m.sha256_file(data),
+                "fixture",
+                False,
+                True,
+            )
+
+            manifest = m.build_provenance_manifest(
+                block_id="B",
+                stage_id="S",
+                timestamp_start="a",
+                timestamp_end="b",
+                argv=["fp"],
+                fp2k_sha256="f",
+                config_path=config,
+                input_pcr_identity=frozen,
+                updated_pcr=(
+                    m.validate_pcr_output_contract(
+                        1,
+                        frozen,
+                        pcr,
+                        root / "x.new",
+                    )
+                ),
+                diffraction_input=identity,
+                return_code=0,
+                stdout="",
+                stderr="",
+                produced_artifacts={},
+                parser_status="PASS",
+                convergence_status="CONTINUE",
+                failure_category=None,
+                implementation_path=Path(__file__),
+            )
+
+            self.assertEqual(
+                manifest["input_pcr"]["sha256"],
+                frozen["sha256"],
+            )
+            self.assertNotEqual(
+                manifest["input_pcr"]["sha256"],
+                manifest["updated_pcr"]["sha256"],
+            )
+
+    def test_T22_unsupported_pcr_mode_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "x.pcr"
+            path.write_text(
+                "!Ipr Ppl Ioc Mat Pcr Ls1\n"
+                "0 0 1 0 3 0\n"
+            )
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "PCR_OUTPUT_MODE_UNSUPPORTED",
+            ):
+                m.parse_pcr_output_mode(path)
+
+    def test_T23_structure_a_pcr_remains_mode_2(self):
+        self.assertEqual(
+            m.parse_pcr_output_mode(
+                HERE / "sa4k_s00.pcr"
+            ),
+            2,
+        )
+
+    def test_T24_pcr2_preserves_input_and_uses_new(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pcr = root / "x.pcr"
+            new = root / "x.new"
+            pcr.write_text("unchanged\n")
+            new.write_text("updated\n")
+            frozen = m.freeze_pcr_identity(pcr)
+
+            result = m.validate_pcr_output_contract(
+                2,
+                frozen,
+                pcr,
+                new,
+            )
+
+            self.assertEqual(
+                result["output_mode"],
+                "Pcr=2_separate_new",
+            )
+            self.assertEqual(
+                result["sha256"],
+                m.sha256_file(new),
+            )
+
+    def test_T25_pcr2_rewritten_input_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pcr = root / "x.pcr"
+            new = root / "x.new"
+            pcr.write_text("before\n")
+            frozen = m.freeze_pcr_identity(pcr)
+            pcr.write_text("after\n")
+            new.write_text("updated\n")
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "Pcr=2 input PCR changed",
+            ):
+                m.validate_pcr_output_contract(
+                    2,
+                    frozen,
+                    pcr,
+                    new,
+                )
+
+    def test_T26_unresolved_pcr_mode_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "x.pcr"
+            path.write_text("COMM missing Pcr control row\n")
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "PCR_OUTPUT_MODE_UNRESOLVED",
+            ):
+                m.parse_pcr_output_mode(path)
 
     def test_T18_fp2k_pin_mismatch(self):
         with tempfile.TemporaryDirectory() as td:

@@ -805,6 +805,124 @@ def _artifact_info(path: Path) -> dict:
     }
 
 
+def freeze_pcr_identity(path: Path) -> dict:
+    require_output(path)
+    return {
+        "path": path.name,
+        "artifact_role": "pre_execution_input_pcr",
+        **_artifact_info(path),
+    }
+
+
+def parse_pcr_output_mode(path: Path) -> int:
+    require_output(path)
+    lines = path.read_text(
+        encoding="utf-8",
+        errors="strict",
+    ).splitlines()
+    header_hits = [
+        index
+        for index, line in enumerate(lines)
+        if "Pcr" in line
+        and "Ipr" in line
+        and "Ppl" in line
+        and line.lstrip().startswith("!")
+    ]
+
+    if len(header_hits) != 1:
+        raise RuntimeError(
+            "PCR_OUTPUT_MODE_UNRESOLVED: expected one Pcr header"
+        )
+
+    header_index = header_hits[0]
+    header_tokens = lines[header_index].lstrip("! ").split()
+
+    if header_tokens.count("Pcr") != 1:
+        raise RuntimeError(
+            "PCR_OUTPUT_MODE_UNRESOLVED: ambiguous Pcr column"
+        )
+
+    value_tokens = None
+    for line in lines[header_index + 1 :]:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("!"):
+            continue
+        value_tokens = stripped.split()
+        break
+
+    pcr_index = header_tokens.index("Pcr")
+    if value_tokens is None or pcr_index >= len(value_tokens):
+        raise RuntimeError(
+            "PCR_OUTPUT_MODE_UNRESOLVED: Pcr value missing"
+        )
+
+    try:
+        mode = int(value_tokens[pcr_index])
+    except ValueError as exc:
+        raise RuntimeError(
+            "PCR_OUTPUT_MODE_UNRESOLVED: Pcr value is not an integer"
+        ) from exc
+
+    if mode not in (1, 2):
+        raise RuntimeError(
+            f"PCR_OUTPUT_MODE_UNSUPPORTED: Pcr={mode}"
+        )
+
+    return mode
+
+
+def validate_pcr_output_contract(
+    mode: int,
+    input_pcr_identity: dict,
+    runtime_pcr_path: Path,
+    new_pcr_path: Path,
+) -> dict:
+    required_identity = {
+        "sha256",
+        "bytes",
+        "path",
+        "artifact_role",
+    }
+    if required_identity - set(input_pcr_identity):
+        raise RuntimeError(
+            "PRECONDITION_FAILURE: incomplete pre-execution PCR identity"
+        )
+
+    if mode == 1:
+        require_output(runtime_pcr_path)
+        return {
+            "output_mode": "Pcr=1_in_place",
+            "path": runtime_pcr_path.name,
+            "artifact_role": "post_execution_updated_pcr",
+            **_artifact_info(runtime_pcr_path),
+        }
+
+    if mode == 2:
+        require_output(runtime_pcr_path)
+        runtime_identity = _artifact_info(runtime_pcr_path)
+        if (
+            runtime_identity["sha256"]
+            != input_pcr_identity["sha256"]
+            or runtime_identity["bytes"]
+            != input_pcr_identity["bytes"]
+        ):
+            raise RuntimeError(
+                "PCR_OUTPUT_CONTRACT_FAILURE: Pcr=2 input PCR changed"
+            )
+
+        require_output(new_pcr_path)
+        return {
+            "output_mode": "Pcr=2_separate_new",
+            "path": new_pcr_path.name,
+            "artifact_role": "post_execution_updated_pcr",
+            **_artifact_info(new_pcr_path),
+        }
+
+    raise RuntimeError(
+        f"PCR_OUTPUT_MODE_UNSUPPORTED: Pcr={mode}"
+    )
+
+
 def preserve_attempt(
     scratch_dir: Path,
     destination: Path,
@@ -859,7 +977,8 @@ def build_provenance_manifest(
     argv,
     fp2k_sha256,
     config_path: Path,
-    input_pcr_path: Path,
+    input_pcr_identity: dict,
+    updated_pcr: dict | None,
     diffraction_input: dict,
     return_code,
     stdout: str,
@@ -895,9 +1014,12 @@ def build_provenance_manifest(
                 load_config(config_path)["config_id"],
             "sha256": sha256_file(config_path),
         },
-        "input_pcr": {
-            "sha256": sha256_file(input_pcr_path)
-        },
+        "input_pcr": dict(input_pcr_identity),
+        "updated_pcr": (
+            dict(updated_pcr)
+            if updated_pcr is not None
+            else None
+        ),
         "diffraction_input": {
             key: diffraction_input[key]
             for key in (
@@ -947,6 +1069,7 @@ def run_fixture(
     }
 
     parser_status = "NOT_RUN"
+    updated_pcr = None
 
     fixture_dat = fixture_dir / "pbso4.dat"
 
@@ -975,17 +1098,25 @@ def run_fixture(
         "pbso4.new",
     ]
 
+    for name in (
+        "pbso4.pcr",
+        "pbso4.dat",
+    ):
+        shutil.copy2(
+            fixture_dir / name,
+            scratch / name,
+        )
+
+    input_pcr_identity = freeze_pcr_identity(
+        scratch / "pbso4.pcr"
+    )
+
     try:
         ensure_ascii_path(scratch)
 
-        for name in (
-            "pbso4.pcr",
-            "pbso4.dat",
-        ):
-            shutil.copy2(
-                fixture_dir / name,
-                scratch / name,
-            )
+        pcr_output_mode = parse_pcr_output_mode(
+            scratch / "pbso4.pcr"
+        )
 
         invocation = invoke_fullprof(
             fp2k,
@@ -1022,8 +1153,11 @@ def run_fixture(
             config["parser_contract"],
         )
 
-        require_output(
-            scratch / "pbso4.new"
+        updated_pcr = validate_pcr_output_contract(
+            pcr_output_mode,
+            input_pcr_identity,
+            scratch / "pbso4.pcr",
+            scratch / "pbso4.new",
         )
 
         parser_status = "PASS"
@@ -1063,7 +1197,8 @@ def run_fixture(
             argv=invocation.get("argv", []),
             fp2k_sha256=fp_info["sha256"],
             config_path=config_path,
-            input_pcr_path=scratch / "pbso4.pcr",
+            input_pcr_identity=input_pcr_identity,
+            updated_pcr=updated_pcr,
             diffraction_input=identity,
             return_code=invocation.get(
                 "returncode"
