@@ -199,7 +199,7 @@
   source_review: STRUCTURE-A-REREFINEMENT-AUTOMATION-REVIEW-001
 
 - id: D-017
-  status: active
+  status: superseded
   decision: >
     Авторизовать один bounded local-Linux implementation/preflight job
     для STRUCTURE-A re-refinement orchestration. Разрешены FullProf
@@ -217,4 +217,37 @@
     authorization and preserves D-015/D-016.
   date: '2026-09-14'
   source_spec: STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPL-SPEC-001
+  superseded_by:
+    - D-018
 
+- id: D-018
+  status: active
+  decision: >
+    Для pinned STRUCTURE-A campaign сохранить FullProf 8.50 - Jun2026-ILL JRC
+    с frozen fp2k SHA-256
+    6f3b6c13e6c33e7a696f9ff986a9e5327e848ba2fb42d6a5e8f67949b93dc4ec
+    как authoritative numerical engine, а thin project-specific Structure-A
+    orchestrator — как authoritative software controller. Project OUT/SUM/PRF
+    parsers и reviewed PCR Pcr=1/Pcr=2 output/provenance contract являются
+    authoritative bounded runtime-verification layer. FullProfAPP 1.3.3
+    PcrIO и PrfIO несовместимы и неавторитетны для canonical runtime use;
+    SumIO не квалифицирован независимо через documented route и не является
+    обязательным canonical gate. FullProfAPP допускается только как optional
+    diagnostic infrastructure; отсутствие или отказ его low-level I/O не
+    блокирует pinned campaign, если accepted project parsers выполняют frozen
+    verification contract. High-level FullProfAPP Automatic Refinement
+    Protocol запрещён как authoritative controller. Иные версии FullProfAPP,
+    compatibility adapters, monkey patches и replacement parsers этим
+    решением не допускаются.
+  rationale: >
+    STRUCTURE-A-FULLPROFAPP-PARSER-COMPATIBILITY-REVIEW-001 подтвердил
+    пригодность project-specific OUT/SUM/PRF verification path и отсутствие
+    основания делать FullProfAPP low-level I/O обязательным runtime gate.
+    Решение сохраняет D-016 как active architecture authority и замещает
+    D-017 только для будущих qualification/gating semantics; D-017 остаётся
+    действительным historical evidence исходной bounded authorization.
+    Это решение не разрешает real Structure-A refinement, scientific
+    parameter optimization, stage transition или другой FullProf build.
+  date: '2026-09-22'
+  source_design: STRUCTURE-A-OPTION-C-FORMALIZATION-DESIGN-BATCH-001
+  prerequisite_review: STRUCTURE-A-FULLPROFAPP-PARSER-COMPATIBILITY-REVIEW-001

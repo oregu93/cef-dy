@@ -160,8 +160,10 @@ infrastructure, beamtime или broad refitting.
 | `W02-02R-C-003` | deferred_not_authorized | Optional post-confirmatory combined discovery+holdout re-estimation; automatic continuation rejected, отдельный Project Control review обязателен для любого reopening. |
 | `DYFEO3-XRD-PRIVATE-IMPORT-001` | completed | Восстановлены и byte-verified восемь уникальных DyFeO3 powder-XRD raw acquisitions и historical `nov19`/`mar21` FullProf provenance; normalized private campaign materialized at `oregu93/cef-dy-private` commit `c5286a0076d01ab4067655eff0102b31a7466a39`. Новый refinement не выполнялся. |
 | `STRUCTURE-A-RECOVERY-REVIEW-001` | completed | STRUCTURE-A admitted for diagnostic structural use only; canonical `MOD-PCM-FORMAL` H0 and quantitative production structural use remain blocked pending controlled full-range re-refinement and review. |
-| `STRUCTURE-A-REREFINEMENT-AUTOMATION-REVIEW-001` | completed | Accepted orchestration architecture: FullProf core + thin project wrapper + qualified low-level FullProfApp I/O helpers; high-level automatic FullProf workflow is not authoritative. Real STRUCTURE-A refinement remains unauthorized. |
-| `STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPLEMENTATION-001` | authorized | One bounded local-Linux implementation/preflight job is authorized for FullProf build qualification, orchestration implementation, fixture tests, low-level FullProfApp I/O qualification, and real-RAS identity/conversion verification only. FullProf execution on the real 4 K pattern remains forbidden. |
+| `STRUCTURE-A-REREFINEMENT-AUTOMATION-REVIEW-001` | completed | D-016 remains the active architecture authority: pinned FullProf core with a thin project-specific controller; high-level Automatic Refinement Protocol is forbidden as authoritative workflow. Real STRUCTURE-A refinement remains unauthorized. |
+| `STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPLEMENTATION-001` | completed | Bounded implementation/preflight authority is exhausted and retained as historical evidence. FullProf core and project OUT/SUM/PRF parsers are qualified for bounded campaign use; the reviewed PCR Pcr=1/Pcr=2 output/provenance contract is accepted. Real 4 K execution was and remains unauthorized. |
+| `STRUCTURE-A-FULLPROFAPP-PARSER-COMPATIBILITY-REVIEW-001` | completed | Accepted prerequisite for Option C: FullProfAPP 1.3.3 PcrIO and PrfIO are incompatible/non-authoritative for canonical runtime use; SumIO is not independently qualified through its documented route and is not a mandatory gate. FullProfAPP remains optional diagnostic infrastructure only. |
+| `STRUCTURE-A-OPTION-C-FORMALIZATION-DESIGN-BATCH-001` | completed | Architecture Option C accepted as D-018: pinned FullProf numerical core + thin project controller + authoritative project OUT/SUM/PRF verification and PCR output/provenance contract. No adapter, alternative parser/build, scientific execution or stage transition is admitted. |
 
 
 ## 2.1. Parallel structural support lane
@@ -172,12 +174,19 @@ infrastructure, beamtime или broad refitting.
 - STRUCTURE-A разрешена для явно diagnostic structural calculations;
 - STRUCTURE-A не допущена как canonical `MOD-PCM-FORMAL` H0;
 - перед таким допуском требуется controlled full-range re-refinement;
-- техническая архитектура re-refinement принята: FullProf core + thin
-  project wrapper + qualified low-level FullProfApp I/O helpers;
+- техническая архитектура re-refinement сохраняется по D-016: pinned FullProf
+  core + thin project-specific controller;
 - `STRUCTURE-A-REREFINEMENT-ORCHESTRATION-IMPL-SPEC-001` принят;
-- bounded local-Linux orchestration implementation/preflight авторизован;
-- допускаются только software qualification, fixture execution и real-RAS
-  identity/conversion verification;
+- bounded implementation/preflight завершён; D-017 superseded D-018 для
+  будущих qualification/gating semantics и не является reusable authority;
+- FullProf core и project OUT/SUM/PRF parsers квалифицированы для bounded
+  campaign use; PCR Pcr=1/Pcr=2 output/provenance contract принят;
+- FullProfAPP low-level I/O не квалифицирован как canonical runtime layer;
+  FullProfAPP остаётся только optional diagnostic infrastructure;
+- failure или отсутствие FullProfAPP low-level I/O не блокирует pinned
+  campaign при выполнении frozen contract accepted project parsers;
+- FullProfAPP Automatic Refinement Protocol запрещён как authoritative
+  controller; adapters, monkey patches и alternative parsers не допущены;
 - FullProf execution на real 4 K pattern остаётся запрещённым;
 - Stage03R execution этим решением не авторизуется.
 
