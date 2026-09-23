@@ -62,6 +62,7 @@ def main(argv: list[str] | None = None) -> int:
                 elif args.command == "resume": store.resume(args.task_id); result = {"status": "waiting_approval", "task_id": args.task_id}
                 elif args.command == "quota-pause": engine.pause_quota(args.task_id); result = {"status": "PAUSED_QUOTA", "task_id": args.task_id}
                 elif args.command == "recover": result = {"orphaned_recovered": engine.recover_orphans(), "cycles": engine.detect_cycles()}
+                elif args.command == "status": result = engine.status()
                 elif args.command == "integrity-check": store.integrity_check(); result = {"status": "PASS"}
                 else: raise AssertionError(args.command)
                 engine.write_summary()

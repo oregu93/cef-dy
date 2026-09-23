@@ -199,15 +199,27 @@ class Engine:
         return {"status": "unchanged" if unchanged else "ok", "accepted": accepted, "rejected": rejected, "duplicates": duplicates, "updated": updated, "manual_changes": manual_changes, "llm_calls": 0}
 
     def write_summary(self) -> Path:
+        summary = self.status()
+        path = self.state_dir / "pc_inbox.yaml"
+        self._atomic_yaml(path, summary)
+        return path
+
+    def status(self) -> dict[str, Any]:
         counts: dict[str, int] = {}
         items = []
         for row in self.store.list_state():
             counts[row["state"]] = counts.get(row["state"], 0) + 1
             items.append({"task_id": row["task_id"], "state": row["state"], "reason": row["reason"], "source_issue": row["source_issue"], "updated_at": row["updated_at"]})
-        summary = {"schema_version": 1, "generated_at": utc_now(), "mode": self.cfg["mode"], "authority": "operational_only_not_project_control", "llm_dispatch_enabled": bool(self.cfg["llm"]["dispatch_enabled"]), "counts": dict(sorted(counts.items())), "tasks": items}
-        path = self.state_dir / "pc_inbox.yaml"
-        self._atomic_yaml(path, summary)
-        return path
+        return {
+            "schema_version": 1,
+            "generated_at": utc_now(),
+            "mode": self.cfg["mode"],
+            "authority": "operational_only_not_project_control",
+            "llm_dispatch_enabled": bool(self.cfg["llm"]["dispatch_enabled"]),
+            "llm_calls": 0,
+            "counts": dict(sorted(counts.items())),
+            "tasks": items,
+        }
 
     @staticmethod
     def _atomic_yaml(path: Path, value: dict[str, Any]) -> None:

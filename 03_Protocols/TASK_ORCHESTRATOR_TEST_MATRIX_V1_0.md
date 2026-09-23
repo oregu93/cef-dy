@@ -38,6 +38,7 @@ write was performed.
 | unexpected orchestrator labels | rejected before ingestion | PASS |
 | manually created web Issue | discovered and ingested through ordinary polling | PASS |
 | GitHub Issue Form compatibility | tracked form emits one required fenced YAML TASK envelope | PASS |
+| CLI status observability | status reports durable task state without worker/LLM execution | PASS |
 | manual title/comment activity | snapshot diff and event; no command execution | PASS |
 | manual TASK body edit | envelope conflict and `WAITING_APPROVAL` | PASS |
 | manual close / task-label removal | non-terminal task paused | PASS |
@@ -52,7 +53,7 @@ write was performed.
 
 ## Executed suites
 
-- New orchestrator suite: 36 tests PASS.
+- New orchestrator suite: 37 tests PASS.
 - Existing Structure-A suites: 38 tests PASS.
 - Existing Zotero/literature suites: 136 tests PASS.
 - Existing Stage03R compatibility suite: 26 tests PASS.
@@ -68,7 +69,7 @@ write was performed.
 - Post-migration all-state SHADOW polling and SQLite integrity check: PASS;
   repeated polls remained `unchanged` with `llm_calls: 0`.
 
-Total explicitly reported test cases: 306 PASS. Validators are reported
+Total explicitly reported test cases: 307 PASS. Validators are reported
 separately because they are repository checks rather than unit-test cases.
 
 ## Remaining evidence required before production
