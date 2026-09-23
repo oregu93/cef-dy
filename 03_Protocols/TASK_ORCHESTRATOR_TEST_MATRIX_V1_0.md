@@ -3,15 +3,16 @@ title: "CEF Dy - task orchestrator verification matrix"
 type: validation_report
 status: shadow_ready_not_production_authorized
 version: "1.0"
-updated: 2026-09-22
+updated: 2026-09-23
 baseline_commit: 46fa52555f39408acef67a8052438e64e49c2bc5
 ---
 
 # Task orchestrator verification matrix
 
-This report covers the local feature worktree only. No commit, push, GitHub
-mutation, systemd installation, scientific execution, stage transition, raw-data
-access, or private-repository write was performed.
+This report covers the orchestrator feature in the canonical local checkout.
+Feature commits are local only. No push, GitHub mutation, systemd installation,
+scientific execution, stage transition, raw-data access, or private-repository
+write was performed.
 
 | Risk / requirement | Verification | Result |
 |---|---|---|
@@ -35,6 +36,13 @@ access, or private-repository write was performed.
 | quota exhaustion | explicit `PAUSED_QUOTA` transition | PASS |
 | quota reset cannot auto-resume | reevaluation leaves `PAUSED_QUOTA` unchanged | PASS |
 | unexpected orchestrator labels | rejected before ingestion | PASS |
+| manually created web Issue | discovered and ingested through ordinary polling | PASS |
+| GitHub Issue Form compatibility | tracked form emits one required fenced YAML TASK envelope | PASS |
+| manual title/comment activity | snapshot diff and event; no command execution | PASS |
+| manual TASK body edit | envelope conflict and `WAITING_APPROVAL` | PASS |
+| manual close / task-label removal | non-terminal task paused | PASS |
+| manual approval-label edit | labels synchronized; local gate preserved | PASS |
+| closed-Issue visibility | `state=all`, local label filtering | PASS |
 | idempotent replay | same task/payload is a no-op with event | PASS |
 | manual LLM gates | issue label + local approval + pilot feature flag required | PASS |
 | automatic paid/OpenAI fallback | forbidden config invariant; no OpenAI/Codex call surface | PASS |
@@ -44,7 +52,7 @@ access, or private-repository write was performed.
 
 ## Executed suites
 
-- New orchestrator suite: 29 tests PASS.
+- New orchestrator suite: 36 tests PASS.
 - Existing Structure-A suites: 38 tests PASS.
 - Existing Zotero/literature suites: 136 tests PASS.
 - Existing Stage03R compatibility suite: 26 tests PASS.
@@ -57,8 +65,10 @@ access, or private-repository write was performed.
   0 rejected, 0 duplicates, `llm_calls: 0`; no matching open Issues existed.
 - Immediate repeated real poll returned `unchanged` through ETag handling with
   `llm_calls: 0`.
+- Post-migration all-state SHADOW polling and SQLite integrity check: PASS;
+  repeated polls remained `unchanged` with `llm_calls: 0`.
 
-Total explicitly reported test cases: 299 PASS. Validators are reported
+Total explicitly reported test cases: 306 PASS. Validators are reported
 separately because they are repository checks rather than unit-test cases.
 
 ## Remaining evidence required before production

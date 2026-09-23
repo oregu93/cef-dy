@@ -4,6 +4,9 @@ import random
 import string
 import unittest
 from datetime import date
+from pathlib import Path
+
+import yaml
 
 from task_orchestrator.model import ValidationError
 from task_orchestrator.policy import normalize_relative, validate_task_policy
@@ -16,6 +19,23 @@ BASE = {"schema_version": 1, "task_id": "INFRA-TASK-001", "role": "07_INFRASTRUC
 
 
 class SchemaPolicyTests(unittest.TestCase):
+    def test_github_issue_form_preserves_task_contract(self):
+        root = Path(__file__).resolve().parents[3]
+        form_path = root / ".github" / "ISSUE_TEMPLATE" / "orchestrator_task.yml"
+        form = yaml.safe_load(form_path.read_text(encoding="utf-8"))
+        self.assertIn("orchestrator:task", form["labels"])
+        textareas = [item for item in form["body"] if item.get("type") == "textarea"]
+        self.assertEqual(len(textareas), 1)
+        textarea = textareas[0]
+        self.assertEqual(textarea["attributes"]["render"], "yaml")
+        self.assertTrue(textarea["validations"]["required"])
+        task = parse_issue_body(
+            f"## TASK envelope\n\n```yaml\n{textarea['attributes']['placeholder']}```",
+            source_issue=1,
+            labels=("orchestrator:task",),
+        )
+        self.assertEqual(task.task_id, "INFRA-EXAMPLE-001")
+
     def test_valid_minimal_task(self):
         self.assertEqual(validate_task(BASE).task_id, "INFRA-TASK-001")
 

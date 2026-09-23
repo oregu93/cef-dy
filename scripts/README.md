@@ -77,8 +77,9 @@ python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll
 python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
-`poll-once` только читает open GitHub Issues с configured label. `shadow` и
-`dry-run` никогда не исполняют READY tasks. Для bounded deterministic pilot
+`poll-once` только читает GitHub Issues и локально отслеживает labelled tasks,
+включая их ручное закрытие и изменение через web UI. `shadow` и `dry-run`
+никогда не исполняют READY tasks. Для bounded deterministic pilot
 оператор вручную меняет mode на `pilot`, оставляя `llm.dispatch_enabled: false`,
 после отдельного review. `approve` и `resume` являются локальными auditable
 операциями; quota reset сам по себе ничего не возобновляет.

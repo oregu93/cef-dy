@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 import os
 import time
@@ -21,6 +22,20 @@ class Issue:
     body: str
     labels: tuple[str, ...]
     updated_at: str
+    state: str = "open"
+    comments: int = 0
+    state_reason: str | None = None
+
+    @property
+    def snapshot_hash(self) -> str:
+        value = {
+            "number": self.number, "title": self.title, "body": self.body,
+            "labels": sorted(self.labels), "updated_at": self.updated_at,
+            "state": self.state, "comments": self.comments,
+            "state_reason": self.state_reason,
+        }
+        encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        return hashlib.sha256(encoded).hexdigest()
 
 
 class IssueSource(Protocol):
@@ -35,7 +50,10 @@ class GitHubIssueSource:
 
     def fetch(self, etag: str | None = None) -> tuple[list[Issue], str | None, bool]:
         repository = self.config["repository"]
-        query = urlencode({"state": "open", "labels": self.config["task_label"], "per_page": 100})
+        query_values = {"state": "all", "sort": "updated", "direction": "desc", "per_page": 100}
+        if not self.config.get("track_manual_edits", True):
+            query_values.update({"state": "open", "labels": self.config["task_label"]})
+        query = urlencode(query_values)
         url = f"{self.config['api_base'].rstrip('/')}/repos/{repository}/issues?{query}"
         headers = {"Accept": "application/vnd.github+json", "User-Agent": "cef-dy-local-orchestrator/1"}
         token = os.environ.get(self.config.get("token_env", "GITHUB_TOKEN"), "")
@@ -75,7 +93,13 @@ class GitHubIssueSource:
             if "pull_request" in item:
                 continue
             labels = tuple(sorted(label.get("name", "") for label in item.get("labels", []) if isinstance(label, dict)))
-            issues.append(Issue(int(item["number"]), str(item.get("title", "")), str(item.get("body") or ""), labels, str(item.get("updated_at", ""))))
+            issues.append(Issue(
+                int(item["number"]), str(item.get("title", "")),
+                str(item.get("body") or ""), labels,
+                str(item.get("updated_at", "")),
+                str(item.get("state", "open")), int(item.get("comments", 0)),
+                str(item["state_reason"]) if item.get("state_reason") is not None else None,
+            ))
         return issues, response_etag, False
 
 

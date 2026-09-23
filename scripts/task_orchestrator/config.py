@@ -19,7 +19,7 @@ DEFAULTS: dict[str, Any] = {
     "orphaned_run_after_seconds": 1800,
     "max_concurrent_workers": 2,
     "max_concurrent_llm_runs": 1,
-    "github": {"enabled": False, "repository": "oregu93/cef-dy", "task_label": "orchestrator:task", "api_base": "https://api.github.com", "token_env": "GITHUB_TOKEN", "timeout_seconds": 20, "max_pages": 10, "backoff_initial_seconds": 5, "backoff_max_seconds": 300},
+    "github": {"enabled": False, "repository": "oregu93/cef-dy", "task_label": "orchestrator:task", "track_manual_edits": True, "api_base": "https://api.github.com", "token_env": "GITHUB_TOKEN", "timeout_seconds": 20, "max_pages": 10, "backoff_initial_seconds": 5, "backoff_max_seconds": 300},
     "llm": {"dispatch_enabled": False, "paid_fallback_allowed": False, "require_issue_label": "orchestrator:llm-approved", "require_local_approval": True, "require_explicit_resume": True, "ollama": {"enabled": False, "base_url": "http://127.0.0.1:11434", "model": "", "timeout_seconds": 30}},
     "paths": {"allowed_read_roots": ["."], "forbidden_patterns": [".git/**", "CEF_Dy_Data/**", "private/**", "secrets/**", "credentials/**", "04_Results/raw/**", "04_Results/intermediate/**"], "allowed_output_root": "CEF_Dy_Backup/task_orchestrator"},
     "commands": {"allow": {}},

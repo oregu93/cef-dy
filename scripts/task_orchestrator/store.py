@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 import json
+import hashlib
 from pathlib import Path
 import shutil
 import sqlite3
 from typing import Any, Iterator
 
-from .model import State, Task, TransitionError, TRANSITIONS, utc_now
+from .model import State, Task, TransitionError, TRANSITIONS, TERMINAL_STATES, utc_now
 
 
 SCHEMA = """
@@ -16,6 +17,7 @@ PRAGMA synchronous=FULL;
 CREATE TABLE IF NOT EXISTS tasks (
   task_id TEXT PRIMARY KEY,
   payload_hash TEXT NOT NULL,
+  envelope_hash TEXT,
   payload_json TEXT NOT NULL,
   state TEXT NOT NULL,
   reason TEXT,
@@ -25,6 +27,18 @@ CREATE TABLE IF NOT EXISTS tasks (
   resume_nonce INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS issue_snapshots (
+  issue_number INTEGER PRIMARY KEY,
+  task_id TEXT,
+  snapshot_hash TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body_hash TEXT NOT NULL,
+  labels_json TEXT NOT NULL,
+  issue_state TEXT NOT NULL,
+  comments_count INTEGER NOT NULL,
+  github_updated_at TEXT NOT NULL,
+  seen_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS events (
   event_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,6 +74,17 @@ class Store:
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA foreign_keys=ON")
         self.conn.executescript(SCHEMA)
+        self._migrate()
+
+    def _migrate(self) -> None:
+        columns = {row[1] for row in self.conn.execute("PRAGMA table_info(tasks)")}
+        if "envelope_hash" not in columns:
+            self.conn.execute("ALTER TABLE tasks ADD COLUMN envelope_hash TEXT")
+        rows = list(self.conn.execute("SELECT task_id,payload_json FROM tasks WHERE envelope_hash IS NULL"))
+        for row in rows:
+            value = json.loads(row["payload_json"])
+            task = Task(**{**value, "dependencies": tuple(value["dependencies"]), "allowed_paths": tuple(value["allowed_paths"]), "expected_artifacts": tuple(value["expected_artifacts"]), "labels": tuple(value["labels"])})
+            self.conn.execute("UPDATE tasks SET envelope_hash=? WHERE task_id=?", (task.envelope_hash, row["task_id"]))
 
     def close(self) -> None:
         self.conn.close()
@@ -95,20 +120,70 @@ class Store:
     def ingest(self, task: Task) -> str:
         payload = json.dumps(task.canonical_dict(), sort_keys=True, ensure_ascii=False)
         with self.transaction():
-            row = self.conn.execute("SELECT payload_hash,state FROM tasks WHERE task_id=?", (task.task_id,)).fetchone()
+            row = self.conn.execute("SELECT payload_hash,envelope_hash,payload_json,state,source_issue FROM tasks WHERE task_id=?", (task.task_id,)).fetchone()
             if row:
-                if row["payload_hash"] != task.payload_hash:
-                    self.append_event(task.task_id, "IDENTITY_CONFLICT", row["state"], row["state"], {"incoming_hash": task.payload_hash})
-                    raise TransitionError(f"task_id {task.task_id} already exists with a different payload")
+                if row["envelope_hash"] != task.envelope_hash:
+                    self.append_event(task.task_id, "MANUAL_TASK_ENVELOPE_CONFLICT", row["state"], row["state"], {"incoming_envelope_hash": task.envelope_hash, "source_issue": task.source_issue})
+                    return "conflict"
+                if row["payload_hash"] != task.payload_hash or row["source_issue"] != task.source_issue:
+                    previous = json.loads(row["payload_json"])
+                    self.conn.execute(
+                        "UPDATE tasks SET payload_hash=?,payload_json=?,source_issue=? WHERE task_id=?",
+                        (task.payload_hash, payload, task.source_issue, task.task_id),
+                    )
+                    self.append_event(task.task_id, "ISSUE_METADATA_UPDATED", row["state"], row["state"], {"old_labels": previous.get("labels", []), "new_labels": list(task.labels), "source_issue": task.source_issue})
+                    return "metadata_updated"
                 self.append_event(task.task_id, "DUPLICATE_DELIVERY", row["state"], row["state"], {"payload_hash": task.payload_hash})
                 return "duplicate"
             now = utc_now()
             self.conn.execute(
-                "INSERT INTO tasks(task_id,payload_hash,payload_json,state,source_issue,created_at,updated_at) VALUES(?,?,?,?,?,?,?)",
-                (task.task_id, task.payload_hash, payload, State.RECEIVED.value, task.source_issue, now, now),
+                "INSERT INTO tasks(task_id,payload_hash,envelope_hash,payload_json,state,source_issue,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?)",
+                (task.task_id, task.payload_hash, task.envelope_hash, payload, State.RECEIVED.value, task.source_issue, now, now),
             )
             self.append_event(task.task_id, "INGESTED", None, State.RECEIVED.value, {"payload_hash": task.payload_hash})
         return "created"
+
+    def task_id_for_issue(self, issue_number: int) -> str | None:
+        row = self.conn.execute("SELECT task_id FROM tasks WHERE source_issue=?", (issue_number,)).fetchone()
+        return str(row[0]) if row else None
+
+    def record_issue_snapshot(self, issue: Any, task_id: str | None = None) -> tuple[str, list[str]]:
+        body_hash = hashlib.sha256(issue.body.encode()).hexdigest()
+        labels_json = json.dumps(sorted(issue.labels), ensure_ascii=False)
+        with self.transaction():
+            row = self.conn.execute("SELECT * FROM issue_snapshots WHERE issue_number=?", (issue.number,)).fetchone()
+            if row and row["snapshot_hash"] == issue.snapshot_hash:
+                self.conn.execute(
+                    "UPDATE issue_snapshots SET task_id=COALESCE(?,task_id),seen_at=? WHERE issue_number=?",
+                    (task_id, utc_now(), issue.number),
+                )
+                return "unchanged", []
+            changed: list[str] = []
+            if row:
+                comparisons = {
+                    "title": (row["title"], issue.title),
+                    "body": (row["body_hash"], body_hash),
+                    "labels": (row["labels_json"], labels_json),
+                    "state": (row["issue_state"], issue.state),
+                    "comments": (row["comments_count"], issue.comments),
+                    "updated_at": (row["github_updated_at"], issue.updated_at),
+                }
+                changed = [name for name, values in comparisons.items() if values[0] != values[1]]
+            now = utc_now()
+            self.conn.execute(
+                "INSERT INTO issue_snapshots(issue_number,task_id,snapshot_hash,title,body_hash,labels_json,issue_state,comments_count,github_updated_at,seen_at) VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(issue_number) DO UPDATE SET task_id=COALESCE(excluded.task_id,issue_snapshots.task_id),snapshot_hash=excluded.snapshot_hash,title=excluded.title,body_hash=excluded.body_hash,labels_json=excluded.labels_json,issue_state=excluded.issue_state,comments_count=excluded.comments_count,github_updated_at=excluded.github_updated_at,seen_at=excluded.seen_at",
+                (issue.number, task_id, issue.snapshot_hash, issue.title, body_hash, labels_json, issue.state, issue.comments, issue.updated_at, now),
+            )
+            event_task = task_id or (row["task_id"] if row else None)
+            self.append_event(event_task, "ISSUE_DISCOVERED" if row is None else "ISSUE_WEB_CHANGE", None, None, {"issue": issue.number, "changed": changed, "state": issue.state, "comments": issue.comments})
+            return ("new" if row is None else "changed"), changed
+
+    def pause_for_manual_issue_change(self, task_id: str, reason: str) -> None:
+        row = self.get(task_id)
+        if not row or row["state"] in {s.value for s in TERMINAL_STATES}:
+            return
+        target = State.WAITING_APPROVAL
+        self.transition(task_id, target, reason, force_recovery=True)
 
     def transition(self, task_id: str, new_state: State, reason: str, *, force_recovery: bool = False) -> None:
         with self.transaction():

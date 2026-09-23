@@ -3,7 +3,7 @@ title: "CEF Dy - local task orchestrator contract"
 type: protocol
 status: draft_for_shadow_validation
 version: "1.0"
-updated: 2026-09-22
+updated: 2026-09-23
 ---
 
 # Local task orchestrator contract
@@ -101,6 +101,81 @@ Results and Project Control summaries are local operational artifacts under the
 ignored state directory. They do not alter `PROJECT_CONTROL`, `PROJECT_STATE`,
 registers, checkpoints, or scientific results. Summary publication into a chat
 or canonical file is a separate human-controlled action.
+
+The orchestrator does not generate separate user-facing handoff reports by
+default. Durable operational evidence is the SQLite event log, RESULT files and
+the compact PC inbox. A Markdown report is created only when explicitly needed
+for canonical review or requested by the user.
+
+## Manual GitHub web changes
+
+GitHub web UI and API changes are equivalent external inputs. Polling uses
+`state=all` and local filtering so it can observe newly labelled tasks, manual
+label removal, closing/reopening, title/body edits and comment-count changes.
+
+- A newly created, correctly labelled Issue is ingested normally.
+- Title changes and comment activity are recorded as `ISSUE_WEB_CHANGE`; comment
+  text is not interpreted as an executable command.
+- Labels are synchronized. Adding or removing the LLM approval label updates the
+  approval gate, but never replaces the required local approval/resume action.
+- Removing the task label or closing the Issue pauses a non-terminal task in
+  `WAITING_APPROVAL`.
+- Changing a previously ingested TASK envelope is never applied silently. The
+  envelope hash conflict is logged and the task is paused for review.
+- Changing `TASK_ID` in place is rejected. A materially revised or completed
+  task uses a new task ID according to the rerun/dedup governance rules.
+- Reopening or reverting an Issue does not silently resume execution.
+
+The issue timeline is a human-readable projection, not canonical scientific
+authority. Manual web activity cannot authorize repository writes, scientific
+execution, stage transitions, raw/holdout access or LLM dispatch.
+
+The repository provides `.github/ISSUE_TEMPLATE/orchestrator_task.yml` for
+manual creation through the GitHub web UI. Its required textarea is rendered as
+the single fenced YAML block accepted by the parser. Before using the form, the
+repository maintainer creates the `orchestrator:task` label once if it does not
+already exist; GitHub does not create labels merely because a template names
+them. Blank and ordinary scientific/project Issues remain outside orchestrator
+scope unless that label is deliberately applied.
+
+## Bounded OSS design review
+
+The implementation was compared with GitHub Issue Forms/IssueOps, OpenAI
+Symphony, Probot, Dagu, Dagster and Temporal. The review produced these choices:
+
+- Adopt the Symphony separation between tracker adapter, coordination policy,
+  execution worker and observability, plus bounded concurrency, reconciliation,
+  explicit claims and backoff. Do not adopt its automatic coding-agent runner:
+  this project's default loop must make zero LLM calls and quota reset must not
+  cause dispatch.
+- Adopt GitHub Issue Forms only as a human-entry aid. Keep the canonical TASK
+  schema, strict local validation, snapshot deduplication and event history.
+  Comments remain discussion, never commands.
+- Keep polling as the first deployment mode. A future webhook receiver must
+  verify signatures, validate event/action, deduplicate `X-GitHub-Delivery`,
+  respond quickly and enqueue work rather than execute it in the request.
+- Defer Probot and GitHub App infrastructure until authenticated GitHub writes
+  are explicitly authorized. They add a public webhook, credentials and another
+  runtime without improving the current read-only shadow gate.
+- Do not add Dagu, Dagster, Prefect or Temporal now. Their scheduling, UI and
+  recovery features are useful at larger scale, but would duplicate a small
+  durable SQLite finite-state machine and expand the failure/dependency surface.
+  Re-evaluate only if multiple hosts, many heterogeneous workflows or a shared
+  operational UI become actual requirements.
+
+This review is a design decision inside the canonical contract, not a separate
+user-facing handoff report.
+
+Primary references reviewed:
+
+- [GitHub Issue Form syntax](https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms)
+- [GitHub webhook best practices](https://docs.github.com/en/webhooks/using-webhooks/best-practices-for-using-webhooks)
+- [IssueOps organization](https://github.com/issue-ops)
+- [OpenAI Symphony specification](https://github.com/openai/symphony/blob/main/SPEC.md)
+- [Probot documentation](https://probot.github.io/docs/README/)
+- [Dagu repository](https://github.com/dagucloud/dagu)
+- [Dagster OSS webserver and daemon](https://docs.dagster.io/guides/operate/webserver)
+- [Temporal documentation](https://docs.temporal.io/)
 
 ## Deployment gates
 

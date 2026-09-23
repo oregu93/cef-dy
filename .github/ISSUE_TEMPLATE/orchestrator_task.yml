@@ -1,0 +1,48 @@
+name: Orchestrator task
+description: Propose a deterministic CEF Dy task for read-only shadow ingestion.
+title: "[ORCH] "
+labels:
+  - "orchestrator:task"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is an operational proposal, not scientific or repository-write
+        authority. Keep secrets, private data, raw experimental data and holdout
+        material out of the Issue. The local orchestrator remains read-only in
+        SHADOW mode and will fail closed on an invalid envelope.
+
+  - type: textarea
+    id: task-envelope
+    attributes:
+      label: TASK envelope
+      description: |
+        Enter exactly one TASK mapping. Replace canonical_head with the reviewed
+        40-character commit SHA. Supported deterministic actions are documented
+        in 03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V1_0.md.
+      render: yaml
+      placeholder: |
+        schema_version: 1
+        task_id: INFRA-EXAMPLE-001
+        role: 07_INFRASTRUCTURE
+        canonical_head: 0123456789abcdef0123456789abcdef01234567
+        task_type: deterministic
+        action: head_check
+        dependencies: []
+        inputs: {}
+        allowed_paths: []
+        expected_artifacts: []
+        timeout_seconds: 60
+        stop_condition: Return after the check; do not modify repository files.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety-confirmation
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I confirm that this Issue contains no secrets, private data, raw experimental data or holdout material.
+          required: true
+        - label: I understand that labels and Issue edits do not authorize repository writes, scientific execution, stage transitions or LLM dispatch.
+          required: true

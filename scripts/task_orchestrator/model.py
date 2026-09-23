@@ -72,6 +72,17 @@ class Task:
         value["labels"] = sorted(self.labels)
         return value
 
+    def envelope_dict(self) -> dict[str, Any]:
+        value = self.canonical_dict()
+        value.pop("source_issue", None)
+        value.pop("labels", None)
+        return value
+
+    @property
+    def envelope_hash(self) -> str:
+        encoded = json.dumps(self.envelope_dict(), sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+        return hashlib.sha256(encoded).hexdigest()
+
     @property
     def payload_hash(self) -> str:
         encoded = json.dumps(self.canonical_dict(), sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()

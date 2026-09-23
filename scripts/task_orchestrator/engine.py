@@ -28,7 +28,9 @@ class Engine:
 
     def ingest(self, task: Task) -> str:
         outcome = self.store.ingest(task)
-        if outcome == "duplicate":
+        if outcome == "conflict":
+            raise TransitionError(f"task_id {task.task_id} already exists with a different TASK envelope")
+        if outcome in {"duplicate", "metadata_updated"}:
             return outcome
         try:
             validate_task_policy(task, self.cfg)
@@ -151,26 +153,50 @@ class Engine:
             self.store.append_event(None, "SOURCE_OUTAGE", None, None, {"error": str(exc), "backoff_seconds": delay})
             return {"status": "outage", "backoff_seconds": delay, "llm_calls": 0}
         self.store.update_source("github", etag=etag, backoff_until=0, failures=0)
-        accepted = rejected = duplicates = 0
+        accepted = rejected = duplicates = updated = manual_changes = 0
         if not unchanged:
             for issue in issues:
+                existing_task_id = self.store.task_id_for_issue(issue.number)
+                has_task_label = self.cfg["github"]["task_label"] in issue.labels
+                if not has_task_label and not existing_task_id:
+                    continue
+                snapshot_status, changed_fields = self.store.record_issue_snapshot(issue, existing_task_id)
+                if snapshot_status == "changed":
+                    manual_changes += 1
                 try:
+                    if not has_task_label:
+                        self.store.pause_for_manual_issue_change(existing_task_id, "manual removal of orchestrator task label")
+                        continue
                     allowed_control_labels = {self.cfg["github"]["task_label"], self.cfg["llm"]["require_issue_label"]}
                     unexpected = sorted(label for label in issue.labels if label.startswith("orchestrator:") and label not in allowed_control_labels)
                     if unexpected:
                         raise ValueError("unexpected orchestrator labels: " + ", ".join(unexpected))
-                    outcome = self.ingest(parse_issue_body(issue.body, source_issue=issue.number, labels=issue.labels))
+                    task = parse_issue_body(issue.body, source_issue=issue.number, labels=issue.labels)
+                    if existing_task_id and task.task_id != existing_task_id:
+                        raise ValueError(f"manual TASK_ID change from {existing_task_id} to {task.task_id}")
+                    outcome = self.ingest(task)
+                    self.store.record_issue_snapshot(issue, task.task_id)
                     if outcome == "duplicate": duplicates += 1
+                    elif outcome == "metadata_updated": updated += 1
                     elif outcome == "rejected": rejected += 1
                     else: accepted += 1
+                    if issue.state != "open":
+                        self.store.pause_for_manual_issue_change(task.task_id, f"GitHub Issue manually closed ({issue.state_reason or 'no reason'})")
+                    elif task.is_llm and not task_has_issue_approval(task, self.cfg):
+                        row = self.store.get(task.task_id)
+                        if row and row["state"] == State.READY.value:
+                            self.store.transition(task.task_id, State.WAITING_APPROVAL, "manual removal of LLM approval label")
                 except Exception as exc:
                     rejected += 1
-                    self.store.append_event(None, "ISSUE_REJECTED", None, None, {"issue": issue.number, "error": str(exc)})
+                    affected = existing_task_id or self.store.task_id_for_issue(issue.number)
+                    if affected:
+                        self.store.pause_for_manual_issue_change(affected, f"manual GitHub Issue edit requires review: {exc}")
+                    self.store.append_event(affected, "ISSUE_REJECTED", None, None, {"issue": issue.number, "error": str(exc)})
         self.detect_cycles()
         self.reevaluate_waiting()
         self.recover_orphans()
         self.write_summary()
-        return {"status": "unchanged" if unchanged else "ok", "accepted": accepted, "rejected": rejected, "duplicates": duplicates, "llm_calls": 0}
+        return {"status": "unchanged" if unchanged else "ok", "accepted": accepted, "rejected": rejected, "duplicates": duplicates, "updated": updated, "manual_changes": manual_changes, "llm_calls": 0}
 
     def write_summary(self) -> Path:
         counts: dict[str, int] = {}
