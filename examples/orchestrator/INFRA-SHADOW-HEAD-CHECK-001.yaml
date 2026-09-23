@@ -1,0 +1,13 @@
+schema_version: 1
+task_id: INFRA-SHADOW-HEAD-CHECK-001
+role: 07_INFRASTRUCTURE
+canonical_head: 46fa52555f39408acef67a8052438e64e49c2bc5
+task_type: deterministic
+action: head_check
+dependencies: []
+inputs:
+  expected_origin: 46fa52555f39408acef67a8052438e64e49c2bc5
+allowed_paths: []
+expected_artifacts: []
+timeout_seconds: 60
+stop_condition: Report exact local and origin/main HEAD; do not modify repository or GitHub state.

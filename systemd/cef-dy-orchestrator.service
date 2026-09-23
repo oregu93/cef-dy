@@ -1,0 +1,17 @@
+[Unit]
+Description=CEF Dy deterministic local task orchestrator
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Документы/CEF/CEF_Dy
+ExecStart=/usr/bin/python3 scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll-once
+EnvironmentFile=-%h/.config/cef-dy-orchestrator/environment
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/Документы/CEF/CEF_Dy/CEF_Dy_Backup/task_orchestrator
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true

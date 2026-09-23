@@ -1,0 +1,11 @@
+[Unit]
+Description=Poll CEF Dy task metadata every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30
+Persistent=false
+
+[Install]
+WantedBy=timers.target

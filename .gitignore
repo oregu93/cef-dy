@@ -55,6 +55,7 @@ credentials/
 
 # Machine-specific paths
 configs/local_paths.yaml
+configs/task_orchestrator.yaml
 
 # Large/intermediate result areas
 04_Results/raw/

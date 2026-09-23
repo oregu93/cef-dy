@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cef-dy.local/schemas/orchestrator-result-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "attempt", "status", "canonical_head", "worker", "started_at", "finished_at", "checks", "artifacts", "error"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "task_id": {"type": "string"},
+    "attempt": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["SUCCEEDED", "FAILED", "PAUSED_QUOTA"]},
+    "canonical_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "worker": {"type": "string"},
+    "started_at": {"type": "string"},
+    "finished_at": {"type": "string"},
+    "checks": {"type": "array"},
+    "artifacts": {"type": "array"},
+    "error": {"type": ["string", "null"]}
+  }
+}

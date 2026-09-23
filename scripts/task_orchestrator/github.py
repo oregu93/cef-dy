@@ -1,0 +1,83 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+import json
+import os
+import time
+from typing import Any, Protocol
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+
+
+class SourceUnavailable(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class Issue:
+    number: int
+    title: str
+    body: str
+    labels: tuple[str, ...]
+    updated_at: str
+
+
+class IssueSource(Protocol):
+    def fetch(self, etag: str | None = None) -> tuple[list[Issue], str | None, bool]: ...
+
+
+class GitHubIssueSource:
+    """Read-only GitHub Issues adapter. It intentionally has no mutation method."""
+
+    def __init__(self, config: dict[str, Any]):
+        self.config = config
+
+    def fetch(self, etag: str | None = None) -> tuple[list[Issue], str | None, bool]:
+        repository = self.config["repository"]
+        query = urlencode({"state": "open", "labels": self.config["task_label"], "per_page": 100})
+        url = f"{self.config['api_base'].rstrip('/')}/repos/{repository}/issues?{query}"
+        headers = {"Accept": "application/vnd.github+json", "User-Agent": "cef-dy-local-orchestrator/1"}
+        token = os.environ.get(self.config.get("token_env", "GITHUB_TOKEN"), "")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        if etag:
+            headers["If-None-Match"] = etag
+        data: list[Any] = []
+        response_etag = etag
+        for page in range(1, int(self.config.get("max_pages", 10)) + 1):
+            page_url = url + f"&page={page}"
+            page_headers = dict(headers)
+            if page > 1:
+                page_headers.pop("If-None-Match", None)
+            request = Request(page_url, headers=page_headers, method="GET")
+            try:
+                with urlopen(request, timeout=int(self.config["timeout_seconds"])) as response:
+                    page_data = json.load(response)
+                    if page == 1:
+                        response_etag = response.headers.get("ETag")
+            except HTTPError as exc:
+                if exc.code == 304 and page == 1:
+                    return [], etag, True
+                retry_after = exc.headers.get("Retry-After") if exc.headers else None
+                raise SourceUnavailable(f"GitHub HTTP {exc.code}; retry_after={retry_after or 'unspecified'}") from exc
+            except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+                raise SourceUnavailable(f"GitHub unavailable: {exc}") from exc
+            if not isinstance(page_data, list):
+                raise SourceUnavailable("GitHub returned a non-list response")
+            data.extend(page_data)
+            if len(page_data) < 100:
+                break
+        else:
+            raise SourceUnavailable("GitHub pagination exceeds configured max_pages")
+        issues = []
+        for item in data:
+            if "pull_request" in item:
+                continue
+            labels = tuple(sorted(label.get("name", "") for label in item.get("labels", []) if isinstance(label, dict)))
+            issues.append(Issue(int(item["number"]), str(item.get("title", "")), str(item.get("body") or ""), labels, str(item.get("updated_at", ""))))
+        return issues, response_etag, False
+
+
+def backoff_seconds(failures: int, initial: int, maximum: int) -> int:
+    return min(maximum, initial * (2 ** max(0, failures - 1)))

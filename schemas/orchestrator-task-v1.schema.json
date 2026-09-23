@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cef-dy.local/schemas/orchestrator-task-v1.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "role", "canonical_head", "task_type", "action", "stop_condition"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "task_id": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9._-]{2,127}$"},
+    "role": {"enum": ["00_PROJECT_CONTROL", "01_LITERATURE", "03_CEF", "04_STRUCTURE", "07_INFRASTRUCTURE", "WORK"]},
+    "canonical_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "task_type": {"enum": ["deterministic", "llm_semantic", "llm_worker"]},
+    "action": {"enum": ["head_check", "sha256_check", "schema_check", "dependency_check", "status_check", "artifact_check", "test_command", "semantic_helper"]},
+    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true, "maxItems": 100},
+    "inputs": {"type": "object"},
+    "allowed_paths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true, "maxItems": 100},
+    "expected_artifacts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true, "maxItems": 100},
+    "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 3600},
+    "stop_condition": {"type": "string", "minLength": 1, "maxLength": 2000}
+  }
+}
