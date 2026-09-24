@@ -32,6 +32,29 @@ llm:
     model: ""
     timeout_seconds: 30
 
+# Read-only planning projections. UNKNOWN/stale quota blocks unattended
+# quota-consuming eligibility but not explicit interactive work. reset_at is
+# descriptive and never resumes PAUSED_QUOTA.
+visibility:
+  enabled: false
+  quota_stale_after_seconds: 900
+  quota:
+    five_hour: {state: UNKNOWN, observed_at: null, reset_at: null}
+    weekly: {state: UNKNOWN, observed_at: null, reset_at: null}
+
+# M1 provides only durable local previews/outbox interfaces. No live publisher
+# is wired by this example configuration.
+publishing:
+  enabled: false
+  preview_only: true
+  trusted_authors: []
+
+# Persistent-chat history is not observable by the orchestrator. Only explicit
+# observations may be stored; missing/stale telemetry projects as UNKNOWN.
+chat_health:
+  enabled: false
+  observation_stale_after_seconds: 86400
+
 paths:
   allowed_read_roots:
     - .

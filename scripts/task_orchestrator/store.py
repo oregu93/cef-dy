@@ -63,6 +63,42 @@ CREATE TABLE IF NOT EXISTS source_state (
   failures INTEGER NOT NULL DEFAULT 0,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS task_sidecars (
+  repository TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  envelope_hash TEXT NOT NULL,
+  metadata_hash TEXT NOT NULL,
+  metadata_json TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY(repository,task_id,envelope_hash),
+  UNIQUE(repository,task_id)
+);
+CREATE TABLE IF NOT EXISTS publication_outbox (
+  publication_id TEXT PRIMARY KEY,
+  repository TEXT NOT NULL,
+  task_id TEXT NOT NULL,
+  envelope_hash TEXT NOT NULL,
+  result_sha256 TEXT NOT NULL,
+  target TEXT NOT NULL,
+  marker TEXT NOT NULL,
+  preview TEXT NOT NULL,
+  status TEXT NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  backoff_until REAL NOT NULL DEFAULT 0,
+  reason TEXT,
+  remote_id TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  UNIQUE(repository,task_id,envelope_hash,target)
+);
+CREATE TABLE IF NOT EXISTS chat_health_registry (
+  chat_id TEXT PRIMARY KEY,
+  record_hash TEXT NOT NULL,
+  record_json TEXT NOT NULL,
+  observed_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
 """
 
 
@@ -255,3 +291,138 @@ class Store:
             "INSERT INTO source_state(source,etag,backoff_until,failures,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(source) DO UPDATE SET etag=excluded.etag,backoff_until=excluded.backoff_until,failures=excluded.failures,updated_at=excluded.updated_at",
             (name, etag, backoff_until, failures, utc_now()),
         )
+
+    def put_sidecar(self, metadata: dict[str, Any]) -> str:
+        from .visibility import sidecar_identity, validate_sidecar
+        value = validate_sidecar(metadata)
+        repository, task_id, envelope_hash, metadata_hash = sidecar_identity(value)
+        payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        with self.transaction():
+            task_row = self.conn.execute(
+                "SELECT envelope_hash FROM tasks WHERE task_id=?", (task_id,)
+            ).fetchone()
+            if task_row and task_row["envelope_hash"] != envelope_hash:
+                raise TransitionError(
+                    "sidecar envelope hash conflicts with worker task identity"
+                )
+            row = self.conn.execute(
+                "SELECT envelope_hash,metadata_hash FROM task_sidecars WHERE repository=? AND task_id=?",
+                (repository, task_id),
+            ).fetchone()
+            if row and row["envelope_hash"] != envelope_hash:
+                raise TransitionError("sidecar task identity conflicts with existing envelope hash")
+            if row and row["metadata_hash"] == metadata_hash:
+                return "duplicate"
+            now = utc_now()
+            self.conn.execute(
+                "INSERT INTO task_sidecars(repository,task_id,envelope_hash,metadata_hash,metadata_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?) "
+                "ON CONFLICT(repository,task_id) DO UPDATE SET metadata_hash=excluded.metadata_hash,metadata_json=excluded.metadata_json,updated_at=excluded.updated_at",
+                (repository, task_id, envelope_hash, metadata_hash, payload, now, now),
+            )
+            self.append_event(task_id, "SIDECAR_CREATED" if row is None else "SIDECAR_UPDATED",
+                              None, None, {"repository": repository,
+                                           "envelope_hash": envelope_hash,
+                                           "metadata_hash": metadata_hash})
+            return "created" if row is None else "updated"
+
+    def list_sidecars(self) -> list[sqlite3.Row]:
+        return list(self.conn.execute(
+            "SELECT * FROM task_sidecars ORDER BY repository,task_id"
+        ))
+
+    def enqueue_publication(self, *, publication_id: str, repository: str, task_id: str,
+                            envelope_hash: str, result_sha256: str, target: str,
+                            marker: str, preview: str, status: str) -> str:
+        with self.transaction():
+            identity = self.conn.execute(
+                "SELECT publication_id,result_sha256,status FROM publication_outbox "
+                "WHERE repository=? AND task_id=? AND envelope_hash=? AND target=?",
+                (repository, task_id, envelope_hash, target),
+            ).fetchone()
+            if identity:
+                if identity["result_sha256"] != result_sha256:
+                    raise TransitionError("same publication identity has a different RESULT SHA-256")
+                return "duplicate"
+            now = utc_now()
+            self.conn.execute(
+                "INSERT INTO publication_outbox(publication_id,repository,task_id,envelope_hash,result_sha256,target,marker,preview,status,created_at,updated_at) "
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                (publication_id, repository, task_id, envelope_hash, result_sha256,
+                 target, marker, preview, status, now, now),
+            )
+            self.append_event(task_id, "PUBLICATION_PREVIEW_CREATED", None, status,
+                              {"publication_id": publication_id,
+                               "result_sha256": result_sha256, "target": target})
+            return "created"
+
+    def publication(self, publication_id: str) -> sqlite3.Row | None:
+        return self.conn.execute(
+            "SELECT * FROM publication_outbox WHERE publication_id=?", (publication_id,)
+        ).fetchone()
+
+    def claim_publication(self, publication_id: str, *, now_epoch: float) -> sqlite3.Row | None:
+        with self.transaction():
+            row = self.publication(publication_id)
+            if row is None or row["status"] != "PENDING" or float(row["backoff_until"]) > now_epoch:
+                return None
+            self.conn.execute(
+                "UPDATE publication_outbox SET status='SENDING',attempts=attempts+1,updated_at=? WHERE publication_id=? AND status='PENDING'",
+                (utc_now(), publication_id),
+            )
+            if self.conn.execute("SELECT changes()").fetchone()[0] != 1:
+                return None
+            return self.publication(publication_id)
+
+    def update_publication(self, publication_id: str, status: str, *,
+                           reason: str | None = None, remote_id: str | None = None,
+                           backoff_until: float = 0) -> None:
+        with self.transaction():
+            row = self.publication(publication_id)
+            if row is None:
+                raise TransitionError("unknown publication")
+            self.conn.execute(
+                "UPDATE publication_outbox SET status=?,reason=?,remote_id=COALESCE(?,remote_id),backoff_until=?,updated_at=? WHERE publication_id=?",
+                (status, reason, remote_id, backoff_until, utc_now(), publication_id),
+            )
+            self.append_event(row["task_id"], "PUBLICATION_STATUS", row["status"], status,
+                              {"publication_id": publication_id, "reason": reason,
+                               "remote_id": remote_id})
+
+    def recover_uncertain_publications(self) -> int:
+        with self.transaction():
+            rows = list(self.conn.execute(
+                "SELECT publication_id,task_id FROM publication_outbox WHERE status='SENDING'"
+            ))
+            for row in rows:
+                self.conn.execute(
+                    "UPDATE publication_outbox SET status='UNKNOWN',reason=?,updated_at=? WHERE publication_id=?",
+                    ("restart during send; reconciliation required", utc_now(), row["publication_id"]),
+                )
+                self.append_event(row["task_id"], "PUBLICATION_STATUS", "SENDING", "UNKNOWN",
+                                  {"publication_id": row["publication_id"],
+                                   "reason": "restart during send"})
+            return len(rows)
+
+    def put_chat_health(self, record: dict[str, Any]) -> str:
+        from .chat_health import health_record_hash, validate_health_record
+        value = validate_health_record(record)
+        record_hash = health_record_hash(value)
+        payload = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        with self.transaction():
+            row = self.conn.execute(
+                "SELECT record_hash FROM chat_health_registry WHERE chat_id=?", (value["chat_id"],)
+            ).fetchone()
+            if row and row["record_hash"] == record_hash:
+                return "duplicate"
+            now = utc_now()
+            self.conn.execute(
+                "INSERT INTO chat_health_registry(chat_id,record_hash,record_json,observed_at,updated_at) VALUES(?,?,?,?,?) "
+                "ON CONFLICT(chat_id) DO UPDATE SET record_hash=excluded.record_hash,record_json=excluded.record_json,observed_at=excluded.observed_at,updated_at=excluded.updated_at",
+                (value["chat_id"], record_hash, payload, value["observed_at"], now),
+            )
+            return "created" if row is None else "updated"
+
+    def chat_health(self, chat_id: str) -> sqlite3.Row | None:
+        return self.conn.execute(
+            "SELECT * FROM chat_health_registry WHERE chat_id=?", (chat_id,)
+        ).fetchone()
