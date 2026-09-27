@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
+import re
 from typing import Any
 
 import yaml
@@ -20,7 +21,21 @@ DEFAULTS: dict[str, Any] = {
     "max_concurrent_workers": 2,
     "max_concurrent_llm_runs": 1,
     "github": {"enabled": False, "repository": "oregu93/cef-dy", "task_label": "orchestrator:task", "track_manual_edits": True, "api_base": "https://api.github.com", "token_env": "GITHUB_TOKEN", "timeout_seconds": 20, "max_pages": 10, "backoff_initial_seconds": 5, "backoff_max_seconds": 300},
-    "llm": {"dispatch_enabled": False, "paid_fallback_allowed": False, "require_issue_label": "orchestrator:llm-approved", "require_local_approval": True, "require_explicit_resume": True, "ollama": {"enabled": False, "base_url": "http://127.0.0.1:11434", "model": "", "timeout_seconds": 30}},
+    "llm": {
+        "dispatch_enabled": False, "paid_fallback_allowed": False,
+        "require_issue_label": "orchestrator:llm-approved",
+        "require_local_approval": True, "require_explicit_resume": True,
+        "lease_seconds": 900, "quota_probe_guard_seconds": 60,
+        "quota_probe_backoff_seconds": [300, 900, 1800, 3600],
+        "command": {
+            "argv": ["/usr/lib/chatgpt/resources/codex", "exec", "--ephemeral",
+                     "--sandbox", "read-only", "--skip-git-repo-check",
+                     "--output-last-message", "{output}", "-"],
+            "probe_prompt": "Reply with exactly ADMISSION_OK and do not use tools.",
+            "timeout_seconds": 900,
+        },
+        "ollama": {"enabled": False, "base_url": "http://127.0.0.1:11434", "model": "", "timeout_seconds": 30},
+    },
     "visibility": {
         "enabled": False,
         "quota_stale_after_seconds": 900,
@@ -37,6 +52,16 @@ DEFAULTS: dict[str, Any] = {
     "chat_health": {
         "enabled": False,
         "observation_stale_after_seconds": 86400,
+    },
+    "autonomy": {
+        "enabled": False,
+        "plan_only": False,
+        "away_mode": False,
+        "max_batch_tasks": 1,
+        "max_parallel_local": 1,
+        "checkpoint_subdir": "autonomy",
+        "result_inbox_subdir": "result-inbox",
+        "evidence_subdir": "m1b-evidence",
     },
     "paths": {"allowed_read_roots": ["."], "forbidden_patterns": [".git/**", "CEF_Dy_Data/**", "private/**", "secrets/**", "credentials/**", "04_Results/raw/**", "04_Results/intermediate/**"], "allowed_output_root": "CEF_Dy_Backup/task_orchestrator"},
     "commands": {"allow": {}},
@@ -65,6 +90,9 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValidationError("unsupported config schema or mode")
     if cfg["max_concurrent_llm_runs"] != 1:
         raise ValidationError("max_concurrent_llm_runs must equal 1")
+    workers = cfg["max_concurrent_workers"]
+    if isinstance(workers, bool) or not isinstance(workers, int) or not 1 <= workers <= 16:
+        raise ValidationError("max_concurrent_workers must be an integer from 1 to 16")
     if cfg["llm"].get("paid_fallback_allowed") is not False:
         raise ValidationError("paid_fallback_allowed must be false")
     if cfg["mode"] in {"shadow", "dry-run"} and cfg["llm"].get("dispatch_enabled"):
@@ -83,6 +111,46 @@ def load_config(path: Path) -> dict[str, Any]:
             raise ValidationError(f"invalid {window} quota state")
     if isinstance(cfg["chat_health"].get("observation_stale_after_seconds"), bool) or int(cfg["chat_health"].get("observation_stale_after_seconds", 0)) <= 0:
         raise ValidationError("chat_health observation_stale_after_seconds must be positive")
+    autonomy = cfg.get("autonomy")
+    autonomy_keys = {
+        "enabled", "plan_only", "away_mode", "max_batch_tasks",
+        "max_parallel_local", "checkpoint_subdir", "result_inbox_subdir",
+        "evidence_subdir",
+    }
+    if not isinstance(autonomy, dict) or set(autonomy) != autonomy_keys:
+        raise ValidationError("autonomy fields mismatch")
+    for key in ("enabled", "plan_only", "away_mode"):
+        if type(autonomy[key]) is not bool:
+            raise ValidationError(f"autonomy.{key} must be boolean")
+    for key in ("max_batch_tasks", "max_parallel_local"):
+        value = autonomy[key]
+        if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= 16:
+            raise ValidationError(f"autonomy.{key} must be an integer from 1 to 16")
+        if value > workers:
+            raise ValidationError(f"autonomy.{key} cannot exceed max_concurrent_workers")
+    for name in ("checkpoint_subdir", "result_inbox_subdir", "evidence_subdir"):
+        subdir = autonomy[name]
+        if not isinstance(subdir, str) or subdir in {".", ".."} or re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}", subdir
+        ) is None:
+            raise ValidationError(f"autonomy.{name} must be one safe relative component")
+    llm = cfg["llm"]
+    if isinstance(llm.get("lease_seconds"), bool) or int(llm.get("lease_seconds", 0)) < 30:
+        raise ValidationError("llm.lease_seconds must be at least 30")
+    if isinstance(llm.get("quota_probe_guard_seconds"), bool) or int(llm.get("quota_probe_guard_seconds", 0)) < 0:
+        raise ValidationError("llm.quota_probe_guard_seconds must be nonnegative")
+    backoff = llm.get("quota_probe_backoff_seconds")
+    if not isinstance(backoff, list) or not backoff or any(
+        isinstance(v, bool) or not isinstance(v, int) or v < 1 for v in backoff
+    ):
+        raise ValidationError("llm.quota_probe_backoff_seconds must be positive integers")
+    command = llm.get("command")
+    if not isinstance(command, dict) or set(command) != {"argv", "probe_prompt", "timeout_seconds"}:
+        raise ValidationError("llm.command fields mismatch")
+    if not isinstance(command["argv"], list) or not command["argv"] or any(
+        not isinstance(v, str) or not v for v in command["argv"]
+    ):
+        raise ValidationError("llm.command.argv must be nonempty strings")
     repo = Path(cfg["repository_root"])
     if not repo.is_absolute():
         repo = (path.parent.parent / repo).resolve()

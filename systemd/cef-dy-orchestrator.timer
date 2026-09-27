@@ -1,11 +1,11 @@
 [Unit]
-Description=Poll CEF Dy task metadata every five minutes
+Description=Run CEF Dy deterministic M1b orchestrator every minute
 
 [Timer]
-OnBootSec=2min
-OnUnitActiveSec=5min
-RandomizedDelaySec=30
-Persistent=false
+OnBootSec=30s
+OnUnitInactiveSec=1min
+RandomizedDelaySec=10
+Persistent=true
 
 [Install]
 WantedBy=timers.target

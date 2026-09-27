@@ -26,6 +26,13 @@ llm:
   require_issue_label: orchestrator:llm-approved
   require_local_approval: true
   require_explicit_resume: true
+  lease_seconds: 900
+  quota_probe_guard_seconds: 60
+  quota_probe_backoff_seconds: [300, 900, 1800, 3600]
+  command:
+    argv: [/usr/lib/chatgpt/resources/codex, exec, --ephemeral, --sandbox, read-only, --skip-git-repo-check, --output-last-message, "{output}", -]
+    probe_prompt: "Reply with exactly ADMISSION_OK and do not use tools."
+    timeout_seconds: 900
   ollama:
     enabled: false
     base_url: http://127.0.0.1:11434
@@ -54,6 +61,18 @@ publishing:
 chat_health:
   enabled: false
   observation_stale_after_seconds: 86400
+
+# The cycle itself is deterministic; optional AI work is a disposable bounded
+# subprocess and is disabled until explicitly enabled in local production config.
+autonomy:
+  enabled: false
+  plan_only: false
+  away_mode: false
+  max_batch_tasks: 1
+  max_parallel_local: 1
+  checkpoint_subdir: autonomy
+  result_inbox_subdir: result-inbox
+  evidence_subdir: m1b-evidence
 
 paths:
   allowed_read_roots:

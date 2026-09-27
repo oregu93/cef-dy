@@ -23,13 +23,22 @@ from task_orchestrator.chat_health import (
     explicit_health_observation,
     unknown_health_projection,
 )
+from task_orchestrator.autonomy import (
+    AutonomyError, build_plan, checkpoint_status, disabled_result,
+    open_readonly_database, publish_checkpoint, verify_git_identity,
+)
+from task_orchestrator.reliability import M1bController, M1bStore
 
 
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--config", type=Path, required=True)
     sub = p.add_subparsers(dest="command", required=True)
-    for name in ("poll-once", "run-ready", "status", "recover", "integrity-check"):
+    for name in (
+        "poll-once", "run-ready", "status", "recover", "integrity-check",
+        "autonomy-plan", "autonomy-status", "cycle-plan", "cycle-once",
+        "reliability-status",
+    ):
         sub.add_parser(name)
     sub.add_parser("board-preview")
     health = sub.add_parser("chat-health")
@@ -61,21 +70,56 @@ def main(argv: list[str] | None = None) -> int:
     try:
         cfg = load_config(args.config.resolve())
         state_dir = Path(cfg["state_dir"])
+        if args.command == "autonomy-status":
+            print(json.dumps(checkpoint_status(cfg), indent=2, ensure_ascii=False))
+            return 0
+        if args.command == "autonomy-plan" and not cfg["autonomy"]["enabled"]:
+            print(json.dumps(disabled_result(), indent=2, ensure_ascii=False))
+            return 0
         if args.command == "validate-task":
             task = read_task(args.task)
             print(json.dumps({"status": "VALID", "task_id": task.task_id, "payload_hash": task.payload_hash}, indent=2))
             return 0
         lock = ProcessLock(state_dir / "orchestrator.lock", int(cfg["lock_stale_after_seconds"]))
         with lock:
+            if args.command == "autonomy-plan":
+                head = verify_git_identity(Path(cfg["repository_root"]))
+                conn = open_readonly_database(state_dir / "state.sqlite3")
+                try:
+                    result = publish_checkpoint(cfg, build_plan(cfg, conn, head))
+                finally:
+                    conn.close()
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0
             store = Store(state_dir / "state.sqlite3")
             try:
                 engine = Engine(cfg, store)
+                if args.command == "reliability-status":
+                    print(json.dumps(M1bStore(store.conn, cfg).status(), indent=2, ensure_ascii=False))
+                    return 0
+                if args.command == "cycle-once":
+                    result = M1bController(cfg, store).cycle()
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                    return 0
+                if args.command == "cycle-plan":
+                    poll = engine.poll()
+                    if poll.get("status") not in {"ok", "unchanged", "disabled"}:
+                        raise AutonomyError("PLAN_SUPPRESSED_SOURCE_UNAVAILABLE")
+                    if not cfg["autonomy"]["enabled"]:
+                        result = {"poll": poll, "plan": disabled_result()}
+                    else:
+                        head = verify_git_identity(Path(cfg["repository_root"]))
+                        result = {"poll": poll, "plan": publish_checkpoint(
+                            cfg, build_plan(cfg, store.conn, head)
+                        )}
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                    return 0
                 if args.command == "ingest": result = {"status": engine.ingest(read_task(args.task))}
                 elif args.command == "poll-once": result = engine.poll()
                 elif args.command == "run-ready": result = {"results": engine.run_ready(), "llm_calls": 0}
                 elif args.command == "approve": store.approve(args.task_id); engine.reevaluate_waiting(); result = {"status": "approved", "task_id": args.task_id}
                 elif args.command == "resume": store.resume(args.task_id); result = {"status": "waiting_approval", "task_id": args.task_id}
-                elif args.command == "quota-pause": engine.pause_quota(args.task_id); result = {"status": "PAUSED_QUOTA", "task_id": args.task_id}
+                elif args.command == "quota-pause": engine.pause_quota(args.task_id); result = {"status": "QUOTA_WAIT", "task_id": args.task_id}
                 elif args.command == "recover": result = {"orphaned_recovered": engine.recover_orphans(), "cycles": engine.detect_cycles()}
                 elif args.command == "status": result = engine.status()
                 elif args.command == "board-preview":
@@ -113,7 +157,7 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
             finally:
                 store.close()
-    except (ValidationError, LockBusy, RuntimeError, ValueError) as exc:
+    except (ValidationError, LockBusy, RuntimeError, ValueError, AutonomyError) as exc:
         print(json.dumps({"status": "ERROR", "error": f"{type(exc).__name__}: {exc}"}, ensure_ascii=False), file=sys.stderr)
         return 2
 

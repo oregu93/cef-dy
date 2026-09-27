@@ -62,7 +62,7 @@ class StoreEngineTests(unittest.TestCase):
         self.assertEqual(self.store.get(a.task_id)["state"], "BLOCKED")
         self.assertEqual(self.store.get(b.task_id)["state"], "BLOCKED")
 
-    def test_manual_llm_gate_and_quota_no_auto_resume(self):
+    def test_manual_llm_gate_and_quota_enters_recoverable_lane(self):
         task = self.fx.task("INFRA-LLM-001", task_type="llm_semantic", action="semantic_helper", labels=("orchestrator:task", "orchestrator:llm-approved"))
         self.engine.ingest(task)
         self.store.approve(task.task_id)
@@ -72,13 +72,9 @@ class StoreEngineTests(unittest.TestCase):
         self.engine.reevaluate_waiting()
         self.assertEqual(self.store.get(task.task_id)["state"], "READY")
         self.engine.pause_quota(task.task_id)
-        self.assertEqual(self.store.get(task.task_id)["state"], "PAUSED_QUOTA")
+        self.assertEqual(self.store.get(task.task_id)["state"], "QUOTA_WAIT")
         self.engine.reevaluate_waiting()
-        self.assertEqual(self.store.get(task.task_id)["state"], "PAUSED_QUOTA")
-        self.store.resume(task.task_id)
-        self.assertEqual(self.store.get(task.task_id)["state"], "WAITING_APPROVAL")
-        self.engine.run_ready()
-        self.assertEqual(self.store.get(task.task_id)["state"], "WAITING_APPROVAL")
+        self.assertEqual(self.store.get(task.task_id)["state"], "QUOTA_WAIT")
 
     def test_orphan_recovery_deterministic_and_llm(self):
         det = self.fx.task("INFRA-ORPHAN-D")

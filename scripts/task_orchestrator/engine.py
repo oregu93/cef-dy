@@ -48,7 +48,12 @@ class Engine:
         elif any(value != State.SUCCEEDED.value for value in dep_states.values()):
             self.store.transition(task.task_id, State.WAITING_DEPENDENCY, "dependencies incomplete")
         elif task.is_llm:
-            self.store.transition(task.task_id, State.WAITING_APPROVAL, "LLM tasks require issue label and local approval")
+            issue_ok = task_has_issue_approval(task, self.cfg)
+            local_ok = not self.cfg["llm"].get("require_local_approval", True)
+            if issue_ok and local_ok and self.cfg["llm"].get("dispatch_enabled") and self.cfg["mode"] == "pilot":
+                self.store.transition(task.task_id, State.READY, "authorized bounded AI task ready")
+            else:
+                self.store.transition(task.task_id, State.WAITING_APPROVAL, "AI task authorization incomplete")
         else:
             self.store.transition(task.task_id, State.READY, "deterministic task ready")
 
@@ -64,7 +69,7 @@ class Engine:
             task = self.store.task(row)
             if not task.is_llm:
                 continue
-            local = bool(row["approved_at"])
+            local = bool(row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
             issue = task_has_issue_approval(task, self.cfg)
             if local and issue and self.cfg["llm"].get("dispatch_enabled") and self.cfg["mode"] == "pilot":
                 self.store.transition(task.task_id, State.READY, "dual approval satisfied")
@@ -134,7 +139,7 @@ class Engine:
         row = self.store.get(task_id)
         if not row or row["state"] not in {State.RUNNING.value, State.READY.value}:
             raise TransitionError("quota pause requires READY or RUNNING task")
-        self.store.transition(task_id, State.PAUSED_QUOTA, "quota exhaustion; automatic resume forbidden", force_recovery=row["state"] == State.READY.value)
+        self.store.transition(task_id, State.QUOTA_WAIT, "quota exhaustion; automatic resume scheduled", force_recovery=row["state"] == State.READY.value)
 
     def poll(self, source: IssueSource | None = None) -> dict[str, Any]:
         if not self.cfg["github"]["enabled"]:
