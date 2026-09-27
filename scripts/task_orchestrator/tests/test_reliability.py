@@ -4,11 +4,13 @@ from concurrent.futures import ThreadPoolExecutor
 import sqlite3
 import time
 import unittest
+from unittest import mock
 
 from task_orchestrator.engine import Engine
-from task_orchestrator.github import SourceUnavailable
+from task_orchestrator.github import Issue, SourceUnavailable
 from task_orchestrator.model import State
 from task_orchestrator.reliability import Admission, M1bController, M1bStore
+from task_orchestrator.publishing import CommentPage, TransportResponse
 from task_orchestrator.store import Store
 
 from .common import Fixture
@@ -37,10 +39,46 @@ class OutageSource:
         raise SourceUnavailable("synthetic network outage")
 
 
+class StaticSource:
+    def __init__(self, issues):
+        self.issues = issues
+
+    def fetch(self, etag):
+        return self.issues, '"etag"', False
+
+
+class FakePublication:
+    def __init__(self):
+        self.sends = 0
+
+    def send_comment(self, target, body):
+        self.sends += 1
+        return TransportResponse(201, remote_id="comment-1")
+
+    def list_comments(self, target):
+        return CommentPage((), True)
+
+
+def ai_issue_body(head, task_id):
+    return f"""task
+```yaml
+schema_version: 1
+task_id: {task_id}
+role: 07_INFRASTRUCTURE
+canonical_head: {head}
+task_type: llm_worker
+action: semantic_helper
+timeout_seconds: 10
+stop_condition: stop
+```
+"""
+
+
 class ReliabilityTests(unittest.TestCase):
     def setUp(self):
         self.fx = Fixture()
         self.fx.cfg["autonomy"]["enabled"] = True
+        self.fx.cfg["autonomy"]["plan_only"] = False
         self.fx.cfg["autonomy"]["max_batch_tasks"] = 16
         self.fx.cfg["llm"]["dispatch_enabled"] = True
         self.fx.cfg["llm"]["require_local_approval"] = False
@@ -58,6 +96,14 @@ class ReliabilityTests(unittest.TestCase):
             task_id=task_id, task_type="llm_worker", action="semantic_helper",
             labels=("orchestrator:task", "orchestrator:llm-approved"), **kwargs,
         )
+
+    def result(self, task_id, attempt=1, status="SUCCEEDED", retryable=False, error=None):
+        return {
+            "schema_version": 1, "task_id": task_id, "attempt": attempt,
+            "status": status, "canonical_head": self.fx.head, "worker": "test",
+            "started_at": "2026-01-01T00:00:00Z", "finished_at": "2026-01-01T00:00:01Z",
+            "checks": [], "artifacts": [], "error": error, "retryable": retryable,
+        }
 
     def test_quota_wait_does_not_consume_retry_and_local_work_continues(self):
         self.assertEqual(self.engine.ingest(self.ai_task()), "created")
@@ -124,7 +170,7 @@ class ReliabilityTests(unittest.TestCase):
         row = self.store.get("INFRA-RESULT-001")
         state = M1bStore(self.store.conn, self.fx.cfg)
         lease = state.claim(row, "w", 100.0)
-        result = {"task_id": "INFRA-RESULT-001", "status": "SUCCEEDED", "error": None}
+        result = self.result("INFRA-RESULT-001")
         self.assertEqual(state.accept(lease["attempt_id"], result), "accepted")
         self.assertEqual(state.accept(lease["attempt_id"], result), "duplicate")
         changed = {**result, "status": "FAILED"}
@@ -135,7 +181,7 @@ class ReliabilityTests(unittest.TestCase):
         self.engine.ingest(self.fx.task(task_id="INFRA-CRASH-001"))
         controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
         lease = controller.state.claim(self.store.get("INFRA-CRASH-001"), "dead-worker", 100.0)
-        result = {"task_id": "INFRA-CRASH-001", "status": "SUCCEEDED", "error": None}
+        result = self.result("INFRA-CRASH-001")
         controller._write_spool(lease["attempt_id"], result)
         fresh = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 101.0)
         counts = fresh.ingest_spool()
@@ -180,13 +226,96 @@ class ReliabilityTests(unittest.TestCase):
         self.engine.ingest(self.fx.task(task_id="INFRA-ACK-001"))
         controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
         lease = controller.state.claim(self.store.get("INFRA-ACK-001"), "worker", 100.0)
-        result = {"task_id": "INFRA-ACK-001", "status": "SUCCEEDED", "error": None}
+        result = self.result("INFRA-ACK-001")
         controller._write_spool(lease["attempt_id"], result)
         self.assertEqual(controller.state.accept(lease["attempt_id"], result), "accepted")
         fresh = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 101.0)
         counts = fresh.ingest_spool()
         self.assertEqual(counts["duplicate"], 1)
         self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results WHERE task_id='INFRA-ACK-001'").fetchone()[0], 1)
+
+    def test_shadow_and_disabled_modes_never_dispatch(self):
+        self.fx.cfg["mode"] = "shadow"
+        self.fx.cfg["autonomy"]["enabled"] = False
+        self.store.ingest(self.fx.task(task_id="INFRA-SHADOW-001"))
+        self.store.transition("INFRA-SHADOW-001", State.VALIDATED, "test")
+        self.store.transition("INFRA-SHADOW-001", State.READY, "test")
+        output = M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        self.assertEqual(self.store.get("INFRA-SHADOW-001")["state"], State.READY.value)
+        self.assertEqual(output["status"]["ORCHESTRATOR_M1B_STATE"], "SHADOW")
+
+    def test_retryable_attempt_does_not_occupy_final_result_identity(self):
+        self.engine.ingest(self.ai_task("AI-RETRY-001"))
+        fake = FakeAI(executions=[
+            Admission("FAILED_RETRYABLE", reason="transient"),
+            Admission("ACCEPTED", {"status": "SUCCEEDED", "checks": [], "artifacts": [], "error": None}),
+        ])
+        controller = M1bController(self.fx.cfg, self.store, fake)
+        controller.cycle()
+        self.assertEqual(self.store.get("AI-RETRY-001")["state"], State.FAILED_RETRYABLE.value)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 0)
+        controller.cycle()
+        self.assertEqual(self.store.get("AI-RETRY-001")["state"], State.SUCCEEDED.value)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 1)
+
+    def test_malformed_spool_is_quarantined_not_accepted(self):
+        self.engine.ingest(self.fx.task(task_id="INFRA-BADRESULT-001"))
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
+        lease = controller.state.claim(self.store.get("INFRA-BADRESULT-001"), "worker", 100.0)
+        controller._write_spool(lease["attempt_id"], {"task_id": "INFRA-BADRESULT-001", "status": "SUCCEEDED"})
+        counts = controller.ingest_spool()
+        self.assertEqual(counts["malformed"], 1)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 0)
+
+    def test_revoked_approval_is_not_restored_by_quota_probe(self):
+        self.fx.cfg["github"]["enabled"] = True
+        task = self.ai_task("AI-REVOKE-001")
+        self.engine.ingest(task)
+        first = FakeAI(executions=[Admission("QUOTA_REFUSED", reason="quota", reset_at=101.0)])
+        M1bController(self.fx.cfg, self.store, first, clock=lambda: 100.0).cycle(StaticSource([]))
+        issue = Issue(1, "task", ai_issue_body(self.fx.head, task.task_id),
+                      ("orchestrator:task",), "t2")
+        second = FakeAI(probes=[Admission("ACCEPTED", {"text": "ADMISSION_OK"})])
+        M1bController(self.fx.cfg, self.store, second, clock=lambda: 102.0).cycle(StaticSource([issue]))
+        self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
+        self.assertEqual(second.execute_calls, 0)
+
+    def test_cycle_projects_terminal_result_exactly_once(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.engine.ingest(self.fx.task(task_id="INFRA-PROJECT-001", source_issue=9))
+        transport = FakePublication()
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport)
+        first = controller.cycle(StaticSource([]))
+        second = controller.cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 1)
+        row = self.store.conn.execute("SELECT * FROM publication_outbox").fetchone()
+        self.assertEqual(row["status"], "PUBLISHED")
+        self.assertTrue(first["publications"])
+        self.assertFalse([item for item in second["publications"] if item.get("network_writes")])
+
+    def test_detached_ai_launch_returns_without_running_worker_inline(self):
+        self.fx.cfg["llm"]["detached_workers"] = True
+        self.fx.cfg["_config_path"] = str(self.fx.root / "config.yaml")
+        self.engine.ingest(self.ai_task("AI-DETACHED-001"))
+        fake = FakeAI()
+        completed = mock.Mock(returncode=0, stdout="", stderr="")
+        with mock.patch("task_orchestrator.reliability.subprocess.run", return_value=completed) as run:
+            result = M1bController(self.fx.cfg, self.store, fake).cycle()
+        self.assertEqual(result["dispatched"][0]["outcome"], "launched")
+        self.assertEqual(fake.execute_calls, 0)
+        self.assertEqual(self.store.get("AI-DETACHED-001")["state"], State.RUNNING.value)
+        self.assertEqual(run.call_args.args[0][0:2], ["systemd-run", "--user"])
+
+        self.fx.cfg["llm"]["detached_workers"] = False
+        worker = M1bController(self.fx.cfg, self.store, fake)
+        attempt_id = self.store.conn.execute(
+            "SELECT attempt_id FROM worker_leases WHERE task_id='AI-DETACHED-001'"
+        ).fetchone()[0]
+        worker.run_leased_ai("AI-DETACHED-001", attempt_id)
+        self.assertEqual(self.store.get("AI-DETACHED-001")["state"], State.SUCCEEDED.value)
 
 
 if __name__ == "__main__":

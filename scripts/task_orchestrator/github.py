@@ -10,6 +10,10 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+from .publishing import (
+    AmbiguousDelivery, CommentPage, RemoteComment, TransportResponse,
+)
+
 
 class SourceUnavailable(RuntimeError):
     pass
@@ -101,6 +105,65 @@ class GitHubIssueSource:
                 str(item["state_reason"]) if item.get("state_reason") is not None else None,
             ))
         return issues, response_etag, False
+
+
+class GitHubCommentTransport:
+    """Exact-marker GitHub Issue comment transport for the durable outbox."""
+
+    def __init__(self, config: dict[str, Any]):
+        self.config = config
+
+    def _headers(self) -> dict[str, str]:
+        headers = {
+            "Accept": "application/vnd.github+json",
+            "Content-Type": "application/json",
+            "User-Agent": "cef-dy-local-orchestrator/2",
+        }
+        token = os.environ.get(self.config.get("token_env", "GITHUB_TOKEN"), "")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        return headers
+
+    def _issue_number(self, target: str) -> int:
+        if not target.startswith("issue:") or not target[6:].isdigit() or int(target[6:]) < 1:
+            raise ValueError("invalid GitHub publication target")
+        return int(target[6:])
+
+    def send_comment(self, target: str, body: str) -> TransportResponse:
+        if "Authorization" not in self._headers():
+            return TransportResponse(401)
+        number = self._issue_number(target)
+        url = f"{self.config['api_base'].rstrip('/')}/repos/{self.config['repository']}/issues/{number}/comments"
+        request = Request(url, data=json.dumps({"body": body}).encode(), headers=self._headers(), method="POST")
+        try:
+            with urlopen(request, timeout=int(self.config["timeout_seconds"])) as response:
+                payload = json.load(response)
+                return TransportResponse(int(response.status), str(payload.get("id")) if payload.get("id") is not None else None)
+        except HTTPError as exc:
+            retry = exc.headers.get("Retry-After") if exc.headers else None
+            return TransportResponse(exc.code, retry_after_seconds=int(retry) if retry and retry.isdigit() else None)
+        except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+            raise AmbiguousDelivery(str(exc)) from exc
+
+    def list_comments(self, target: str) -> CommentPage:
+        number = self._issue_number(target)
+        base = f"{self.config['api_base'].rstrip('/')}/repos/{self.config['repository']}/issues/{number}/comments?per_page=100"
+        comments: list[RemoteComment] = []
+        for page in range(1, int(self.config.get("max_pages", 10)) + 1):
+            request = Request(base + f"&page={page}", headers=self._headers(), method="GET")
+            try:
+                with urlopen(request, timeout=int(self.config["timeout_seconds"])) as response:
+                    payload = json.load(response)
+            except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+                raise AmbiguousDelivery(str(exc)) from exc
+            if not isinstance(payload, list):
+                raise AmbiguousDelivery("GitHub comments response is not a list")
+            for item in payload:
+                user = item.get("user") or {}
+                comments.append(RemoteComment(str(item.get("body") or ""), user.get("login"), str(item.get("id"))))
+            if len(payload) < 100:
+                return CommentPage(tuple(comments), True)
+        return CommentPage(tuple(comments), False)
 
 
 def backoff_seconds(failures: int, initial: int, maximum: int) -> int:

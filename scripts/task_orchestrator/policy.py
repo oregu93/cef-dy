@@ -31,6 +31,10 @@ def resolve_read_path(repo: Path, path_text: str, forbidden: list[str]) -> Path:
     root = repo.resolve()
     if candidate != root and root not in candidate.parents:
         raise ValidationError(f"path escapes repository: {relative}")
+    resolved_relative = candidate.relative_to(root).as_posix()
+    if any(fnmatch(resolved_relative, pattern) or fnmatch(resolved_relative + "/", pattern)
+           for pattern in forbidden):
+        raise ValidationError(f"resolved path forbidden by policy: {relative}")
     return candidate
 
 

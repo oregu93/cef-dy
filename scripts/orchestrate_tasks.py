@@ -40,6 +40,9 @@ def parser() -> argparse.ArgumentParser:
         "reliability-status",
     ):
         sub.add_parser(name)
+    worker_once = sub.add_parser("worker-once")
+    worker_once.add_argument("task_id")
+    worker_once.add_argument("attempt_id")
     sub.add_parser("board-preview")
     health = sub.add_parser("chat-health")
     health.add_argument("chat_id")
@@ -80,6 +83,14 @@ def main(argv: list[str] | None = None) -> int:
             task = read_task(args.task)
             print(json.dumps({"status": "VALID", "task_id": task.task_id, "payload_hash": task.payload_hash}, indent=2))
             return 0
+        if args.command == "worker-once":
+            store = Store(state_dir / "state.sqlite3")
+            try:
+                result = M1bController(cfg, store).run_leased_ai(args.task_id, args.attempt_id)
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0
+            finally:
+                store.close()
         lock = ProcessLock(state_dir / "orchestrator.lock", int(cfg["lock_stale_after_seconds"]))
         with lock:
             if args.command == "autonomy-plan":

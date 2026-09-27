@@ -103,7 +103,7 @@ class PollLockRecoveryTests(unittest.TestCase):
         self.assertEqual(self.store.get("INFRA-LLM-POLL-001")["state"], "READY")
         removed = Issue(14, "task", initial.body, ("orchestrator:task",), "t3")
         self.engine.poll(Source([removed]))
-        self.assertEqual(self.store.get("INFRA-LLM-POLL-001")["state"], "WAITING_APPROVAL")
+        self.assertEqual(self.store.get("INFRA-LLM-POLL-001")["state"], "WAITING_USER")
 
     def test_github_adapter_scans_all_states_without_server_label_filter(self):
         response = mock.MagicMock()

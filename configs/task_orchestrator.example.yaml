@@ -26,6 +26,7 @@ llm:
   require_issue_label: orchestrator:llm-approved
   require_local_approval: true
   require_explicit_resume: true
+  detached_workers: false
   lease_seconds: 900
   quota_probe_guard_seconds: 60
   quota_probe_backoff_seconds: [300, 900, 1800, 3600]

@@ -66,6 +66,19 @@ class SchemaPolicyTests(unittest.TestCase):
                     with self.assertRaises(ValidationError): validate_task_policy(task, fixture.cfg)
                 finally: fixture.close()
 
+    def test_symlink_cannot_bypass_forbidden_path(self):
+        fixture = Fixture()
+        try:
+            forbidden = fixture.root / "CEF_Dy_Data"
+            forbidden.mkdir()
+            (forbidden / "holdout.txt").write_text("protected", encoding="utf-8")
+            (fixture.root / "innocent.txt").symlink_to(forbidden / "holdout.txt")
+            task = fixture.task(action="artifact_check", expected_artifacts=("innocent.txt",))
+            with self.assertRaises(ValidationError):
+                validate_task_policy(task, fixture.cfg)
+        finally:
+            fixture.close()
+
     def test_random_paths_never_escape(self):
         random.seed(42)
         for _ in range(500):

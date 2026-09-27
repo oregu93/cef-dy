@@ -25,6 +25,7 @@ DEFAULTS: dict[str, Any] = {
         "dispatch_enabled": False, "paid_fallback_allowed": False,
         "require_issue_label": "orchestrator:llm-approved",
         "require_local_approval": True, "require_explicit_resume": True,
+        "detached_workers": False,
         "lease_seconds": 900, "quota_probe_guard_seconds": 60,
         "quota_probe_backoff_seconds": [300, 900, 1800, 3600],
         "command": {
@@ -97,12 +98,16 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValidationError("paid_fallback_allowed must be false")
     if cfg["mode"] in {"shadow", "dry-run"} and cfg["llm"].get("dispatch_enabled"):
         raise ValidationError("LLM dispatch cannot be enabled in shadow/dry-run")
-    if cfg["publishing"].get("enabled") is not False:
-        raise ValidationError("live publishing is unavailable in the M1 foundation")
-    if cfg["publishing"].get("preview_only") is not True:
-        raise ValidationError("M1 publishing must remain preview_only")
+    if type(cfg["publishing"].get("enabled")) is not bool or type(cfg["publishing"].get("preview_only")) is not bool:
+        raise ValidationError("publishing enabled/preview_only must be boolean")
+    if cfg["publishing"].get("enabled") and cfg["publishing"].get("preview_only"):
+        raise ValidationError("live publishing requires preview_only=false")
     if not isinstance(cfg["publishing"].get("trusted_authors"), list):
         raise ValidationError("publishing.trusted_authors must be a list")
+    if cfg["publishing"].get("enabled") and not cfg["publishing"].get("trusted_authors"):
+        raise ValidationError("live publishing requires trusted_authors")
+    if cfg["publishing"].get("enabled") and not cfg["github"].get("enabled"):
+        raise ValidationError("live publishing requires github.enabled")
     if isinstance(cfg["visibility"].get("quota_stale_after_seconds"), bool) or int(cfg["visibility"].get("quota_stale_after_seconds", 0)) <= 0:
         raise ValidationError("visibility quota_stale_after_seconds must be positive")
     for window in ("five_hour", "weekly"):
@@ -137,6 +142,8 @@ def load_config(path: Path) -> dict[str, Any]:
     llm = cfg["llm"]
     if isinstance(llm.get("lease_seconds"), bool) or int(llm.get("lease_seconds", 0)) < 30:
         raise ValidationError("llm.lease_seconds must be at least 30")
+    if type(llm.get("detached_workers")) is not bool:
+        raise ValidationError("llm.detached_workers must be boolean")
     if isinstance(llm.get("quota_probe_guard_seconds"), bool) or int(llm.get("quota_probe_guard_seconds", 0)) < 0:
         raise ValidationError("llm.quota_probe_guard_seconds must be nonnegative")
     backoff = llm.get("quota_probe_backoff_seconds")
@@ -159,4 +166,5 @@ def load_config(path: Path) -> dict[str, Any]:
     if not state.is_absolute():
         state = (repo / state).resolve()
     cfg["state_dir"] = str(state)
+    cfg["_config_path"] = str(path)
     return cfg

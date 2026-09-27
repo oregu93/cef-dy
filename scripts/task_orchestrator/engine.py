@@ -65,7 +65,7 @@ class Engine:
                 self.store.transition(task.task_id, State.BLOCKED, "dependency terminal failure")
             elif all(value == State.SUCCEEDED.value for value in states.values()):
                 self.store.transition(task.task_id, State.WAITING_APPROVAL if task.is_llm else State.READY, "dependencies complete")
-        for row in self.store.list_state(State.WAITING_APPROVAL):
+        for row in self.store.list_state(State.WAITING_APPROVAL, State.WAITING_USER):
             task = self.store.task(row)
             if not task.is_llm:
                 continue
@@ -189,8 +189,8 @@ class Engine:
                         self.store.pause_for_manual_issue_change(task.task_id, f"GitHub Issue manually closed ({issue.state_reason or 'no reason'})")
                     elif task.is_llm and not task_has_issue_approval(task, self.cfg):
                         row = self.store.get(task.task_id)
-                        if row and row["state"] == State.READY.value:
-                            self.store.transition(task.task_id, State.WAITING_APPROVAL, "manual removal of LLM approval label")
+                        if row and row["state"] not in {s.value for s in (State.SUCCEEDED, State.FAILED, State.REJECTED, State.BLOCKED)}:
+                            self.store.transition(task.task_id, State.WAITING_USER, "manual removal of LLM approval label", force_recovery=True)
                 except Exception as exc:
                     rejected += 1
                     affected = existing_task_id or self.store.task_id_for_issue(issue.number)

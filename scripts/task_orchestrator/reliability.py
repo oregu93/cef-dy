@@ -19,7 +19,9 @@ import uuid
 import yaml
 
 from .engine import Engine
+from .github import GitHubCommentTransport
 from .model import State, Task, WorkerResult, utc_now
+from .publishing import OutboxStatus, Publisher, enqueue_result_preview
 from . import workers
 
 
@@ -39,6 +41,13 @@ CREATE TABLE IF NOT EXISTS worker_leases (
 CREATE TABLE IF NOT EXISTS accepted_results (
   task_id TEXT PRIMARY KEY,
   attempt_id TEXT NOT NULL,
+  result_sha256 TEXT NOT NULL,
+  result_json TEXT NOT NULL,
+  accepted_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS attempt_results (
+  attempt_id TEXT PRIMARY KEY,
+  task_id TEXT NOT NULL,
   result_sha256 TEXT NOT NULL,
   result_json TEXT NOT NULL,
   accepted_at TEXT NOT NULL
@@ -199,7 +208,9 @@ class SubprocessAITransport:
         try:
             parsed = json.loads(text)
         except json.JSONDecodeError:
-            parsed = {"status": "SUCCEEDED", "summary": text, "checks": [], "artifacts": [], "error": None}
+            return Admission("FAILED_RETRYABLE", reason="AI worker returned non-JSON output")
+        if not isinstance(parsed, dict) or set(parsed) != {"status", "summary", "checks", "artifacts", "error"}:
+            return Admission("FAILED_RETRYABLE", reason="AI worker result schema mismatch")
         return Admission("ACCEPTED", result=parsed)
 
 
@@ -282,11 +293,36 @@ class M1bStore:
         self.conn.execute("UPDATE dispatch_attempts SET admitted=1 WHERE attempt_id=?", (attempt_id,))
 
     def accept(self, attempt_id: str, result: dict[str, Any]) -> str:
+        required = {"schema_version", "task_id", "attempt", "status", "canonical_head",
+                    "worker", "started_at", "finished_at", "checks", "artifacts",
+                    "error", "retryable"}
+        if not isinstance(result, dict) or set(result) != required:
+            raise ValueError("result schema mismatch")
+        if result["schema_version"] != 1 or result["status"] not in {"SUCCEEDED", "FAILED"}:
+            raise ValueError("result status/schema invalid")
+        if isinstance(result["attempt"], bool) or not isinstance(result["attempt"], int) or result["attempt"] < 1:
+            raise ValueError("result attempt invalid")
+        if type(result["retryable"]) is not bool or not isinstance(result["checks"], list) or not isinstance(result["artifacts"], list):
+            raise ValueError("result field types invalid")
         task_id = str(result["task_id"])
         encoded = _canonical(result)
         result_hash = hashlib.sha256(encoded.encode()).hexdigest()
         self.conn.execute("BEGIN IMMEDIATE")
         try:
+            task_row = self.conn.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
+            if task_row is None:
+                self.conn.execute("ROLLBACK")
+                return "stale"
+            task = json.loads(task_row["payload_json"])
+            if result["canonical_head"] != task["canonical_head"]:
+                raise ValueError("result canonical_head mismatch")
+            attempt_existing = self.conn.execute(
+                "SELECT result_sha256 FROM attempt_results WHERE attempt_id=?", (attempt_id,)
+            ).fetchone()
+            if attempt_existing:
+                outcome = "duplicate_retryable" if attempt_existing["result_sha256"] == result_hash else "conflict"
+                self.conn.execute("COMMIT")
+                return outcome
             existing = self.conn.execute("SELECT * FROM accepted_results WHERE task_id=?", (task_id,)).fetchone()
             if existing:
                 outcome = "duplicate" if existing["result_sha256"] == result_hash else "conflict"
@@ -296,8 +332,24 @@ class M1bStore:
             if lease is None or lease["attempt_id"] != attempt_id:
                 self.conn.execute("ROLLBACK")
                 return "stale"
+            if result["retryable"]:
+                self.conn.execute(
+                    "INSERT OR IGNORE INTO attempt_results VALUES(?,?,?,?,?)",
+                    (attempt_id, task_id, result_hash, encoded, utc_now()),
+                )
+                self.conn.execute(
+                    "UPDATE tasks SET state=?,reason=?,attempt=attempt+1,updated_at=? WHERE task_id=?",
+                    (State.FAILED_RETRYABLE.value, result.get("error") or "retryable worker failure", utc_now(), task_id),
+                )
+                self.conn.execute("DELETE FROM worker_leases WHERE task_id=?", (task_id,))
+                self.conn.execute(
+                    "UPDATE dispatch_attempts SET outcome=?,finished_at=? WHERE attempt_id=?",
+                    (State.FAILED_RETRYABLE.value, utc_now(), attempt_id),
+                )
+                self.conn.execute("COMMIT")
+                return "accepted_retryable"
             status = str(result["status"])
-            target = State.SUCCEEDED.value if status == "SUCCEEDED" else State.FAILED_RETRYABLE.value if result.get("retryable") else State.FAILED.value
+            target = State.SUCCEEDED.value if status == "SUCCEEDED" else State.FAILED.value
             self.conn.execute(
                 "INSERT INTO accepted_results VALUES(?,?,?,?,?)",
                 (task_id, attempt_id, result_hash, encoded, utc_now()),
@@ -439,17 +491,73 @@ class M1bStore:
 
 class M1bController:
     def __init__(self, cfg: dict[str, Any], store: Any, transport: AITransport | None = None,
-                 *, worker_id: str | None = None, clock: Any = time.time):
+                 *, publication_transport: Any = None,
+                 worker_id: str | None = None, clock: Any = time.time):
         self.cfg = cfg
         self.store = store
         self.engine = Engine(cfg, store)
         self.state = M1bStore(store.conn, cfg)
         self.transport = transport or SubprocessAITransport(cfg)
+        self.publication_transport = publication_transport or GitHubCommentTransport(cfg["github"])
         self.worker_id = worker_id or f"controller-{os.getpid()}"
         self.clock = clock
         self.state_dir = Path(cfg["state_dir"])
         self.spool = self.state_dir / cfg["autonomy"]["result_inbox_subdir"]
         self.spool.mkdir(parents=True, exist_ok=True)
+
+    def _git_identity(self) -> dict[str, Any]:
+        def value(*args: str) -> str | None:
+            try:
+                proc = subprocess.run(["git", *args], cwd=self.cfg["repository_root"],
+                                      capture_output=True, text=True, timeout=10, shell=False)
+            except (OSError, subprocess.TimeoutExpired):
+                return None
+            return proc.stdout.strip() if proc.returncode == 0 else None
+        return {
+            "CANONICAL_HEAD": value("rev-parse", "refs/remotes/origin/main"),
+            "CURRENT_COMMIT": value("rev-parse", "HEAD"),
+            "CANDIDATE_BRANCH": value("branch", "--show-current"),
+            "CANDIDATE_WORKTREE": str(self.cfg["repository_root"]),
+        }
+
+    def reconcile_publications(self, now: float) -> list[dict[str, Any]]:
+        outcomes: list[dict[str, Any]] = []
+        self.store.recover_uncertain_publications()
+        preview_only = bool(self.cfg["publishing"]["preview_only"])
+        for row in self.store.conn.execute(
+            "SELECT r.task_id,t.source_issue FROM accepted_results r JOIN tasks t USING(task_id) "
+            "WHERE t.source_issue IS NOT NULL ORDER BY r.accepted_at,r.task_id"
+        ):
+            result_path = self.state_dir / "results" / f"{row['task_id']}.yaml"
+            if not result_path.is_file():
+                continue
+            try:
+                outcomes.append(enqueue_result_preview(
+                    self.store, repository=self.cfg["github"]["repository"],
+                    target=f"issue:{row['source_issue']}", result_path=result_path,
+                    preview_only=preview_only,
+                ))
+            except Exception as exc:
+                outcomes.append({"task_id": row["task_id"], "status": "ENQUEUE_ERROR", "error": str(exc)})
+        publisher = Publisher(
+            self.store, self.publication_transport,
+            lock_path=self.state_dir / "publication.lock",
+            lock_stale_after_seconds=int(self.cfg["lock_stale_after_seconds"]),
+            enabled=bool(self.cfg["publishing"]["enabled"]), preview_only=preview_only,
+            trusted_authors=self.cfg["publishing"]["trusted_authors"],
+        )
+        rows = list(self.store.conn.execute(
+            "SELECT publication_id,status FROM publication_outbox ORDER BY created_at,publication_id"
+        ))
+        for row in rows:
+            try:
+                if row["status"] == OutboxStatus.PENDING.value:
+                    outcomes.append(publisher.publish(row["publication_id"], now_epoch=now))
+                elif row["status"] == OutboxStatus.UNKNOWN.value:
+                    outcomes.append(publisher.reconcile(row["publication_id"]))
+            except Exception as exc:
+                outcomes.append({"publication_id": row["publication_id"], "status": "RECONCILE_ERROR", "error": str(exc)})
+        return outcomes
 
     def _spool_path(self, task_id: str, attempt_id: str) -> Path:
         return self.spool / f"{task_id}.{attempt_id}.yaml"
@@ -467,7 +575,8 @@ class M1bController:
             _atomic_yaml(self.state_dir / "results" / f"{result['task_id']}.yaml", public)
 
     def ingest_spool(self) -> dict[str, int]:
-        counts = {"accepted": 0, "duplicate": 0, "stale": 0, "conflict": 0, "malformed": 0}
+        counts = {"accepted": 0, "accepted_retryable": 0, "duplicate": 0,
+                  "duplicate_retryable": 0, "stale": 0, "conflict": 0, "malformed": 0}
         for path in sorted(self.spool.glob("*.yaml")):
             try:
                 payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -475,8 +584,9 @@ class M1bController:
                     raise ValueError("spool schema mismatch")
                 outcome = self.state.accept(str(payload["attempt_id"]), payload["result"])
                 counts[outcome] += 1
-                if outcome in {"accepted", "duplicate"}:
-                    self._write_public_result(payload["result"])
+                if outcome in {"accepted", "accepted_retryable", "duplicate", "duplicate_retryable"}:
+                    if outcome not in {"accepted_retryable", "duplicate_retryable"}:
+                        self._write_public_result(payload["result"])
                     path.rename(path.with_suffix(".accepted"))
                 elif outcome in {"stale", "conflict"}:
                     path.rename(path.with_suffix("." + outcome))
@@ -504,32 +614,88 @@ class M1bController:
         if lease is None:
             return {"task_id": task.task_id, "outcome": "claim_lost"}
         if task.is_llm:
-            outcome = self.transport.execute(task, lease["attempt"])
-            if outcome.status == "QUOTA_REFUSED":
-                self.state.quota_refused(task.task_id, lease["attempt_id"], outcome.reason or "quota refused", outcome.reset_at, now)
-                return {"task_id": task.task_id, "outcome": "QUOTA_WAIT"}
-            if outcome.status != "ACCEPTED":
-                result = {
-                    "schema_version": 1, "task_id": task.task_id, "attempt": lease["attempt"],
-                    "status": "FAILED", "canonical_head": task.canonical_head,
-                    "worker": "ai_bounded_specialist", "started_at": utc_now(), "finished_at": utc_now(),
-                    "checks": [], "artifacts": [], "error": outcome.reason, "retryable": True,
-                }
-            else:
-                self.state.mark_admitted(lease["attempt_id"])
-                result = self._result(task, lease["attempt"], outcome)
-        else:
-            worker_result: WorkerResult = workers.run(task, lease["attempt"], self.cfg)
-            result = {**worker_result.as_dict(), "retryable": False}
-        self._write_spool(lease["attempt_id"], result)
+            if self.cfg["llm"].get("detached_workers"):
+                return self._launch_detached(task, lease)
+            return self._complete_ai(task, lease, now)
+        worker_result: WorkerResult = workers.run(task, lease["attempt"], self.cfg)
+        result = {**worker_result.as_dict(), "retryable": False}
+        spool_path = self._write_spool(lease["attempt_id"], result)
         accepted = self.state.accept(lease["attempt_id"], result)
         if accepted in {"accepted", "duplicate"}:
             self._write_public_result(result)
+        if accepted in {"accepted", "accepted_retryable", "duplicate", "duplicate_retryable"}:
+            spool_path.rename(spool_path.with_suffix(".accepted"))
         return {"task_id": task.task_id, "outcome": accepted}
+
+    def _complete_ai(self, task: Task, lease: dict[str, Any], now: float) -> dict[str, Any]:
+        outcome = self.transport.execute(task, lease["attempt"])
+        if outcome.status == "QUOTA_REFUSED":
+            self.state.quota_refused(task.task_id, lease["attempt_id"], outcome.reason or "quota refused", outcome.reset_at, now)
+            return {"task_id": task.task_id, "outcome": "QUOTA_WAIT"}
+        if outcome.status != "ACCEPTED":
+            result = {
+                "schema_version": 1, "task_id": task.task_id, "attempt": lease["attempt"],
+                "status": "FAILED", "canonical_head": task.canonical_head,
+                "worker": "ai_bounded_specialist", "started_at": utc_now(), "finished_at": utc_now(),
+                "checks": [], "artifacts": [], "error": outcome.reason, "retryable": True,
+            }
+        else:
+            self.state.mark_admitted(lease["attempt_id"])
+            result = self._result(task, lease["attempt"], outcome)
+        spool_path = self._write_spool(lease["attempt_id"], result)
+        accepted = self.state.accept(lease["attempt_id"], result)
+        if accepted in {"accepted", "duplicate"}:
+            self._write_public_result(result)
+        if accepted in {"accepted", "accepted_retryable", "duplicate", "duplicate_retryable"}:
+            spool_path.rename(spool_path.with_suffix(".accepted"))
+        return {"task_id": task.task_id, "outcome": accepted}
+
+    def _launch_detached(self, task: Task, lease: dict[str, Any]) -> dict[str, Any]:
+        config_path = self.cfg.get("_config_path")
+        if not config_path:
+            raise RuntimeError("detached worker requires a resolved config path")
+        unit = "cef-dy-ai-" + lease["attempt_id"]
+        argv = [
+            "systemd-run", "--user", "--collect", "--quiet", f"--unit={unit}",
+            "--property=Type=exec", "--property=NoNewPrivileges=yes",
+            f"--property=WorkingDirectory={self.cfg['repository_root']}",
+            "/usr/bin/python3", str(Path(self.cfg["repository_root"]) / "scripts/orchestrate_tasks.py"),
+            "--config", str(config_path), "worker-once", task.task_id, lease["attempt_id"],
+        ]
+        proc = subprocess.run(argv, capture_output=True, text=True, timeout=30, shell=False)
+        if proc.returncode == 0:
+            return {"task_id": task.task_id, "outcome": "launched", "attempt_id": lease["attempt_id"]}
+        failure = Admission("FAILED_RETRYABLE", reason=(proc.stderr or proc.stdout or "systemd-run failed")[-2000:])
+        return self._complete_ai_failure_without_launch(task, lease, failure)
+
+    def _complete_ai_failure_without_launch(self, task: Task, lease: dict[str, Any], outcome: Admission) -> dict[str, Any]:
+        result = {
+            "schema_version": 1, "task_id": task.task_id, "attempt": lease["attempt"],
+            "status": "FAILED", "canonical_head": task.canonical_head,
+            "worker": "ai_worker_launcher", "started_at": utc_now(), "finished_at": utc_now(),
+            "checks": [], "artifacts": [], "error": outcome.reason, "retryable": True,
+        }
+        path = self._write_spool(lease["attempt_id"], result)
+        accepted = self.state.accept(lease["attempt_id"], result)
+        if accepted in {"accepted_retryable", "duplicate_retryable"}:
+            path.rename(path.with_suffix(".accepted"))
+        return {"task_id": task.task_id, "outcome": accepted}
+
+    def run_leased_ai(self, task_id: str, attempt_id: str) -> dict[str, Any]:
+        lease_row = self.store.conn.execute(
+            "SELECT * FROM worker_leases WHERE task_id=? AND attempt_id=?", (task_id, attempt_id)
+        ).fetchone()
+        task_row = self.store.get(task_id)
+        if lease_row is None or task_row is None or task_row["state"] != State.RUNNING.value:
+            return {"task_id": task_id, "outcome": "stale"}
+        lease = dict(lease_row)
+        lease["attempt"] = int(task_row["attempt"]) + 1
+        return self._complete_ai(self.store.task(task_row), lease, float(self.clock()))
 
     def cycle(self, source: Any = None) -> dict[str, Any]:
         now = float(self.clock())
-        self.state.checkpoint(CURRENT_PHASE="RUNNING", NEXT_EXACT_ACTION="recover, poll, reconcile, dispatch")
+        self.state.checkpoint(CURRENT_PHASE="RUNNING", NEXT_EXACT_ACTION="recover, poll, reconcile, dispatch",
+                              **self._git_identity())
         recovered_results = self.ingest_spool()
         expired = self.state.recover_expired(now)
         try:
@@ -554,16 +720,31 @@ class M1bController:
         )
         dispatched: list[dict[str, Any]] = []
         limit = int(self.cfg["autonomy"]["max_batch_tasks"])
+        execution_enabled = (
+            self.cfg["mode"] == "pilot"
+            and self.cfg["autonomy"]["enabled"]
+            and not self.cfg["autonomy"]["plan_only"]
+        )
         ready = self.store.list_state(State.READY)
-        for row in ready:
+        for row in ready if execution_enabled else ():
             if len(dispatched) >= limit:
                 break
             task = self.store.task(row)
             if task.is_llm:
+                local_ok = bool(row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
+                if not local_ok or self.cfg["llm"]["require_issue_label"] not in task.labels:
+                    self.store.transition(task.task_id, State.WAITING_USER,
+                                          "AI authorization missing at dispatch", force_recovery=True)
+                    continue
                 if not self.cfg["llm"]["dispatch_enabled"] or self.state.lane()["state"] != "AVAILABLE":
                     continue
             dispatched.append(self._run_claim(row, now))
+        publications = self.reconcile_publications(now)
         status = self.state.status()
+        if not execution_enabled:
+            status["ORCHESTRATOR_M1B_STATE"] = "SHADOW"
+        if not self.cfg["llm"]["dispatch_enabled"]:
+            status["AI_LANE"] = "DISABLED"
         live = self.state_dir / self.cfg["autonomy"]["evidence_subdir"] / "ORCH_LIVE_STATUS.yaml"
         _atomic_yaml(live, status)
         blockers = [dict(row) for row in self.store.conn.execute("SELECT task_id,reason FROM tasks WHERE state='BLOCKED'")]
@@ -577,4 +758,4 @@ class M1bController:
         )
         return {"poll": poll, "recovered_results": recovered_results,
                 "expired_leases": expired, "probe": probe,
-                "dispatched": dispatched, "status": status}
+                "dispatched": dispatched, "publications": publications, "status": status}
