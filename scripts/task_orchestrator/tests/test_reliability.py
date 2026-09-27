@@ -349,6 +349,22 @@ time.sleep(60)
         self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
         self.assertEqual(second.execute_calls, 0)
 
+    def test_revoked_running_worker_late_result_is_rejected(self):
+        task = self.ai_task("AI-RUNNING-REVOKE-001")
+        self.engine.ingest(task)
+        state = M1bStore(self.store.conn, self.fx.cfg)
+        lease = state.claim(self.store.get(task.task_id), "detached", 100.0)
+        revoked = self.fx.task(
+            task_id=task.task_id, task_type="llm_worker", action="semantic_helper",
+            source_issue=1, labels=("orchestrator:task",),
+        )
+        self.assertEqual(self.store.ingest(revoked), "metadata_updated")
+        self.store.transition(task.task_id, State.WAITING_USER, "approval revoked", force_recovery=True)
+        outcome = state.accept(lease["attempt_id"], self.result(task.task_id))
+        self.assertEqual(outcome, "revoked")
+        self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 0)
+
     def test_cycle_projects_terminal_result_exactly_once(self):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,

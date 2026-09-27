@@ -342,6 +342,20 @@ class M1bStore:
             if lease is None or lease["attempt_id"] != attempt_id:
                 self.conn.execute("ROLLBACK")
                 return "stale"
+            authorized = task_row["state"] == State.RUNNING.value
+            if task["task_type"] in {"llm_semantic", "llm_worker"}:
+                authorized = authorized and self.cfg["llm"]["require_issue_label"] in task.get("labels", [])
+                authorized = authorized and (
+                    bool(task_row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
+                )
+            if not authorized:
+                self.conn.execute("DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?", (task_id, attempt_id))
+                self.conn.execute(
+                    "UPDATE dispatch_attempts SET outcome='AUTHORIZATION_REVOKED',finished_at=? WHERE attempt_id=?",
+                    (utc_now(), attempt_id),
+                )
+                self.conn.execute("COMMIT")
+                return "revoked"
             dispatch = self.conn.execute("SELECT attempt FROM dispatch_attempts WHERE attempt_id=?", (attempt_id,)).fetchone()
             if dispatch is None or int(dispatch["attempt"]) != result["attempt"]:
                 raise ValueError("result attempt does not match durable dispatch")
@@ -482,6 +496,29 @@ class M1bStore:
                 raise
         return len(rows)
 
+    def cancel_invalid_leases(self) -> int:
+        rows = list(self.conn.execute(
+            "SELECT l.task_id,l.attempt_id FROM worker_leases l JOIN tasks t USING(task_id) "
+            "WHERE t.state<>?", (State.RUNNING.value,)
+        ))
+        if not rows:
+            return 0
+        self.conn.execute("BEGIN IMMEDIATE")
+        try:
+            for row in rows:
+                self.conn.execute("DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?",
+                                  (row["task_id"], row["attempt_id"]))
+                self.conn.execute(
+                    "UPDATE dispatch_attempts SET outcome='AUTHORIZATION_REVOKED',finished_at=? WHERE attempt_id=?",
+                    (utc_now(), row["attempt_id"]),
+                )
+            self.conn.execute("COMMIT")
+        except Exception:
+            if self.conn.in_transaction:
+                self.conn.execute("ROLLBACK")
+            raise
+        return len(rows)
+
     def status(self) -> dict[str, Any]:
         lane = self.lane()
         counts = {row["state"]: row["n"] for row in self.conn.execute(
@@ -604,7 +641,8 @@ class M1bController:
 
     def ingest_spool(self) -> dict[str, int]:
         counts = {"accepted": 0, "accepted_retryable": 0, "duplicate": 0,
-                  "duplicate_retryable": 0, "stale": 0, "conflict": 0, "malformed": 0}
+                  "duplicate_retryable": 0, "stale": 0, "revoked": 0,
+                  "conflict": 0, "malformed": 0}
         for path in sorted(self.spool.glob("*.yaml")):
             try:
                 payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -616,7 +654,7 @@ class M1bController:
                     if outcome not in {"accepted_retryable", "duplicate_retryable"}:
                         self._write_public_result(payload["result"])
                     path.rename(path.with_suffix(".accepted"))
-                elif outcome in {"stale", "conflict"}:
+                elif outcome in {"stale", "revoked", "conflict"}:
                     path.rename(path.with_suffix("." + outcome))
             except Exception:
                 counts["malformed"] += 1
@@ -724,12 +762,13 @@ class M1bController:
         now = float(self.clock())
         self.state.checkpoint(CURRENT_PHASE="RUNNING", NEXT_EXACT_ACTION="recover, poll, reconcile, dispatch",
                               **self._git_identity())
-        recovered_results = self.ingest_spool()
-        expired = self.state.recover_expired(now)
         try:
             poll = self.engine.poll(source)
         except Exception as exc:
             poll = {"status": "outage", "error": f"{type(exc).__name__}: {exc}"}
+        cancelled = self.state.cancel_invalid_leases()
+        recovered_results = self.ingest_spool()
+        expired = self.state.recover_expired(now)
         lane = self.state.lane()
         probe = "not_due"
         if (self.cfg["llm"]["dispatch_enabled"] and lane["state"] == "QUOTA_WAIT"
@@ -784,6 +823,7 @@ class M1bController:
             LAST_WORKER_RESULT=dispatched[-1] if dispatched else None,
             BLOCKED_TASKS=blockers, WAITING_USER_TASKS=waiting,
         )
-        return {"poll": poll, "recovered_results": recovered_results,
+        return {"poll": poll, "cancelled_leases": cancelled,
+                "recovered_results": recovered_results,
                 "expired_leases": expired, "probe": probe,
                 "dispatched": dispatched, "publications": publications, "status": status}
