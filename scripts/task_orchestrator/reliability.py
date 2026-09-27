@@ -403,11 +403,30 @@ class M1bStore:
             raise
 
     def quota_refused(self, task_id: str, attempt_id: str, reason: str,
-                      reset_at: float | None, now: float) -> None:
+                      reset_at: float | None, now: float) -> str:
         backoffs = self.cfg["llm"]["quota_probe_backoff_seconds"]
         guard = int(self.cfg["llm"]["quota_probe_guard_seconds"])
         self.conn.execute("BEGIN IMMEDIATE")
         try:
+            task_row = self.conn.execute("SELECT * FROM tasks WHERE task_id=?", (task_id,)).fetchone()
+            lease = self.conn.execute(
+                "SELECT * FROM worker_leases WHERE task_id=? AND attempt_id=?", (task_id, attempt_id)
+            ).fetchone()
+            authorized = task_row is not None and lease is not None and task_row["state"] == State.RUNNING.value
+            if authorized:
+                task = json.loads(task_row["payload_json"])
+                authorized = self.cfg["llm"]["require_issue_label"] in task.get("labels", [])
+                authorized = authorized and (
+                    bool(task_row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
+                )
+            if not authorized:
+                self.conn.execute("DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?", (task_id, attempt_id))
+                self.conn.execute(
+                    "UPDATE dispatch_attempts SET outcome='AUTHORIZATION_REVOKED',finished_at=? WHERE attempt_id=?",
+                    (utc_now(), attempt_id),
+                )
+                self.conn.execute("COMMIT")
+                return "revoked"
             lane = self.lane()
             index = int(lane["backoff_index"])
             if reset_at is None:
@@ -431,6 +450,7 @@ class M1bStore:
                 (utc_now(), attempt_id),
             )
             self.conn.execute("COMMIT")
+            return "QUOTA_WAIT"
         except Exception:
             if self.conn.in_transaction:
                 self.conn.execute("ROLLBACK")
@@ -444,10 +464,17 @@ class M1bStore:
                     "UPDATE ai_lane SET state='AVAILABLE',next_probe_at=NULL,reset_at=NULL,backoff_index=0,last_success_at=?,updated_at=? WHERE singleton=1",
                     (utc_now(), utc_now()),
                 )
-                self.conn.execute(
-                    "UPDATE tasks SET state=?,reason=?,updated_at=? WHERE state=?",
-                    (State.READY.value, "AI admission probe succeeded; automatic resume", utc_now(), State.QUOTA_WAIT.value),
-                )
+                rows = list(self.conn.execute("SELECT * FROM tasks WHERE state=?", (State.QUOTA_WAIT.value,)))
+                for row in rows:
+                    task = json.loads(row["payload_json"])
+                    authorized = self.cfg["llm"]["require_issue_label"] in task.get("labels", [])
+                    authorized = authorized and (
+                        bool(row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
+                    )
+                    target = State.READY.value if authorized else State.WAITING_USER.value
+                    reason = "AI admission probe succeeded; automatic resume" if authorized else "AI authorization missing at quota recovery"
+                    self.conn.execute("UPDATE tasks SET state=?,reason=?,updated_at=? WHERE task_id=?",
+                                      (target, reason, utc_now(), row["task_id"]))
                 self.conn.execute("COMMIT")
             except Exception:
                 if self.conn.in_transaction:
@@ -696,8 +723,10 @@ class M1bController:
     def _complete_ai(self, task: Task, lease: dict[str, Any], now: float) -> dict[str, Any]:
         outcome = self.transport.execute(task, lease["attempt"])
         if outcome.status == "QUOTA_REFUSED":
-            self.state.quota_refused(task.task_id, lease["attempt_id"], outcome.reason or "quota refused", outcome.reset_at, now)
-            return {"task_id": task.task_id, "outcome": "QUOTA_WAIT"}
+            quota_outcome = self.state.quota_refused(
+                task.task_id, lease["attempt_id"], outcome.reason or "quota refused", outcome.reset_at, now,
+            )
+            return {"task_id": task.task_id, "outcome": quota_outcome}
         if outcome.status != "ACCEPTED":
             result = {
                 "schema_version": 1, "task_id": task.task_id, "attempt": lease["attempt"],

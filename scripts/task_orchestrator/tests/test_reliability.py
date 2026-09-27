@@ -365,6 +365,18 @@ time.sleep(60)
         self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
         self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 0)
 
+    def test_revoked_running_worker_late_quota_signal_is_rejected(self):
+        task = self.ai_task("AI-RUNNING-QUOTA-REVOKE-001")
+        self.engine.ingest(task)
+        state = M1bStore(self.store.conn, self.fx.cfg)
+        lease = state.claim(self.store.get(task.task_id), "detached", 100.0)
+        self.store.transition(task.task_id, State.WAITING_USER, "approval revoked", force_recovery=True)
+        state.cancel_invalid_leases()
+        outcome = state.quota_refused(task.task_id, lease["attempt_id"], "quota", 101.0, 100.0)
+        self.assertEqual(outcome, "revoked")
+        self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
+        self.assertEqual(state.lane()["state"], "AVAILABLE")
+
     def test_cycle_projects_terminal_result_exactly_once(self):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
