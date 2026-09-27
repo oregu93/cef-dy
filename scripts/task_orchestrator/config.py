@@ -25,8 +25,8 @@ DEFAULTS: dict[str, Any] = {
         "dispatch_enabled": False, "paid_fallback_allowed": False,
         "require_issue_label": "orchestrator:llm-approved",
         "require_local_approval": True, "require_explicit_resume": True,
-        "detached_workers": False,
-        "lease_seconds": 900, "quota_probe_guard_seconds": 60,
+        "detached_workers": True,
+        "lease_seconds": 1200, "quota_probe_guard_seconds": 60,
         "quota_probe_backoff_seconds": [300, 900, 1800, 3600],
         "command": {
             "argv": ["/usr/lib/chatgpt/resources/codex", "exec", "--ephemeral",
@@ -158,6 +158,14 @@ def load_config(path: Path) -> dict[str, Any]:
         not isinstance(v, str) or not v for v in command["argv"]
     ):
         raise ValidationError("llm.command.argv must be nonempty strings")
+    if isinstance(command["timeout_seconds"], bool) or not isinstance(command["timeout_seconds"], int) or command["timeout_seconds"] < 1:
+        raise ValidationError("llm.command.timeout_seconds must be a positive integer")
+    if llm["detached_workers"] and int(llm["lease_seconds"]) < int(command["timeout_seconds"]) + 120:
+        raise ValidationError("detached worker lease must exceed worker timeout by at least 120 seconds")
+    if cfg["publishing"].get("enabled") and (
+        cfg["mode"] != "pilot" or not autonomy["enabled"] or autonomy["plan_only"]
+    ):
+        raise ValidationError("live publishing requires active pilot autonomy")
     repo = Path(cfg["repository_root"])
     if not repo.is_absolute():
         repo = (path.parent.parent / repo).resolve()

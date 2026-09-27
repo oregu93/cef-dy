@@ -258,14 +258,16 @@ class Publisher:
                 status = OutboxStatus.FAILED.value
             return {"status": status, "publication_id": publication_id, "network_writes": 1}
 
-    def reconcile(self, publication_id: str) -> dict[str, Any]:
+    def reconcile(self, publication_id: str, *, now_epoch: float | None = None) -> dict[str, Any]:
+        now_epoch = time.time() if now_epoch is None else now_epoch
         row = self.store.publication(publication_id)
         if row is None:
             raise ValidationError("unknown publication")
         page = self.transport.list_comments(row["target"])
         if not page.pagination_complete:
             self.store.update_publication(publication_id, OutboxStatus.UNKNOWN.value,
-                                          reason="reconciliation pagination incomplete")
+                                          reason="reconciliation pagination incomplete",
+                                          backoff_until=now_epoch + 60)
             return {"status": OutboxStatus.UNKNOWN.value, "matched": 0}
         marker_comments = [comment for comment in page.comments if row["marker"] in comment.body]
         matches = [comment for comment in marker_comments
@@ -284,7 +286,8 @@ class Publisher:
                                           reason="reconciled exact trusted marker")
             return {"status": OutboxStatus.PUBLISHED.value, "matched": 1}
         self.store.update_publication(publication_id, OutboxStatus.UNKNOWN.value,
-                                      reason="marker absent; manual retry authorization required")
+                                      reason="marker absent; reconciliation will retry",
+                                      backoff_until=now_epoch + 60)
         return {"status": OutboxStatus.UNKNOWN.value, "matched": 0}
 
     def audit_published(self, publication_id: str) -> dict[str, Any]:

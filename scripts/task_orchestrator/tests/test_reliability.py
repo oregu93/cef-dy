@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import os
+from pathlib import Path
+import signal
 import sqlite3
+import subprocess
+import sys
 import time
 import unittest
 from unittest import mock
@@ -81,6 +86,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["autonomy"]["plan_only"] = False
         self.fx.cfg["autonomy"]["max_batch_tasks"] = 16
         self.fx.cfg["llm"]["dispatch_enabled"] = True
+        self.fx.cfg["llm"]["detached_workers"] = False
         self.fx.cfg["llm"]["require_local_approval"] = False
         self.fx.cfg["llm"]["quota_probe_guard_seconds"] = 0
         self.fx.cfg["llm"]["quota_probe_backoff_seconds"] = [1, 2, 3]
@@ -266,6 +272,69 @@ class ReliabilityTests(unittest.TestCase):
         counts = controller.ingest_spool()
         self.assertEqual(counts["malformed"], 1)
         self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 0)
+
+    def test_result_attempt_must_match_durable_dispatch(self):
+        self.engine.ingest(self.fx.task(task_id="INFRA-ATTEMPT-001"))
+        state = M1bStore(self.store.conn, self.fx.cfg)
+        lease = state.claim(self.store.get("INFRA-ATTEMPT-001"), "worker", 100.0)
+        with self.assertRaises(ValueError):
+            state.accept(lease["attempt_id"], self.result("INFRA-ATTEMPT-001", attempt=999))
+        self.assertEqual(self.store.get("INFRA-ATTEMPT-001")["state"], State.RUNNING.value)
+
+    def test_shadow_mode_never_performs_live_publication(self):
+        self.fx.cfg["mode"] = "pilot"
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.engine.ingest(self.fx.task(task_id="INFRA-SHADOW-PUB-001", source_issue=10))
+        transport = FakePublication()
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), publication_transport=transport)
+        controller.cycle(StaticSource([]))
+        self.fx.cfg["mode"] = "shadow"
+        self.fx.cfg["autonomy"]["enabled"] = False
+        self.store.update_publication(
+            self.store.conn.execute("SELECT publication_id FROM publication_outbox").fetchone()[0],
+            "PENDING",
+        )
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), publication_transport=transport)
+        controller.cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 1)
+
+    def test_sigterm_and_sigkill_worker_processes_recover_from_durable_lease(self):
+        package_root = Path(__file__).resolve().parents[2]
+        database = self.fx.root / "state" / "state.sqlite3"
+        child_code = r"""
+from copy import deepcopy
+from pathlib import Path
+import sys,time
+from task_orchestrator.config import DEFAULTS
+from task_orchestrator.reliability import M1bStore
+from task_orchestrator.store import Store
+cfg=deepcopy(DEFAULTS)
+cfg['repository_root']=sys.argv[2]
+cfg['state_dir']=sys.argv[3]
+store=Store(Path(sys.argv[1]))
+row=store.get(sys.argv[4])
+M1bStore(store.conn,cfg).claim(row,'crash-child',0.0)
+print('CLAIMED',flush=True)
+time.sleep(60)
+"""
+        for index, sig in enumerate((signal.SIGTERM, signal.SIGKILL)):
+            task_id = f"INFRA-SIGNAL-{index}"
+            self.engine.ingest(self.fx.task(task_id=task_id))
+            env = dict(os.environ)
+            env["PYTHONPATH"] = str(package_root)
+            child = subprocess.Popen(
+                [sys.executable, "-c", child_code, str(database), str(self.fx.root),
+                 str(self.fx.root / "state"), task_id],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env,
+            )
+            self.assertEqual(child.stdout.readline().strip(), "CLAIMED")
+            child.send_signal(sig)
+            child.communicate(timeout=10)
+            self.assertEqual(self.store.get(task_id)["state"], State.RUNNING.value)
+            self.assertEqual(M1bStore(self.store.conn, self.fx.cfg).recover_expired(5000.0), 1)
+            self.assertEqual(self.store.get(task_id)["state"], State.READY.value)
 
     def test_revoked_approval_is_not_restored_by_quota_probe(self):
         self.fx.cfg["github"]["enabled"] = True

@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS dispatch_attempts (
   task_id TEXT NOT NULL,
   worker_id TEXT NOT NULL,
   lane TEXT NOT NULL,
+  attempt INTEGER NOT NULL,
   admitted INTEGER NOT NULL DEFAULT 0,
   outcome TEXT,
   started_at TEXT NOT NULL,
@@ -219,6 +220,9 @@ class M1bStore:
         self.conn = conn
         self.cfg = cfg
         self.conn.executescript(M1B_SCHEMA)
+        columns = {row[1] for row in self.conn.execute("PRAGMA table_info(dispatch_attempts)")}
+        if "attempt" not in columns:
+            self.conn.execute("ALTER TABLE dispatch_attempts ADD COLUMN attempt INTEGER NOT NULL DEFAULT 1")
 
     def checkpoint(self, **changes: Any) -> dict[str, Any]:
         task_id = "ORCH-M1B-RELIABILITY-REBUILD-001"
@@ -271,8 +275,9 @@ class M1bStore:
                 return None
             lane = "AI_BOUNDED_SPECIALIST" if self._is_ai(row["task_id"]) else "LOCAL_DETERMINISTIC"
             self.conn.execute(
-                "INSERT INTO dispatch_attempts VALUES(?,?,?,?,0,NULL,?,NULL)",
-                (attempt_id, row["task_id"], worker_id, lane, utc_now()),
+                "INSERT INTO dispatch_attempts(attempt_id,task_id,worker_id,lane,attempt,admitted,outcome,started_at,finished_at) "
+                "VALUES(?,?,?,?,?,0,NULL,?,NULL)",
+                (attempt_id, row["task_id"], worker_id, lane, int(current["attempt"]) + 1, utc_now()),
             )
             self.conn.execute("COMMIT")
             return {"task_id": row["task_id"], "attempt_id": attempt_id,
@@ -304,6 +309,11 @@ class M1bStore:
             raise ValueError("result attempt invalid")
         if type(result["retryable"]) is not bool or not isinstance(result["checks"], list) or not isinstance(result["artifacts"], list):
             raise ValueError("result field types invalid")
+        for key in ("task_id", "status", "canonical_head", "worker", "started_at", "finished_at"):
+            if not isinstance(result[key], str) or not result[key]:
+                raise ValueError(f"result {key} invalid")
+        if result["error"] is not None and not isinstance(result["error"], str):
+            raise ValueError("result error invalid")
         task_id = str(result["task_id"])
         encoded = _canonical(result)
         result_hash = hashlib.sha256(encoded.encode()).hexdigest()
@@ -332,6 +342,9 @@ class M1bStore:
             if lease is None or lease["attempt_id"] != attempt_id:
                 self.conn.execute("ROLLBACK")
                 return "stale"
+            dispatch = self.conn.execute("SELECT attempt FROM dispatch_attempts WHERE attempt_id=?", (attempt_id,)).fetchone()
+            if dispatch is None or int(dispatch["attempt"]) != result["attempt"]:
+                raise ValueError("result attempt does not match durable dispatch")
             if result["retryable"]:
                 self.conn.execute(
                     "INSERT OR IGNORE INTO attempt_results VALUES(?,?,?,?,?)",
@@ -539,11 +552,17 @@ class M1bController:
                 ))
             except Exception as exc:
                 outcomes.append({"task_id": row["task_id"], "status": "ENQUEUE_ERROR", "error": str(exc)})
+        live_enabled = (
+            bool(self.cfg["publishing"]["enabled"])
+            and self.cfg["mode"] == "pilot"
+            and self.cfg["autonomy"]["enabled"]
+            and not self.cfg["autonomy"]["plan_only"]
+        )
         publisher = Publisher(
             self.store, self.publication_transport,
             lock_path=self.state_dir / "publication.lock",
             lock_stale_after_seconds=int(self.cfg["lock_stale_after_seconds"]),
-            enabled=bool(self.cfg["publishing"]["enabled"]), preview_only=preview_only,
+            enabled=live_enabled, preview_only=preview_only,
             trusted_authors=self.cfg["publishing"]["trusted_authors"],
         )
         rows = list(self.store.conn.execute(
@@ -554,8 +573,17 @@ class M1bController:
                 if row["status"] == OutboxStatus.PENDING.value:
                     outcomes.append(publisher.publish(row["publication_id"], now_epoch=now))
                 elif row["status"] == OutboxStatus.UNKNOWN.value:
-                    outcomes.append(publisher.reconcile(row["publication_id"]))
+                    current = self.store.publication(row["publication_id"])
+                    if current is not None and float(current["backoff_until"]) <= now:
+                        outcomes.append(publisher.reconcile(row["publication_id"], now_epoch=now))
             except Exception as exc:
+                current = self.store.publication(row["publication_id"])
+                attempts = int(current["attempts"]) if current else 0
+                delay = min(300, 5 * (2 ** min(attempts, 6)))
+                if current is not None:
+                    self.store.update_publication(row["publication_id"], OutboxStatus.UNKNOWN.value,
+                                                  reason=f"reconciliation outage: {exc}",
+                                                  backoff_until=now + delay)
                 outcomes.append({"publication_id": row["publication_id"], "status": "RECONCILE_ERROR", "error": str(exc)})
         return outcomes
 
