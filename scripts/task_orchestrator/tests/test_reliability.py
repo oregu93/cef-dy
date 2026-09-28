@@ -359,6 +359,18 @@ class ReliabilityTests(unittest.TestCase):
             source_issue=17, labels=("orchestrator:task", "orchestrator:llm-approved"),
         )
         self.assertEqual(self.store.ingest(approved), "metadata_updated")
+        self.fx.cfg["llm"]["detached_workers"] = True
+        self.fx.cfg["_config_path"] = str(self.fx.root / "config.yaml")
+        completed = mock.Mock(returncode=0, stdout="", stderr="")
+        with mock.patch("task_orchestrator.reliability.subprocess.run", return_value=completed):
+            controller.cycle(StaticSource([]))
+        self.assertEqual(self.store.get(task.task_id)["state"], State.RUNNING.value)
+        self.assertEqual(sum("ATTENTION_REQUIRED: false" in body for body in transport.bodies), 1)
+        attempt_id = self.store.conn.execute(
+            "SELECT attempt_id FROM worker_leases WHERE task_id=?", (task.task_id,)
+        ).fetchone()[0]
+        self.fx.cfg["llm"]["detached_workers"] = False
+        controller.run_leased_ai(task.task_id, attempt_id)
         controller.cycle(StaticSource([]))
         controller.cycle(StaticSource([]))
         self.assertEqual(sum("ATTENTION_REQUIRED: false" in body for body in transport.bodies), 1)

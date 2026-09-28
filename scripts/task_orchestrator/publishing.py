@@ -256,7 +256,7 @@ def enqueue_attention_preview(
 
 def enqueue_attention_resolution_preview(
     store: Any, *, repository: str, target: str, task_row: Mapping[str, Any],
-    preview_only: bool = True,
+    attention_publication_id: str, preview_only: bool = True,
 ) -> dict[str, Any]:
     """Durably clear a previously published attention request."""
     if not isinstance(target, str) or re.fullmatch(r"issue:[1-9][0-9]*", target) is None:
@@ -265,10 +265,10 @@ def enqueue_attention_resolution_preview(
         raise ValidationError("attention resolution requires a non-attention task state")
     task = store.task(task_row)
     resolution_sha = hashlib.sha256(
-        f"{task.task_id}\0resolved\0{task_row['state']}\0{task_row['reason'] or ''}".encode()
+        f"{task.task_id}\0{attention_publication_id}\0resolved".encode()
     ).hexdigest()
     resolution_identity = hashlib.sha256(
-        f"{task_row['envelope_hash']}\0attention-resolution:v1\0{resolution_sha}".encode()
+        f"{task_row['envelope_hash']}\0attention-resolution:v1\0{attention_publication_id}".encode()
     ).hexdigest()
     marker = (
         f"<!-- cef-dy-orch-attention-resolution:v1 repo={repository} task={task.task_id} "
