@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import threading
@@ -300,6 +301,111 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.assertEqual(engine_status["llm_calls"], 1)
         self.assertEqual(controller_status["RUNTIME_MODE"], "PRODUCTION")
         self.assertEqual(controller_status["LLM_EXECUTION_ATTEMPTS"], 1)
+
+    def bound_review(self, task_id="BOUND-REVIEW-001", summary="exact parent summary"):
+        parent = self.reviewed_semantic_task(task_id)
+        self.engine.ingest(parent)
+        controller = M1bController(
+            self.fx.cfg, self.store,
+            SequenceAI([self.semantic_outcome("FAILED", summary)]),
+        )
+        controller.cycle()
+        controller.router.reconcile()
+        review_row = self.store.get(task_id + "-REVIEW-001")
+        self.assertIsNotNone(review_row)
+        return parent, controller, self.store.task(review_row)
+
+    def test_review_prompt_contains_exact_bound_parent_result(self):
+        summary = "P1 exact evidence binding sentinel"
+        parent, _controller, review = self.bound_review(summary=summary)
+        accepted = self.store.conn.execute(
+            "SELECT * FROM accepted_results WHERE task_id=?", (parent.task_id,)
+        ).fetchone()
+        captured = {}
+        transport = SubprocessAITransport(self.fx.cfg)
+
+        def capture(prompt):
+            captured["prompt"] = prompt
+            return Admission("ACCEPTED", {"text": json.dumps({
+                "status": "PASS", "summary": "reviewed exact evidence",
+                "checks": [], "artifacts": [], "error": None,
+            })})
+
+        transport._run = capture  # type: ignore[method-assign]
+        self.assertEqual(transport.execute(review, 1).status, "ACCEPTED")
+        prompt = captured["prompt"]
+        self.assertIn(summary, prompt)
+        self.assertIn('"semantic_verdict":"FAILED"', prompt)
+        self.assertIn(accepted["result_sha256"], prompt)
+        material = review.inputs["review_material"]
+        self.assertEqual(material["accepted_result_sha256"], accepted["result_sha256"])
+        self.assertEqual(material["parent_task_id"], parent.task_id)
+
+    def test_review_material_hash_tamper_fails_closed_waiting_user(self):
+        parent, controller, review = self.bound_review("BOUND-TAMPER-001")
+        row = self.store.get(review.task_id)
+        payload = json.loads(row["payload_json"])
+        payload["inputs"]["review_material"]["accepted_result_sha256"] = "0" * 64
+        self.store.conn.execute(
+            "UPDATE tasks SET payload_json=? WHERE task_id=?",
+            (json.dumps(payload, sort_keys=True), review.task_id),
+        )
+        controller.cycle()
+        self.assertEqual(self.store.get(review.task_id)["state"], State.WAITING_USER.value)
+        route = self.store.conn.execute(
+            "SELECT * FROM task_routes WHERE task_id=?", (review.task_id,)
+        ).fetchone()
+        self.assertEqual(route["route_status"], "INVALID_REVIEW_MATERIAL")
+        self.assertIn("hash mismatch", route["reason"])
+        self.assertEqual(self.store.get(parent.task_id)["state"], State.SUCCEEDED.value)
+
+    def test_legacy_semantic_result_without_summary_does_not_create_review(self):
+        parent = self.reviewed_semantic_task("LEGACY-INCOMPLETE-RESULT-001")
+        self.engine.ingest(parent)
+        controller = M1bController(
+            self.fx.cfg, self.store,
+            SequenceAI([self.semantic_outcome("FAILED", "will be removed")]),
+        )
+        controller.cycle()
+        accepted = self.store.conn.execute(
+            "SELECT * FROM accepted_results WHERE task_id=?", (parent.task_id,)
+        ).fetchone()
+        legacy = json.loads(accepted["result_json"])
+        for key in ("summary", "semantic_verdict", "semantic_error"):
+            legacy.pop(key)
+        encoded = json.dumps(legacy, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        self.store.conn.execute(
+            "UPDATE accepted_results SET result_json=?,result_sha256=? WHERE task_id=?",
+            (encoded, hashlib.sha256(encoded.encode()).hexdigest(), parent.task_id),
+        )
+        controller.router.reconcile()
+        self.assertIsNone(self.store.get(parent.task_id + "-REVIEW-001"))
+        requirement = self.store.conn.execute(
+            "SELECT * FROM review_requirements WHERE parent_task_id=?", (parent.task_id,)
+        ).fetchone()
+        self.assertEqual(requirement["status"], "WAITING_USER")
+        self.assertIn("legacy parent result", requirement["reason"])
+
+    def test_oversized_embedded_review_material_uses_verified_artifact(self):
+        summary = "bounded-artifact-sentinel-" + ("x" * 70_000)
+        parent, _controller, review = self.bound_review("BOUND-ARTIFACT-001", summary)
+        material = review.inputs["review_material"]
+        self.assertEqual(material["delivery"], "artifact")
+        self.assertEqual(material["parent_task_id"], parent.task_id)
+        self.assertNotIn("summary", material)
+        captured = {}
+        transport = SubprocessAITransport(self.fx.cfg)
+
+        def capture(prompt):
+            captured["prompt"] = prompt
+            return Admission("ACCEPTED", {"text": json.dumps({
+                "status": "PASS", "summary": "large artifact reviewed",
+                "checks": [], "artifacts": [], "error": None,
+            })})
+
+        transport._run = capture  # type: ignore[method-assign]
+        self.assertEqual(transport.execute(review, 1).status, "ACCEPTED")
+        self.assertIn("bounded-artifact-sentinel-", captured["prompt"])
 
     def test_ai_prompt_contains_exact_canonical_bootstrap(self):
         task = self.fx.task(role="07_INFRASTRUCTURE", task_type="llm_worker", action="semantic_helper")

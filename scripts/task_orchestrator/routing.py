@@ -10,6 +10,8 @@ import re
 import sqlite3
 from typing import Any
 
+import yaml
+
 from .model import State, Task, utc_now
 
 
@@ -32,6 +34,9 @@ SUITABILITY = {
     "WORK_REQUIRED": ("WORK_CODEX",),
     "HUMAN_REQUIRED": ("HUMAN_DECISION",),
 }
+REVIEW_EMBED_LIMIT = 60_000
+REVIEW_ARTIFACT_LIMIT = 2_000_000
+REVIEW_SEMANTIC_FIELDS = {"summary", "semantic_verdict", "semantic_error"}
 
 M2_SCHEMA = """
 CREATE TABLE IF NOT EXISTS specialist_roles (
@@ -117,6 +122,51 @@ def bootstrap_for_task(cfg: dict[str, Any], role: str) -> SpecialistRole:
     if role_id is None:
         raise ValueError(f"unknown specialist role: {role}")
     return load_registry(Path(cfg["routing"]["bootstrap_path"]))[role_id]
+
+
+def _canonical(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def _material_digest(value: dict[str, Any]) -> str:
+    return hashlib.sha256(_canonical(value).encode()).hexdigest()
+
+
+def resolve_review_prompt_material(cfg: dict[str, Any], task: Task) -> str:
+    """Resolve envelope-bound review evidence without trusting chat memory."""
+    if task.inputs.get("independent_review") is not True:
+        return ""
+    material = task.inputs.get("review_material")
+    if not isinstance(material, dict):
+        raise ValueError("independent review material is missing")
+    digest = material.get("review_material_sha256")
+    core = {key: value for key, value in material.items() if key != "review_material_sha256"}
+    if not isinstance(digest, str) or _material_digest(core) != digest:
+        raise ValueError("independent review material hash mismatch")
+    delivery = material.get("delivery")
+    if delivery == "embedded":
+        result = material.get("accepted_result")
+        if not isinstance(result, dict):
+            raise ValueError("embedded accepted result is missing")
+        return "\nVERIFIED PARENT REVIEW MATERIAL:\n" + _canonical(material) + "\n"
+    if delivery != "artifact":
+        raise ValueError("independent review material delivery is invalid")
+    relative = material.get("result_path")
+    if not isinstance(relative, str) or not re.fullmatch(r"results/[A-Z0-9][A-Z0-9._-]{2,127}\.yaml", relative):
+        raise ValueError("review result artifact path is invalid")
+    path = Path(cfg["state_dir"]) / relative
+    try:
+        raw = path.read_bytes()
+    except OSError as exc:
+        raise ValueError(f"review result artifact unavailable: {exc}") from exc
+    if not raw or len(raw) > REVIEW_ARTIFACT_LIMIT:
+        raise ValueError("review result artifact is empty or oversized")
+    if hashlib.sha256(raw).hexdigest() != material.get("artifact_sha256"):
+        raise ValueError("review result artifact hash mismatch")
+    return (
+        "\nVERIFIED PARENT REVIEW MATERIAL BINDING:\n" + _canonical(material)
+        + "\nVERIFIED PARENT RESULT ARTIFACT:\n" + raw.decode("utf-8", errors="strict") + "\n"
+    )
 
 
 class ProductionRouter:
@@ -205,6 +255,10 @@ class ProductionRouter:
             status, lane, reason, digest = "INVALID_ROLE", "HUMAN_DECISION", "unknown canonical specialist role", None
         else:
             digest = roles[role_id].bootstrap_sha256
+        if task.inputs.get("independent_review") is True:
+            valid, review_reason = self.verify_review_material(task)
+            if not valid:
+                status, lane, reason = "INVALID_REVIEW_MATERIAL", "HUMAN_DECISION", review_reason
         now = utc_now()
         self.conn.execute(
             "INSERT INTO task_routes(task_id,role_id,bootstrap_sha256,preferred_lane,selected_lane,route_status,reason,suitability,allowed_lanes_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?) "
@@ -214,7 +268,7 @@ class ProductionRouter:
             (task.task_id, role_id, digest, preferred, lane, status, reason, requirement, json.dumps(allowed), now, now),
         )
         row = self.store.get(task.task_id)
-        if status in {"INVALID_ROLE", "INVALID_SUITABILITY", "WAITING_USER"} and row and row["state"] not in {
+        if status in {"INVALID_ROLE", "INVALID_SUITABILITY", "INVALID_REVIEW_MATERIAL", "WAITING_USER"} and row and row["state"] not in {
             State.SUCCEEDED.value, State.FAILED.value, State.REJECTED.value, State.BLOCKED.value,
         }:
             self.store.transition(task.task_id, State.WAITING_USER, reason, force_recovery=True)
@@ -245,6 +299,17 @@ class ProductionRouter:
         elif not self.cfg["routing"]["auto_create_reviews"]:
             status, reason, review_id = "WAITING_USER", "automatic review creation disabled", None
         else:
+            try:
+                review_material = self._build_review_material(task)
+            except ValueError as exc:
+                status, reason, review_id = "WAITING_USER", str(exc), None
+                self.conn.execute(
+                    "INSERT INTO review_requirements VALUES(?,?,?,?,?,?,?) "
+                    "ON CONFLICT(parent_task_id) DO UPDATE SET review_task_id=excluded.review_task_id,role_id=excluded.role_id,"
+                    "status=excluded.status,reason=excluded.reason,updated_at=excluded.updated_at",
+                    (task.task_id, review_id, review_role, status, reason, now, now),
+                )
+                return status
             labels = ("orchestrator:llm-approved",)
             review = Task(
                 schema_version=1, task_id=review_id, role=review_role,
@@ -256,7 +321,8 @@ class ProductionRouter:
                 action="semantic_helper", dependencies=(),
                 inputs={"review_of": task.task_id, "independent_review": True,
                         "parent_role": role_id, "resource_requirement": "WORK_PREFERRED",
-                        "allowed_lanes": ["LOCAL_OSS_MODEL", "NON_WORK_AI", "WORK_CODEX"]},
+                        "allowed_lanes": ["LOCAL_OSS_MODEL", "NON_WORK_AI", "WORK_CODEX"],
+                        "review_material": review_material},
                 allowed_paths=(), expected_artifacts=(), timeout_seconds=task.timeout_seconds,
                 stop_condition="Independently return PASS or actionable findings; do not modify files or project authority.",
                 source_issue=None, labels=labels,
@@ -281,6 +347,100 @@ class ProductionRouter:
             (task.task_id, review_id, review_role, status, reason, now, now),
         )
         return status
+
+    def _accepted_review_result(self, task: Task) -> tuple[sqlite3.Row, dict[str, Any]]:
+        accepted = self.conn.execute(
+            "SELECT * FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone()
+        if accepted is None:
+            raise ValueError("parent accepted result is unavailable")
+        try:
+            result = json.loads(accepted["result_json"])
+        except (TypeError, json.JSONDecodeError) as exc:
+            raise ValueError("parent accepted result is malformed") from exc
+        if not isinstance(result, dict):
+            raise ValueError("parent accepted result is malformed")
+        if task.is_llm and not REVIEW_SEMANTIC_FIELDS.issubset(result):
+            raise ValueError("legacy parent result lacks complete semantic review material")
+        if (result.get("task_id") != task.task_id
+                or result.get("canonical_head") != task.canonical_head
+                or result.get("retryable") is not False
+                or result.get("status") != State.SUCCEEDED.value):
+            raise ValueError("parent accepted result identity or semantic material is invalid")
+        if task.is_llm:
+            if (not isinstance(result.get("summary"), str)
+                    or not isinstance(result.get("semantic_verdict"), str)
+                    or not result.get("semantic_verdict")):
+                raise ValueError("parent semantic review material is invalid")
+            if result.get("semantic_error") is not None and not isinstance(result.get("semantic_error"), str):
+                raise ValueError("parent semantic_error is invalid")
+        if _material_digest(result) != accepted["result_sha256"]:
+            raise ValueError("parent accepted result hash mismatch")
+        return accepted, result
+
+    def _build_review_material(self, task: Task) -> dict[str, Any]:
+        accepted, result = self._accepted_review_result(task)
+        core: dict[str, Any] = {
+            "schema_version": 1,
+            "delivery": "embedded",
+            "parent_task_id": task.task_id,
+            "parent_attempt_id": accepted["attempt_id"],
+            "parent_canonical_head": task.canonical_head,
+            "accepted_result_sha256": accepted["result_sha256"],
+            "accepted_result": result,
+        }
+        if len(_canonical(core).encode()) > REVIEW_EMBED_LIMIT:
+            path = Path(self.cfg["state_dir"]) / "results" / f"{task.task_id}.yaml"
+            try:
+                raw = path.read_bytes()
+            except OSError as exc:
+                raise ValueError(f"review result artifact unavailable: {exc}") from exc
+            if not raw or len(raw) > REVIEW_ARTIFACT_LIMIT:
+                raise ValueError("review result artifact is empty or oversized")
+            try:
+                public = yaml.safe_load(raw)
+            except yaml.YAMLError as exc:
+                raise ValueError("review result artifact is malformed") from exc
+            compared = ["task_id", "attempt", "status", "canonical_head", "checks", "artifacts", "error"]
+            if task.is_llm:
+                compared.extend(("summary", "semantic_verdict", "semantic_error"))
+            if not isinstance(public, dict) or any(public.get(key) != result.get(key) for key in compared):
+                raise ValueError("review result artifact does not match accepted result")
+            core = {
+                "schema_version": 1,
+                "delivery": "artifact",
+                "parent_task_id": task.task_id,
+                "parent_attempt_id": accepted["attempt_id"],
+                "parent_canonical_head": task.canonical_head,
+                "accepted_result_sha256": accepted["result_sha256"],
+                "result_path": f"results/{task.task_id}.yaml",
+                "artifact_sha256": hashlib.sha256(raw).hexdigest(),
+                "semantic_verdict": result.get("semantic_verdict"),
+                "summary_sha256": hashlib.sha256(str(result.get("summary", "")).encode()).hexdigest(),
+                "semantic_error_sha256": hashlib.sha256(
+                    _canonical(result.get("semantic_error")).encode()
+                ).hexdigest(),
+            }
+        return {**core, "review_material_sha256": _material_digest(core)}
+
+    def verify_review_material(self, review: Task) -> tuple[bool, str]:
+        if review.inputs.get("independent_review") is not True:
+            return True, "not an independent review task"
+        parent_id = review.inputs.get("review_of")
+        if not isinstance(parent_id, str):
+            return False, "independent review parent identity is missing"
+        parent_row = self.store.get(parent_id)
+        if parent_row is None:
+            return False, "independent review parent is unavailable"
+        parent = self.store.task(parent_row)
+        try:
+            expected = self._build_review_material(parent)
+            resolve_review_prompt_material(self.cfg, review)
+        except ValueError as exc:
+            return False, str(exc)
+        if review.inputs.get("review_material") != expected:
+            return False, "independent review material does not match durable accepted parent result"
+        return True, "independent review material verified"
 
     def _execution_complete(self, task: Task) -> bool:
         row = self.store.get(task.task_id)

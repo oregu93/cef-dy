@@ -38,6 +38,24 @@
 - Result publication rendering understands the optional semantic verdict and
   summary while continuing to accept legacy v1 result files.
 
+## P1 remote-review material binding correction
+
+- Every auto-created independent review is now bound to the exact durable
+  `accepted_results` row through parent task/attempt/canonical-HEAD identity,
+  accepted-result SHA-256, and a canonical review-material SHA-256.
+- Normal-size accepted results are embedded in the review envelope, including
+  `summary`, `semantic_verdict`, `checks`, `artifacts`, and `semantic_error`.
+- Results too large for the bounded task envelope use a state-relative public
+  result artifact reference with its own SHA-256. The verified artifact content
+  is deterministically appended to the disposable worker prompt.
+- The router re-verifies material against durable state before dispatch. The
+  worker transport independently verifies envelope/artifact hashes when
+  resolving prompt material. Missing, altered, mismatched, or unavailable
+  material fails closed to `WAITING_USER`.
+- Legacy semantic results that lack the already-lost `summary` and semantic
+  fields do not auto-create a potentially misleading review. They remain a
+  legacy diagnostic requiring a fresh audit after deployment.
+
 ## Focused regression evidence
 
 The focused gate covers:
@@ -49,6 +67,10 @@ The focused gate covers:
 5. review worker failure leaves the parent execution result unchanged;
 6. production runtime/call telemetry;
 7. immutable dashboard visibility after a completed WAL-backed cycle.
+8. exact accepted parent result appears in the real disposable-worker prompt;
+9. review-material hash tampering fails closed to `WAITING_USER`;
+10. legacy incomplete semantic payload cannot create an automatic review;
+11. oversized review material uses a verified bounded artifact reference.
 
 ## PREVIEW-only publication investigation
 
