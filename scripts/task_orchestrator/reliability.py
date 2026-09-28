@@ -21,7 +21,9 @@ import yaml
 from .engine import Engine
 from .github import GitHubCommentTransport
 from .model import State, Task, WorkerResult, utc_now
-from .publishing import OutboxStatus, Publisher, enqueue_result_preview
+from .publishing import (
+    OutboxStatus, Publisher, enqueue_attention_preview, enqueue_result_preview,
+)
 from . import workers
 
 
@@ -616,6 +618,19 @@ class M1bController:
                 ))
             except Exception as exc:
                 outcomes.append({"task_id": row["task_id"], "status": "ENQUEUE_ERROR", "error": str(exc)})
+        for row in self.store.conn.execute(
+            "SELECT * FROM tasks WHERE source_issue IS NOT NULL "
+            "AND state IN ('WAITING_USER','WAITING_APPROVAL','BLOCKED') ORDER BY created_at,task_id"
+        ):
+            try:
+                outcomes.append(enqueue_attention_preview(
+                    self.store, repository=self.cfg["github"]["repository"],
+                    target=f"issue:{row['source_issue']}", task_row=row,
+                    preview_only=preview_only,
+                ))
+            except Exception as exc:
+                outcomes.append({"task_id": row["task_id"], "status": "ATTENTION_ENQUEUE_ERROR",
+                                 "error": str(exc)})
         live_enabled = (
             bool(self.cfg["publishing"]["enabled"])
             and self.cfg["mode"] == "pilot"

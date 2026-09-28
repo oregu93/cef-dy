@@ -55,9 +55,11 @@ class StaticSource:
 class FakePublication:
     def __init__(self):
         self.sends = 0
+        self.bodies = []
 
     def send_comment(self, target, body):
         self.sends += 1
+        self.bodies.append(body)
         return TransportResponse(201, remote_id="comment-1")
 
     def list_comments(self, target):
@@ -208,6 +210,56 @@ class ReliabilityTests(unittest.TestCase):
         M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
         self.assertEqual(self.store.get("INFRA-WAIT-001")["state"], State.WAITING_USER.value)
         self.assertEqual(self.store.get("INFRA-GO-001")["state"], State.SUCCEEDED.value)
+
+    def test_waiting_user_attention_is_durable_exactly_once_and_nonblocking(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.engine.ingest(self.fx.task(
+            task_id="INFRA-ATTENTION-001", task_type="llm_worker",
+            action="semantic_helper", source_issue=14,
+            labels=("orchestrator:task",),
+        ))
+        self.engine.ingest(self.fx.task(task_id="INFRA-ATTENTION-GO-001", source_issue=None))
+        transport = FakePublication()
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport)
+        controller.cycle(StaticSource([]))
+        controller.cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 1)
+        self.assertEqual(self.store.get("INFRA-ATTENTION-GO-001")["state"], State.SUCCEEDED.value)
+        body = transport.bodies[0]
+        for field in ("ATTENTION_REQUIRED: true", "DECISION_CLASS:", "WHY_NOW:",
+                      "SMALLEST_DECISION_REQUIRED:", "OPTIONS:",
+                      "SAFE_DEFAULT_IF_NO_RESPONSE:", "OTHER_WORK_CONTINUES: true"):
+            self.assertIn(field, body)
+        rows = list(self.store.conn.execute(
+            "SELECT * FROM publication_outbox WHERE task_id='INFRA-ATTENTION-001'"
+        ))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["status"], "PUBLISHED")
+        self.store.transition("INFRA-ATTENTION-001", State.BLOCKED,
+                              "decision remained unresolved")
+        controller.cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 2)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM publication_outbox WHERE task_id='INFRA-ATTENTION-001'"
+        ).fetchone()[0], 2)
+
+    def test_shadow_attention_projection_has_zero_network_writes(self):
+        self.fx.cfg["mode"] = "shadow"
+        self.fx.cfg["autonomy"]["enabled"] = False
+        self.engine.ingest(self.fx.task(task_id="INFRA-SHADOW-ATTN-001", source_issue=15))
+        self.store.transition("INFRA-SHADOW-ATTN-001", State.WAITING_USER,
+                              "human decision", force_recovery=True)
+        transport = FakePublication()
+        M1bController(self.fx.cfg, self.store, FakeAI(),
+                      publication_transport=transport).cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 0)
+        row = self.store.conn.execute(
+            "SELECT * FROM publication_outbox WHERE task_id='INFRA-SHADOW-ATTN-001'"
+        ).fetchone()
+        self.assertEqual(row["status"], "PREVIEW")
 
     def test_hundred_task_load_has_no_double_execution_or_starvation(self):
         self.fx.cfg["autonomy"]["max_batch_tasks"] = 16

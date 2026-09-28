@@ -201,6 +201,58 @@ def enqueue_result_preview(
             "status": status.value, "preview": preview, "result_sha256": result_sha}
 
 
+def enqueue_attention_preview(
+    store: Any, *, repository: str, target: str, task_row: Mapping[str, Any],
+    preview_only: bool = True,
+) -> dict[str, Any]:
+    """Durably project one fail-closed human decision request onto its source Issue."""
+    if not isinstance(target, str) or re.fullmatch(r"issue:[1-9][0-9]*", target) is None:
+        raise ValidationError("attention target must be an explicit issue:<number>")
+    if task_row["state"] not in {"WAITING_USER", "WAITING_APPROVAL", "BLOCKED"}:
+        raise ValidationError("attention projection requires a waiting or blocked task")
+    task = store.task(task_row)
+    reason = _safe_text(task_row["reason"] or "human authority is required")
+    attention_sha = hashlib.sha256(
+        f"{task.task_id}\0{task_row['state']}\0{task_row['reason'] or ''}".encode()
+    ).hexdigest()
+    attention_identity = hashlib.sha256(
+        f"{task_row['envelope_hash']}\0attention:v1\0{attention_sha}".encode()
+    ).hexdigest()
+    marker = (
+        f"<!-- cef-dy-orch-attention:v1 repo={repository} task={task.task_id} "
+        f"envelope={task_row['envelope_hash']} attention={attention_sha} -->"
+    )
+    preview = "\n".join((
+        marker,
+        f"### Orchestrator attention — `{_safe_text(task.task_id, 300)}`",
+        "",
+        "ATTENTION_REQUIRED: true",
+        f"DECISION_CLASS: `{_safe_text(task_row['state'], 100)}`",
+        f"WHY_NOW: {reason}",
+        "SMALLEST_DECISION_REQUIRED: authorize, revise, or cancel this task in its canonical Issue",
+        "OPTIONS: authorize execution; revise the bounded task; leave paused; cancel",
+        "SAFE_DEFAULT_IF_NO_RESPONSE: remain paused without execution",
+        "OTHER_WORK_CONTINUES: true",
+        "Authority: operational request only; no scientific or Project Control promotion",
+        "",
+    ))
+    if len(preview.encode("utf-8")) > MAX_PREVIEW_BYTES:
+        raise ValidationError("attention preview is oversized")
+    status = OutboxStatus.PREVIEW if preview_only else OutboxStatus.PENDING
+    publication_id = hashlib.sha256(
+        f"{repository}\0{task.task_id}\0{attention_identity}\0{target}".encode()
+    ).hexdigest()
+    outcome = store.enqueue_publication(
+        publication_id=publication_id, repository=repository,
+        task_id=task.task_id, envelope_hash=attention_identity,
+        result_sha256=attention_sha, target=target, marker=marker,
+        preview=preview, status=status.value,
+    )
+    return {"outcome": outcome, "publication_id": publication_id,
+            "status": status.value, "preview": preview,
+            "attention_sha256": attention_sha}
+
+
 class Publisher:
     def __init__(self, store: Any, transport: PublicationTransport, *, lock_path: Path,
                  lock_stale_after_seconds: int, enabled: bool = False,
