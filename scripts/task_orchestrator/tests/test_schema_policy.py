@@ -95,5 +95,19 @@ class SchemaPolicyTests(unittest.TestCase):
         task = validate_task({**BASE, "task_type": "llm_semantic", "action": "semantic_helper"})
         self.assertTrue(task.is_llm)
 
+    def test_dependency_result_binding_is_explicit_and_semantic_only(self):
+        with self.assertRaisesRegex(ValidationError, "semantic task"):
+            validate_task({**BASE, "dependencies": ["PARENT-001"],
+                           "inputs": {"bind_dependency_results": True}})
+        semantic = {**BASE, "task_type": "llm_semantic", "action": "semantic_helper"}
+        with self.assertRaisesRegex(ValidationError, "at least one dependency"):
+            validate_task({**semantic, "inputs": {"bind_dependency_results": True}})
+        with self.assertRaisesRegex(ValidationError, "must be boolean"):
+            validate_task({**semantic, "dependencies": ["PARENT-001"],
+                           "inputs": {"bind_dependency_results": "yes"}})
+        task = validate_task({**semantic, "dependencies": ["PARENT-001"],
+                              "inputs": {"bind_dependency_results": True}})
+        self.assertEqual(task.dependencies, ("PARENT-001",))
+
 
 if __name__ == "__main__": unittest.main()

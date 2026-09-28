@@ -113,9 +113,15 @@ def validate_task(data: Any, *, source_issue: int | None = None, labels: tuple[s
             lane not in RESOURCE_LANES for lane in lanes
         ):
             raise ValidationError("inputs.allowed_lanes must be a nonempty unique list of supported lanes")
-    for key in ("review_required", "auto_review_authorized"):
+    for key in ("review_required", "auto_review_authorized", "bind_dependency_results"):
         if key in inputs and type(inputs[key]) is not bool:
             raise ValidationError(f"inputs.{key} must be boolean")
+    if inputs.get("bind_dependency_results") is True:
+        if task_type == "deterministic":
+            raise ValidationError("dependency-result binding requires a semantic task")
+        dependencies = data.get("dependencies")
+        if not isinstance(dependencies, list) or not dependencies:
+            raise ValidationError("dependency-result binding requires at least one dependency")
     if "review_role" in inputs and inputs["review_role"] not in ROLES:
         raise ValidationError("inputs.review_role is invalid")
     timeout = data.get("timeout_seconds", 60)

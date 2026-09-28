@@ -26,7 +26,10 @@ from .publishing import (
     enqueue_attention_resolution_preview, enqueue_result_preview,
 )
 from . import workers
-from .routing import ProductionRouter, bootstrap_for_task, resolve_review_prompt_material
+from .routing import (
+    ProductionRouter, bootstrap_for_task, resolve_dependency_prompt_material,
+    resolve_review_prompt_material,
+)
 from .ollama import OllamaHelper
 
 
@@ -215,12 +218,16 @@ class SubprocessAITransport:
             review_material = resolve_review_prompt_material(self.cfg, task)
         except (OSError, UnicodeError, ValueError) as exc:
             return Admission("REVIEW_MATERIAL_INVALID", reason=str(exc))
+        try:
+            dependency_material = resolve_dependency_prompt_material(self.cfg, task)
+        except (OSError, UnicodeError, ValueError, sqlite3.DatabaseError) as exc:
+            return Admission("DEPENDENCY_MATERIAL_INVALID", reason=str(exc))
         prompt = (
             "You are a disposable bounded specialist. Do not modify files, run scientific "
             "programs, access holdout/raw data, or change project authority. Complete only the "
             "semantic task below and return a compact JSON object with keys status, summary, "
             "checks, artifacts, error.\n" + specialist + "TASK envelope:\n" + envelope
-            + review_material
+            + review_material + dependency_material
         )
         outcome = self._run(prompt)
         if outcome.status != "ACCEPTED":
@@ -879,8 +886,12 @@ class M1bController:
         except (OSError, UnicodeError, ValueError) as exc:
             return self._fail_closed_review_material(task, lease, str(exc))
         try:
+            dependency_material = resolve_dependency_prompt_material(self.cfg, task)
+        except (OSError, UnicodeError, ValueError, sqlite3.DatabaseError) as exc:
+            return self._fail_closed_dependency_material(task, lease, str(exc))
+        try:
             prompt = (role.bootstrap_text + "\nTASK envelope:\n" + _canonical(task.envelope_dict())
-                      + review_material)
+                      + review_material + dependency_material)
             if lane == "LOCAL_OSS_MODEL":
                 text = OllamaHelper(self.cfg["llm"]["ollama"]).generate(prompt)
             else:
@@ -981,6 +992,10 @@ class M1bController:
         outcome = self.transport.execute(task, lease["attempt"])
         if outcome.status == "REVIEW_MATERIAL_INVALID":
             return self._fail_closed_review_material(task, lease, outcome.reason or "review material invalid")
+        if outcome.status == "DEPENDENCY_MATERIAL_INVALID":
+            return self._fail_closed_dependency_material(
+                task, lease, outcome.reason or "dependency material invalid"
+            )
         if outcome.status == "QUOTA_REFUSED":
             quota_outcome = self.state.quota_refused(
                 task.task_id, lease["attempt_id"], outcome.reason or "quota refused", outcome.reset_at, now,
@@ -1008,6 +1023,15 @@ class M1bController:
         self.store.transition(
             task.task_id, State.WAITING_USER,
             "independent review material verification failed: " + reason,
+            force_recovery=True,
+        )
+        self.state.cancel_invalid_leases()
+        return {"task_id": task.task_id, "outcome": "WAITING_USER", "reason": reason}
+
+    def _fail_closed_dependency_material(self, task: Task, lease: dict[str, Any], reason: str) -> dict[str, Any]:
+        self.store.transition(
+            task.task_id, State.WAITING_USER,
+            "dependency result material verification failed: " + reason,
             force_recovery=True,
         )
         self.state.cancel_invalid_leases()
@@ -1125,6 +1149,11 @@ class M1bController:
             if task.is_llm:
                 if task.inputs.get("independent_review") is True:
                     valid, reason = self.router.verify_review_material(task)
+                    if not valid:
+                        self.store.transition(task.task_id, State.WAITING_USER, reason, force_recovery=True)
+                        continue
+                if task.inputs.get("bind_dependency_results") is True:
+                    valid, reason = self.router.verify_dependency_bundle(task)
                     if not valid:
                         self.store.transition(task.task_id, State.WAITING_USER, reason, force_recovery=True)
                         continue

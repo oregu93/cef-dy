@@ -81,6 +81,10 @@ def snapshot(cfg: dict[str, Any]) -> dict[str, Any]:
         results = [dict(row) for row in conn.execute(
             "SELECT task_id,attempt_id,result_sha256,accepted_at FROM accepted_results ORDER BY accepted_at DESC"
         )] if _table_exists(conn, "accepted_results") else []
+        dependency_bundles = [dict(row) for row in conn.execute(
+            "SELECT task_id,bundle_sha256,dependency_count,created_at,updated_at "
+            "FROM dependency_result_bundles ORDER BY updated_at DESC,task_id"
+        )] if _table_exists(conn, "dependency_result_bundles") else []
         controller = None
         controller_updated = None
         if _table_exists(conn, "controller_state"):
@@ -95,6 +99,20 @@ def snapshot(cfg: dict[str, Any]) -> dict[str, Any]:
     attention_states = {"WAITING_USER", "WAITING_APPROVAL", "BLOCKED", "FAILED", "REJECTED"}
     attention = [task for task in tasks if task["state"] in attention_states]
     blockers = [task for task in tasks if task["state"] in {"BLOCKED", "FAILED", "REJECTED"}]
+    active = [task for task in tasks if task["state"] in {"RUNNING", "READY", "WAITING_DEPENDENCY", "WAITING_RESOURCE"}]
+    latest = events[0] if events else None
+    next_action = (controller or {}).get("NEXT_EXACT_ACTION")
+    if not next_action and active:
+        next_action = f"process {active[0]['task_id']} ({active[0]['state']})"
+    operator_progress = {
+        "CURRENT": [f"{task['task_id']}: {task['state']}" for task in active[:8]] or ["idle"],
+        "LAST_PROGRESS": (
+            f"{latest['created_at']} {latest['task_id'] or '-'} {latest['event_type']}"
+            if latest else "no durable activity"
+        ),
+        "NEXT_ACTION": next_action or "next controller cycle",
+        "NEEDS_USER": [f"{task['task_id']}: {task['reason']}" for task in attention[:8]],
+    }
     repo = Path(cfg["repository_root"])
     return {
         "schema_version": 1,
@@ -115,6 +133,8 @@ def snapshot(cfg: dict[str, Any]) -> dict[str, Any]:
         "resource_lanes": resource_lanes,
         "reviews": reviews,
         "results": results,
+        "dependency_bundles": dependency_bundles,
+        "operator_progress": operator_progress,
         "attention": attention,
         "blockers": blockers,
         "recent_activity": events,
@@ -152,6 +172,7 @@ table{{border-collapse:collapse;width:100%;background:white;margin-bottom:20px}}
 <div class="card"><b>Weekly quota</b><br>{html.escape(str(data['quota_windows']['weekly'].get('state', 'UNKNOWN')))}</div>
 <div class="card"><b>Canonical HEAD</b><br><span class="mono">{html.escape(str(git.get('canonical_head')))}</span></div>
 <div class="card"><b>Local HEAD</b><br><span class="mono">{html.escape(str(git.get('local_head')))}</span></div></div>
+<h2>Operator progress</h2>{_table([data['operator_progress']], ('CURRENT','LAST_PROGRESS','NEXT_ACTION','NEEDS_USER'))}
 <h2>Attention and blockers</h2>{_table(data['attention'], ('task_id','state','role','reason','updated_at'))}
 <h2>Terminal blockers</h2>{_table(data['blockers'], ('task_id','state','role','reason','updated_at'))}
 <h2>Tasks and dependencies</h2>{_table(data['tasks'], ('task_id','state','role','task_type','dependencies','attempt','reason','updated_at'))}
@@ -160,6 +181,7 @@ table{{border-collapse:collapse;width:100%;background:white;margin-bottom:20px}}
 <h2>Specialist routes</h2>{_table(data['routes'], ('task_id','role_id','suitability','allowed_lanes_json','selected_lane','route_status','reason','updated_at'))}
 <h2>Reviews</h2>{_table(data['reviews'], ('parent_task_id','review_task_id','role_id','status','reason','updated_at'))}
 <h2>Results</h2>{_table(data['results'], ('task_id','attempt_id','result_sha256','accepted_at'))}
+<h2>Dependency result bundles</h2>{_table(data['dependency_bundles'], ('task_id','bundle_sha256','dependency_count','created_at','updated_at'))}
 <h2>Recent activity</h2>{_table(data['recent_activity'], ('event_id','created_at','task_id','event_type','old_state','new_state'))}
 </body></html>"""
     return page.encode("utf-8")

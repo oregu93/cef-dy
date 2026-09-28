@@ -80,6 +80,14 @@ CREATE TABLE IF NOT EXISTS review_requirements (
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS dependency_result_bundles (
+  task_id TEXT PRIMARY KEY,
+  bundle_sha256 TEXT NOT NULL,
+  bundle_json TEXT NOT NULL,
+  dependency_count INTEGER NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
 """
 
 
@@ -132,41 +140,102 @@ def _material_digest(value: dict[str, Any]) -> str:
     return hashlib.sha256(_canonical(value).encode()).hexdigest()
 
 
-def resolve_review_prompt_material(cfg: dict[str, Any], task: Task) -> str:
-    """Resolve envelope-bound review evidence without trusting chat memory."""
-    if task.inputs.get("independent_review") is not True:
-        return ""
-    material = task.inputs.get("review_material")
+def _resolve_bound_material(cfg: dict[str, Any], material: Any, label: str) -> str:
     if not isinstance(material, dict):
-        raise ValueError("independent review material is missing")
+        raise ValueError(f"{label} material is missing")
     digest = material.get("review_material_sha256")
     core = {key: value for key, value in material.items() if key != "review_material_sha256"}
     if not isinstance(digest, str) or _material_digest(core) != digest:
-        raise ValueError("independent review material hash mismatch")
+        raise ValueError(f"{label} material hash mismatch")
     delivery = material.get("delivery")
     if delivery == "embedded":
         result = material.get("accepted_result")
         if not isinstance(result, dict):
             raise ValueError("embedded accepted result is missing")
-        return "\nVERIFIED PARENT REVIEW MATERIAL:\n" + _canonical(material) + "\n"
+        return f"\nVERIFIED {label.upper()} MATERIAL:\n" + _canonical(material) + "\n"
     if delivery != "artifact":
-        raise ValueError("independent review material delivery is invalid")
+        raise ValueError(f"{label} material delivery is invalid")
     relative = material.get("result_path")
     if not isinstance(relative, str) or not re.fullmatch(r"results/[A-Z0-9][A-Z0-9._-]{2,127}\.yaml", relative):
-        raise ValueError("review result artifact path is invalid")
+        raise ValueError(f"{label} result artifact path is invalid")
     path = Path(cfg["state_dir"]) / relative
     try:
         raw = path.read_bytes()
     except OSError as exc:
-        raise ValueError(f"review result artifact unavailable: {exc}") from exc
+        raise ValueError(f"{label} result artifact unavailable: {exc}") from exc
     if not raw or len(raw) > REVIEW_ARTIFACT_LIMIT:
-        raise ValueError("review result artifact is empty or oversized")
+        raise ValueError(f"{label} result artifact is empty or oversized")
     if hashlib.sha256(raw).hexdigest() != material.get("artifact_sha256"):
-        raise ValueError("review result artifact hash mismatch")
+        raise ValueError(f"{label} result artifact hash mismatch")
     return (
-        "\nVERIFIED PARENT REVIEW MATERIAL BINDING:\n" + _canonical(material)
-        + "\nVERIFIED PARENT RESULT ARTIFACT:\n" + raw.decode("utf-8", errors="strict") + "\n"
+        f"\nVERIFIED {label.upper()} MATERIAL BINDING:\n" + _canonical(material)
+        + f"\nVERIFIED {label.upper()} RESULT ARTIFACT:\n" + raw.decode("utf-8", errors="strict") + "\n"
     )
+
+
+def resolve_review_prompt_material(cfg: dict[str, Any], task: Task) -> str:
+    """Resolve envelope-bound review evidence without trusting chat memory."""
+    if task.inputs.get("independent_review") is not True:
+        return ""
+    return _resolve_bound_material(cfg, task.inputs.get("review_material"), "parent review")
+
+
+def resolve_dependency_prompt_material(cfg: dict[str, Any], task: Task) -> str:
+    """Resolve and verify the durable ordered dependency-result bundle."""
+    if task.inputs.get("bind_dependency_results") is not True:
+        return ""
+    database = Path(cfg["state_dir"]) / "state.sqlite3"
+    conn = sqlite3.connect(database.resolve().as_uri() + "?mode=ro", uri=True, timeout=5)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute(
+            "SELECT * FROM dependency_result_bundles WHERE task_id=?", (task.task_id,)
+        ).fetchone()
+        if row is None:
+            raise ValueError("dependency result bundle is missing")
+        try:
+            bundle = json.loads(row["bundle_json"])
+        except (TypeError, json.JSONDecodeError) as exc:
+            raise ValueError("dependency result bundle is malformed") from exc
+        if (not isinstance(bundle, dict) or _material_digest(bundle) != row["bundle_sha256"]
+                or bundle.get("consumer_task_id") != task.task_id
+                or bundle.get("consumer_canonical_head") != task.canonical_head
+                or bundle.get("ordered_dependency_ids") != sorted(task.dependencies)):
+            raise ValueError("dependency result bundle identity/hash mismatch")
+        materials = bundle.get("materials")
+        if not isinstance(materials, list) or len(materials) != len(task.dependencies):
+            raise ValueError("dependency result bundle cardinality mismatch")
+        sections = []
+        for dependency_id, material in zip(bundle["ordered_dependency_ids"], materials, strict=True):
+            if not isinstance(material, dict) or material.get("parent_task_id") != dependency_id:
+                raise ValueError("dependency result bundle ordering mismatch")
+            accepted = conn.execute(
+                "SELECT * FROM accepted_results WHERE task_id=?", (dependency_id,)
+            ).fetchone()
+            dependency = conn.execute(
+                "SELECT payload_json,state FROM tasks WHERE task_id=?", (dependency_id,)
+            ).fetchone()
+            if accepted is None or dependency is None or dependency["state"] != State.SUCCEEDED.value:
+                raise ValueError(f"dependency result unavailable or non-successful: {dependency_id}")
+            payload = json.loads(dependency["payload_json"])
+            if (material.get("parent_attempt_id") != accepted["attempt_id"]
+                    or material.get("accepted_result_sha256") != accepted["result_sha256"]
+                    or material.get("parent_canonical_head") != payload.get("canonical_head")):
+                raise ValueError(f"dependency result identity/hash mismatch: {dependency_id}")
+            if material.get("delivery") == "embedded":
+                accepted_result = json.loads(accepted["result_json"])
+                if material.get("accepted_result") != accepted_result:
+                    raise ValueError(f"embedded dependency result mismatch: {dependency_id}")
+            sections.append(_resolve_bound_material(cfg, material, f"dependency {dependency_id}"))
+        return (
+            "\nVERIFIED ORDERED DEPENDENCY RESULT BUNDLE:\n" + _canonical({
+                "bundle_sha256": row["bundle_sha256"],
+                "consumer_task_id": task.task_id,
+                "ordered_dependency_ids": bundle["ordered_dependency_ids"],
+            }) + "\n" + "".join(sections)
+        )
+    finally:
+        conn.close()
 
 
 class ProductionRouter:
@@ -259,6 +328,22 @@ class ProductionRouter:
             valid, review_reason = self.verify_review_material(task)
             if not valid:
                 status, lane, reason = "INVALID_REVIEW_MATERIAL", "HUMAN_DECISION", review_reason
+        if task.inputs.get("bind_dependency_results") is True:
+            dependency_rows = [self.store.get(task_id) for task_id in task.dependencies]
+            dependencies_complete = bool(dependency_rows) and all(
+                row is not None and row["state"] == State.SUCCEEDED.value for row in dependency_rows
+            )
+            if dependencies_complete:
+                valid, dependency_reason = self.sync_dependency_bundle(task)
+                if not valid:
+                    status, lane, reason = "INVALID_DEPENDENCY_MATERIAL", "HUMAN_DECISION", dependency_reason
+            elif any(row is not None and row["state"] in {
+                State.FAILED.value, State.REJECTED.value, State.BLOCKED.value,
+            } for row in dependency_rows):
+                status, lane, reason = (
+                    "INVALID_DEPENDENCY_MATERIAL", "HUMAN_DECISION",
+                    "failed/rejected dependency cannot provide accepted result material",
+                )
         now = utc_now()
         self.conn.execute(
             "INSERT INTO task_routes(task_id,role_id,bootstrap_sha256,preferred_lane,selected_lane,route_status,reason,suitability,allowed_lanes_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?) "
@@ -268,7 +353,16 @@ class ProductionRouter:
             (task.task_id, role_id, digest, preferred, lane, status, reason, requirement, json.dumps(allowed), now, now),
         )
         row = self.store.get(task.task_id)
-        if status in {"INVALID_ROLE", "INVALID_SUITABILITY", "INVALID_REVIEW_MATERIAL", "WAITING_USER"} and row and row["state"] not in {
+        dependency_terminal = status == "INVALID_DEPENDENCY_MATERIAL" and any(
+            dependency is not None and dependency["state"] in {
+                State.FAILED.value, State.REJECTED.value, State.BLOCKED.value,
+            } for dependency in (self.store.get(task_id) for task_id in task.dependencies)
+        )
+        if dependency_terminal and row and row["state"] not in {
+            State.SUCCEEDED.value, State.FAILED.value, State.REJECTED.value, State.BLOCKED.value,
+        }:
+            self.store.transition(task.task_id, State.BLOCKED, reason, force_recovery=True)
+        elif status in {"INVALID_ROLE", "INVALID_SUITABILITY", "INVALID_REVIEW_MATERIAL", "INVALID_DEPENDENCY_MATERIAL", "WAITING_USER"} and row and row["state"] not in {
             State.SUCCEEDED.value, State.FAILED.value, State.REJECTED.value, State.BLOCKED.value,
         }:
             self.store.transition(task.task_id, State.WAITING_USER, reason, force_recovery=True)
@@ -442,6 +536,68 @@ class ProductionRouter:
             return False, "independent review material does not match durable accepted parent result"
         return True, "independent review material verified"
 
+    def _build_dependency_bundle(self, task: Task) -> dict[str, Any]:
+        if not task.is_llm or task.inputs.get("bind_dependency_results") is not True:
+            raise ValueError("dependency-result binding requires an opted-in semantic task")
+        ordered = sorted(task.dependencies)
+        if not ordered:
+            raise ValueError("dependency-result binding requires at least one dependency")
+        materials = []
+        for dependency_id in ordered:
+            row = self.store.get(dependency_id)
+            if row is None or row["state"] != State.SUCCEEDED.value:
+                raise ValueError(f"dependency is not execution-complete: {dependency_id}")
+            materials.append(self._build_review_material(self.store.task(row)))
+        return {
+            "schema_version": 1,
+            "consumer_task_id": task.task_id,
+            "consumer_canonical_head": task.canonical_head,
+            "ordered_dependency_ids": ordered,
+            "materials": materials,
+        }
+
+    def sync_dependency_bundle(self, task: Task) -> tuple[bool, str]:
+        try:
+            bundle = self._build_dependency_bundle(task)
+            encoded = _canonical(bundle)
+            digest = _material_digest(bundle)
+            existing = self.conn.execute(
+                "SELECT * FROM dependency_result_bundles WHERE task_id=?", (task.task_id,)
+            ).fetchone()
+            if existing is None:
+                now = utc_now()
+                self.conn.execute(
+                    "INSERT INTO dependency_result_bundles(task_id,bundle_sha256,bundle_json,dependency_count,created_at,updated_at) "
+                    "VALUES(?,?,?,?,?,?)",
+                    (task.task_id, digest, encoded, len(bundle["materials"]), now, now),
+                )
+            elif (existing["bundle_sha256"] != digest or existing["bundle_json"] != encoded
+                    or existing["dependency_count"] != len(bundle["materials"])):
+                raise ValueError("durable dependency result bundle was modified or no longer matches accepted results")
+            resolved = resolve_dependency_prompt_material(self.cfg, task)
+            if not resolved:
+                raise ValueError("dependency result bundle did not resolve")
+            return True, "dependency result bundle verified"
+        except (OSError, UnicodeError, ValueError, sqlite3.DatabaseError) as exc:
+            return False, str(exc)
+
+    def verify_dependency_bundle(self, task: Task) -> tuple[bool, str]:
+        if task.inputs.get("bind_dependency_results") is not True:
+            return True, "dependency-result binding not requested"
+        try:
+            expected = self._build_dependency_bundle(task)
+            row = self.conn.execute(
+                "SELECT * FROM dependency_result_bundles WHERE task_id=?", (task.task_id,)
+            ).fetchone()
+            if row is None or row["bundle_sha256"] != _material_digest(expected):
+                raise ValueError("dependency result bundle identity/hash mismatch")
+            if json.loads(row["bundle_json"]) != expected:
+                raise ValueError("dependency result bundle does not match durable accepted results")
+            resolve_dependency_prompt_material(self.cfg, task)
+            return True, "dependency result bundle verified"
+        except (OSError, UnicodeError, ValueError, sqlite3.DatabaseError) as exc:
+            return False, str(exc)
+
     def _execution_complete(self, task: Task) -> bool:
         row = self.store.get(task.task_id)
         if row is not None and row["state"] == State.SUCCEEDED.value:
@@ -482,6 +638,7 @@ class ProductionRouter:
             "SPECIALIST_ROLE_ROUTING": "VERIFIED" if self.conn.execute("SELECT count(*) FROM specialist_roles").fetchone()[0] == 6 else "DEGRADED",
             "ROUTES": self.conn.execute("SELECT count(*) FROM task_routes").fetchone()[0],
             "REVIEWS": self.conn.execute("SELECT count(*) FROM review_requirements").fetchone()[0],
+            "DEPENDENCY_RESULT_BUNDLES": self.conn.execute("SELECT count(*) FROM dependency_result_bundles").fetchone()[0],
             "RESOURCE_LANES": [dict(row) for row in self.conn.execute("SELECT * FROM resource_lanes ORDER BY cost_priority")],
             "MULTI_LANE_RESOURCE_ROUTING": "VERIFIED" if self.conn.execute("SELECT count(*) FROM resource_lanes").fetchone()[0] == 5 else "DEGRADED",
             "UNSUPPORTED_PERSISTENT_CHAT_AUTOMATION": False,

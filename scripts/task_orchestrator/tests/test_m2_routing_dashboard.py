@@ -407,6 +407,164 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.assertEqual(transport.execute(review, 1).status, "ACCEPTED")
         self.assertIn("bounded-artifact-sentinel-", captured["prompt"])
 
+    def fanin_task(self, task_id, dependencies):
+        return self.fx.task(
+            task_id=task_id, role="00_PROJECT_CONTROL",
+            task_type="llm_worker", action="semantic_helper",
+            dependencies=tuple(dependencies),
+            labels=("orchestrator:task", "orchestrator:llm-approved"),
+            inputs={"resource_requirement": "WORK_REQUIRED", "bind_dependency_results": True},
+        )
+
+    def capture_transport(self, captured):
+        transport = SubprocessAITransport(self.fx.cfg)
+
+        def capture(prompt):
+            captured["prompt"] = prompt
+            return Admission("ACCEPTED", {"text": json.dumps({
+                "status": "PASS", "summary": "fan-in complete",
+                "checks": [], "artifacts": [], "error": None,
+            })})
+
+        transport._run = capture  # type: ignore[method-assign]
+        return transport
+
+    def test_two_parent_fanin_reaches_role_00_with_exact_ordered_results(self):
+        parent_b = self.work_task("FANIN-B-001")
+        parent_a = self.work_task("FANIN-A-001")
+        child = self.fanin_task("FANIN-00-001", (parent_b.task_id, parent_a.task_id))
+        for task in (parent_b, parent_a, child):
+            self.engine.ingest(task)
+        fake = SequenceAI([
+            self.semantic_outcome("PASS", "exact-result-A"),
+            self.semantic_outcome("PASS", "exact-result-B"),
+        ])
+        controller = M1bController(self.fx.cfg, self.store, fake)
+        controller.cycle()
+        captured = {}
+        controller.transport = self.capture_transport(captured)
+        controller.cycle()
+        self.assertEqual(self.store.get(child.task_id)["state"], State.SUCCEEDED.value)
+        bundle = json.loads(self.store.conn.execute(
+            "SELECT bundle_json FROM dependency_result_bundles WHERE task_id=?", (child.task_id,)
+        ).fetchone()[0])
+        self.assertEqual(bundle["ordered_dependency_ids"], [parent_a.task_id, parent_b.task_id])
+        prompt = captured["prompt"]
+        bound_prompt = prompt.split("VERIFIED ORDERED DEPENDENCY RESULT BUNDLE:", 1)[1]
+        first_material = bound_prompt.index("VERIFIED DEPENDENCY " + parent_a.task_id)
+        second_material = bound_prompt.index("VERIFIED DEPENDENCY " + parent_b.task_id)
+        self.assertLess(first_material, second_material)
+        for parent in (parent_a, parent_b):
+            accepted = self.store.conn.execute(
+                "SELECT result_sha256 FROM accepted_results WHERE task_id=?", (parent.task_id,)
+            ).fetchone()[0]
+            self.assertIn(accepted, prompt)
+        route = self.store.conn.execute(
+            "SELECT role_id FROM task_routes WHERE task_id=?", (child.task_id,)
+        ).fetchone()
+        self.assertEqual(route["role_id"], "00")
+
+    def test_dependency_bundle_tamper_fails_closed_before_worker(self):
+        parent = self.work_task("BIND-TAMPER-PARENT-001")
+        child = self.fanin_task("BIND-TAMPER-CHILD-001", (parent.task_id,))
+        self.engine.ingest(parent)
+        self.engine.ingest(child)
+        controller = M1bController(
+            self.fx.cfg, self.store,
+            SequenceAI([self.semantic_outcome("PASS", "untampered parent")]),
+        )
+        controller.cycle()
+        controller.router.reconcile()
+        self.store.conn.execute(
+            "UPDATE dependency_result_bundles SET bundle_json=? WHERE task_id=?",
+            ('{"tampered":true}', child.task_id),
+        )
+        capture = SequenceAI([self.semantic_outcome("PASS", "must not run")])
+        controller.transport = capture
+        controller.cycle()
+        self.assertEqual(capture.tasks, [])
+        self.assertEqual(self.store.get(child.task_id)["state"], State.WAITING_USER.value)
+        route = self.store.conn.execute(
+            "SELECT route_status,reason FROM task_routes WHERE task_id=?", (child.task_id,)
+        ).fetchone()
+        self.assertEqual(route["route_status"], "INVALID_DEPENDENCY_MATERIAL")
+        self.assertIn("modified", route["reason"])
+
+    def test_oversized_dependency_material_uses_bounded_artifact(self):
+        sentinel = "dependency-artifact-sentinel-" + ("x" * 70_000)
+        parent = self.work_task("BIND-LARGE-PARENT-001")
+        child = self.fanin_task("BIND-LARGE-CHILD-001", (parent.task_id,))
+        self.engine.ingest(parent)
+        self.engine.ingest(child)
+        controller = M1bController(
+            self.fx.cfg, self.store,
+            SequenceAI([self.semantic_outcome("PASS", sentinel)]),
+        )
+        controller.cycle()
+        captured = {}
+        controller.transport = self.capture_transport(captured)
+        controller.cycle()
+        bundle = json.loads(self.store.conn.execute(
+            "SELECT bundle_json FROM dependency_result_bundles WHERE task_id=?", (child.task_id,)
+        ).fetchone()[0])
+        self.assertEqual(bundle["materials"][0]["delivery"], "artifact")
+        self.assertIn("dependency-artifact-sentinel-", captured["prompt"])
+
+    def test_failed_dependency_is_never_consumed(self):
+        parent = self.fx.task(
+            task_id="BIND-FAILED-PARENT-001", action="test_command",
+            inputs={"command_id": "fail"},
+        )
+        child = self.fanin_task("BIND-FAILED-CHILD-001", (parent.task_id,))
+        self.engine.ingest(parent)
+        self.engine.ingest(child)
+        fake = FakeAI()
+        controller = M1bController(self.fx.cfg, self.store, fake)
+        controller.cycle()
+        controller.cycle()
+        self.assertEqual(self.store.get(parent.task_id)["state"], State.FAILED.value)
+        self.assertEqual(self.store.get(child.task_id)["state"], State.BLOCKED.value)
+        self.assertEqual(fake.tasks, [])
+        self.assertIsNone(self.store.conn.execute(
+            "SELECT 1 FROM dependency_result_bundles WHERE task_id=?", (child.task_id,)
+        ).fetchone())
+        rejected = self.fx.task(
+            task_id="BIND-REJECTED-PARENT-001", action="test_command",
+            inputs={"command_id": "not-allowlisted"},
+        )
+        rejected_child = self.fanin_task("BIND-REJECTED-CHILD-001", (rejected.task_id,))
+        self.assertEqual(self.engine.ingest(rejected), "rejected")
+        self.engine.ingest(rejected_child)
+        controller.cycle()
+        self.assertEqual(self.store.get(rejected_child.task_id)["state"], State.BLOCKED.value)
+        self.assertIsNone(self.store.conn.execute(
+            "SELECT 1 FROM dependency_result_bundles WHERE task_id=?", (rejected_child.task_id,)
+        ).fetchone())
+
+    def test_mixed_deterministic_and_semantic_fanin_and_exactly_once(self):
+        deterministic = self.fx.task(task_id="FANIN-LOCAL-001")
+        semantic = self.work_task("FANIN-SEMANTIC-001")
+        child = self.fanin_task("FANIN-MIXED-00-001", (semantic.task_id, deterministic.task_id))
+        for task in (deterministic, semantic, child):
+            self.engine.ingest(task)
+        parent_transport = SequenceAI([self.semantic_outcome("PASS", "semantic-parent")])
+        controller = M1bController(self.fx.cfg, self.store, parent_transport)
+        controller.cycle()
+        child_transport = SequenceAI([self.semantic_outcome("PASS", "combined-once")])
+        controller.transport = child_transport
+        controller.cycle()
+        controller.cycle()
+        self.assertEqual(child_transport.tasks.count(child.task_id), 1)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM accepted_results WHERE task_id=?", (child.task_id,)
+        ).fetchone()[0], 1)
+        bundle = json.loads(self.store.conn.execute(
+            "SELECT bundle_json FROM dependency_result_bundles WHERE task_id=?", (child.task_id,)
+        ).fetchone()[0])
+        self.assertEqual(bundle["ordered_dependency_ids"], sorted(child.dependencies))
+        self.assertEqual({item["parent_task_id"] for item in bundle["materials"]},
+                         {deterministic.task_id, semantic.task_id})
+
     def test_ai_prompt_contains_exact_canonical_bootstrap(self):
         task = self.fx.task(role="07_INFRASTRUCTURE", task_type="llm_worker", action="semantic_helper")
         transport = SubprocessAITransport(self.fx.cfg)
@@ -432,6 +590,10 @@ class M2RoutingDashboardTests(unittest.TestCase):
             payload = json.load(urllib.request.urlopen(url + "/api/status", timeout=2))
             self.assertTrue(payload["dashboard"]["read_only"])
             self.assertEqual(payload["dashboard"]["health"], "HEALTHY")
+            self.assertEqual(
+                set(payload["operator_progress"]),
+                {"CURRENT", "LAST_PROGRESS", "NEXT_ACTION", "NEEDS_USER"},
+            )
             request = urllib.request.Request(url + "/api/status", data=b"{}", method="POST")
             with self.assertRaises(urllib.error.HTTPError) as rejected:
                 urllib.request.urlopen(request, timeout=2)
