@@ -173,6 +173,7 @@ class M2RoutingDashboardTests(unittest.TestCase):
     def test_dashboard_is_read_only_local_and_failure_nonblocking(self):
         self.engine.ingest(self.fx.task(task_id="DASH-TASK-001"))
         M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        self.store.conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
         before = self.store.conn.execute("SELECT count(*) FROM events").fetchone()[0]
         server = create_server(self.fx.cfg)
         thread = threading.Thread(target=server.serve_forever, daemon=True)

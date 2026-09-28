@@ -30,7 +30,7 @@ def _table_exists(conn: sqlite3.Connection, name: str) -> bool:
 
 
 def open_readonly(path: Path) -> sqlite3.Connection:
-    conn = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=2)
+    conn = sqlite3.connect(path.resolve().as_uri() + "?mode=ro&immutable=1", uri=True, timeout=2)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA query_only=ON")
     return conn
