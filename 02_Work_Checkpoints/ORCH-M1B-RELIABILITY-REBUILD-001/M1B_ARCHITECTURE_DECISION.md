@@ -1,6 +1,6 @@
 # M1b architecture decision
 
-Status: candidate for independent review
+Status: deployed after independent review and control adjudication
 
 Task: `ORCH-M1B-RELIABILITY-REBUILD-001`
 

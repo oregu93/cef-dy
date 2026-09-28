@@ -22,8 +22,10 @@ Status values in this file describe the candidate test suite. Deployment evidenc
 | GitHub projection | timeout/429/5xx, ambiguous ACK and reconciliation are durable | publication test group | PASS |
 | Governance | path escape, forbidden path and malformed task fail closed | schema/policy test group | PASS |
 | Waiting user | waiting task does not stall unrelated ready task | `test_waiting_user_does_not_stall_ready_work` | PASS |
+| AI concurrency | distinct tasks and concurrent claimers share one durable AI slot | AI-slot regression pair | PASS |
+| Attention lifecycle | preview promotion, stale supersession, fallback Issue, repeated episodes resolve exactly once | attention regression group | PASS |
 | Dependency graph | completion/failure propagation and cycles | store/engine dependency tests | PASS |
 | Load | 100 tasks complete once, no lease remains, no starvation | `test_hundred_task_load_has_no_double_execution_or_starvation` | PASS |
 | No hidden AI supervisor | idle polling exposes no OpenAI/Codex launch surface | `test_idle_loop_has_no_openai_or_codex_call_surface` | PASS |
 
-The suite uses fake AI admission/worker transports. A real AI smoke is a separate post-review deployment gate and must not substitute for these deterministic assertions.
+The final suite contains 94 tests and uses fake AI admission/worker transports. Post-deployment verification also used one controlled systemd quota-refusal/auto-resume scenario and one minimal real admission probe.

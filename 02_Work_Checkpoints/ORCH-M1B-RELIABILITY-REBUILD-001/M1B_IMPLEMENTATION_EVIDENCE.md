@@ -16,6 +16,6 @@ Task: `ORCH-M1B-RELIABILITY-REBUILD-001`
 
 ## Candidate verification
 
-The pre-freeze suite completed 74 tests successfully, including an asserted 100-task synthetic load and an eight-way claim race. Exact frozen commit, hashes, rerun counts, reviewer findings, deployment commands, service state, soak observations, and rollback evidence are recorded by the later gate artifacts in this directory.
+The final frozen implementation commit is `3c933c77bc4401b645bba020d975ca4a8784626f`. The final suite completed 94 tests successfully, including a 100-task synthetic load, eight-way task claim race, cross-task global AI-slot race, crash recovery, quota auto-resume, exact-once results, preview-to-live promotion, stale-attention supersession, and repeated attention episodes. A fresh focused control adjudicator reran all 94 tests plus 11 blocker regressions and returned `DEPLOY` with no P0/P1/P2 code blocker.
 
 No scientific execution, holdout access, Structure-A execution, or protected-path modification is part of this evidence.
