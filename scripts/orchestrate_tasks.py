@@ -28,6 +28,7 @@ from task_orchestrator.autonomy import (
     open_readonly_database, publish_checkpoint, verify_git_identity,
 )
 from task_orchestrator.reliability import M1bController, M1bStore
+from task_orchestrator.dashboard import serve as serve_dashboard
 
 
 def parser() -> argparse.ArgumentParser:
@@ -38,6 +39,7 @@ def parser() -> argparse.ArgumentParser:
         "poll-once", "run-ready", "status", "recover", "integrity-check",
         "autonomy-plan", "autonomy-status", "cycle-plan", "cycle-once",
         "reliability-status",
+        "dashboard-serve",
     ):
         sub.add_parser(name)
     worker_once = sub.add_parser("worker-once")
@@ -73,6 +75,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         cfg = load_config(args.config.resolve())
         state_dir = Path(cfg["state_dir"])
+        if args.command == "dashboard-serve":
+            serve_dashboard(cfg)
+            return 0
         if args.command == "autonomy-status":
             print(json.dumps(checkpoint_status(cfg), indent=2, ensure_ascii=False))
             return 0

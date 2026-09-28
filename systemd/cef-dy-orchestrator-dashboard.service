@@ -1,0 +1,23 @@
+[Unit]
+Description=CEF Dy M2 read-only local operator dashboard
+After=cef-dy-orchestrator.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Документы/CEF/CEF_Dy
+ExecStart=/usr/bin/python3 scripts/orchestrate_tasks.py --config %h/.config/cef-dy-orchestrator/task_orchestrator.yaml dashboard-serve
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=localhost
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=default.target

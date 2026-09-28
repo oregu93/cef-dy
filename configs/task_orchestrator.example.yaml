@@ -76,6 +76,21 @@ autonomy:
   result_inbox_subdir: result-inbox
   evidence_subdir: m1b-evidence
 
+# M2 is an additive routing layer. Each bounded AI worker receives the exact
+# canonical specialist section from CHAT_BOOTSTRAPS.md.
+routing:
+  enabled: false
+  bootstrap_path: 03_Protocols/CHAT_BOOTSTRAPS.md
+  auto_create_reviews: true
+
+# Separate localhost-only read-only service. SQLite remains the source of truth.
+dashboard:
+  enabled: false
+  host: 127.0.0.1
+  port: 8765
+  stale_after_seconds: 300
+  recent_events: 100
+
 paths:
   allowed_read_roots:
     - .

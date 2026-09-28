@@ -64,6 +64,18 @@ DEFAULTS: dict[str, Any] = {
         "result_inbox_subdir": "result-inbox",
         "evidence_subdir": "m1b-evidence",
     },
+    "routing": {
+        "enabled": False,
+        "bootstrap_path": "03_Protocols/CHAT_BOOTSTRAPS.md",
+        "auto_create_reviews": True,
+    },
+    "dashboard": {
+        "enabled": False,
+        "host": "127.0.0.1",
+        "port": 8765,
+        "stale_after_seconds": 300,
+        "recent_events": 100,
+    },
     "paths": {"allowed_read_roots": ["."], "forbidden_patterns": [".git/**", "CEF_Dy_Data/**", "private/**", "secrets/**", "credentials/**", "04_Results/raw/**", "04_Results/intermediate/**"], "allowed_output_root": "CEF_Dy_Backup/task_orchestrator"},
     "commands": {"allow": {}},
 }
@@ -171,10 +183,36 @@ def load_config(path: Path) -> dict[str, Any]:
         cfg["mode"] != "pilot" or not autonomy["enabled"] or autonomy["plan_only"]
     ):
         raise ValidationError("live publishing requires active pilot autonomy")
+    routing = cfg.get("routing")
+    if not isinstance(routing, dict) or set(routing) != {
+        "enabled", "bootstrap_path", "auto_create_reviews",
+    }:
+        raise ValidationError("routing fields mismatch")
+    if type(routing["enabled"]) is not bool or type(routing["auto_create_reviews"]) is not bool:
+        raise ValidationError("routing enabled/auto_create_reviews must be boolean")
+    if not isinstance(routing["bootstrap_path"], str) or not routing["bootstrap_path"]:
+        raise ValidationError("routing.bootstrap_path must be a nonempty path")
+    dashboard = cfg.get("dashboard")
+    if not isinstance(dashboard, dict) or set(dashboard) != {
+        "enabled", "host", "port", "stale_after_seconds", "recent_events",
+    }:
+        raise ValidationError("dashboard fields mismatch")
+    if type(dashboard["enabled"]) is not bool:
+        raise ValidationError("dashboard.enabled must be boolean")
+    if dashboard["host"] != "127.0.0.1":
+        raise ValidationError("dashboard host must be loopback-only")
+    for name, low, high in (("port", 1, 65535), ("stale_after_seconds", 1, 86400), ("recent_events", 1, 1000)):
+        value = dashboard[name]
+        if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
+            raise ValidationError(f"dashboard.{name} must be an integer from {low} to {high}")
     repo = Path(cfg["repository_root"])
     if not repo.is_absolute():
         repo = (path.parent.parent / repo).resolve()
     cfg["repository_root"] = str(repo)
+    bootstrap = Path(routing["bootstrap_path"])
+    if not bootstrap.is_absolute():
+        bootstrap = (repo / bootstrap).resolve()
+    routing["bootstrap_path"] = str(bootstrap)
     state = Path(cfg["state_dir"])
     if not state.is_absolute():
         state = (repo / state).resolve()

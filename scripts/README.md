@@ -77,6 +77,26 @@ python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll
 python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
+### M2 production routing and operator dashboard
+
+M2 extends M1b; it does not replace the M1b controller, durable state, quota
+lane, or timer. Enable `routing.enabled` to register roles 00/01/02/03/04/07
+from the exact canonical sections in `03_Protocols/CHAT_BOOTSTRAPS.md` and to
+prefer deterministic local work before bounded AI work. Tasks in
+`WAITING_USER` remain visible and do not block unrelated READY tasks.
+
+The operator dashboard is a separate service and reads the existing SQLite
+state with SQLite query-only mode. Enable `dashboard.enabled`, then run:
+
+```bash
+python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml dashboard-serve
+```
+
+The stable default URL is <http://127.0.0.1:8765/>; JSON is available at
+<http://127.0.0.1:8765/api/status>. The server accepts only GET/HEAD, binds only
+to `127.0.0.1`, has no write API, and is intentionally deployed as a separate
+systemd service so a dashboard failure cannot stop orchestration.
+
 `poll-once` только читает GitHub Issues и локально отслеживает labelled tasks,
 включая их ручное закрытие и изменение через web UI. `shadow` и `dry-run`
 никогда не исполняют READY tasks. Для bounded deterministic pilot

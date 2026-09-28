@@ -26,6 +26,7 @@ from .publishing import (
     enqueue_attention_resolution_preview, enqueue_result_preview,
 )
 from . import workers
+from .routing import ProductionRouter, bootstrap_for_task
 
 
 M1B_SCHEMA = """
@@ -199,11 +200,21 @@ class SubprocessAITransport:
 
     def execute(self, task: Task, attempt: int) -> Admission:
         envelope = _canonical(task.envelope_dict())
+        specialist = ""
+        if self.cfg.get("routing", {}).get("enabled"):
+            try:
+                role = bootstrap_for_task(self.cfg, task.role)
+            except (OSError, ValueError) as exc:
+                return Admission("FAILED_RETRYABLE", reason=f"specialist bootstrap unavailable: {exc}")
+            specialist = (
+                "The following text is the exact canonical bootstrap for your specialist role. "
+                "Treat it as binding within the task envelope:\n\n" + role.bootstrap_text + "\n"
+            )
         prompt = (
             "You are a disposable bounded specialist. Do not modify files, run scientific "
             "programs, access holdout/raw data, or change project authority. Complete only the "
             "semantic task below and return a compact JSON object with keys status, summary, "
-            "checks, artifacts, error. TASK envelope:\n" + envelope
+            "checks, artifacts, error.\n" + specialist + "TASK envelope:\n" + envelope
         )
         outcome = self._run(prompt)
         if outcome.status != "ACCEPTED":
@@ -592,6 +603,7 @@ class M1bController:
         self.state_dir = Path(cfg["state_dir"])
         self.spool = self.state_dir / cfg["autonomy"]["result_inbox_subdir"]
         self.spool.mkdir(parents=True, exist_ok=True)
+        self.router = ProductionRouter(cfg, store, self.engine)
 
     def _git_identity(self) -> dict[str, Any]:
         def value(*args: str) -> str | None:
@@ -871,6 +883,13 @@ class M1bController:
         cancelled = self.state.cancel_invalid_leases()
         recovered_results = self.ingest_spool()
         expired = self.state.recover_expired(now)
+        routing_ok = True
+        try:
+            routing = self.router.reconcile()
+        except (OSError, ValueError, sqlite3.DatabaseError) as exc:
+            routing_ok = False
+            routing = {"status": "DEGRADED", "error": f"{type(exc).__name__}: {exc}"}
+            self.store.append_event(None, "M2_ROUTING_DEGRADED", None, None, routing)
         lane = self.state.lane()
         probe = "not_due"
         if (self.cfg["llm"]["dispatch_enabled"] and lane["state"] == "QUOTA_WAIT"
@@ -895,10 +914,16 @@ class M1bController:
             and not self.cfg["autonomy"]["plan_only"]
         )
         ready = self.store.list_state(State.READY)
+        if self.router.enabled:
+            ready = sorted(ready, key=lambda row: (
+                self.store.task(row).is_llm, row["created_at"], row["task_id"]
+            ))
         for row in ready if execution_enabled else ():
             if len(dispatched) >= limit:
                 break
             task = self.store.task(row)
+            if task.is_llm and self.router.enabled and not routing_ok:
+                continue
             if task.is_llm:
                 local_ok = bool(row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
                 if not local_ok or self.cfg["llm"]["require_issue_label"] not in task.labels:
@@ -910,6 +935,9 @@ class M1bController:
             dispatched.append(self._run_claim(row, now))
         publications = self.reconcile_publications(now)
         status = self.state.status()
+        status.update(self.router.status())
+        if not routing_ok:
+            status["M2_PRODUCTION_ROUTING"] = "DEGRADED"
         if not execution_enabled:
             status["ORCHESTRATOR_M1B_STATE"] = "SHADOW"
         if not self.cfg["llm"]["dispatch_enabled"]:
@@ -927,5 +955,5 @@ class M1bController:
         )
         return {"poll": poll, "cancelled_leases": cancelled,
                 "recovered_results": recovered_results,
-                "expired_leases": expired, "probe": probe,
+                "expired_leases": expired, "routing": routing, "probe": probe,
                 "dispatched": dispatched, "publications": publications, "status": status}
