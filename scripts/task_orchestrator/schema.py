@@ -15,7 +15,20 @@ TASK_KEYS = {
     "stop_condition",
 }
 REQUIRED = {"schema_version", "task_id", "role", "canonical_head", "task_type", "action", "stop_condition"}
-ROLES = {"00_PROJECT_CONTROL", "01_LITERATURE", "03_CEF", "04_STRUCTURE", "07_INFRASTRUCTURE", "WORK"}
+ROLES = {
+    "00_PROJECT_CONTROL", "01_LITERATURE", "01_LITERATURE_PHYSICS",
+    "02_TAIPAN_DATA_REDUCTION", "03_CEF", "03_CEF_MODELLING_FIT_DESIGN",
+    "04_STRUCTURE", "04_STRUCTURE_CONVENTIONS", "07_INFRASTRUCTURE",
+    "07_RESEARCH_SOFTWARE_INFRASTRUCTURE",
+}
+RESOURCE_REQUIREMENTS = {
+    "DETERMINISTIC_REQUIRED", "LOCAL_SEMANTIC_OK", "NON_WORK_AI_OK",
+    "WORK_PREFERRED", "WORK_REQUIRED", "HUMAN_REQUIRED",
+}
+RESOURCE_LANES = {
+    "LOCAL_DETERMINISTIC", "LOCAL_OSS_MODEL", "NON_WORK_AI", "WORK_CODEX",
+    "HUMAN_DECISION",
+}
 TASK_TYPES = {"deterministic", "llm_semantic", "llm_worker"}
 ACTIONS = {"head_check", "sha256_check", "schema_check", "dependency_check", "status_check", "artifact_check", "test_command", "semantic_helper"}
 DETERMINISTIC_ACTIONS = ACTIONS - {"semantic_helper"}
@@ -86,6 +99,20 @@ def validate_task(data: Any, *, source_issue: int | None = None, labels: tuple[s
         raise ValidationError(f"inputs must contain only finite JSON-compatible values: {exc}") from exc
     if len(yaml.safe_dump(inputs, allow_unicode=True)) > 100_000:
         raise ValidationError("inputs exceeds 100000 serialized characters")
+    requirement = inputs.get("resource_requirement")
+    if requirement is not None and requirement not in RESOURCE_REQUIREMENTS:
+        raise ValidationError("inputs.resource_requirement is invalid")
+    lanes = inputs.get("allowed_lanes")
+    if lanes is not None:
+        if not isinstance(lanes, list) or not lanes or len(lanes) != len(set(lanes)) or any(
+            lane not in RESOURCE_LANES for lane in lanes
+        ):
+            raise ValidationError("inputs.allowed_lanes must be a nonempty unique list of supported lanes")
+    for key in ("review_required", "auto_review_authorized"):
+        if key in inputs and type(inputs[key]) is not bool:
+            raise ValidationError(f"inputs.{key} must be boolean")
+    if "review_role" in inputs and inputs["review_role"] not in ROLES:
+        raise ValidationError("inputs.review_role is invalid")
     timeout = data.get("timeout_seconds", 60)
     if isinstance(timeout, bool) or not isinstance(timeout, int) or not 1 <= timeout <= 3600:
         raise ValidationError("timeout_seconds must be an integer from 1 to 3600")

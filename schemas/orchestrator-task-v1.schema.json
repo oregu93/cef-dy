@@ -7,7 +7,7 @@
   "properties": {
     "schema_version": {"const": 1},
     "task_id": {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9._-]{2,127}$"},
-    "role": {"enum": ["00_PROJECT_CONTROL", "01_LITERATURE", "03_CEF", "04_STRUCTURE", "07_INFRASTRUCTURE", "WORK"]},
+    "role": {"enum": ["00_PROJECT_CONTROL", "01_LITERATURE", "01_LITERATURE_PHYSICS", "02_TAIPAN_DATA_REDUCTION", "03_CEF", "03_CEF_MODELLING_FIT_DESIGN", "04_STRUCTURE", "04_STRUCTURE_CONVENTIONS", "07_INFRASTRUCTURE", "07_RESEARCH_SOFTWARE_INFRASTRUCTURE"]},
     "canonical_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "task_type": {"enum": ["deterministic", "llm_semantic", "llm_worker"]},
     "action": {"enum": ["head_check", "sha256_check", "schema_check", "dependency_check", "status_check", "artifact_check", "test_command", "semantic_helper"]},

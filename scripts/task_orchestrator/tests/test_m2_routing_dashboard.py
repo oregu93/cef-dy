@@ -10,7 +10,7 @@ import urllib.request
 from task_orchestrator.dashboard import create_server, snapshot
 from task_orchestrator.engine import Engine
 from task_orchestrator.model import State
-from task_orchestrator.reliability import Admission, M1bController, SubprocessAITransport
+from task_orchestrator.reliability import Admission, M1bController, M1bStore, SubprocessAITransport
 from task_orchestrator.routing import ROLE_IDS, ProductionRouter, load_registry
 from task_orchestrator.store import Store
 
@@ -85,6 +85,27 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.assertEqual(self.store.get("UNKNOWN-ROLE-001")["state"], State.WAITING_USER.value)
         self.assertEqual(self.store.get("LOCAL-INDEPENDENT-001")["state"], State.SUCCEEDED.value)
 
+    def test_invalid_route_never_executes_even_after_waiting_reevaluation(self):
+        fake = FakeAI()
+        task = self.fx.task(
+            task_id="INVALID-ROUTE-001", role="not-a-role", task_type="llm_worker",
+            action="semantic_helper", labels=("orchestrator:llm-approved",),
+        )
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, fake).cycle()
+        self.assertEqual(fake.tasks, [])
+        self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
+        self.assertEqual(self.store.conn.execute("SELECT route_status FROM task_routes WHERE task_id=?", (task.task_id,)).fetchone()[0], "INVALID_ROLE")
+
+    def test_malformed_review_flags_never_create_review(self):
+        task = self.fx.task(
+            task_id="MALFORMED-REVIEW-001",
+            inputs={"review_required": "false", "auto_review_authorized": "false", "review_role": "NOT_A_ROLE"},
+        )
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        self.assertIsNone(self.store.get(task.task_id + "-REVIEW-001"))
+
     def test_success_creates_authorized_bounded_review(self):
         parent = self.fx.task(
             task_id="LOCAL-REVIEWED-001",
@@ -140,6 +161,121 @@ class M2RoutingDashboardTests(unittest.TestCase):
         M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
         self.assertEqual(self.store.get("AFTER-DASH-FAILURE-001")["state"], State.SUCCEEDED.value)
         self.assertTrue(snapshot(self.fx.cfg)["dashboard"]["read_only"])
+
+    def work_task(self, task_id="WORK-REQUIRED-001", **inputs):
+        return self.fx.task(
+            task_id=task_id, role="03_CEF", task_type="llm_worker",
+            action="semantic_helper", labels=("orchestrator:llm-approved",),
+            inputs={"resource_requirement": "WORK_REQUIRED", **inputs},
+        )
+
+    def force_work_quota_wait(self, next_probe=1000.0):
+        M1bStore(self.store.conn, self.fx.cfg)
+        self.store.conn.execute(
+            "UPDATE ai_lane SET state='QUOTA_WAIT',next_probe_at=?,refusal_count=refusal_count+1 WHERE singleton=1",
+            (next_probe,),
+        )
+
+    def test_01_work_quota_refusal_does_not_stop_m2(self):
+        self.engine.ingest(self.work_task())
+        fake = FakeAI()
+        fake.execute = lambda task, attempt: Admission("QUOTA_REFUSED", reason="quota", reset_at=1000.0)
+        output = M1bController(self.fx.cfg, self.store, fake, clock=lambda: 100.0).cycle()
+        self.assertEqual(output["status"]["ORCHESTRATOR_M1B_STATE"], "OPERATIONAL")
+        self.assertEqual(self.store.get("WORK-REQUIRED-001")["state"], State.WAITING_RESOURCE.value)
+
+    def test_02_deterministic_executes_while_work_quota_waits(self):
+        self.force_work_quota_wait()
+        self.engine.ingest(self.fx.task(task_id="LOCAL-DURING-WORK-WAIT-001"))
+        M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0).cycle()
+        self.assertEqual(self.store.get("LOCAL-DURING-WORK-WAIT-001")["state"], State.SUCCEEDED.value)
+
+    def test_03_verified_non_work_lane_routes_away_from_work(self):
+        self.fx.cfg["non_work_ai"].update(
+            enabled=True, verified_interface=True,
+            command={"argv": ["/bin/false"], "timeout_seconds": 5},
+        )
+        self.force_work_quota_wait()
+        task = self.fx.task(
+            task_id="NON-WORK-CAPABLE-001", role="01_LITERATURE",
+            task_type="llm_worker", action="semantic_helper",
+            labels=("orchestrator:llm-approved",),
+            inputs={"resource_requirement": "NON_WORK_AI_OK",
+                    "allowed_lanes": ["NON_WORK_AI", "WORK_CODEX"]},
+        )
+        self.engine.ingest(task)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
+        controller.router.reconcile()
+        route = self.store.conn.execute("SELECT * FROM task_routes WHERE task_id=?", (task.task_id,)).fetchone()
+        self.assertEqual((route["selected_lane"], route["route_status"]), ("NON_WORK_AI", "ROUTED"))
+
+    def test_04_work_required_waits_without_retry_budget(self):
+        self.force_work_quota_wait()
+        task = self.work_task("WORK-WAITS-001")
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0).cycle()
+        row = self.store.get(task.task_id)
+        self.assertEqual((row["state"], row["attempt"]), (State.WAITING_RESOURCE.value, 0))
+
+    def test_05_work_probe_reactivates_only_work_lane(self):
+        self.force_work_quota_wait(next_probe=100.0)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 101.0)
+        controller.cycle()
+        lanes = {row["lane_id"]: dict(row) for row in self.store.conn.execute("SELECT * FROM resource_lanes")}
+        self.assertEqual(self.store.conn.execute("SELECT state FROM ai_lane").fetchone()[0], "AVAILABLE")
+        self.assertEqual(lanes["LOCAL_DETERMINISTIC"]["availability_state"], "AVAILABLE")
+
+    def test_06_waiting_work_task_resumes_exactly_once(self):
+        self.force_work_quota_wait(next_probe=100.0)
+        task = self.work_task("WORK-RESUME-ONCE-001")
+        self.engine.ingest(task)
+        fake = FakeAI()
+        controller = M1bController(self.fx.cfg, self.store, fake, clock=lambda: 101.0)
+        controller.cycle()
+        controller.cycle()
+        self.assertEqual(self.store.get(task.task_id)["state"], State.SUCCEEDED.value)
+        self.assertEqual(fake.tasks.count(task.task_id), 1)
+
+    def test_07_work_recovery_does_not_duplicate_running_non_work(self):
+        self.fx.cfg["non_work_ai"].update(
+            enabled=True, verified_interface=True,
+            command={"argv": ["/bin/false"], "timeout_seconds": 5},
+        )
+        self.force_work_quota_wait(next_probe=100.0)
+        task = self.work_task(
+            "NONWORK-RUNNING-001", resource_requirement="NON_WORK_AI_OK",
+            allowed_lanes=["NON_WORK_AI", "WORK_CODEX"],
+        )
+        self.engine.ingest(task)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 101.0)
+        controller.router.reconcile()
+        lease = controller.state.claim(self.store.get(task.task_id), "already-running", 99.0)
+        self.assertIsNotNone(lease)
+        controller.cycle()
+        self.assertEqual(self.store.get(task.task_id)["state"], State.RUNNING.value)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM dispatch_attempts WHERE task_id=?", (task.task_id,)).fetchone()[0], 1)
+
+    def test_08_lane_quota_state_is_isolated(self):
+        self.force_work_quota_wait()
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
+        controller.router.reconcile()
+        lanes = {row["lane_id"]: dict(row) for row in self.store.conn.execute("SELECT * FROM resource_lanes")}
+        self.assertEqual(lanes["WORK_CODEX"]["quota_state"], "QUOTA_WAIT")
+        self.assertEqual(lanes["LOCAL_DETERMINISTIC"]["quota_state"], "AVAILABLE")
+        self.assertNotEqual(lanes["NON_WORK_AI"]["quota_state"], "QUOTA_WAIT")
+
+    def test_09_dashboard_shows_every_lane_separately(self):
+        M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        lane_ids = {row["lane_id"] for row in snapshot(self.fx.cfg)["resource_lanes"]}
+        self.assertEqual(lane_ids, {"LOCAL_DETERMINISTIC", "LOCAL_OSS_MODEL", "NON_WORK_AI", "WORK_CODEX", "HUMAN_DECISION"})
+
+    def test_10_no_unsupported_persistent_chat_automation_claim(self):
+        controller = M1bController(self.fx.cfg, self.store, FakeAI())
+        controller.router.reconcile()
+        status = controller.router.status()
+        self.assertIs(status["UNSUPPORTED_PERSISTENT_CHAT_AUTOMATION"], False)
+        non_work = self.store.conn.execute("SELECT * FROM resource_lanes WHERE lane_id='NON_WORK_AI'").fetchone()
+        self.assertEqual(non_work["availability_state"], "UNVERIFIED")
 
 
 if __name__ == "__main__":

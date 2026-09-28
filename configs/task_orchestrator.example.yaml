@@ -37,9 +37,21 @@ llm:
     timeout_seconds: 900
   ollama:
     enabled: false
+    verified_interface: false
     base_url: http://127.0.0.1:11434
     model: ""
     timeout_seconds: 30
+    max_concurrent_runs: 1
+
+# Optional non-Work semantic lane. It remains UNVERIFIED/DISABLED unless a real
+# machine-addressable interface is explicitly configured and verified.
+non_work_ai:
+  enabled: false
+  verified_interface: false
+  max_concurrent_runs: 1
+  command:
+    argv: []
+    timeout_seconds: 900
 
 # Read-only planning projections. UNKNOWN/stale quota blocks unattended
 # quota-consuming eligibility but not explicit interactive work. reset_at is

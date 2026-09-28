@@ -85,6 +85,14 @@ from the exact canonical sections in `03_Protocols/CHAT_BOOTSTRAPS.md` and to
 prefer deterministic local work before bounded AI work. Tasks in
 `WAITING_USER` remain visible and do not block unrelated READY tasks.
 
+Resource routing keeps five independent lanes: `LOCAL_DETERMINISTIC`,
+`LOCAL_OSS_MODEL`, `NON_WORK_AI`, `WORK_CODEX`, and `HUMAN_DECISION`. Semantic
+tasks declare `inputs.resource_requirement` and may provide ordered
+`inputs.allowed_lanes`. Local OSS and non-Work lanes remain disabled until a
+real programmatic interface is explicitly verified; persistent chats are never
+claimed as autonomous workers. Exhausting `WORK_CODEX` moves only that lane to
+quota wait and leaves every verified non-Work lane schedulable.
+
 The operator dashboard is a separate service and reads the existing SQLite
 state with SQLite query-only mode. Enable `dashboard.enabled`, then run:
 

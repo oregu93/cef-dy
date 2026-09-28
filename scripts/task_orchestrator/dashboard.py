@@ -72,6 +72,9 @@ def snapshot(cfg: dict[str, Any]) -> dict[str, Any]:
         routes = [dict(row) for row in conn.execute(
             "SELECT * FROM task_routes ORDER BY updated_at DESC,task_id"
         )] if _table_exists(conn, "task_routes") else []
+        resource_lanes = [dict(row) for row in conn.execute(
+            "SELECT * FROM resource_lanes ORDER BY cost_priority,lane_id"
+        )] if _table_exists(conn, "resource_lanes") else []
         reviews = [dict(row) for row in conn.execute(
             "SELECT * FROM review_requirements ORDER BY updated_at DESC,parent_task_id"
         )] if _table_exists(conn, "review_requirements") else []
@@ -109,6 +112,7 @@ def snapshot(cfg: dict[str, Any]) -> dict[str, Any]:
         "tasks": tasks,
         "workers": leases,
         "routes": routes,
+        "resource_lanes": resource_lanes,
         "reviews": reviews,
         "results": results,
         "attention": attention,
@@ -152,7 +156,8 @@ table{{border-collapse:collapse;width:100%;background:white;margin-bottom:20px}}
 <h2>Terminal blockers</h2>{_table(data['blockers'], ('task_id','state','role','reason','updated_at'))}
 <h2>Tasks and dependencies</h2>{_table(data['tasks'], ('task_id','state','role','task_type','dependencies','attempt','reason','updated_at'))}
 <h2>Workers</h2>{_table(data['workers'], ('task_id','worker_id','attempt_id','claimed_at','lease_expires_at'))}
-<h2>Specialist routes</h2>{_table(data['routes'], ('task_id','role_id','selected_lane','route_status','reason','updated_at'))}
+<h2>Resource lanes</h2>{_table(data['resource_lanes'], ('lane_id','availability_state','quota_state','next_probe_at','concurrency_limit','capability_json','cost_priority','refusal_count'))}
+<h2>Specialist routes</h2>{_table(data['routes'], ('task_id','role_id','suitability','allowed_lanes_json','selected_lane','route_status','reason','updated_at'))}
 <h2>Reviews</h2>{_table(data['reviews'], ('parent_task_id','review_task_id','role_id','status','reason','updated_at'))}
 <h2>Results</h2>{_table(data['results'], ('task_id','attempt_id','result_sha256','accepted_at'))}
 <h2>Recent activity</h2>{_table(data['recent_activity'], ('event_id','created_at','task_id','event_type','old_state','new_state'))}

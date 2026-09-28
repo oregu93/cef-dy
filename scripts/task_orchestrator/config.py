@@ -35,7 +35,11 @@ DEFAULTS: dict[str, Any] = {
             "probe_prompt": "Reply with exactly ADMISSION_OK and do not use tools.",
             "timeout_seconds": 900,
         },
-        "ollama": {"enabled": False, "base_url": "http://127.0.0.1:11434", "model": "", "timeout_seconds": 30},
+        "ollama": {"enabled": False, "verified_interface": False, "base_url": "http://127.0.0.1:11434", "model": "", "timeout_seconds": 30, "max_concurrent_runs": 1},
+    },
+    "non_work_ai": {
+        "enabled": False, "verified_interface": False, "max_concurrent_runs": 1,
+        "command": {"argv": [], "timeout_seconds": 900},
     },
     "visibility": {
         "enabled": False,
@@ -179,6 +183,23 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValidationError("llm.command.timeout_seconds must be a positive integer")
     if llm["detached_workers"] and int(llm["lease_seconds"]) < int(command["timeout_seconds"]) + 120:
         raise ValidationError("detached worker lease must exceed worker timeout by at least 120 seconds")
+    for name, lane in (("llm.ollama", llm["ollama"]), ("non_work_ai", cfg["non_work_ai"])):
+        if type(lane.get("enabled")) is not bool or type(lane.get("verified_interface")) is not bool:
+            raise ValidationError(f"{name} enabled/verified_interface must be boolean")
+        concurrency = lane.get("max_concurrent_runs")
+        if isinstance(concurrency, bool) or not isinstance(concurrency, int) or not 1 <= concurrency <= 16:
+            raise ValidationError(f"{name}.max_concurrent_runs must be an integer from 1 to 16")
+        if lane["enabled"] and not lane["verified_interface"]:
+            raise ValidationError(f"{name} cannot be enabled without a verified interface")
+    non_work_command = cfg["non_work_ai"]["command"]
+    if set(non_work_command) != {"argv", "timeout_seconds"} or not isinstance(non_work_command["argv"], list):
+        raise ValidationError("non_work_ai.command fields mismatch")
+    if any(not isinstance(value, str) or not value for value in non_work_command["argv"]):
+        raise ValidationError("non_work_ai.command.argv must contain nonempty strings")
+    if isinstance(non_work_command["timeout_seconds"], bool) or not isinstance(non_work_command["timeout_seconds"], int) or non_work_command["timeout_seconds"] < 1:
+        raise ValidationError("non_work_ai.command.timeout_seconds must be positive")
+    if cfg["non_work_ai"]["enabled"] and not non_work_command["argv"]:
+        raise ValidationError("enabled non_work_ai requires command.argv")
     if cfg["publishing"].get("enabled") and (
         cfg["mode"] != "pilot" or not autonomy["enabled"] or autonomy["plan_only"]
     ):
