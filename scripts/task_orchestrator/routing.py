@@ -156,6 +156,10 @@ class ProductionRouter:
         }
         now = utc_now()
         for lane_id, value in values.items():
+            existing = self.conn.execute("SELECT * FROM resource_lanes WHERE lane_id=?", (lane_id,)).fetchone()
+            if lane_id in {"LOCAL_OSS_MODEL", "NON_WORK_AI"} and existing is not None and existing["quota_state"] == "QUOTA_WAIT":
+                value = (existing["availability_state"], existing["quota_state"], existing["next_probe_at"],
+                         value[3], value[4], value[5], existing["refusal_count"])
             self.conn.execute(
                 "INSERT INTO resource_lanes VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(lane_id) DO UPDATE SET "
                 "availability_state=excluded.availability_state,quota_state=excluded.quota_state,next_probe_at=excluded.next_probe_at,"
@@ -168,11 +172,15 @@ class ProductionRouter:
     @staticmethod
     def requirement(task: Task) -> str:
         return str(task.inputs.get("resource_requirement") or (
-            "WORK_REQUIRED" if task.is_llm else "DETERMINISTIC_REQUIRED"
+            "" if task.is_llm else "DETERMINISTIC_REQUIRED"
         ))
 
     def _select_lane(self, task: Task, lanes: dict[str, dict[str, Any]]) -> tuple[str, str, tuple[str, ...], str]:
         requirement = self.requirement(task)
+        if (task.is_llm and requirement == "DETERMINISTIC_REQUIRED") or (
+            not task.is_llm and requirement not in {"DETERMINISTIC_REQUIRED", "HUMAN_REQUIRED"}
+        ):
+            return "HUMAN_DECISION", "INVALID_SUITABILITY", (), "task type and resource suitability are incompatible"
         defaults = SUITABILITY.get(requirement)
         if defaults is None:
             return "HUMAN_DECISION", "INVALID_SUITABILITY", (), "invalid resource suitability"
@@ -181,6 +189,8 @@ class ProductionRouter:
         allowed = tuple(lane for lane in allowed if lane in defaults)
         if not allowed:
             return "HUMAN_DECISION", "INVALID_SUITABILITY", allowed, "no suitable allowed lane"
+        if requirement == "HUMAN_REQUIRED":
+            return "HUMAN_DECISION", "WAITING_USER", allowed, "human decision explicitly required"
         for lane in allowed:
             if lanes[lane]["availability_state"] == "AVAILABLE":
                 return lane, "ROUTED", allowed, "first available suitable lane selected"
@@ -204,7 +214,7 @@ class ProductionRouter:
             (task.task_id, role_id, digest, preferred, lane, status, reason, requirement, json.dumps(allowed), now, now),
         )
         row = self.store.get(task.task_id)
-        if status in {"INVALID_ROLE", "INVALID_SUITABILITY"} and row and row["state"] not in {
+        if status in {"INVALID_ROLE", "INVALID_SUITABILITY", "WAITING_USER"} and row and row["state"] not in {
             State.SUCCEEDED.value, State.FAILED.value, State.REJECTED.value, State.BLOCKED.value,
         }:
             self.store.transition(task.task_id, State.WAITING_USER, reason, force_recovery=True)

@@ -102,6 +102,11 @@ def validate_task(data: Any, *, source_issue: int | None = None, labels: tuple[s
     requirement = inputs.get("resource_requirement")
     if requirement is not None and requirement not in RESOURCE_REQUIREMENTS:
         raise ValidationError("inputs.resource_requirement is invalid")
+    if requirement is not None:
+        if task_type == "deterministic" and requirement not in {"DETERMINISTIC_REQUIRED", "HUMAN_REQUIRED"}:
+            raise ValidationError("deterministic tasks require DETERMINISTIC_REQUIRED or HUMAN_REQUIRED")
+        if task_type != "deterministic" and requirement == "DETERMINISTIC_REQUIRED":
+            raise ValidationError("semantic tasks cannot declare DETERMINISTIC_REQUIRED")
     lanes = inputs.get("allowed_lanes")
     if lanes is not None:
         if not isinstance(lanes, list) or not lanes or len(lanes) != len(set(lanes)) or any(

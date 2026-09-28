@@ -69,6 +69,7 @@ class M2RoutingDashboardTests(unittest.TestCase):
             task_id="AI-FIRST-001", role="03_CEF_MODELLING_FIT_DESIGN",
             task_type="llm_worker", action="semantic_helper",
             labels=("orchestrator:llm-approved",),
+            inputs={"resource_requirement": "WORK_REQUIRED"},
         ))
         self.engine.ingest(self.fx.task(task_id="LOCAL-SECOND-001"))
         output = M1bController(self.fx.cfg, self.store, fake).cycle()
@@ -105,6 +106,39 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.engine.ingest(task)
         M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
         self.assertIsNone(self.store.get(task.task_id + "-REVIEW-001"))
+
+    def test_lane_type_confusion_and_human_lane_never_execute(self):
+        fake = FakeAI()
+        semantic = self.fx.task(
+            task_id="SEMANTIC-NOT-DETERMINISTIC-001", role="03_CEF",
+            task_type="llm_worker", action="semantic_helper",
+            labels=("orchestrator:llm-approved",),
+            inputs={"resource_requirement": "DETERMINISTIC_REQUIRED",
+                    "allowed_lanes": ["LOCAL_DETERMINISTIC"]},
+        )
+        human = self.fx.task(
+            task_id="HUMAN-NEVER-AUTO-001",
+            inputs={"resource_requirement": "HUMAN_REQUIRED",
+                    "allowed_lanes": ["HUMAN_DECISION"]},
+        )
+        self.engine.ingest(semantic)
+        self.engine.ingest(human)
+        M1bController(self.fx.cfg, self.store, fake).cycle()
+        self.assertEqual(fake.tasks, [])
+        self.assertEqual(self.store.get(semantic.task_id)["state"], State.WAITING_USER.value)
+        self.assertEqual(self.store.get(human.task_id)["state"], State.WAITING_USER.value)
+
+    def test_undeclared_semantic_suitability_fails_closed_without_work_default(self):
+        fake = FakeAI()
+        task = self.fx.task(
+            task_id="UNDECLARED-SEMANTIC-001", role="03_CEF", task_type="llm_worker",
+            action="semantic_helper", labels=("orchestrator:llm-approved",), inputs={},
+        )
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, fake).cycle()
+        route = self.store.conn.execute("SELECT * FROM task_routes WHERE task_id=?", (task.task_id,)).fetchone()
+        self.assertEqual(route["route_status"], "INVALID_SUITABILITY")
+        self.assertEqual(fake.tasks, [])
 
     def test_success_creates_authorized_bounded_review(self):
         parent = self.fx.task(
@@ -276,6 +310,65 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.assertIs(status["UNSUPPORTED_PERSISTENT_CHAT_AUTOMATION"], False)
         non_work = self.store.conn.execute("SELECT * FROM resource_lanes WHERE lane_id='NON_WORK_AI'").fetchone()
         self.assertEqual(non_work["availability_state"], "UNVERIFIED")
+
+    def test_work_probe_does_not_promote_unrelated_local_resource_wait(self):
+        self.force_work_quota_wait(next_probe=100.0)
+        task = self.fx.task(
+            task_id="LOCAL-OSS-ONLY-WAIT-001", role="01_LITERATURE",
+            task_type="llm_worker", action="semantic_helper",
+            labels=("orchestrator:llm-approved",),
+            inputs={"resource_requirement": "LOCAL_SEMANTIC_OK",
+                    "allowed_lanes": ["LOCAL_OSS_MODEL"]},
+        )
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 101.0).cycle()
+        self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_RESOURCE.value)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM publication_outbox WHERE task_id=?", (task.task_id,)
+        ).fetchone()[0], 0)
+
+    def test_expired_non_work_lease_is_not_poisoned_by_work_quota(self):
+        self.fx.cfg["non_work_ai"].update(
+            enabled=True, verified_interface=True,
+            command={"argv": ["/bin/false"], "timeout_seconds": 5},
+        )
+        self.force_work_quota_wait(next_probe=1000.0)
+        task = self.work_task(
+            "NONWORK-EXPIRED-001", resource_requirement="NON_WORK_AI_OK",
+            allowed_lanes=["NON_WORK_AI", "WORK_CODEX"],
+        )
+        self.engine.ingest(task)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
+        controller.router.reconcile()
+        lease = controller.state.claim(self.store.get(task.task_id), "expired", 0.0)
+        self.store.conn.execute("UPDATE worker_leases SET lease_expires_at=30 WHERE attempt_id=?", (lease["attempt_id"],))
+        self.fx.cfg["autonomy"]["plan_only"] = True
+        controller.cycle()
+        self.assertEqual(self.store.get(task.task_id)["state"], State.READY.value)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT selected_lane FROM task_routes WHERE task_id=?", (task.task_id,)
+        ).fetchone()[0], "NON_WORK_AI")
+
+    def test_alternate_lane_quota_refusal_is_durable_and_retry_free(self):
+        self.fx.cfg["non_work_ai"].update(
+            enabled=True, verified_interface=True,
+            command={"argv": ["/bin/sh", "-c", "echo quota >&2; exit 1"], "timeout_seconds": 5},
+        )
+        task = self.work_task(
+            "NONWORK-QUOTA-001", resource_requirement="NON_WORK_AI_OK",
+            allowed_lanes=["NON_WORK_AI"],
+        )
+        self.engine.ingest(task)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
+        controller.cycle()
+        row = self.store.get(task.task_id)
+        lane = self.store.conn.execute("SELECT * FROM resource_lanes WHERE lane_id='NON_WORK_AI'").fetchone()
+        self.assertEqual((row["state"], row["attempt"]), (State.WAITING_RESOURCE.value, 0))
+        self.assertEqual((lane["quota_state"], lane["refusal_count"]), ("QUOTA_WAIT", 1))
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 101.0)
+        controller.cycle()
+        lane = self.store.conn.execute("SELECT * FROM resource_lanes WHERE lane_id='NON_WORK_AI'").fetchone()
+        self.assertEqual((lane["quota_state"], lane["refusal_count"]), ("QUOTA_WAIT", 1))
 
 
 if __name__ == "__main__":

@@ -282,6 +282,10 @@ class M1bStore:
                     self.conn.execute("ROLLBACK")
                     return None
                 lane = route["selected_lane"]
+                is_ai = self._is_ai(row["task_id"])
+                if lane == "HUMAN_DECISION" or (lane == "LOCAL_DETERMINISTIC") == is_ai:
+                    self.conn.execute("ROLLBACK")
+                    return None
                 lane_row = self.conn.execute(
                     "SELECT concurrency_limit FROM resource_lanes WHERE lane_id=?", (lane,)
                 ).fetchone()
@@ -506,9 +510,9 @@ class M1bStore:
                     "UPDATE ai_lane SET state='AVAILABLE',next_probe_at=NULL,reset_at=NULL,backoff_index=0,last_success_at=?,updated_at=? WHERE singleton=1",
                     (utc_now(), utc_now()),
                 )
-                states = (State.QUOTA_WAIT.value, State.WAITING_RESOURCE.value) if self.cfg.get("routing", {}).get("enabled") else (State.QUOTA_WAIT.value,)
+                states = () if self.cfg.get("routing", {}).get("enabled") else (State.QUOTA_WAIT.value,)
                 marks = ",".join("?" for _ in states)
-                rows = list(self.conn.execute(f"SELECT * FROM tasks WHERE state IN ({marks})", states))
+                rows = list(self.conn.execute(f"SELECT * FROM tasks WHERE state IN ({marks})", states)) if states else []
                 for row in rows:
                     task = json.loads(row["payload_json"])
                     authorized = self.cfg["llm"]["require_issue_label"] in task.get("labels", [])
@@ -548,7 +552,12 @@ class M1bStore:
             if accepted:
                 self.conn.execute("DELETE FROM worker_leases WHERE task_id=?", (lease["task_id"],))
                 continue
-            target = State.QUOTA_WAIT.value if self._is_ai(lease["task_id"]) and self.lane()["state"] == "QUOTA_WAIT" else State.READY.value
+            dispatch = self.conn.execute("SELECT lane FROM dispatch_attempts WHERE attempt_id=?", (lease["attempt_id"],)).fetchone()
+            work_lease = dispatch is not None and dispatch["lane"] in {"WORK_CODEX", "AI_BOUNDED_SPECIALIST"}
+            target = (
+                State.WAITING_RESOURCE.value if self.cfg.get("routing", {}).get("enabled")
+                else State.QUOTA_WAIT.value
+            ) if work_lease and self.lane()["state"] == "QUOTA_WAIT" else State.READY.value
             self.conn.execute("BEGIN IMMEDIATE")
             try:
                 self.conn.execute("DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?", (lease["task_id"], lease["attempt_id"]))
@@ -850,6 +859,32 @@ class M1bController:
             outcome = Admission("ACCEPTED", parsed)
         except Exception as exc:
             outcome = Admission("FAILED_RETRYABLE", reason=f"{lane} worker failed: {exc}")
+        if outcome.status != "ACCEPTED" and any(
+            pattern in (outcome.reason or "").casefold() for pattern in QUOTA_PATTERNS
+        ):
+            now = float(self.clock())
+            delay = int(self.cfg["llm"]["quota_probe_backoff_seconds"][0])
+            self.store.conn.execute("BEGIN IMMEDIATE")
+            try:
+                self.store.conn.execute(
+                    "UPDATE resource_lanes SET availability_state='QUOTA_WAIT',quota_state='QUOTA_WAIT',"
+                    "next_probe_at=?,refusal_count=refusal_count+1,updated_at=? WHERE lane_id=?",
+                    (now + delay, utc_now(), lane),
+                )
+                self.store.conn.execute(
+                    "UPDATE tasks SET state=?,reason=?,updated_at=? WHERE task_id=? AND state=?",
+                    (State.WAITING_RESOURCE.value, f"{lane} quota refusal; lane-specific probe scheduled", utc_now(),
+                     task.task_id, State.RUNNING.value),
+                )
+                self.store.conn.execute("DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?", (task.task_id, lease["attempt_id"]))
+                self.store.conn.execute("UPDATE dispatch_attempts SET outcome='LANE_QUOTA_REFUSED',finished_at=? WHERE attempt_id=?",
+                                        (utc_now(), lease["attempt_id"]))
+                self.store.conn.execute("COMMIT")
+            except Exception:
+                if self.store.conn.in_transaction:
+                    self.store.conn.execute("ROLLBACK")
+                raise
+            return {"task_id": task.task_id, "outcome": "WAITING_RESOURCE", "lane": lane}
         if outcome.status == "ACCEPTED":
             self.state.mark_admitted(lease["attempt_id"])
             result = self._result(task, lease["attempt"], outcome)
@@ -868,6 +903,41 @@ class M1bController:
         if accepted in {"accepted", "accepted_retryable", "duplicate", "duplicate_retryable"}:
             path.rename(path.with_suffix(".accepted"))
         return {"task_id": task.task_id, "outcome": accepted, "lane": lane}
+
+    def _probe_alternate_lanes(self, now: float) -> list[dict[str, Any]]:
+        if not self.router.enabled:
+            return []
+        results = []
+        rows = list(self.store.conn.execute(
+            "SELECT * FROM resource_lanes WHERE lane_id IN ('LOCAL_OSS_MODEL','NON_WORK_AI') "
+            "AND quota_state='QUOTA_WAIT' AND next_probe_at IS NOT NULL AND next_probe_at<=?", (now,)
+        ))
+        for row in rows:
+            lane = row["lane_id"]
+            try:
+                if lane == "LOCAL_OSS_MODEL":
+                    response = OllamaHelper(self.cfg["llm"]["ollama"]).generate("Reply with exactly ADMISSION_OK")
+                else:
+                    command = self.cfg["non_work_ai"]["command"]
+                    proc = subprocess.run(command["argv"], input="Reply with exactly ADMISSION_OK", text=True,
+                                          capture_output=True, timeout=int(command["timeout_seconds"]),
+                                          shell=False, cwd=self.cfg["repository_root"])
+                    response = proc.stdout if proc.returncode == 0 else ""
+                if "ADMISSION_OK" not in response:
+                    raise RuntimeError("unexpected lane probe response")
+                self.store.conn.execute(
+                    "UPDATE resource_lanes SET availability_state='AVAILABLE',quota_state='AVAILABLE',"
+                    "next_probe_at=NULL,updated_at=? WHERE lane_id=?", (utc_now(), lane),
+                )
+                results.append({"lane": lane, "status": "AVAILABLE"})
+            except Exception as exc:
+                delay = int(self.cfg["llm"]["quota_probe_backoff_seconds"][-1])
+                self.store.conn.execute(
+                    "UPDATE resource_lanes SET next_probe_at=?,updated_at=? WHERE lane_id=?",
+                    (now + delay, utc_now(), lane),
+                )
+                results.append({"lane": lane, "status": "QUOTA_WAIT", "error": str(exc)})
+        return results
 
     def _complete_ai(self, task: Task, lease: dict[str, Any], now: float) -> dict[str, Any]:
         outcome = self.transport.execute(task, lease["attempt"])
@@ -965,8 +1035,11 @@ class M1bController:
             outcome = self.transport.probe()
             self.state.probe_result(outcome, now)
             if self.router.enabled:
-                self.router.sync_lanes()
+                routing = self.router.reconcile()
             probe = outcome.status
+        alternate_probes = self._probe_alternate_lanes(now)
+        if alternate_probes:
+            routing = self.router.reconcile()
         self.engine.reevaluate_waiting()
         self.store.conn.execute(
             "UPDATE tasks SET state=?,reason=?,updated_at=? WHERE state=? AND attempt<3",
@@ -994,12 +1067,13 @@ class M1bController:
             task = self.store.task(row)
             if task.is_llm and self.router.enabled and not routing_ok:
                 continue
+            route = None
+            if self.router.enabled:
+                route = self.store.conn.execute("SELECT selected_lane,route_status FROM task_routes WHERE task_id=?", (task.task_id,)).fetchone()
+                if route is None or route["route_status"] != "ROUTED" or route["selected_lane"] == "HUMAN_DECISION":
+                    self.store.transition(task.task_id, State.WAITING_USER, "no executable valid resource route", force_recovery=True)
+                    continue
             if task.is_llm:
-                if self.router.enabled:
-                    route = self.store.conn.execute("SELECT selected_lane,route_status FROM task_routes WHERE task_id=?", (task.task_id,)).fetchone()
-                    if route is None or route["route_status"] != "ROUTED" or route["selected_lane"] == "HUMAN_DECISION":
-                        self.store.transition(task.task_id, State.WAITING_USER, "no executable valid resource route", force_recovery=True)
-                        continue
                 local_ok = bool(row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
                 if not local_ok or self.cfg["llm"]["require_issue_label"] not in task.labels:
                     self.store.transition(task.task_id, State.WAITING_USER,
@@ -1033,4 +1107,5 @@ class M1bController:
         return {"poll": poll, "cancelled_leases": cancelled,
                 "recovered_results": recovered_results,
                 "expired_leases": expired, "routing": routing, "probe": probe,
+                "alternate_probes": alternate_probes,
                 "dispatched": dispatched, "publications": publications, "status": status}
