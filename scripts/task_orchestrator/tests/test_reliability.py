@@ -379,6 +379,45 @@ class ReliabilityTests(unittest.TestCase):
             "'<!-- cef-dy-orch-attention-resolution:v1 %' AND task_id=?", (task.task_id,)
         ).fetchone()[0], 1)
 
+    def test_two_attention_episodes_each_get_exactly_one_resolution(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.fx.cfg["llm"]["detached_workers"] = True
+        self.fx.cfg["_config_path"] = str(self.fx.root / "config.yaml")
+        task = self.fx.task(
+            task_id="INFRA-TWO-ATTN-001", task_type="llm_worker",
+            action="semantic_helper", source_issue=18, labels=("orchestrator:task",),
+        )
+        self.engine.ingest(task)
+        transport = FakePublication()
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport)
+        controller.cycle(StaticSource([]))
+        approved = self.fx.task(
+            task_id=task.task_id, task_type="llm_worker", action="semantic_helper",
+            source_issue=18, labels=("orchestrator:task", "orchestrator:llm-approved"),
+        )
+        self.assertEqual(self.store.ingest(approved), "metadata_updated")
+        completed = mock.Mock(returncode=0, stdout="", stderr="")
+        with mock.patch("task_orchestrator.reliability.subprocess.run", return_value=completed):
+            controller.cycle(StaticSource([]))
+        self.assertEqual(self.store.ingest(task), "metadata_updated")
+        self.store.transition(task.task_id, State.WAITING_USER,
+                              "approval revoked again", force_recovery=True)
+        controller.state.cancel_invalid_leases()
+        controller.cycle(StaticSource([]))
+        self.assertEqual(self.store.ingest(approved), "metadata_updated")
+        with mock.patch("task_orchestrator.reliability.subprocess.run", return_value=completed):
+            controller.cycle(StaticSource([]))
+        controller.cycle(StaticSource([]))
+        self.assertEqual(sum("ATTENTION_REQUIRED: true" in body for body in transport.bodies), 2)
+        self.assertEqual(sum("ATTENTION_REQUIRED: false" in body for body in transport.bodies), 2)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM publication_outbox WHERE marker LIKE "
+            "'<!-- cef-dy-orch-attention-resolution:v1 %' AND task_id=?", (task.task_id,)
+        ).fetchone()[0], 2)
+
     def test_attention_without_source_issue_uses_configured_durable_issue(self):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["github"]["attention_issue"] = 4

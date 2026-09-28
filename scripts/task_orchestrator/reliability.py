@@ -614,7 +614,7 @@ class M1bController:
         preview_only = bool(self.cfg["publishing"]["preview_only"])
         attention_states = {State.WAITING_USER.value, State.WAITING_APPROVAL.value,
                             State.BLOCKED.value}
-        resolved_attention_targets: dict[str, tuple[str, str]] = {}
+        resolved_attention_targets: list[tuple[str, str, str]] = []
         for row in self.store.conn.execute(
             "SELECT p.publication_id,p.status,p.task_id,p.target,t.* FROM publication_outbox p "
             "JOIN tasks t ON t.task_id=p.task_id "
@@ -630,15 +630,20 @@ class M1bController:
                 outcomes.append({"publication_id": row["publication_id"],
                                  "status": OutboxStatus.SUPERSEDED.value})
             elif row["status"] == OutboxStatus.PUBLISHED.value:
-                resolved_attention_targets[row["task_id"]] = (row["target"], row["publication_id"])
-        for task_id, (target, attention_publication_id) in sorted(resolved_attention_targets.items()):
+                resolved_attention_targets.append(
+                    (row["task_id"], row["target"], row["publication_id"])
+                )
+        for task_id, target, attention_publication_id in sorted(resolved_attention_targets):
             row = self.store.get(task_id)
             if row is None:
                 continue
+            resolution_sha = hashlib.sha256(
+                f"{task_id}\0{attention_publication_id}\0resolved".encode()
+            ).hexdigest()
             if self.store.conn.execute(
-                "SELECT 1 FROM publication_outbox WHERE task_id=? "
+                "SELECT 1 FROM publication_outbox WHERE task_id=? AND result_sha256=? "
                 "AND marker LIKE '<!-- cef-dy-orch-attention-resolution:v1 %' LIMIT 1",
-                (task_id,),
+                (task_id, resolution_sha),
             ).fetchone() is not None:
                 continue
             try:
