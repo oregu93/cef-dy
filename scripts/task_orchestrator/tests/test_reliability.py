@@ -53,14 +53,15 @@ class StaticSource:
 
 
 class FakePublication:
-    def __init__(self):
+    def __init__(self, responses=()):
         self.sends = 0
         self.bodies = []
+        self.responses = list(responses)
 
     def send_comment(self, target, body):
         self.sends += 1
         self.bodies.append(body)
-        return TransportResponse(201, remote_id="comment-1")
+        return self.responses.pop(0) if self.responses else TransportResponse(201, remote_id="comment-1")
 
     def list_comments(self, target):
         return CommentPage((), True)
@@ -173,6 +174,40 @@ class ReliabilityTests(unittest.TestCase):
         self.assertEqual(len(winners), 1)
         self.assertEqual(self.store.conn.execute("SELECT count(*) FROM worker_leases").fetchone()[0], 1)
 
+    def test_global_ai_slot_allows_only_one_lease_across_tasks_and_cycles(self):
+        for task_id in ("AI-SLOT-001", "AI-SLOT-002"):
+            self.engine.ingest(self.ai_task(task_id))
+        self.fx.cfg["llm"]["detached_workers"] = True
+        self.fx.cfg["_config_path"] = str(self.fx.root / "config.yaml")
+        completed = mock.Mock(returncode=0, stdout="", stderr="")
+        controller = M1bController(self.fx.cfg, self.store, FakeAI())
+        with mock.patch("task_orchestrator.reliability.subprocess.run", return_value=completed):
+            first = controller.cycle(StaticSource([]))
+            second = controller.cycle(StaticSource([]))
+        launched = [item for item in first["dispatched"] + second["dispatched"]
+                    if item["outcome"] == "launched"]
+        self.assertEqual(len(launched), 1)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM worker_leases w JOIN dispatch_attempts d "
+            "ON d.attempt_id=w.attempt_id WHERE d.lane='AI_BOUNDED_SPECIALIST'"
+        ).fetchone()[0], 1)
+
+    def test_concurrent_claims_for_distinct_ai_tasks_share_one_global_slot(self):
+        for task_id in ("AI-SLOT-RACE-001", "AI-SLOT-RACE-002"):
+            self.engine.ingest(self.ai_task(task_id))
+        database = self.fx.root / "state" / "state.sqlite3"
+
+        def claim(task_id):
+            local = Store(database)
+            try:
+                return M1bStore(local.conn, self.fx.cfg).claim(local.get(task_id), task_id, 100.0)
+            finally:
+                local.close()
+
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            claims = list(pool.map(claim, ["AI-SLOT-RACE-001", "AI-SLOT-RACE-002"] * 4))
+        self.assertEqual(sum(item is not None for item in claims), 1)
+
     def test_result_is_accepted_exactly_once(self):
         self.engine.ingest(self.fx.task(task_id="INFRA-RESULT-001"))
         row = self.store.get("INFRA-RESULT-001")
@@ -249,17 +284,105 @@ class ReliabilityTests(unittest.TestCase):
     def test_shadow_attention_projection_has_zero_network_writes(self):
         self.fx.cfg["mode"] = "shadow"
         self.fx.cfg["autonomy"]["enabled"] = False
-        self.engine.ingest(self.fx.task(task_id="INFRA-SHADOW-ATTN-001", source_issue=15))
-        self.store.transition("INFRA-SHADOW-ATTN-001", State.WAITING_USER,
-                              "human decision", force_recovery=True)
+        self.engine.ingest(self.fx.task(
+            task_id="INFRA-SHADOW-ATTN-001", task_type="llm_worker",
+            action="semantic_helper", source_issue=15,
+            labels=("orchestrator:task",),
+        ))
         transport = FakePublication()
-        M1bController(self.fx.cfg, self.store, FakeAI(),
-                      publication_transport=transport).cycle(StaticSource([]))
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport)
+        controller.cycle(StaticSource([]))
         self.assertEqual(transport.sends, 0)
         row = self.store.conn.execute(
             "SELECT * FROM publication_outbox WHERE task_id='INFRA-SHADOW-ATTN-001'"
         ).fetchone()
         self.assertEqual(row["status"], "PREVIEW")
+        self.fx.cfg["mode"] = "pilot"
+        self.fx.cfg["autonomy"]["enabled"] = True
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        M1bController(self.fx.cfg, self.store, FakeAI(),
+                      publication_transport=transport).cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 1)
+        row = self.store.conn.execute(
+            "SELECT * FROM publication_outbox WHERE task_id='INFRA-SHADOW-ATTN-001'"
+        ).fetchone()
+        self.assertEqual(row["status"], "PUBLISHED")
+
+    def test_unpublished_attention_is_superseded_after_resolution(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        task = self.fx.task(
+            task_id="INFRA-STALE-ATTN-001", task_type="llm_worker",
+            action="semantic_helper", source_issue=16, labels=("orchestrator:task",),
+        )
+        self.engine.ingest(task)
+        transport = FakePublication((TransportResponse(429, retry_after_seconds=60),))
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport, clock=lambda: 100.0)
+        controller.cycle(StaticSource([]))
+        approved = self.fx.task(
+            task_id=task.task_id, task_type="llm_worker", action="semantic_helper",
+            source_issue=16, labels=("orchestrator:task", "orchestrator:llm-approved"),
+        )
+        self.assertEqual(self.store.ingest(approved), "metadata_updated")
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport, clock=lambda: 200.0)
+        controller.cycle(StaticSource([]))
+        controller.cycle(StaticSource([]))
+        attention = self.store.conn.execute(
+            "SELECT status FROM publication_outbox WHERE marker LIKE "
+            "'<!-- cef-dy-orch-attention:v1 %' AND task_id=?", (task.task_id,)
+        ).fetchone()
+        self.assertEqual(attention["status"], "SUPERSEDED")
+        self.assertEqual(sum("ATTENTION_REQUIRED: true" in body for body in transport.bodies), 1)
+        self.assertEqual(transport.sends, 2)
+
+    def test_published_attention_gets_exactly_one_resolution_update(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        task = self.fx.task(
+            task_id="INFRA-RESOLVE-ATTN-001", task_type="llm_worker",
+            action="semantic_helper", source_issue=17, labels=("orchestrator:task",),
+        )
+        self.engine.ingest(task)
+        transport = FakePublication()
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(),
+                                   publication_transport=transport)
+        controller.cycle(StaticSource([]))
+        approved = self.fx.task(
+            task_id=task.task_id, task_type="llm_worker", action="semantic_helper",
+            source_issue=17, labels=("orchestrator:task", "orchestrator:llm-approved"),
+        )
+        self.assertEqual(self.store.ingest(approved), "metadata_updated")
+        controller.cycle(StaticSource([]))
+        controller.cycle(StaticSource([]))
+        self.assertEqual(sum("ATTENTION_REQUIRED: false" in body for body in transport.bodies), 1)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM publication_outbox WHERE marker LIKE "
+            "'<!-- cef-dy-orch-attention-resolution:v1 %' AND task_id=?", (task.task_id,)
+        ).fetchone()[0], 1)
+
+    def test_attention_without_source_issue_uses_configured_durable_issue(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["github"]["attention_issue"] = 4
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.engine.ingest(self.fx.task(
+            task_id="INFRA-FALLBACK-ATTN-001", task_type="llm_worker",
+            action="semantic_helper", source_issue=None, labels=("orchestrator:task",),
+        ))
+        transport = FakePublication()
+        M1bController(self.fx.cfg, self.store, FakeAI(),
+                      publication_transport=transport).cycle(StaticSource([]))
+        row = self.store.conn.execute(
+            "SELECT target,status FROM publication_outbox WHERE task_id='INFRA-FALLBACK-ATTN-001'"
+        ).fetchone()
+        self.assertEqual((row["target"], row["status"]), ("issue:4", "PUBLISHED"))
 
     def test_hundred_task_load_has_no_double_execution_or_starvation(self):
         self.fx.cfg["autonomy"]["max_batch_tasks"] = 16

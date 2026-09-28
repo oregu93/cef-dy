@@ -22,7 +22,8 @@ from .engine import Engine
 from .github import GitHubCommentTransport
 from .model import State, Task, WorkerResult, utc_now
 from .publishing import (
-    OutboxStatus, Publisher, enqueue_attention_preview, enqueue_result_preview,
+    OutboxStatus, Publisher, enqueue_attention_preview,
+    enqueue_attention_resolution_preview, enqueue_result_preview,
 )
 from . import workers
 
@@ -260,6 +261,15 @@ class M1bStore:
             if current is None or current["state"] != State.READY.value:
                 self.conn.execute("ROLLBACK")
                 return None
+            lane = "AI_BOUNDED_SPECIALIST" if self._is_ai(row["task_id"]) else "LOCAL_DETERMINISTIC"
+            if lane == "AI_BOUNDED_SPECIALIST":
+                active_ai = self.conn.execute(
+                    "SELECT count(*) FROM worker_leases w JOIN dispatch_attempts d "
+                    "ON d.attempt_id=w.attempt_id WHERE d.lane='AI_BOUNDED_SPECIALIST'"
+                ).fetchone()[0]
+                if int(active_ai) >= int(self.cfg["max_concurrent_llm_runs"]):
+                    self.conn.execute("ROLLBACK")
+                    return None
             try:
                 self.conn.execute(
                     "INSERT INTO worker_leases VALUES(?,?,?,?,?)",
@@ -275,7 +285,6 @@ class M1bStore:
             if self.conn.execute("SELECT changes()").fetchone()[0] != 1:
                 self.conn.execute("ROLLBACK")
                 return None
-            lane = "AI_BOUNDED_SPECIALIST" if self._is_ai(row["task_id"]) else "LOCAL_DETERMINISTIC"
             self.conn.execute(
                 "INSERT INTO dispatch_attempts(attempt_id,task_id,worker_id,lane,attempt,admitted,outcome,started_at,finished_at) "
                 "VALUES(?,?,?,?,?,0,NULL,?,NULL)",
@@ -603,6 +612,38 @@ class M1bController:
         outcomes: list[dict[str, Any]] = []
         self.store.recover_uncertain_publications()
         preview_only = bool(self.cfg["publishing"]["preview_only"])
+        attention_states = {State.WAITING_USER.value, State.WAITING_APPROVAL.value,
+                            State.BLOCKED.value}
+        resolved_attention_targets: dict[str, str] = {}
+        for row in self.store.conn.execute(
+            "SELECT p.publication_id,p.status,p.task_id,p.target,t.* FROM publication_outbox p "
+            "JOIN tasks t ON t.task_id=p.task_id "
+            "WHERE p.marker LIKE '<!-- cef-dy-orch-attention:v1 %'"
+        ):
+            if row["state"] in attention_states:
+                continue
+            if row["status"] in {OutboxStatus.PREVIEW.value, OutboxStatus.PENDING.value}:
+                self.store.update_publication(
+                    row["publication_id"], OutboxStatus.SUPERSEDED.value,
+                    reason="task no longer requires human attention",
+                )
+                outcomes.append({"publication_id": row["publication_id"],
+                                 "status": OutboxStatus.SUPERSEDED.value})
+            elif row["status"] == OutboxStatus.PUBLISHED.value:
+                resolved_attention_targets[row["task_id"]] = row["target"]
+        for task_id, target in sorted(resolved_attention_targets.items()):
+            row = self.store.get(task_id)
+            if row is None:
+                continue
+            try:
+                outcomes.append(enqueue_attention_resolution_preview(
+                    self.store, repository=self.cfg["github"]["repository"],
+                    target=target, task_row=row,
+                    preview_only=preview_only,
+                ))
+            except Exception as exc:
+                outcomes.append({"task_id": task_id, "status": "ATTENTION_RESOLUTION_ENQUEUE_ERROR",
+                                 "error": str(exc)})
         for row in self.store.conn.execute(
             "SELECT r.task_id,t.source_issue FROM accepted_results r JOIN tasks t USING(task_id) "
             "WHERE t.source_issue IS NOT NULL ORDER BY r.accepted_at,r.task_id"
@@ -619,13 +660,18 @@ class M1bController:
             except Exception as exc:
                 outcomes.append({"task_id": row["task_id"], "status": "ENQUEUE_ERROR", "error": str(exc)})
         for row in self.store.conn.execute(
-            "SELECT * FROM tasks WHERE source_issue IS NOT NULL "
-            "AND state IN ('WAITING_USER','WAITING_APPROVAL','BLOCKED') ORDER BY created_at,task_id"
+            "SELECT * FROM tasks WHERE state IN ('WAITING_USER','WAITING_APPROVAL','BLOCKED') "
+            "ORDER BY created_at,task_id"
         ):
+            target_issue = row["source_issue"] or self.cfg["github"].get("attention_issue")
+            if target_issue is None:
+                outcomes.append({"task_id": row["task_id"], "status": "ATTENTION_LOCAL_ONLY",
+                                 "error": "no source_issue or github.attention_issue"})
+                continue
             try:
                 outcomes.append(enqueue_attention_preview(
                     self.store, repository=self.cfg["github"]["repository"],
-                    target=f"issue:{row['source_issue']}", task_row=row,
+                    target=f"issue:{target_issue}", task_row=row,
                     preview_only=preview_only,
                 ))
             except Exception as exc:

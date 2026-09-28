@@ -20,7 +20,7 @@ DEFAULTS: dict[str, Any] = {
     "orphaned_run_after_seconds": 1800,
     "max_concurrent_workers": 2,
     "max_concurrent_llm_runs": 1,
-    "github": {"enabled": False, "repository": "oregu93/cef-dy", "task_label": "orchestrator:task", "track_manual_edits": True, "api_base": "https://api.github.com", "token_env": "GITHUB_TOKEN", "timeout_seconds": 20, "max_pages": 10, "backoff_initial_seconds": 5, "backoff_max_seconds": 300},
+    "github": {"enabled": False, "repository": "oregu93/cef-dy", "task_label": "orchestrator:task", "attention_issue": None, "track_manual_edits": True, "api_base": "https://api.github.com", "token_env": "GITHUB_TOKEN", "timeout_seconds": 20, "max_pages": 10, "backoff_initial_seconds": 5, "backoff_max_seconds": 300},
     "llm": {
         "dispatch_enabled": False, "paid_fallback_allowed": False,
         "require_issue_label": "orchestrator:llm-approved",
@@ -108,6 +108,11 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValidationError("live publishing requires trusted_authors")
     if cfg["publishing"].get("enabled") and not cfg["github"].get("enabled"):
         raise ValidationError("live publishing requires github.enabled")
+    attention_issue = cfg["github"].get("attention_issue")
+    if attention_issue is not None and (
+        isinstance(attention_issue, bool) or not isinstance(attention_issue, int) or attention_issue < 1
+    ):
+        raise ValidationError("github.attention_issue must be null or a positive integer")
     if isinstance(cfg["visibility"].get("quota_stale_after_seconds"), bool) or int(cfg["visibility"].get("quota_stale_after_seconds", 0)) <= 0:
         raise ValidationError("visibility quota_stale_after_seconds must be positive")
     for window in ("five_hour", "weekly"):

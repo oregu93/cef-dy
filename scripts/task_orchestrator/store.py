@@ -342,6 +342,17 @@ class Store:
             if identity:
                 if identity["result_sha256"] != result_sha256:
                     raise TransitionError("same publication identity has a different RESULT SHA-256")
+                if identity["status"] == "PREVIEW" and status == "PENDING":
+                    now = utc_now()
+                    self.conn.execute(
+                        "UPDATE publication_outbox SET status='PENDING',updated_at=? "
+                        "WHERE publication_id=? AND status='PREVIEW'",
+                        (now, identity["publication_id"]),
+                    )
+                    self.append_event(task_id, "PUBLICATION_STATUS", "PREVIEW", "PENDING",
+                                      {"publication_id": identity["publication_id"],
+                                       "reason": "live publishing activated"})
+                    return "promoted"
                 return "duplicate"
             now = utc_now()
             self.conn.execute(

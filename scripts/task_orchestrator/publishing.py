@@ -37,6 +37,7 @@ class OutboxStatus(str, Enum):
     PUBLISHED = "PUBLISHED"
     FAILED = "FAILED"
     CONFLICT = "CONFLICT"
+    SUPERSEDED = "SUPERSEDED"
 
 
 @dataclass(frozen=True)
@@ -251,6 +252,52 @@ def enqueue_attention_preview(
     return {"outcome": outcome, "publication_id": publication_id,
             "status": status.value, "preview": preview,
             "attention_sha256": attention_sha}
+
+
+def enqueue_attention_resolution_preview(
+    store: Any, *, repository: str, target: str, task_row: Mapping[str, Any],
+    preview_only: bool = True,
+) -> dict[str, Any]:
+    """Durably clear a previously published attention request."""
+    if not isinstance(target, str) or re.fullmatch(r"issue:[1-9][0-9]*", target) is None:
+        raise ValidationError("attention target must be an explicit issue:<number>")
+    if task_row["state"] in {"WAITING_USER", "WAITING_APPROVAL", "BLOCKED"}:
+        raise ValidationError("attention resolution requires a non-attention task state")
+    task = store.task(task_row)
+    resolution_sha = hashlib.sha256(
+        f"{task.task_id}\0resolved\0{task_row['state']}\0{task_row['reason'] or ''}".encode()
+    ).hexdigest()
+    resolution_identity = hashlib.sha256(
+        f"{task_row['envelope_hash']}\0attention-resolution:v1\0{resolution_sha}".encode()
+    ).hexdigest()
+    marker = (
+        f"<!-- cef-dy-orch-attention-resolution:v1 repo={repository} task={task.task_id} "
+        f"envelope={task_row['envelope_hash']} resolution={resolution_sha} -->"
+    )
+    preview = "\n".join((
+        marker,
+        f"### Orchestrator attention resolved — `{_safe_text(task.task_id, 300)}`",
+        "",
+        "ATTENTION_REQUIRED: false",
+        f"RESOLUTION_STATE: `{_safe_text(task_row['state'], 100)}`",
+        f"WHY_NOW: {_safe_text(task_row['reason'] or 'task no longer requires human attention')}",
+        "OTHER_WORK_CONTINUES: true",
+        "Authority: operational status only; no scientific or Project Control promotion",
+        "",
+    ))
+    status = OutboxStatus.PREVIEW if preview_only else OutboxStatus.PENDING
+    publication_id = hashlib.sha256(
+        f"{repository}\0{task.task_id}\0{resolution_identity}\0{target}".encode()
+    ).hexdigest()
+    outcome = store.enqueue_publication(
+        publication_id=publication_id, repository=repository,
+        task_id=task.task_id, envelope_hash=resolution_identity,
+        result_sha256=resolution_sha, target=target, marker=marker,
+        preview=preview, status=status.value,
+    )
+    return {"outcome": outcome, "publication_id": publication_id,
+            "status": status.value, "preview": preview,
+            "resolution_sha256": resolution_sha}
 
 
 class Publisher:
