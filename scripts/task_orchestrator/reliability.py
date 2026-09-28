@@ -347,7 +347,9 @@ class M1bStore:
         required = {"schema_version", "task_id", "attempt", "status", "canonical_head",
                     "worker", "started_at", "finished_at", "checks", "artifacts",
                     "error", "retryable"}
-        if not isinstance(result, dict) or set(result) != required:
+        semantic_fields = {"summary", "semantic_verdict", "semantic_error"}
+        if (not isinstance(result, dict) or not required.issubset(result)
+                or set(result) - required - semantic_fields):
             raise ValueError("result schema mismatch")
         if result["schema_version"] != 1 or result["status"] not in {"SUCCEEDED", "FAILED"}:
             raise ValueError("result status/schema invalid")
@@ -360,6 +362,16 @@ class M1bStore:
                 raise ValueError(f"result {key} invalid")
         if result["error"] is not None and not isinstance(result["error"], str):
             raise ValueError("result error invalid")
+        present_semantic = semantic_fields.intersection(result)
+        if present_semantic and present_semantic != semantic_fields:
+            raise ValueError("semantic result fields must be complete")
+        if present_semantic:
+            if not isinstance(result["summary"], str):
+                raise ValueError("result summary invalid")
+            if not isinstance(result["semantic_verdict"], str) or not result["semantic_verdict"]:
+                raise ValueError("result semantic_verdict invalid")
+            if result["semantic_error"] is not None and not isinstance(result["semantic_error"], str):
+                raise ValueError("result semantic_error invalid")
         task_id = str(result["task_id"])
         encoded = _canonical(result)
         result_hash = hashlib.sha256(encoded.encode()).hexdigest()
@@ -605,15 +617,21 @@ class M1bStore:
             "SELECT state,count(*) n FROM tasks GROUP BY state ORDER BY state"
         )}
         leases = [dict(row) for row in self.conn.execute("SELECT * FROM worker_leases ORDER BY task_id")]
+        llm_attempts = self.conn.execute(
+            "SELECT count(*) FROM dispatch_attempts WHERE admitted=1 AND lane IN "
+            "('AI_BOUNDED_SPECIALIST','WORK_CODEX','LOCAL_OSS_MODEL','NON_WORK_AI')"
+        ).fetchone()[0]
         return {
             "schema_version": 2, "generated_at": utc_now(),
             "ORCHESTRATOR_M1B_STATE": "OPERATIONAL",
+            "RUNTIME_MODE": "PRODUCTION",
             "CONTROL_PLANE_STATE": "ACTIVE" if self.cfg["github"]["enabled"] else "LOCAL_ONLY",
             "DETERMINISTIC_LANE": "ACTIVE",
             "AI_LANE": lane["state"],
             "NEXT_AI_PROBE_AT": _epoch_to_utc(lane["next_probe_at"]),
             "AI_REFUSAL_COUNT": lane["refusal_count"],
             "ACTIVE_WORKER_LEASES": leases,
+            "LLM_EXECUTION_ATTEMPTS": int(llm_attempts),
             "TASK_COUNTS": counts,
             "SCIENCE_STRATEGY_AUTHORITY": "HUMAN",
         }
@@ -780,6 +798,9 @@ class M1bController:
                     "worker", "started_at", "finished_at", "checks", "artifacts", "error"}
         public = {key: result[key] for key in required if key in result}
         if set(public) == required:
+            for key in ("summary", "semantic_verdict", "semantic_error"):
+                if key in result:
+                    public[key] = result[key]
             _atomic_yaml(self.state_dir / "results" / f"{result['task_id']}.yaml", public)
 
     def ingest_spool(self) -> dict[str, int]:
@@ -807,13 +828,20 @@ class M1bController:
     @staticmethod
     def _result(task: Task, attempt: int, outcome: Admission) -> dict[str, Any]:
         result = outcome.result or {}
-        status = "SUCCEEDED" if str(result.get("status", "SUCCEEDED")).upper() == "SUCCEEDED" else "FAILED"
+        semantic_verdict = str(result.get("status", "UNKNOWN")).strip().upper() or "UNKNOWN"
+        semantic_error = result.get("error")
         return {
             "schema_version": 1, "task_id": task.task_id, "attempt": attempt,
-            "status": status, "canonical_head": task.canonical_head,
+            # ACCEPTED means that the bounded semantic worker executed and
+            # returned a structurally valid result.  Its substantive verdict
+            # is evidence, not the transport/execution state of this task.
+            "status": "SUCCEEDED", "canonical_head": task.canonical_head,
             "worker": "ai_bounded_specialist", "started_at": utc_now(),
             "finished_at": utc_now(), "checks": result.get("checks", []),
-            "artifacts": result.get("artifacts", []), "error": result.get("error"),
+            "artifacts": result.get("artifacts", []), "error": None,
+            "summary": str(result.get("summary", "")),
+            "semantic_verdict": semantic_verdict,
+            "semantic_error": None if semantic_error is None else str(semantic_error),
             "retryable": False,
         }
 
@@ -1104,6 +1132,10 @@ class M1bController:
             LAST_WORKER_RESULT=dispatched[-1] if dispatched else None,
             BLOCKED_TASKS=blockers, WAITING_USER_TASKS=waiting,
         )
+        # The dashboard opens an immutable, read-only snapshot and therefore
+        # intentionally ignores WAL files.  Publish the completed cycle to the
+        # main database without making the dashboard a writer or a dependency.
+        self.store.conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
         return {"poll": poll, "cancelled_leases": cancelled,
                 "recovered_results": recovered_results,
                 "expired_leases": expired, "routing": routing, "probe": probe,

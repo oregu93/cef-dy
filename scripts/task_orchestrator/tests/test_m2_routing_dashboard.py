@@ -7,6 +7,8 @@ import unittest
 import urllib.error
 import urllib.request
 
+import yaml
+
 from task_orchestrator.dashboard import create_server, open_readonly, snapshot
 from task_orchestrator.engine import Engine
 from task_orchestrator.model import State
@@ -33,6 +35,16 @@ class FakeAI:
         return Admission("ACCEPTED", {
             "status": "SUCCEEDED", "checks": [], "artifacts": [], "error": None,
         })
+
+
+class SequenceAI(FakeAI):
+    def __init__(self, outcomes):
+        super().__init__()
+        self.outcomes = list(outcomes)
+
+    def execute(self, task, attempt):
+        self.tasks.append(task.task_id)
+        return self.outcomes.pop(0)
 
 
 class M2RoutingDashboardTests(unittest.TestCase):
@@ -157,6 +169,137 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.assertEqual(requirement["review_task_id"], review_id)
         route = self.store.conn.execute("SELECT * FROM task_routes WHERE task_id=?", (review_id,)).fetchone()
         self.assertEqual(route["role_id"], "00")
+
+    def reviewed_semantic_task(self, task_id):
+        return self.fx.task(
+            task_id=task_id, role="07_INFRASTRUCTURE",
+            task_type="llm_worker", action="semantic_helper",
+            labels=("orchestrator:task", "orchestrator:llm-approved"),
+            inputs={"resource_requirement": "WORK_REQUIRED", "review_required": True,
+                    "review_role": "00", "auto_review_authorized": True},
+        )
+
+    @staticmethod
+    def semantic_outcome(verdict="FAILED", summary="negative audit findings"):
+        return Admission("ACCEPTED", {
+            "status": verdict, "summary": summary,
+            "checks": [{"check": "scope", "status": "PASS"}],
+            "artifacts": [], "error": None,
+        })
+
+    def test_negative_semantic_verdict_completes_execution_and_creates_review(self):
+        parent = self.reviewed_semantic_task("NEGATIVE-AUDIT-001")
+        self.engine.ingest(parent)
+        fake = SequenceAI([
+            self.semantic_outcome(),
+            self.semantic_outcome("PASS", "independent review complete"),
+        ])
+        controller = M1bController(self.fx.cfg, self.store, fake)
+        controller.cycle()
+        self.assertEqual(self.store.get(parent.task_id)["state"], State.SUCCEEDED.value)
+        accepted = json.loads(self.store.conn.execute(
+            "SELECT result_json FROM accepted_results WHERE task_id=?", (parent.task_id,)
+        ).fetchone()[0])
+        self.assertEqual(accepted["status"], "SUCCEEDED")
+        self.assertEqual(accepted["semantic_verdict"], "FAILED")
+        controller.cycle()
+        review_id = parent.task_id + "-REVIEW-001"
+        self.assertEqual(self.store.get(review_id)["state"], State.SUCCEEDED.value)
+        requirement = self.store.conn.execute(
+            "SELECT * FROM review_requirements WHERE parent_task_id=?", (parent.task_id,)
+        ).fetchone()
+        self.assertEqual(requirement["review_task_id"], review_id)
+
+    def test_semantic_summary_survives_accepted_and_public_result(self):
+        task = self.reviewed_semantic_task("SUMMARY-E2E-001")
+        summary = "P1 protocol gap: substantive findings are negative."
+        self.engine.ingest(task)
+        M1bController(
+            self.fx.cfg, self.store, SequenceAI([self.semantic_outcome(summary=summary)])
+        ).cycle()
+        durable = json.loads(self.store.conn.execute(
+            "SELECT result_json FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone()[0])
+        public = yaml.safe_load(
+            (self.fx.root / "state" / "results" / f"{task.task_id}.yaml").read_text(encoding="utf-8")
+        )
+        self.assertEqual(durable["summary"], summary)
+        self.assertEqual(public["summary"], summary)
+        self.assertEqual(public["semantic_verdict"], "FAILED")
+
+    def test_duplicate_semantic_result_remains_exactly_once(self):
+        task = self.reviewed_semantic_task("SEMANTIC-DUPLICATE-001")
+        self.engine.ingest(task)
+        controller = M1bController(
+            self.fx.cfg, self.store, SequenceAI([self.semantic_outcome()])
+        )
+        controller.cycle()
+        row = self.store.conn.execute(
+            "SELECT * FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone()
+        self.assertEqual(controller.state.accept(row["attempt_id"], json.loads(row["result_json"])), "duplicate")
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone()[0], 1)
+
+    def test_transport_failure_is_distinct_from_negative_semantic_verdict(self):
+        transport_task = self.reviewed_semantic_task("A-TRANSPORT-FAILURE-001")
+        negative_task = self.reviewed_semantic_task("B-NEGATIVE-VERDICT-002")
+        self.engine.ingest(transport_task)
+        self.engine.ingest(negative_task)
+        fake = SequenceAI([
+            Admission("FAILED_RETRYABLE", reason="worker transport disconnected"),
+            self.semantic_outcome(),
+        ])
+        M1bController(self.fx.cfg, self.store, fake).cycle()
+        self.assertEqual(self.store.get(transport_task.task_id)["state"], State.FAILED_RETRYABLE.value)
+        self.assertIsNone(self.store.conn.execute(
+            "SELECT 1 FROM accepted_results WHERE task_id=?", (transport_task.task_id,)
+        ).fetchone())
+        self.assertEqual(self.store.get(negative_task.task_id)["state"], State.SUCCEEDED.value)
+        negative = json.loads(self.store.conn.execute(
+            "SELECT result_json FROM accepted_results WHERE task_id=?", (negative_task.task_id,)
+        ).fetchone()[0])
+        self.assertEqual(negative["semantic_verdict"], "FAILED")
+        self.assertIsNone(negative["error"])
+
+    def test_review_worker_failure_does_not_rewrite_parent_execution(self):
+        parent = self.reviewed_semantic_task("REVIEW-FAILURE-ISOLATION-001")
+        self.engine.ingest(parent)
+        fake = SequenceAI([
+            self.semantic_outcome("PASS", "parent execution complete"),
+            Admission("FAILED_RETRYABLE", reason="review worker transport failed"),
+        ])
+        controller = M1bController(self.fx.cfg, self.store, fake)
+        controller.cycle()
+        before = dict(self.store.conn.execute(
+            "SELECT * FROM accepted_results WHERE task_id=?", (parent.task_id,)
+        ).fetchone())
+        controller.cycle()
+        self.assertEqual(self.store.get(parent.task_id)["state"], State.SUCCEEDED.value)
+        self.assertEqual(dict(self.store.conn.execute(
+            "SELECT * FROM accepted_results WHERE task_id=?", (parent.task_id,)
+        ).fetchone()), before)
+        self.assertEqual(
+            self.store.get(parent.task_id + "-REVIEW-001")["state"],
+            State.FAILED_RETRYABLE.value,
+        )
+
+    def test_production_telemetry_reports_runtime_and_admitted_ai_attempts(self):
+        task = self.reviewed_semantic_task("PRODUCTION-TELEMETRY-001")
+        self.engine.ingest(task)
+        controller = M1bController(
+            self.fx.cfg, self.store,
+            SequenceAI([self.semantic_outcome("PASS", "telemetry fixture")]),
+        )
+        controller.cycle()
+        engine_status = self.engine.status()
+        controller_status = controller.state.status()
+        self.assertEqual(engine_status["mode"], "production")
+        self.assertEqual(engine_status["configured_mode"], "pilot")
+        self.assertEqual(engine_status["llm_calls"], 1)
+        self.assertEqual(controller_status["RUNTIME_MODE"], "PRODUCTION")
+        self.assertEqual(controller_status["LLM_EXECUTION_ATTEMPTS"], 1)
 
     def test_ai_prompt_contains_exact_canonical_bootstrap(self):
         task = self.fx.task(role="07_INFRASTRUCTURE", task_type="llm_worker", action="semantic_helper")

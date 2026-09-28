@@ -215,13 +215,29 @@ class Engine:
         for row in self.store.list_state():
             counts[row["state"]] = counts.get(row["state"], 0) + 1
             items.append({"task_id": row["task_id"], "state": row["state"], "reason": row["reason"], "source_issue": row["source_issue"], "updated_at": row["updated_at"]})
+        production = (
+            self.cfg["mode"] == "pilot"
+            and self.cfg["autonomy"]["enabled"]
+            and not self.cfg["autonomy"]["plan_only"]
+        )
+        llm_attempts = 0
+        table = self.store.conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='dispatch_attempts'"
+        ).fetchone()
+        if table is not None:
+            llm_attempts = int(self.store.conn.execute(
+                "SELECT count(*) FROM dispatch_attempts WHERE admitted=1 AND lane IN "
+                "('AI_BOUNDED_SPECIALIST','WORK_CODEX','LOCAL_OSS_MODEL','NON_WORK_AI')"
+            ).fetchone()[0])
         return {
             "schema_version": 1,
             "generated_at": utc_now(),
-            "mode": self.cfg["mode"],
+            "mode": "production" if production else self.cfg["mode"],
+            "configured_mode": self.cfg["mode"],
             "authority": "operational_only_not_project_control",
             "llm_dispatch_enabled": bool(self.cfg["llm"]["dispatch_enabled"]),
-            "llm_calls": 0,
+            "llm_calls": llm_attempts,
+            "llm_calls_scope": "durable admitted semantic execution attempts",
             "counts": dict(sorted(counts.items())),
             "tasks": items,
         }

@@ -88,7 +88,9 @@ def load_result(path: Path) -> tuple[dict[str, Any], bytes, str]:
         raise ValidationError("RESULT must be a mapping")
     required = {"schema_version", "task_id", "attempt", "status", "canonical_head",
                 "worker", "started_at", "finished_at", "checks", "artifacts", "error"}
-    if set(value) != required or value["schema_version"] != 1:
+    optional = {"summary", "semantic_verdict", "semantic_error"}
+    if (not required.issubset(value) or set(value) - required - optional
+            or value["schema_version"] != 1):
         raise ValidationError("RESULT schema mismatch")
     if not isinstance(value["task_id"], str) or not isinstance(value["canonical_head"], str):
         raise ValidationError("RESULT identity fields must be text")
@@ -101,6 +103,14 @@ def load_result(path: Path) -> tuple[dict[str, Any], bytes, str]:
         raise ValidationError("RESULT checks and artifacts must be lists")
     if value["error"] is not None and not isinstance(value["error"], str):
         raise ValidationError("RESULT error must be null or text")
+    if "summary" in value and not isinstance(value["summary"], str):
+        raise ValidationError("RESULT summary must be text")
+    if "semantic_verdict" in value and (
+        not isinstance(value["semantic_verdict"], str) or not value["semantic_verdict"]
+    ):
+        raise ValidationError("RESULT semantic_verdict must be nonempty text")
+    if "semantic_error" in value and value["semantic_error"] is not None and not isinstance(value["semantic_error"], str):
+        raise ValidationError("RESULT semantic_error must be null or text")
     return value, raw, sha256_bytes(raw)
 
 
@@ -141,6 +151,10 @@ def render_preview(repository: str, task: Mapping[str, Any], envelope_hash: str,
         f"- RESULT SHA-256: `{result_sha256}`",
         "- Authority: operational evidence only; no scientific or Project Control promotion",
     ]
+    if result.get("semantic_verdict"):
+        lines.append(f"- Semantic verdict: `{_safe_text(result['semantic_verdict'], 100)}`")
+    if result.get("summary"):
+        lines.extend(("", "Semantic summary:", "```text", _safe_text(result["summary"]), "```"))
     error = result.get("error")
     if error:
         lines.extend(("", "Error:", "```text", _safe_text(error), "```"))

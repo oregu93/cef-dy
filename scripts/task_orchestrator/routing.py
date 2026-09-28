@@ -238,7 +238,7 @@ class ProductionRouter:
         if existing is not None:
             status = existing["state"]
             reason = "bounded review task exists"
-        elif self.store.get(task.task_id)["state"] != State.SUCCEEDED.value:
+        elif not self._execution_complete(task):
             status, reason, review_id = "WAITING_PARENT", "parent result not complete", None
         elif task.inputs.get("auto_review_authorized", False) is not True:
             status, reason, review_id = "WAITING_USER", "automatic review worker not authorized", None
@@ -249,7 +249,11 @@ class ProductionRouter:
             review = Task(
                 schema_version=1, task_id=review_id, role=review_role,
                 canonical_head=task.canonical_head, task_type="llm_worker",
-                action="semantic_helper", dependencies=(task.task_id,),
+                # Creation itself is gated on the parent's durable accepted
+                # execution.  Keeping this relation in review_requirements,
+                # rather than as an FSM dependency, also lets legacy negative
+                # semantic results receive their required review.
+                action="semantic_helper", dependencies=(),
                 inputs={"review_of": task.task_id, "independent_review": True,
                         "parent_role": role_id, "resource_requirement": "WORK_PREFERRED",
                         "allowed_lanes": ["LOCAL_OSS_MODEL", "NON_WORK_AI", "WORK_CODEX"]},
@@ -277,6 +281,23 @@ class ProductionRouter:
             (task.task_id, review_id, review_role, status, reason, now, now),
         )
         return status
+
+    def _execution_complete(self, task: Task) -> bool:
+        row = self.store.get(task.task_id)
+        if row is not None and row["state"] == State.SUCCEEDED.value:
+            return True
+        if not task.is_llm:
+            return False
+        accepted = self.conn.execute(
+            "SELECT result_json FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone()
+        if accepted is None:
+            return False
+        try:
+            result = json.loads(accepted["result_json"])
+        except (TypeError, json.JSONDecodeError):
+            return False
+        return result.get("retryable") is False and result.get("status") in {"SUCCEEDED", "FAILED"}
 
     def reconcile(self) -> dict[str, Any]:
         if not self.enabled:
