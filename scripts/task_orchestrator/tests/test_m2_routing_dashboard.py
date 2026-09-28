@@ -7,7 +7,7 @@ import unittest
 import urllib.error
 import urllib.request
 
-from task_orchestrator.dashboard import create_server, snapshot
+from task_orchestrator.dashboard import create_server, open_readonly, snapshot
 from task_orchestrator.engine import Engine
 from task_orchestrator.model import State
 from task_orchestrator.reliability import Admission, M1bController, M1bStore, SubprocessAITransport
@@ -195,6 +195,16 @@ class M2RoutingDashboardTests(unittest.TestCase):
         M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
         self.assertEqual(self.store.get("AFTER-DASH-FAILURE-001")["state"], State.SUCCEEDED.value)
         self.assertTrue(snapshot(self.fx.cfg)["dashboard"]["read_only"])
+
+    def test_readonly_database_uri_handles_non_ascii_path(self):
+        directory = self.fx.root / "Данные"
+        directory.mkdir()
+        database = directory / "состояние.sqlite3"
+        source = Store(database)
+        source.close()
+        with open_readonly(database) as conn:
+            self.assertEqual(conn.execute("PRAGMA query_only").fetchone()[0], 1)
+            self.assertEqual(conn.execute("SELECT count(*) FROM tasks").fetchone()[0], 0)
 
     def work_task(self, task_id="WORK-REQUIRED-001", **inputs):
         return self.fx.task(
