@@ -34,7 +34,8 @@ class FakeAI:
     def execute(self, task, attempt):
         self.tasks.append(task.task_id)
         return Admission("ACCEPTED", {
-            "status": "SUCCEEDED", "checks": [], "artifacts": [], "error": None,
+            "status": "SUCCEEDED", "summary": "completed",
+            "checks": [], "artifacts": [], "error": None,
         })
 
 

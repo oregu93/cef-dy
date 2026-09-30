@@ -91,6 +91,25 @@ QUOTA_PATTERNS = (
     "too many requests", "credits exhausted",
 )
 
+SEMANTIC_RESULT_KEYS = {"status", "summary", "checks", "artifacts", "error"}
+
+
+def _semantic_result_error(value: Any) -> str | None:
+    """Return a deterministic producer-contract error, or None when valid."""
+    if not isinstance(value, dict) or set(value) != SEMANTIC_RESULT_KEYS:
+        return "semantic result keys invalid"
+    if not isinstance(value["status"], str) or not value["status"].strip():
+        return "semantic result status must be a non-empty string"
+    if not isinstance(value["summary"], str):
+        return "semantic result summary must be a string"
+    if not isinstance(value["checks"], list):
+        return "semantic result checks must be a list"
+    if not isinstance(value["artifacts"], list):
+        return "semantic result artifacts must be a list"
+    if value["error"] is not None and not isinstance(value["error"], str):
+        return "semantic result error must be a string or null"
+    return None
+
 
 def _canonical(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -225,8 +244,10 @@ class SubprocessAITransport:
         prompt = (
             "You are a disposable bounded specialist. Do not modify files, run scientific "
             "programs, access holdout/raw data, or change project authority. Complete only the "
-            "semantic task below and return a compact JSON object with keys status, summary, "
-            "checks, artifacts, error.\n" + specialist + "TASK envelope:\n" + envelope
+            "semantic task below and return a compact JSON object with exactly these typed "
+            "fields: status (non-empty string), summary (string), checks (list), artifacts "
+            "(list), error (string or null). Do not substitute mappings or strings for the "
+            "checks or artifacts lists.\n" + specialist + "TASK envelope:\n" + envelope
             + review_material + dependency_material
         )
         outcome = self._run(prompt)
@@ -237,8 +258,9 @@ class SubprocessAITransport:
             parsed = json.loads(text)
         except json.JSONDecodeError:
             return Admission("FAILED_RETRYABLE", reason="AI worker returned non-JSON output")
-        if not isinstance(parsed, dict) or set(parsed) != {"status", "summary", "checks", "artifacts", "error"}:
-            return Admission("FAILED_RETRYABLE", reason="AI worker result schema mismatch")
+        schema_error = _semantic_result_error(parsed)
+        if schema_error is not None:
+            return Admission("RESULT_SCHEMA_REJECTED", reason=f"AI worker result schema invalid: {schema_error}")
         return Admission("ACCEPTED", result=parsed)
 
 
@@ -355,35 +377,87 @@ class M1bStore:
     def mark_admitted(self, attempt_id: str) -> None:
         self.conn.execute("UPDATE dispatch_attempts SET admitted=1 WHERE attempt_id=?", (attempt_id,))
 
+    def reject_result_schema(self, attempt_id: str, reason: str) -> str:
+        """Fence a leased attempt whose durable RESULT failed schema validation."""
+        self.conn.execute("BEGIN IMMEDIATE")
+        try:
+            dispatch = self.conn.execute(
+                "SELECT task_id,outcome,finished_at FROM dispatch_attempts WHERE attempt_id=?",
+                (attempt_id,),
+            ).fetchone()
+            if dispatch is None:
+                self.conn.execute("ROLLBACK")
+                return "stale"
+            if dispatch["finished_at"] is not None:
+                self.conn.execute("COMMIT")
+                return "duplicate_schema_rejected" if dispatch["outcome"] == "RESULT_SCHEMA_REJECTED" else "stale"
+            task_id = dispatch["task_id"]
+            lease = self.conn.execute(
+                "SELECT 1 FROM worker_leases WHERE task_id=? AND attempt_id=?", (task_id, attempt_id)
+            ).fetchone()
+            task = self.conn.execute("SELECT state FROM tasks WHERE task_id=?", (task_id,)).fetchone()
+            if lease is None or task is None or task["state"] != State.RUNNING.value:
+                self.conn.execute("ROLLBACK")
+                return "stale"
+            detail = f"RESULT_SCHEMA_REJECTED: {reason}"[:2000]
+            self.conn.execute(
+                "UPDATE tasks SET state=?,reason=?,attempt=attempt+1,updated_at=? WHERE task_id=?",
+                (State.FAILED_RETRYABLE.value, detail, utc_now(), task_id),
+            )
+            self.conn.execute(
+                "DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?", (task_id, attempt_id)
+            )
+            self.conn.execute(
+                "UPDATE dispatch_attempts SET outcome='RESULT_SCHEMA_REJECTED',finished_at=? "
+                "WHERE attempt_id=?", (utc_now(), attempt_id),
+            )
+            self.conn.execute(
+                "INSERT INTO events(task_id,event_type,old_state,new_state,detail_json,created_at) "
+                "VALUES(?,?,?,?,?,?)",
+                (task_id, "RESULT_SCHEMA_REJECTED", State.RUNNING.value,
+                 State.FAILED_RETRYABLE.value,
+                 _canonical({"attempt_id": attempt_id, "reason": reason}), utc_now()),
+            )
+            self.conn.execute("COMMIT")
+            return "result_schema_rejected"
+        except Exception:
+            if self.conn.in_transaction:
+                self.conn.execute("ROLLBACK")
+            raise
+
     def accept(self, attempt_id: str, result: dict[str, Any]) -> str:
         required = {"schema_version", "task_id", "attempt", "status", "canonical_head",
                     "worker", "started_at", "finished_at", "checks", "artifacts",
                     "error", "retryable"}
         semantic_fields = {"summary", "semantic_verdict", "semantic_error"}
+        schema_error = None
         if (not isinstance(result, dict) or not required.issubset(result)
                 or set(result) - required - semantic_fields):
-            raise ValueError("result schema mismatch")
-        if result["schema_version"] != 1 or result["status"] not in {"SUCCEEDED", "FAILED"}:
-            raise ValueError("result status/schema invalid")
-        if isinstance(result["attempt"], bool) or not isinstance(result["attempt"], int) or result["attempt"] < 1:
-            raise ValueError("result attempt invalid")
-        if type(result["retryable"]) is not bool or not isinstance(result["checks"], list) or not isinstance(result["artifacts"], list):
-            raise ValueError("result field types invalid")
+            schema_error = "result schema mismatch"
+        elif result["schema_version"] != 1 or result["status"] not in {"SUCCEEDED", "FAILED"}:
+            schema_error = "result status/schema invalid"
+        elif isinstance(result["attempt"], bool) or not isinstance(result["attempt"], int) or result["attempt"] < 1:
+            schema_error = "result attempt invalid"
+        elif (type(result["retryable"]) is not bool or not isinstance(result["checks"], list)
+              or not isinstance(result["artifacts"], list)):
+            schema_error = "result field types invalid"
+        if schema_error is not None:
+            return self.reject_result_schema(attempt_id, schema_error)
         for key in ("task_id", "status", "canonical_head", "worker", "started_at", "finished_at"):
             if not isinstance(result[key], str) or not result[key]:
-                raise ValueError(f"result {key} invalid")
+                return self.reject_result_schema(attempt_id, f"result {key} invalid")
         if result["error"] is not None and not isinstance(result["error"], str):
-            raise ValueError("result error invalid")
+            return self.reject_result_schema(attempt_id, "result error invalid")
         present_semantic = semantic_fields.intersection(result)
         if present_semantic and present_semantic != semantic_fields:
-            raise ValueError("semantic result fields must be complete")
+            return self.reject_result_schema(attempt_id, "semantic result fields must be complete")
         if present_semantic:
             if not isinstance(result["summary"], str):
-                raise ValueError("result summary invalid")
+                return self.reject_result_schema(attempt_id, "result summary invalid")
             if not isinstance(result["semantic_verdict"], str) or not result["semantic_verdict"]:
-                raise ValueError("result semantic_verdict invalid")
+                return self.reject_result_schema(attempt_id, "result semantic_verdict invalid")
             if result["semantic_error"] is not None and not isinstance(result["semantic_error"], str):
-                raise ValueError("result semantic_error invalid")
+                return self.reject_result_schema(attempt_id, "result semantic_error invalid")
         task_id = str(result["task_id"])
         encoded = _canonical(result)
         result_hash = hashlib.sha256(encoded.encode()).hexdigest()
@@ -633,6 +707,15 @@ class M1bStore:
             "SELECT count(*) FROM dispatch_attempts WHERE admitted=1 AND lane IN "
             "('AI_BOUNDED_SPECIALIST','WORK_CODEX','LOCAL_OSS_MODEL','NON_WORK_AI')"
         ).fetchone()[0]
+        rejected = [dict(row) for row in self.conn.execute(
+            "SELECT attempt_id,task_id,lane,attempt,finished_at FROM dispatch_attempts "
+            "WHERE outcome='RESULT_SCHEMA_REJECTED' ORDER BY finished_at,attempt_id"
+        )]
+        recovery_required = [dict(row) for row in self.conn.execute(
+            "SELECT t.task_id,t.state,t.reason,t.updated_at FROM tasks t "
+            "LEFT JOIN worker_leases l USING(task_id) "
+            "WHERE t.state=? AND l.task_id IS NULL ORDER BY t.task_id", (State.RUNNING.value,)
+        )]
         return {
             "schema_version": 2, "generated_at": utc_now(),
             "ORCHESTRATOR_M1B_STATE": "OPERATIONAL",
@@ -643,6 +726,8 @@ class M1bStore:
             "NEXT_AI_PROBE_AT": _epoch_to_utc(lane["next_probe_at"]),
             "AI_REFUSAL_COUNT": lane["refusal_count"],
             "ACTIVE_WORKER_LEASES": leases,
+            "RESULT_SCHEMA_REJECTED_ATTEMPTS": rejected,
+            "RECOVERY_REQUIRED": recovery_required,
             "LLM_EXECUTION_ATTEMPTS": int(llm_attempts),
             "TASK_COUNTS": counts,
             "SCIENCE_STRATEGY_AUTHORITY": "HUMAN",
@@ -817,14 +902,22 @@ class M1bController:
 
     def ingest_spool(self) -> dict[str, int]:
         counts = {"accepted": 0, "accepted_retryable": 0, "duplicate": 0,
-                  "duplicate_retryable": 0, "stale": 0, "revoked": 0,
-                  "conflict": 0, "malformed": 0}
+                  "duplicate_retryable": 0, "duplicate_schema_rejected": 0,
+                  "stale": 0, "revoked": 0,
+                  "conflict": 0, "result_schema_rejected": 0, "malformed": 0}
         for path in sorted(self.spool.glob("*.yaml")):
             try:
                 payload = yaml.safe_load(path.read_text(encoding="utf-8"))
-                if not isinstance(payload, dict) or set(payload) != {"attempt_id", "result"} or not isinstance(payload["result"], dict):
+                if (not isinstance(payload, dict) or set(payload) != {"attempt_id", "result"}
+                        or not isinstance(payload["attempt_id"], str)):
                     raise ValueError("spool schema mismatch")
-                outcome = self.state.accept(str(payload["attempt_id"]), payload["result"])
+                outcome = (
+                    self.state.accept(payload["attempt_id"], payload["result"])
+                    if isinstance(payload["result"], dict)
+                    else self.state.reject_result_schema(
+                        payload["attempt_id"], "spool result must be a mapping"
+                    )
+                )
                 counts[outcome] += 1
                 if outcome in {"accepted", "accepted_retryable", "duplicate", "duplicate_retryable"}:
                     if outcome not in {"accepted_retryable", "duplicate_retryable"}:
@@ -832,6 +925,10 @@ class M1bController:
                     path.rename(path.with_suffix(".accepted"))
                 elif outcome in {"stale", "revoked", "conflict"}:
                     path.rename(path.with_suffix("." + outcome))
+                elif outcome in {"result_schema_rejected", "duplicate_schema_rejected"}:
+                    if outcome == "result_schema_rejected":
+                        counts["malformed"] += 1
+                    path.rename(path.with_suffix(".malformed"))
             except Exception:
                 counts["malformed"] += 1
                 path.rename(path.with_suffix(".malformed"))
@@ -840,6 +937,9 @@ class M1bController:
     @staticmethod
     def _result(task: Task, attempt: int, outcome: Admission) -> dict[str, Any]:
         result = outcome.result or {}
+        schema_error = _semantic_result_error(result)
+        if schema_error is not None:
+            raise ValueError(schema_error)
         semantic_verdict = str(result.get("status", "UNKNOWN")).strip().upper() or "UNKNOWN"
         semantic_error = result.get("error")
         return {
@@ -903,11 +1003,19 @@ class M1bController:
                     raise RuntimeError((proc.stderr or proc.stdout or f"exit {proc.returncode}")[-2000:])
                 text = proc.stdout
             parsed = json.loads(text)
-            if not isinstance(parsed, dict) or set(parsed) != {"status", "summary", "checks", "artifacts", "error"}:
-                raise ValueError("alternate semantic worker result schema mismatch")
-            outcome = Admission("ACCEPTED", parsed)
+            schema_error = _semantic_result_error(parsed)
+            outcome = (
+                Admission("RESULT_SCHEMA_REJECTED",
+                          reason=f"alternate semantic worker result schema invalid: {schema_error}")
+                if schema_error is not None else Admission("ACCEPTED", parsed)
+            )
         except Exception as exc:
             outcome = Admission("FAILED_RETRYABLE", reason=f"{lane} worker failed: {exc}")
+        if outcome.status == "RESULT_SCHEMA_REJECTED":
+            rejected = self.state.reject_result_schema(
+                lease["attempt_id"], outcome.reason or "alternate semantic result schema invalid"
+            )
+            return {"task_id": task.task_id, "outcome": rejected, "lane": lane}
         if outcome.status != "ACCEPTED" and any(
             pattern in (outcome.reason or "").casefold() for pattern in QUOTA_PATTERNS
         ):
@@ -1001,6 +1109,18 @@ class M1bController:
                 task.task_id, lease["attempt_id"], outcome.reason or "quota refused", outcome.reset_at, now,
             )
             return {"task_id": task.task_id, "outcome": quota_outcome}
+        if outcome.status == "ACCEPTED":
+            schema_error = _semantic_result_error(outcome.result)
+            if schema_error is not None:
+                outcome = Admission(
+                    "RESULT_SCHEMA_REJECTED",
+                    reason=f"AI worker result schema invalid: {schema_error}",
+                )
+        if outcome.status == "RESULT_SCHEMA_REJECTED":
+            rejected = self.state.reject_result_schema(
+                lease["attempt_id"], outcome.reason or "semantic result schema invalid"
+            )
+            return {"task_id": task.task_id, "outcome": rejected}
         if outcome.status != "ACCEPTED":
             result = {
                 "schema_version": 1, "task_id": task.task_id, "attempt": lease["attempt"],

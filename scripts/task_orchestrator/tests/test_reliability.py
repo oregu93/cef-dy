@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+import json
 import os
 from pathlib import Path
 import signal
@@ -14,7 +15,9 @@ from unittest import mock
 from task_orchestrator.engine import Engine
 from task_orchestrator.github import Issue, SourceUnavailable
 from task_orchestrator.model import State
-from task_orchestrator.reliability import Admission, M1bController, M1bStore
+from task_orchestrator.reliability import (
+    Admission, M1bController, M1bStore, SubprocessAITransport,
+)
 from task_orchestrator.publishing import CommentPage, TransportResponse
 from task_orchestrator.store import Store
 
@@ -35,7 +38,8 @@ class FakeAI:
     def execute(self, task, attempt):
         self.execute_calls += 1
         return self.executions.pop(0) if self.executions else Admission(
-            "ACCEPTED", {"status": "SUCCEEDED", "checks": [], "artifacts": [], "error": None}
+            "ACCEPTED", {"status": "SUCCEEDED", "summary": "completed",
+                         "checks": [], "artifacts": [], "error": None}
         )
 
 
@@ -131,7 +135,8 @@ class ReliabilityTests(unittest.TestCase):
         M1bController(self.fx.cfg, self.store, first, clock=lambda: 100.0).cycle()
         second = FakeAI(
             probes=[Admission("ACCEPTED", {"text": "ADMISSION_OK"})],
-            executions=[Admission("ACCEPTED", {"status": "SUCCEEDED", "checks": [], "artifacts": [], "error": None})],
+            executions=[Admission("ACCEPTED", {"status": "SUCCEEDED", "summary": "completed",
+                                                "checks": [], "artifacts": [], "error": None})],
         )
         result = M1bController(self.fx.cfg, self.store, second, clock=lambda: 102.0).cycle()
         self.assertEqual(second.probe_calls, 1)
@@ -480,7 +485,8 @@ class ReliabilityTests(unittest.TestCase):
         self.engine.ingest(self.ai_task("AI-RETRY-001"))
         fake = FakeAI(executions=[
             Admission("FAILED_RETRYABLE", reason="transient"),
-            Admission("ACCEPTED", {"status": "SUCCEEDED", "checks": [], "artifacts": [], "error": None}),
+            Admission("ACCEPTED", {"status": "SUCCEEDED", "summary": "completed",
+                                   "checks": [], "artifacts": [], "error": None}),
         ])
         controller = M1bController(self.fx.cfg, self.store, fake)
         controller.cycle()
@@ -497,7 +503,104 @@ class ReliabilityTests(unittest.TestCase):
         controller._write_spool(lease["attempt_id"], {"task_id": "INFRA-BADRESULT-001", "status": "SUCCEEDED"})
         counts = controller.ingest_spool()
         self.assertEqual(counts["malformed"], 1)
+        self.assertEqual(counts["result_schema_rejected"], 1)
         self.assertEqual(self.store.conn.execute("SELECT count(*) FROM accepted_results").fetchone()[0], 0)
+        row = self.store.get("INFRA-BADRESULT-001")
+        self.assertEqual((row["state"], row["attempt"]), (State.FAILED_RETRYABLE.value, 1))
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM worker_leases").fetchone()[0], 0)
+        dispatch = self.store.conn.execute(
+            "SELECT outcome,finished_at FROM dispatch_attempts WHERE attempt_id=?", (lease["attempt_id"],)
+        ).fetchone()
+        self.assertEqual(dispatch["outcome"], "RESULT_SCHEMA_REJECTED")
+        self.assertIsNotNone(dispatch["finished_at"])
+        self.assertEqual(len(list(controller.spool.glob("*.malformed"))), 1)
+
+    def test_semantic_producer_contract_rejects_wrong_container_types(self):
+        task = self.ai_task("AI-TYPED-PRODUCER-001")
+        transport = SubprocessAITransport(self.fx.cfg)
+        invalid = {
+            "status": "PASS", "summary": "bad checks", "checks": {"scope": "PASS"},
+            "artifacts": [], "error": None,
+        }
+        with mock.patch.object(transport, "_run", return_value=Admission("ACCEPTED", {"text": json.dumps(invalid)})) as run:
+            outcome = transport.execute(task, 1)
+        self.assertEqual(outcome.status, "RESULT_SCHEMA_REJECTED")
+        self.assertIn("checks must be a list", outcome.reason)
+        self.assertIn("checks (list)", run.call_args.args[0])
+
+        invalid["checks"] = []
+        invalid["artifacts"] = "not-a-list"
+        with mock.patch.object(transport, "_run", return_value=Admission("ACCEPTED", {"text": json.dumps(invalid)})):
+            outcome = transport.execute(task, 1)
+        self.assertEqual(outcome.status, "RESULT_SCHEMA_REJECTED")
+        self.assertIn("artifacts must be a list", outcome.reason)
+
+    def test_semantic_producer_contract_accepts_typed_lists(self):
+        task = self.ai_task("AI-TYPED-PRODUCER-OK-001")
+        payload = {
+            "status": "PASS", "summary": "typed", "checks": [{"name": "scope"}],
+            "artifacts": ["report.txt"], "error": None,
+        }
+        transport = SubprocessAITransport(self.fx.cfg)
+        with mock.patch.object(transport, "_run", return_value=Admission("ACCEPTED", {"text": json.dumps(payload)})):
+            outcome = transport.execute(task, 1)
+        self.assertEqual(outcome, Admission("ACCEPTED", payload))
+
+    def test_repeated_invalid_semantic_results_reach_retry_limit(self):
+        task = self.ai_task("AI-SCHEMA-RETRY-LIMIT-001")
+        self.engine.ingest(task)
+        invalid = Admission("ACCEPTED", {
+            "status": "PASS", "summary": "invalid", "checks": {"scope": "PASS"},
+            "artifacts": [], "error": None,
+        })
+        controller = M1bController(
+            self.fx.cfg, self.store, FakeAI(executions=[invalid, invalid, invalid])
+        )
+        for _ in range(3):
+            controller.cycle()
+        self.assertEqual(self.store.get(task.task_id)["attempt"], 3)
+        controller.cycle()
+        self.assertEqual(self.store.get(task.task_id)["state"], State.BLOCKED.value)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM dispatch_attempts WHERE task_id=? AND finished_at IS NOT NULL",
+            (task.task_id,),
+        ).fetchone()[0], 3)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM dispatch_attempts WHERE task_id=? AND outcome='RESULT_SCHEMA_REJECTED'",
+            (task.task_id,),
+        ).fetchone()[0], 3)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM worker_leases").fetchone()[0], 0)
+
+    def test_rejected_spool_recovery_is_idempotent_and_observable(self):
+        task = self.ai_task("AI-DETACHED-SCHEMA-001")
+        self.engine.ingest(task)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: 100.0)
+        lease = controller.state.claim(self.store.get(task.task_id), "detached", 100.0)
+        malformed = self.result(task.task_id)
+        malformed["checks"] = {"wrong": "container"}
+        controller._write_spool(lease["attempt_id"], malformed)
+        first = controller.ingest_spool()
+        forensic = next(controller.spool.glob("*.malformed"))
+        forensic.rename(forensic.with_suffix(".yaml"))  # simulate restart before quarantine rename
+        second = M1bController(self.fx.cfg, self.store, FakeAI()).ingest_spool()
+        self.assertEqual(first["result_schema_rejected"], 1)
+        self.assertEqual(second["duplicate_schema_rejected"], 1)
+        self.assertEqual(self.store.get(task.task_id)["attempt"], 1)
+        self.assertEqual(len(list(controller.spool.glob("*.malformed"))), 1)
+        status = controller.state.status()
+        self.assertEqual(status["ACTIVE_WORKER_LEASES"], [])
+        self.assertEqual(status["RESULT_SCHEMA_REJECTED_ATTEMPTS"][0]["task_id"], task.task_id)
+        self.assertEqual(status["RECOVERY_REQUIRED"], [])
+
+        orphan = self.fx.task(task_id="INFRA-ORPHANED-RUNNING-001")
+        self.engine.ingest(orphan)
+        self.store.conn.execute(
+            "UPDATE tasks SET state=?,reason=? WHERE task_id=?",
+            (State.RUNNING.value, "synthetic interrupted recovery", orphan.task_id),
+        )
+        status = controller.state.status()
+        self.assertEqual(status["ACTIVE_WORKER_LEASES"], [])
+        self.assertEqual(status["RECOVERY_REQUIRED"][0]["task_id"], orphan.task_id)
 
     def test_result_attempt_must_match_durable_dispatch(self):
         self.engine.ingest(self.fx.task(task_id="INFRA-ATTEMPT-001"))
