@@ -86,6 +86,21 @@ stop_condition: stop
 """
 
 
+def ordinary_issue_body(head, task_id):
+    return f"""task
+```yaml
+schema_version: 1
+task_id: {task_id}
+role: 07_INFRASTRUCTURE
+canonical_head: {head}
+task_type: deterministic
+action: head_check
+timeout_seconds: 10
+stop_condition: stop
+```
+"""
+
+
 class ReliabilityTests(unittest.TestCase):
     def setUp(self):
         self.fx = Fixture()
@@ -117,6 +132,39 @@ class ReliabilityTests(unittest.TestCase):
             "started_at": "2026-01-01T00:00:00Z", "finished_at": "2026-01-01T00:00:01Z",
             "checks": [], "artifacts": [], "error": error, "retryable": retryable,
         }
+
+    def recovery_proof(self):
+        row = self.store.conn.execute(
+            "SELECT state_json FROM controller_state "
+            "WHERE task_id='ORCH-M1B-RELIABILITY-REBUILD-001'"
+        ).fetchone()
+        return json.loads(row[0]) if row else {}
+
+    def mark_recovery_proven(self, now=0.0):
+        M1bStore(self.store.conn, self.fx.cfg).checkpoint(
+            RECOVERY_PROOF_STATE="PROVEN",
+            RECOVERY_FIRST_HEALTHY_AT=now,
+            RECOVERY_LAST_HEALTHY_AT=now,
+            RECOVERY_PROOF_REASON="pre-existing healthy live controller fixture",
+        )
+
+    def create_preview_backlog(self, task_id="RECOVERY-PREVIEW-001"):
+        task = self.fx.task(task_id=task_id, source_issue=55)
+        self.assertEqual(self.engine.ingest(task), "created")
+        controller = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+            clock=lambda: 1000.0,
+        )
+        controller.cycle(StaticSource([]))
+        accepted = self.store.conn.execute(
+            "SELECT result_sha256 FROM accepted_results WHERE task_id=?", (task_id,),
+        ).fetchone()
+        self.assertIsNotNone(accepted)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT status FROM publication_outbox WHERE task_id=? "
+            "AND marker LIKE '<!-- cef-dy-orch-result:v1 %'", (task_id,),
+        ).fetchone()[0], "PREVIEW")
+        return task, accepted["result_sha256"]
 
     def test_quota_wait_does_not_consume_retry_and_local_work_continues(self):
         self.assertEqual(self.engine.ingest(self.ai_task()), "created")
@@ -255,6 +303,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         self.engine.ingest(self.fx.task(
             task_id="INFRA-ATTENTION-001", task_type="llm_worker",
             action="semantic_helper", source_issue=14,
@@ -320,6 +369,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         task = self.fx.task(
             task_id="INFRA-STALE-ATTN-001", task_type="llm_worker",
             action="semantic_helper", source_issue=16, labels=("orchestrator:task",),
@@ -334,9 +384,11 @@ class ReliabilityTests(unittest.TestCase):
             source_issue=16, labels=("orchestrator:task", "orchestrator:llm-approved"),
         )
         self.assertEqual(self.store.ingest(approved), "metadata_updated")
+        clock = [200.0]
         controller = M1bController(self.fx.cfg, self.store, FakeAI(),
-                                   publication_transport=transport, clock=lambda: 200.0)
+                                   publication_transport=transport, clock=lambda: clock[0])
         controller.cycle(StaticSource([]))
+        clock[0] += int(self.fx.cfg["poll_interval_seconds"])
         controller.cycle(StaticSource([]))
         attention = self.store.conn.execute(
             "SELECT status FROM publication_outbox WHERE marker LIKE "
@@ -350,6 +402,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         task = self.fx.task(
             task_id="INFRA-RESOLVE-ATTN-001", task_type="llm_worker",
             action="semantic_helper", source_issue=17, labels=("orchestrator:task",),
@@ -388,6 +441,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         self.fx.cfg["llm"]["detached_workers"] = True
         self.fx.cfg["_config_path"] = str(self.fx.root / "config.yaml")
         task = self.fx.task(
@@ -428,6 +482,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["github"]["attention_issue"] = 4
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         self.engine.ingest(self.fx.task(
             task_id="INFRA-FALLBACK-ATTN-001", task_type="llm_worker",
             action="semantic_helper", source_issue=None, labels=("orchestrator:task",),
@@ -454,10 +509,363 @@ class ReliabilityTests(unittest.TestCase):
 
     def test_github_outage_does_not_stop_local_lane(self):
         self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         self.engine.ingest(self.fx.task(task_id="INFRA-OFFLINE-001"))
-        result = M1bController(self.fx.cfg, self.store, FakeAI()).cycle(OutageSource())
+        result = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+        ).cycle(OutageSource())
         self.assertEqual(result["poll"]["status"], "outage")
         self.assertEqual(self.store.get("INFRA-OFFLINE-001")["state"], State.SUCCEEDED.value)
+
+    def test_current_preview_only_autonomy_scenario_pauses_claims(self):
+        task = self.fx.task(task_id="OPAQUE-CURRENT-SCENARIO-001")
+        self.engine.ingest(task)
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        fake = FakeAI()
+        result = M1bController(self.fx.cfg, self.store, fake).cycle(StaticSource([]))
+        self.assertEqual(result["admission_visibility"], "ADMISSION_PAUSED_OPAQUE_STATE")
+        self.assertEqual(self.store.get(task.task_id)["state"], State.READY.value)
+        self.assertEqual(result["dispatched"], [])
+        self.assertEqual(fake.execute_calls, 0)
+
+    def test_paused_issue_flood_is_not_persisted_and_reopens_cleanly(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        issues = [
+            Issue(
+                1000 + index, "task",
+                ordinary_issue_body(self.fx.head, f"PAUSED-FLOOD-{index:03d}"),
+                ("orchestrator:task",), f"t{index}",
+            )
+            for index in range(100)
+        ]
+        first = self.engine.poll(StaticSource(issues))
+        self.assertEqual(first["deferred"], 100)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM tasks").fetchone()[0], 0)
+        self.assertIsNone(self.store.source("github")["etag"])
+        second = self.engine.poll(StaticSource(issues))
+        self.assertEqual(second["deferred"], 100)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM tasks").fetchone()[0], 0)
+
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        self.mark_recovery_proven()
+        reopened = self.engine.poll(StaticSource(issues))
+        self.assertEqual(reopened["accepted"], 100)
+        self.assertEqual(self.store.conn.execute("SELECT count(*) FROM tasks").fetchone()[0], 100)
+        self.assertIsNotNone(self.store.get("PAUSED-FLOOD-000"))
+
+    def test_pre_admission_recovery_barrier_orders_preview_reconciliation_before_reopen(self):
+        accepted_task, accepted_hash = self.create_preview_backlog()
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        issue = Issue(
+            1200, "task", ordinary_issue_body(self.fx.head, "DEFERRED-AFTER-MAINT-001"),
+            ("orchestrator:task",), "maintenance-etag",
+        )
+        clock = [2000.0]
+        transport = FakePublication()
+        controller = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=transport,
+            clock=lambda: clock[0],
+        )
+
+        maintenance = controller.cycle(StaticSource([issue]))
+        self.assertEqual(maintenance["poll"]["deferred"], 1)
+        self.assertIsNone(self.store.get("DEFERRED-AFTER-MAINT-001"))
+        self.assertEqual(self.recovery_proof()["RECOVERY_PROOF_STATE"], "NOT_PROVEN")
+
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        first = controller.cycle(StaticSource([issue]))
+        self.assertEqual(first["poll"]["deferred"], 1)
+        self.assertEqual(first["dispatched"], [])
+        self.assertFalse(first["ordinary_admission_open"])
+        self.assertEqual(first["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION")
+        self.assertEqual(self.store.conn.execute(
+            "SELECT status FROM publication_outbox WHERE task_id=? "
+            "AND marker LIKE '<!-- cef-dy-orch-result:v1 %'", (accepted_task.task_id,),
+        ).fetchone()[0], "PUBLISHED")
+        self.assertIsNone(self.store.get("DEFERRED-AFTER-MAINT-001"))
+
+        clock[0] += int(self.fx.cfg["poll_interval_seconds"]) - 1
+        too_soon = controller.cycle(StaticSource([issue]))
+        self.assertEqual(too_soon["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION")
+        self.assertEqual(too_soon["poll"]["deferred"], 1)
+        self.assertEqual(too_soon["dispatched"], [])
+
+        clock[0] += 1
+        reopened = controller.cycle(StaticSource([issue]))
+        self.assertEqual(reopened["recovery_proof"]["state"], "PROVEN")
+        self.assertTrue(reopened["ordinary_admission_open"])
+        self.assertEqual(reopened["poll"]["accepted"], 1)
+        self.assertEqual(len(reopened["dispatched"]), 1)
+        self.assertEqual(
+            self.store.get("DEFERRED-AFTER-MAINT-001")["state"], State.SUCCEEDED.value,
+        )
+        self.assertEqual(self.store.conn.execute(
+            "SELECT result_sha256 FROM accepted_results WHERE task_id=?",
+            (accepted_task.task_id,),
+        ).fetchone()[0], accepted_hash)
+
+    def test_recovery_proof_resets_on_opaque_failed_and_missing_projection(self):
+        accepted_task, accepted_hash = self.create_preview_backlog("RECOVERY-RESET-SOURCE-001")
+        held = self.fx.task(task_id="RECOVERY-HELD-READY-001")
+        self.assertEqual(self.engine.ingest(held), "created")
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        clock = [3000.0]
+        fake_ai = FakeAI()
+        controller = M1bController(
+            self.fx.cfg, self.store, fake_ai, publication_transport=FakePublication(),
+            clock=lambda: clock[0],
+        )
+        first = controller.cycle(StaticSource([]))
+        self.assertEqual(first["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION")
+
+        publication_id = self.store.conn.execute(
+            "SELECT publication_id FROM publication_outbox WHERE task_id=? "
+            "AND marker LIKE '<!-- cef-dy-orch-result:v1 %'", (accepted_task.task_id,),
+        ).fetchone()[0]
+
+        for status in ("UNKNOWN", "CONFLICT", "FAILED"):
+            with self.subTest(status=status):
+                if self.recovery_proof()["RECOVERY_PROOF_STATE"] == "NOT_PROVEN":
+                    self.store.update_publication(publication_id, "PUBLISHED")
+                    clock[0] += 1
+                    observed = controller.cycle(StaticSource([]))
+                    self.assertEqual(
+                        observed["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION",
+                    )
+                self.store.update_publication(
+                    publication_id, status,
+                    backoff_until=clock[0] + 1000 if status == "UNKNOWN" else 0,
+                )
+                clock[0] += int(self.fx.cfg["poll_interval_seconds"])
+                blocked = controller.cycle(StaticSource([]))
+                self.assertEqual(blocked["recovery_proof"]["state"], "NOT_PROVEN")
+                self.assertFalse(blocked["ordinary_admission_open"])
+                self.assertEqual(blocked["dispatched"], [])
+                self.assertEqual(self.store.get(held.task_id)["state"], State.READY.value)
+
+        self.store.update_publication(publication_id, "PUBLISHED")
+        clock[0] += 1
+        observed = controller.cycle(StaticSource([]))
+        self.assertEqual(observed["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION")
+        self.store.conn.execute(
+            "DELETE FROM publication_outbox WHERE publication_id=?", (publication_id,),
+        )
+        (self.fx.root / "state" / "results" / f"{accepted_task.task_id}.yaml").unlink()
+        clock[0] += int(self.fx.cfg["poll_interval_seconds"])
+        missing = controller.cycle(StaticSource([]))
+        self.assertEqual(missing["recovery_proof"]["state"], "NOT_PROVEN")
+        self.assertEqual(missing["dispatched"], [])
+        self.assertEqual(self.store.conn.execute(
+            "SELECT result_sha256 FROM accepted_results WHERE task_id=?",
+            (accepted_task.task_id,),
+        ).fetchone()[0], accepted_hash)
+        self.assertEqual(fake_ai.execute_calls, 0)
+
+    def test_recovery_proof_is_durable_and_restart_revalidates_before_admission(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        clock = [4000.0]
+        first = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+            clock=lambda: clock[0],
+        ).cycle(StaticSource([]))
+        self.assertEqual(first["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION")
+
+        clock[0] += int(self.fx.cfg["poll_interval_seconds"]) - 1
+        restarted_one = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+            clock=lambda: clock[0],
+        ).cycle(StaticSource([]))
+        self.assertEqual(
+            restarted_one["recovery_proof"]["state"], "ONE_HEALTHY_OBSERVATION",
+        )
+
+        clock[0] += 1
+        restarted_proven = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+            clock=lambda: clock[0],
+        ).cycle(StaticSource([]))
+        self.assertEqual(restarted_proven["recovery_proof"]["state"], "PROVEN")
+        self.assertTrue(restarted_proven["ordinary_admission_open"])
+
+        held = self.fx.task(task_id="RESTART-OPAQUE-HELD-001")
+        self.assertEqual(self.engine.ingest(held), "created")
+        row = self.store.get(held.task_id)
+        self.store.enqueue_publication(
+            publication_id="restart-opaque", repository="org/repo",
+            task_id=held.task_id, envelope_hash=row["envelope_hash"],
+            result_sha256="a" * 64, target="issue:1",
+            marker="<!-- recovery-test -->", preview="opaque", status="CONFLICT",
+        )
+        clock[0] += 1
+        restarted_unhealthy = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+            clock=lambda: clock[0],
+        ).cycle(StaticSource([]))
+        self.assertEqual(restarted_unhealthy["recovery_proof"]["state"], "NOT_PROVEN")
+        self.assertFalse(restarted_unhealthy["ordinary_admission_open"])
+        self.assertEqual(restarted_unhealthy["dispatched"], [])
+        self.assertEqual(self.store.get(held.task_id)["state"], State.READY.value)
+
+        clock[0] += int(self.fx.cfg["poll_interval_seconds"])
+        restarted_not_proven = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=FakePublication(),
+            clock=lambda: clock[0],
+        ).cycle(StaticSource([]))
+        self.assertEqual(restarted_not_proven["recovery_proof"]["state"], "NOT_PROVEN")
+        self.assertEqual(restarted_not_proven["dispatched"], [])
+
+    def test_restart_reconstructs_paused_visibility_from_durable_results(self):
+        for task_id in ("UNPROJECTED-ONE-001", "UNPROJECTED-TWO-001"):
+            self.engine.ingest(self.fx.task(task_id=task_id, source_issue=101))
+        M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        accepted_before = [tuple(row) for row in self.store.conn.execute(
+            "SELECT task_id,result_sha256,result_json FROM accepted_results ORDER BY task_id"
+        )]
+        self.store.conn.execute(
+            "UPDATE publication_outbox SET status='PENDING' WHERE status='PREVIEW'"
+        )
+        self.fx.cfg["autonomy"]["max_batch_tasks"] = 1
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        first = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: time.time())
+        self.assertEqual(
+            first.engine.visibility_health().state.value,
+            "ADMISSION_PAUSED_OPAQUE_STATE",
+        )
+        restarted = M1bController(self.fx.cfg, self.store, FakeAI(), clock=lambda: time.time())
+        self.assertEqual(
+            restarted.engine.visibility_health().state.value,
+            "ADMISSION_PAUSED_OPAQUE_STATE",
+        )
+        accepted_after = [tuple(row) for row in self.store.conn.execute(
+            "SELECT task_id,result_sha256,result_json FROM accepted_results ORDER BY task_id"
+        )]
+        self.assertEqual(accepted_after, accepted_before)
+
+    def test_historical_accepted_result_with_preview_does_not_trip_breaker(self):
+        task = self.fx.task(task_id="HISTORICAL-PREVIEW-001", source_issue=55)
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        self.assertIsNotNone(self.store.conn.execute(
+            "SELECT 1 FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone())
+        self.assertEqual(self.store.conn.execute(
+            "SELECT status FROM publication_outbox WHERE task_id=?", (task.task_id,)
+        ).fetchone()[0], "PREVIEW")
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        self.assertEqual(
+            self.engine.visibility_health().state.value,
+            "AUTONOMY_VISIBILITY_OK",
+        )
+
+    def test_live_missing_and_outbox_states_drive_visibility(self):
+        task = self.fx.task(task_id="LIVE-OBLIGATION-001", source_issue=56)
+        self.engine.ingest(task)
+        M1bController(self.fx.cfg, self.store, FakeAI()).cycle()
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        self.store.conn.execute(
+            "DELETE FROM publication_outbox WHERE task_id=?", (task.task_id,)
+        )
+        self.assertEqual(
+            self.engine.visibility_health().state.value,
+            "AUTONOMY_VISIBILITY_DEGRADED",
+        )
+        accepted = self.store.conn.execute(
+            "SELECT result_sha256 FROM accepted_results WHERE task_id=?", (task.task_id,)
+        ).fetchone()
+        row = self.store.get(task.task_id)
+        self.store.enqueue_publication(
+            publication_id="live-obligation", repository="org/repo",
+            task_id=task.task_id, envelope_hash=row["envelope_hash"],
+            result_sha256=accepted["result_sha256"], target="issue:56",
+            marker="<!-- cef-dy-orch-result:v1 live -->", preview="live",
+            status="PENDING",
+        )
+        self.assertEqual(
+            self.engine.visibility_health().state.value,
+            "AUTONOMY_VISIBILITY_DEGRADED",
+        )
+        for status in ("UNKNOWN", "CONFLICT"):
+            with self.subTest(status=status):
+                self.store.conn.execute(
+                    "UPDATE publication_outbox SET status=? WHERE task_id=?",
+                    (status, task.task_id),
+                )
+                self.assertEqual(
+                    self.engine.visibility_health().state.value,
+                    "ADMISSION_PAUSED_OPAQUE_STATE",
+                )
+
+    def test_identity_bound_mandatory_review_is_admitted_while_paused(self):
+        parent = self.fx.task(task_id="PAUSED-REVIEW-PARENT-001")
+        self.engine.ingest(parent)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI())
+        controller.cycle()
+        material = controller.router._build_review_material(parent)
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        review = self.fx.task(
+            task_id="PAUSED-REVIEW-PARENT-001-REVIEW-001",
+            task_type="llm_worker", action="semantic_helper",
+            labels=("orchestrator:task", "orchestrator:llm-approved"),
+            source_issue=None,
+            inputs={
+                "independent_review": True,
+                "review_of": parent.task_id,
+                "review_material": material,
+            },
+        )
+        self.store.conn.execute(
+            "INSERT INTO review_requirements VALUES(?,?,?,?,?,?,?)",
+            (parent.task_id, review.task_id, "07", "RESERVED",
+             "test exact reservation", "2026-01-01T00:00:00Z",
+             "2026-01-01T00:00:00Z"),
+        )
+        self.assertEqual(self.engine.ingest(review), "created")
+        self.assertNotEqual(self.store.get(review.task_id)["state"], State.VALIDATED.value)
+
+    def test_publication_failure_does_not_restart_accepted_worker(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
+        task = self.fx.task(task_id="PUBLICATION-FAIL-NO-RERUN-001", source_issue=77)
+        self.engine.ingest(task)
+        transport = FakePublication((TransportResponse(500),))
+        controller = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=transport,
+        )
+        first = controller.cycle(StaticSource([]))
+        attempts = self.store.get(task.task_id)["attempt"]
+        second = controller.cycle(StaticSource([]))
+        self.assertEqual(self.store.get(task.task_id)["state"], State.SUCCEEDED.value)
+        self.assertEqual(self.store.get(task.task_id)["attempt"], attempts)
+        self.assertEqual(first["dispatched"][0]["task_id"], task.task_id)
+        self.assertEqual(second["dispatched"], [])
+
+    def test_expired_ordinary_attempt_is_not_retried_while_visibility_paused(self):
+        task = self.fx.task(task_id="OPAQUE-RETRY-001")
+        self.engine.ingest(task)
+        state = M1bStore(self.store.conn, self.fx.cfg)
+        lease = state.claim(self.store.get(task.task_id), "dead", 100.0)
+        self.assertIsNotNone(lease)
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        result = M1bController(
+            self.fx.cfg, self.store, FakeAI(), clock=lambda: 2000.0,
+        ).cycle(StaticSource([]))
+        self.assertEqual(result["admission_visibility"], "ADMISSION_PAUSED_OPAQUE_STATE")
+        self.assertEqual(self.store.get(task.task_id)["state"], State.FAILED_RETRYABLE.value)
+        self.assertEqual(result["dispatched"], [])
 
     def test_result_after_database_accept_before_ack_is_deduplicated(self):
         self.engine.ingest(self.fx.task(task_id="INFRA-ACK-001"))
@@ -615,6 +1023,7 @@ class ReliabilityTests(unittest.TestCase):
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         self.engine.ingest(self.fx.task(task_id="INFRA-SHADOW-PUB-001", source_issue=10))
         transport = FakePublication()
         controller = M1bController(self.fx.cfg, self.store, FakeAI(), publication_transport=transport)
@@ -667,6 +1076,8 @@ time.sleep(60)
 
     def test_revoked_approval_is_not_restored_by_quota_probe(self):
         self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=True, preview_only=False)
+        self.mark_recovery_proven()
         task = self.ai_task("AI-REVOKE-001")
         self.engine.ingest(task)
         first = FakeAI(executions=[Admission("QUOTA_REFUSED", reason="quota", reset_at=101.0)])
@@ -710,6 +1121,7 @@ time.sleep(60)
         self.fx.cfg["github"]["enabled"] = True
         self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
                                       "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
         self.engine.ingest(self.fx.task(task_id="INFRA-PROJECT-001", source_issue=9))
         transport = FakePublication()
         controller = M1bController(self.fx.cfg, self.store, FakeAI(),

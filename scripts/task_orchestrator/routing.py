@@ -371,7 +371,8 @@ class ProductionRouter:
         }:
             self.store.transition(task.task_id, State.WAITING_RESOURCE, reason, force_recovery=True)
         elif status == "ROUTED" and row and row["state"] == State.WAITING_RESOURCE.value:
-            self.store.transition(task.task_id, State.READY, "suitable resource lane available")
+            if self.engine.admission_decision(task).allowed:
+                self.store.transition(task.task_id, State.READY, "suitable resource lane available")
         return role_id
 
     def _review(self, task: Task, role_id: str | None) -> str:
@@ -382,6 +383,21 @@ class ProductionRouter:
             raise ValueError("invalid review_role")
         review_id = f"{task.task_id}-REVIEW-001"
         now = utc_now()
+        registered = self.conn.execute(
+            "SELECT review_task_id,role_id FROM review_requirements WHERE parent_task_id=?",
+            (task.task_id,),
+        ).fetchone()
+        if registered is not None and (
+            (registered["review_task_id"] not in {None, review_id})
+            or registered["role_id"] != review_role
+        ):
+            self.conn.execute(
+                "UPDATE review_requirements SET status='WAITING_USER',reason=?,updated_at=? "
+                "WHERE parent_task_id=?",
+                ("registered review identity or role conflicts with canonical review", now,
+                 task.task_id),
+            )
+            return "WAITING_USER"
         existing = self.store.get(review_id)
         if existing is not None:
             status = existing["state"]
@@ -421,10 +437,26 @@ class ProductionRouter:
                 stop_condition="Independently return PASS or actionable findings; do not modify files or project authority.",
                 source_issue=None, labels=labels,
             )
-            outcome = self.engine.ingest(review)
+            # Reserve the exact internally generated identity before admission.
+            # Engine admission can therefore distinguish it from a task that
+            # merely copies the accepted parent SHA.
+            self.conn.execute(
+                "INSERT INTO review_requirements VALUES(?,?,?,?,?,?,?) "
+                "ON CONFLICT(parent_task_id) DO UPDATE SET "
+                "review_task_id=excluded.review_task_id,role_id=excluded.role_id,"
+                "status=excluded.status,reason=excluded.reason,updated_at=excluded.updated_at",
+                (task.task_id, review_id, review_role, "RESERVED",
+                 "exact mandatory review identity reserved", now, now),
+            )
+            try:
+                outcome = self.engine.ingest(review)
+            except Exception as exc:
+                outcome = "admission_error"
+                reason = f"review creation failed closed: {type(exc).__name__}: {exc}"
             if outcome not in {"created", "duplicate", "metadata_updated"}:
-                status, reason = "WAITING_USER", f"review creation outcome: {outcome}"
-                review_id = None
+                status = "WAITING_USER"
+                if outcome != "admission_error":
+                    reason = f"review creation outcome: {outcome}"
             else:
                 self.store.approve(review.task_id)
                 self.engine.reevaluate_waiting()

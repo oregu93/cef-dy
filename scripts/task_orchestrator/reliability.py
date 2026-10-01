@@ -18,6 +18,7 @@ import uuid
 
 import yaml
 
+from .admission import VisibilityHealth
 from .engine import Engine
 from .github import GitHubCommentTransport
 from .model import State, Task, WorkerResult, utc_now
@@ -25,12 +26,21 @@ from .publishing import (
     OutboxStatus, Publisher, enqueue_attention_preview,
     enqueue_attention_resolution_preview, enqueue_result_preview,
 )
+from .policy import task_has_issue_approval
 from . import workers
 from .routing import (
     ProductionRouter, bootstrap_for_task, resolve_dependency_prompt_material,
     resolve_review_prompt_material,
 )
 from .ollama import OllamaHelper
+
+
+RECOVERY_NOT_PROVEN = "NOT_PROVEN"
+RECOVERY_ONE_HEALTHY = "ONE_HEALTHY_OBSERVATION"
+RECOVERY_PROVEN = "PROVEN"
+RECOVERY_PROOF_STATES = {
+    RECOVERY_NOT_PROVEN, RECOVERY_ONE_HEALTHY, RECOVERY_PROVEN,
+}
 
 
 M1B_SCHEMA = """
@@ -285,7 +295,15 @@ class M1bStore:
             "AI_LANE_STATE": "AVAILABLE", "NEXT_AI_PROBE_AT": None,
             "ACTIVE_WORKER_LEASE": None, "LAST_WORKER_RESULT": None,
             "BLOCKED_TASKS": [], "WAITING_USER_TASKS": [], "HARD_BLOCKERS": [],
+            "RECOVERY_PROOF_STATE": RECOVERY_NOT_PROVEN,
+            "RECOVERY_FIRST_HEALTHY_AT": None,
+            "RECOVERY_LAST_HEALTHY_AT": None,
+            "RECOVERY_PROOF_REASON": "recovery proof has not been established",
         }
+        state.setdefault("RECOVERY_PROOF_STATE", RECOVERY_NOT_PROVEN)
+        state.setdefault("RECOVERY_FIRST_HEALTHY_AT", None)
+        state.setdefault("RECOVERY_LAST_HEALTHY_AT", None)
+        state.setdefault("RECOVERY_PROOF_REASON", "recovery proof has not been established")
         state.update(changes)
         now = utc_now()
         self.conn.execute(
@@ -294,6 +312,77 @@ class M1bStore:
             (task_id, _canonical(state), now),
         )
         return state
+
+    def recovery_proof(self) -> dict[str, Any]:
+        task_id = "ORCH-M1B-RELIABILITY-REBUILD-001"
+        row = self.conn.execute(
+            "SELECT state_json FROM controller_state WHERE task_id=?", (task_id,),
+        ).fetchone()
+        try:
+            state = json.loads(row[0]) if row else {}
+        except (TypeError, json.JSONDecodeError):
+            state = {}
+        proof_state = str(state.get("RECOVERY_PROOF_STATE", RECOVERY_NOT_PROVEN))
+        if proof_state not in RECOVERY_PROOF_STATES:
+            proof_state = RECOVERY_NOT_PROVEN
+        first = state.get("RECOVERY_FIRST_HEALTHY_AT")
+        last = state.get("RECOVERY_LAST_HEALTHY_AT")
+        if not isinstance(first, (int, float)):
+            first = None
+        if not isinstance(last, (int, float)):
+            last = None
+        return {
+            "state": proof_state,
+            "first_healthy_at": first,
+            "last_healthy_at": last,
+            "reason": str(state.get(
+                "RECOVERY_PROOF_REASON", "recovery proof has not been established",
+            )),
+        }
+
+    def update_recovery_proof(
+        self, *, live_capable: bool, healthy: bool, now: float,
+        poll_interval_seconds: int, reason: str,
+    ) -> dict[str, Any]:
+        current = self.recovery_proof()
+        state = current["state"]
+        first = current["first_healthy_at"]
+        last = current["last_healthy_at"]
+
+        if not live_capable:
+            state, first, last = RECOVERY_NOT_PROVEN, None, None
+            reason = "live-capable publication is disabled; recovery proof reset"
+        elif not healthy:
+            state, first, last = RECOVERY_NOT_PROVEN, None, None
+        elif state == RECOVERY_PROVEN:
+            last = now
+            reason = "healthy post-reconciliation observation preserved durable proof"
+        elif state == RECOVERY_ONE_HEALTHY and first is not None:
+            if now - float(first) >= max(1, int(poll_interval_seconds)):
+                state = RECOVERY_PROVEN
+                last = now
+                reason = "second healthy post-reconciliation observation completed proof"
+            else:
+                last = now
+                reason = "healthy observation retained; poll interval has not elapsed"
+        else:
+            state = RECOVERY_ONE_HEALTHY
+            first = now
+            last = now
+            reason = "first healthy post-reconciliation observation recorded"
+
+        self.checkpoint(
+            RECOVERY_PROOF_STATE=state,
+            RECOVERY_FIRST_HEALTHY_AT=first,
+            RECOVERY_LAST_HEALTHY_AT=last,
+            RECOVERY_PROOF_REASON=reason,
+        )
+        return {
+            "state": state,
+            "first_healthy_at": first,
+            "last_healthy_at": last,
+            "reason": reason,
+        }
 
     def lane(self) -> dict[str, Any]:
         return dict(self.conn.execute("SELECT * FROM ai_lane WHERE singleton=1").fetchone())
@@ -600,7 +689,7 @@ class M1bStore:
                 self.conn.execute("ROLLBACK")
             raise
 
-    def probe_result(self, outcome: Admission, now: float) -> None:
+    def probe_result(self, outcome: Admission, now: float, admission_check: Any = None) -> None:
         if outcome.status == "ACCEPTED":
             self.conn.execute("BEGIN IMMEDIATE")
             try:
@@ -612,13 +701,28 @@ class M1bStore:
                 marks = ",".join("?" for _ in states)
                 rows = list(self.conn.execute(f"SELECT * FROM tasks WHERE state IN ({marks})", states)) if states else []
                 for row in rows:
-                    task = json.loads(row["payload_json"])
-                    authorized = self.cfg["llm"]["require_issue_label"] in task.get("labels", [])
+                    payload = json.loads(row["payload_json"])
+                    authorized = self.cfg["llm"]["require_issue_label"] in payload.get("labels", [])
                     authorized = authorized and (
                         bool(row["approved_at"]) or not self.cfg["llm"].get("require_local_approval", True)
                     )
-                    target = State.READY.value if authorized else State.WAITING_USER.value
-                    reason = "AI admission probe succeeded; automatic resume" if authorized else "AI authorization missing at quota recovery"
+                    task = Task(**{
+                        **payload,
+                        "dependencies": tuple(payload["dependencies"]),
+                        "allowed_paths": tuple(payload["allowed_paths"]),
+                        "expected_artifacts": tuple(payload["expected_artifacts"]),
+                        "labels": tuple(payload["labels"]),
+                    })
+                    visibility_allowed = admission_check is None or admission_check(task)
+                    if authorized and visibility_allowed:
+                        target = State.READY.value
+                        reason = "AI admission probe succeeded; automatic resume"
+                    elif authorized:
+                        target = State.QUOTA_WAIT.value
+                        reason = "AI lane recovered; task resume held by visibility admission gate"
+                    else:
+                        target = State.WAITING_USER.value
+                        reason = "AI authorization missing at quota recovery"
                     self.conn.execute("UPDATE tasks SET state=?,reason=?,updated_at=? WHERE task_id=?",
                                       (target, reason, utc_now(), row["task_id"]))
                 self.conn.execute("COMMIT")
@@ -643,7 +747,7 @@ class M1bStore:
             (next_probe, reset_at, min(index + 1, len(backoffs) - 1), reason[-2000:], utc_now()),
         )
 
-    def recover_expired(self, now: float) -> int:
+    def recover_expired(self, now: float, admission_check: Any = None) -> int:
         rows = list(self.conn.execute("SELECT * FROM worker_leases WHERE lease_expires_at<=?", (now,)))
         for lease in rows:
             accepted = self.conn.execute("SELECT 1 FROM accepted_results WHERE task_id=?", (lease["task_id"],)).fetchone()
@@ -656,12 +760,31 @@ class M1bStore:
                 State.WAITING_RESOURCE.value if self.cfg.get("routing", {}).get("enabled")
                 else State.QUOTA_WAIT.value
             ) if work_lease and self.lane()["state"] == "QUOTA_WAIT" else State.READY.value
+            reason = "expired worker lease recovered"
+            task_payload = self.conn.execute(
+                "SELECT payload_json FROM tasks WHERE task_id=?", (lease["task_id"],)
+            ).fetchone()
+            if (
+                target == State.READY.value and admission_check is not None
+                and task_payload is not None
+            ):
+                value = json.loads(task_payload["payload_json"])
+                task = Task(**{
+                    **value,
+                    "dependencies": tuple(value["dependencies"]),
+                    "allowed_paths": tuple(value["allowed_paths"]),
+                    "expected_artifacts": tuple(value["expected_artifacts"]),
+                    "labels": tuple(value["labels"]),
+                })
+                if not admission_check(task):
+                    target = State.FAILED_RETRYABLE.value
+                    reason = "expired worker lease recovered; retry held by visibility admission gate"
             self.conn.execute("BEGIN IMMEDIATE")
             try:
                 self.conn.execute("DELETE FROM worker_leases WHERE task_id=? AND attempt_id=?", (lease["task_id"], lease["attempt_id"]))
                 self.conn.execute(
                     "UPDATE tasks SET state=?,reason=?,updated_at=? WHERE task_id=? AND state=?",
-                    (target, "expired worker lease recovered", utc_now(), lease["task_id"], State.RUNNING.value),
+                    (target, reason, utc_now(), lease["task_id"], State.RUNNING.value),
                 )
                 self.conn.execute(
                     "UPDATE dispatch_attempts SET outcome='LEASE_EXPIRED',finished_at=? WHERE attempt_id=?",
@@ -741,6 +864,7 @@ class M1bController:
         self.cfg = cfg
         self.store = store
         self.engine = Engine(cfg, store)
+        self.engine.enable_recovery_barrier()
         self.state = M1bStore(store.conn, cfg)
         self.transport = transport or SubprocessAITransport(cfg)
         self.publication_transport = publication_transport or GitHubCommentTransport(cfg["github"])
@@ -750,6 +874,39 @@ class M1bController:
         self.spool = self.state_dir / cfg["autonomy"]["result_inbox_subdir"]
         self.spool.mkdir(parents=True, exist_ok=True)
         self.router = ProductionRouter(cfg, store, self.engine)
+
+    def _live_capable(self) -> bool:
+        return self.engine._live_capable()
+
+    def _publication_recovery_health(
+        self, visibility: Any, outcomes: list[dict[str, Any]],
+    ) -> tuple[bool, str]:
+        reasons: list[str] = []
+        if visibility.state is not VisibilityHealth.AUTONOMY_VISIBILITY_OK:
+            reasons.append(f"visibility={visibility.state.value}")
+        blocking = tuple(row[0] for row in self.store.conn.execute(
+            "SELECT DISTINCT status FROM publication_outbox WHERE status IN "
+            "('PREVIEW','PENDING','SENDING','UNKNOWN','CONFLICT','FAILED') ORDER BY status"
+        ))
+        if blocking:
+            reasons.append("publication states=" + ",".join(str(value) for value in blocking))
+        ambiguous = sorted({
+            str(outcome.get("status")) for outcome in outcomes
+            if str(outcome.get("status", "")).endswith("ERROR")
+        })
+        if ambiguous:
+            reasons.append("reconciliation outcomes=" + ",".join(ambiguous))
+        missing = self.store.conn.execute(
+            "SELECT r.task_id FROM accepted_results r JOIN tasks t USING(task_id) "
+            "WHERE t.source_issue IS NOT NULL AND NOT EXISTS ("
+            "SELECT 1 FROM publication_outbox p WHERE p.task_id=r.task_id "
+            "AND p.status='PUBLISHED' "
+            "AND p.marker LIKE '<!-- cef-dy-orch-result:v1 %') "
+            "ORDER BY r.accepted_at,r.task_id LIMIT 1"
+        ).fetchone()
+        if missing is not None:
+            reasons.append(f"missing live projection for {missing['task_id']}")
+        return (not reasons, "; ".join(reasons) if reasons else "post-reconciliation state is healthy")
 
     def _git_identity(self) -> dict[str, Any]:
         def value(*args: str) -> str | None:
@@ -772,13 +929,35 @@ class M1bController:
         preview_only = bool(self.cfg["publishing"]["preview_only"])
         attention_states = {State.WAITING_USER.value, State.WAITING_APPROVAL.value,
                             State.BLOCKED.value}
+
+        def attention_required(row: sqlite3.Row) -> bool:
+            if row["state"] not in attention_states:
+                return False
+            if row["state"] == State.BLOCKED.value:
+                return True
+            task = self.store.task(row)
+            local_ok = bool(row["approved_at"]) or not self.cfg["llm"].get(
+                "require_local_approval", True,
+            )
+            authorization_complete = (
+                task.is_llm
+                and local_ok
+                and task_has_issue_approval(task, self.cfg)
+                and self.cfg["llm"].get("dispatch_enabled")
+                and self.cfg["mode"] == "pilot"
+            )
+            # Publication recovery runs before WAITING -> READY promotion.  Once
+            # approval metadata is complete, human attention is already resolved
+            # even though the recovery barrier still keeps execution closed.
+            return not authorization_complete
+
         resolved_attention_targets: list[tuple[str, str, str]] = []
         for row in self.store.conn.execute(
             "SELECT p.publication_id,p.status,p.task_id,p.target,t.* FROM publication_outbox p "
             "JOIN tasks t ON t.task_id=p.task_id "
             "WHERE p.marker LIKE '<!-- cef-dy-orch-attention:v1 %'"
         ):
-            if row["state"] in attention_states:
+            if attention_required(row):
                 continue
             if row["status"] in {OutboxStatus.PREVIEW.value, OutboxStatus.PENDING.value}:
                 self.store.update_publication(
@@ -787,7 +966,10 @@ class M1bController:
                 )
                 outcomes.append({"publication_id": row["publication_id"],
                                  "status": OutboxStatus.SUPERSEDED.value})
-            elif row["status"] == OutboxStatus.PUBLISHED.value:
+            elif (
+                row["status"] == OutboxStatus.PUBLISHED.value
+                and row["state"] not in attention_states
+            ):
                 resolved_attention_targets.append(
                     (row["task_id"], row["target"], row["publication_id"])
                 )
@@ -833,6 +1015,8 @@ class M1bController:
             "SELECT * FROM tasks WHERE state IN ('WAITING_USER','WAITING_APPROVAL','BLOCKED') "
             "ORDER BY created_at,task_id"
         ):
+            if not attention_required(row):
+                continue
             target_issue = row["source_issue"] or self.cfg["github"].get("attention_issue")
             if target_issue is None:
                 outcomes.append({"task_id": row["task_id"], "status": "ATTENTION_LOCAL_ONLY",
@@ -1205,15 +1389,42 @@ class M1bController:
 
     def cycle(self, source: Any = None) -> dict[str, Any]:
         now = float(self.clock())
-        self.state.checkpoint(CURRENT_PHASE="RUNNING", NEXT_EXACT_ACTION="recover, poll, reconcile, dispatch",
+        # A previous cycle's in-memory decision never authorizes this cycle.
+        # Every cycle must re-establish the gate after publication recovery.
+        self.engine.set_recovery_barrier_proven(False)
+        self.state.checkpoint(CURRENT_PHASE="RUNNING", NEXT_EXACT_ACTION="recover, reconcile, prove, poll, dispatch",
                               **self._git_identity())
+        cancelled = self.state.cancel_invalid_leases()
+        recovered_results = self.ingest_spool()
+        visibility = self.engine.visibility_health(now)
+        expired = self.state.recover_expired(
+            now,
+            admission_check=lambda task: self.engine.admission_decision(task, visibility).allowed,
+        )
+        try:
+            pre_admission_publications = self.reconcile_publications(now)
+        except Exception as exc:
+            pre_admission_publications = [{
+                "status": "PRE_ADMISSION_RECONCILE_ERROR",
+                "error": f"{type(exc).__name__}: {exc}",
+            }]
+        visibility = self.engine.visibility_health(now)
+        recovery_healthy, recovery_reason = self._publication_recovery_health(
+            visibility, pre_admission_publications,
+        )
+        recovery_proof = self.state.update_recovery_proof(
+            live_capable=self._live_capable(),
+            healthy=recovery_healthy,
+            now=now,
+            poll_interval_seconds=int(self.cfg.get("poll_interval_seconds", 300)),
+            reason=recovery_reason,
+        )
+        recovery_open = recovery_proof["state"] == RECOVERY_PROVEN
+        self.engine.set_recovery_barrier_proven(recovery_open)
         try:
             poll = self.engine.poll(source)
         except Exception as exc:
             poll = {"status": "outage", "error": f"{type(exc).__name__}: {exc}"}
-        cancelled = self.state.cancel_invalid_leases()
-        recovered_results = self.ingest_spool()
-        expired = self.state.recover_expired(now)
         routing_ok = True
         try:
             routing = self.router.reconcile()
@@ -1226,7 +1437,13 @@ class M1bController:
         if (self.cfg["llm"]["dispatch_enabled"] and lane["state"] == "QUOTA_WAIT"
                 and lane["next_probe_at"] is not None and now >= float(lane["next_probe_at"])):
             outcome = self.transport.probe()
-            self.state.probe_result(outcome, now)
+            visibility = self.engine.visibility_health(now)
+            self.state.probe_result(
+                outcome, now,
+                admission_check=lambda task: self.engine.admission_decision(
+                    task, visibility,
+                ).allowed,
+            )
             if self.router.enabled:
                 routing = self.router.reconcile()
             probe = outcome.status
@@ -1234,14 +1451,17 @@ class M1bController:
         if alternate_probes:
             routing = self.router.reconcile()
         self.engine.reevaluate_waiting()
-        self.store.conn.execute(
-            "UPDATE tasks SET state=?,reason=?,updated_at=? WHERE state=? AND attempt<3",
-            (State.READY.value, "retryable failure scheduled", utc_now(), State.FAILED_RETRYABLE.value),
-        )
-        self.store.conn.execute(
-            "UPDATE tasks SET state=?,reason=?,updated_at=? WHERE state=? AND attempt>=3",
-            (State.BLOCKED.value, "ordinary retry limit reached", utc_now(), State.FAILED_RETRYABLE.value),
-        )
+        visibility = self.engine.visibility_health(now)
+        for row in self.store.list_state(State.FAILED_RETRYABLE):
+            if int(row["attempt"]) >= 3:
+                self.store.transition(
+                    row["task_id"], State.BLOCKED, "ordinary retry limit reached",
+                )
+                continue
+            task = self.store.task(row)
+            decision = self.engine.admission_decision(task, visibility)
+            if decision.allowed:
+                self.store.transition(task.task_id, State.READY, "retryable failure scheduled")
         dispatched: list[dict[str, Any]] = []
         limit = int(self.cfg["autonomy"]["max_batch_tasks"])
         execution_enabled = (
@@ -1286,8 +1506,26 @@ class M1bController:
                 if selected == "WORK_CODEX" and (not self.cfg["llm"]["dispatch_enabled"] or self.state.lane()["state"] != "AVAILABLE"):
                     self.store.transition(task.task_id, State.WAITING_RESOURCE, "Work/Codex lane unavailable", force_recovery=True)
                     continue
+            visibility = self.engine.visibility_health(now)
+            decision = self.engine.admission_decision(task, visibility)
+            if not decision.allowed:
+                continue
             dispatched.append(self._run_claim(row, now))
-        publications = self.reconcile_publications(now)
+        publications = pre_admission_publications + self.reconcile_publications(now)
+        visibility = self.engine.visibility_health(now)
+        final_healthy, final_reason = self._publication_recovery_health(
+            visibility, publications,
+        )
+        if self._live_capable() and not final_healthy:
+            recovery_proof = self.state.update_recovery_proof(
+                live_capable=True,
+                healthy=False,
+                now=now,
+                poll_interval_seconds=int(self.cfg.get("poll_interval_seconds", 300)),
+                reason=final_reason,
+            )
+            recovery_open = False
+            self.engine.set_recovery_barrier_proven(False)
         status = self.state.status()
         status.update(self.router.status())
         if not routing_ok:
@@ -1296,6 +1534,17 @@ class M1bController:
             status["ORCHESTRATOR_M1B_STATE"] = "SHADOW"
         if not self.cfg["llm"]["dispatch_enabled"]:
             status["AI_LANE"] = "DISABLED"
+        status["AUTONOMY_VISIBILITY_STATE"] = visibility.state.value
+        status["AUTONOMY_VISIBILITY_REASONS"] = list(visibility.reasons)
+        status["UNPROJECTED_TERMINAL_COUNT"] = visibility.unresolved_terminal_count
+        status["UNPROJECTED_TERMINAL_HIGH_WATER"] = visibility.unprojected_terminal_high_water
+        status["UNPROJECTED_TERMINAL_MAX_AGE_SECONDS"] = visibility.unprojected_terminal_max_age_seconds
+        status["OUTBOX_REQUIRED_HIGH_WATER"] = visibility.outbox_required_high_water
+        status["RECOVERY_PROOF_STATE"] = recovery_proof["state"]
+        status["RECOVERY_FIRST_HEALTHY_AT"] = recovery_proof["first_healthy_at"]
+        status["RECOVERY_LAST_HEALTHY_AT"] = recovery_proof["last_healthy_at"]
+        status["RECOVERY_PROOF_REASON"] = recovery_proof["reason"]
+        status["ORDINARY_ADMISSION_OPEN"] = recovery_open
         live = self.state_dir / self.cfg["autonomy"]["evidence_subdir"] / "ORCH_LIVE_STATUS.yaml"
         _atomic_yaml(live, status)
         blockers = [dict(row) for row in self.store.conn.execute("SELECT task_id,reason FROM tasks WHERE state='BLOCKED'")]
@@ -1306,6 +1555,8 @@ class M1bController:
             NEXT_AI_PROBE_AT=status["NEXT_AI_PROBE_AT"], ACTIVE_WORKER_LEASE=status["ACTIVE_WORKER_LEASES"],
             LAST_WORKER_RESULT=dispatched[-1] if dispatched else None,
             BLOCKED_TASKS=blockers, WAITING_USER_TASKS=waiting,
+            AUTONOMY_VISIBILITY_STATE=visibility.state.value,
+            AUTONOMY_VISIBILITY_REASONS=list(visibility.reasons),
         )
         # The dashboard opens an immutable, read-only snapshot and therefore
         # intentionally ignores WAL files.  Publish the completed cycle to the
@@ -1315,4 +1566,7 @@ class M1bController:
                 "recovered_results": recovered_results,
                 "expired_leases": expired, "routing": routing, "probe": probe,
                 "alternate_probes": alternate_probes,
-                "dispatched": dispatched, "publications": publications, "status": status}
+                "dispatched": dispatched, "publications": publications,
+                "admission_visibility": visibility.state.value,
+                "recovery_proof": recovery_proof,
+                "ordinary_admission_open": recovery_open, "status": status}

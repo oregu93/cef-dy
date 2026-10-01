@@ -100,6 +100,21 @@ class M2RoutingDashboardTests(unittest.TestCase):
         self.assertEqual(self.store.get("UNKNOWN-ROLE-001")["state"], State.WAITING_USER.value)
         self.assertEqual(self.store.get("LOCAL-INDEPENDENT-001")["state"], State.SUCCEEDED.value)
 
+    def test_paused_gate_blocks_waiting_resource_promotion(self):
+        task = self.fx.task(task_id="PAUSED-WAITING-RESOURCE-001")
+        self.engine.ingest(task)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI())
+        controller.router.reconcile()
+        self.store.transition(
+            task.task_id, State.WAITING_RESOURCE, "test resource wait", force_recovery=True,
+        )
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        controller.router.reconcile()
+        self.assertEqual(
+            self.store.get(task.task_id)["state"], State.WAITING_RESOURCE.value,
+        )
+
     def test_invalid_route_never_executes_even_after_waiting_reevaluation(self):
         fake = FakeAI()
         task = self.fx.task(
@@ -341,6 +356,54 @@ class M2RoutingDashboardTests(unittest.TestCase):
         material = review.inputs["review_material"]
         self.assertEqual(material["accepted_result_sha256"], accepted["result_sha256"])
         self.assertEqual(material["parent_task_id"], parent.task_id)
+
+    def test_alternative_review_identity_with_parent_sha_is_blocked(self):
+        parent = self.fx.task(task_id="ALT-REVIEW-PARENT-001")
+        self.engine.ingest(parent)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI())
+        controller.cycle()
+        material = controller.router._build_review_material(parent)
+        canonical_review_id = parent.task_id + "-REVIEW-001"
+        self.store.conn.execute(
+            "INSERT INTO review_requirements VALUES(?,?,?,?,?,?,?)",
+            (parent.task_id, canonical_review_id, "07", "RESERVED", "exact review",
+             "2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"),
+        )
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        alternative = self.fx.task(
+            task_id=parent.task_id + "-REVIEW-ALTERNATIVE",
+            task_type="llm_worker", action="semantic_helper", source_issue=None,
+            labels=("orchestrator:task", "orchestrator:llm-approved"),
+            inputs={"independent_review": True, "review_of": parent.task_id,
+                    "review_material": material},
+        )
+        self.assertEqual(self.engine.ingest(alternative), "admission_blocked")
+        self.assertEqual(self.store.get(alternative.task_id)["state"], State.BLOCKED.value)
+
+    def test_registered_review_with_wrong_role_is_blocked(self):
+        parent = self.fx.task(task_id="WRONG-ROLE-REVIEW-PARENT-001")
+        self.engine.ingest(parent)
+        controller = M1bController(self.fx.cfg, self.store, FakeAI())
+        controller.cycle()
+        material = controller.router._build_review_material(parent)
+        review_id = parent.task_id + "-REVIEW-001"
+        self.store.conn.execute(
+            "INSERT INTO review_requirements VALUES(?,?,?,?,?,?,?)",
+            (parent.task_id, review_id, "00", "RESERVED", "exact review",
+             "2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"),
+        )
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"].update(enabled=False, preview_only=True)
+        wrong_role = self.fx.task(
+            task_id=review_id, role="07_INFRASTRUCTURE",
+            task_type="llm_worker", action="semantic_helper", source_issue=None,
+            labels=("orchestrator:task", "orchestrator:llm-approved"),
+            inputs={"independent_review": True, "review_of": parent.task_id,
+                    "review_material": material},
+        )
+        self.assertEqual(self.engine.ingest(wrong_role), "admission_blocked")
+        self.assertEqual(self.store.get(wrong_role.task_id)["state"], State.BLOCKED.value)
 
     def test_review_material_hash_tamper_fails_closed_waiting_user(self):
         parent, controller, review = self.bound_review("BOUND-TAMPER-001")
