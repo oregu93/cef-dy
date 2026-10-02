@@ -66,9 +66,15 @@ python scripts/work_recovery.py selftest
 
 ## Локальный deterministic task orchestrator
 
-Контракт: [TASK_ORCHESTRATOR_CONTRACT_V1_0](../03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V1_0.md).
-Конфигурация по умолчанию является `shadow`, GitHub polling выключен, а LLM
-dispatch отсутствует. Сначала скопируйте example в ignored machine-local config:
+Текущий production-контракт:
+[TASK_ORCHESTRATOR_CONTRACT_V2_0](../03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V2_0.md).
+Краткий operations facade находится в
+[INFRASTRUCTURE_BASELINE_V1](../00_Project/INFRASTRUCTURE_BASELINE_V1.md).
+V1 contract сохранён только как historical provenance.
+
+Example-конфигурация остаётся безопасной: `shadow`, GitHub polling и publishing
+выключены, publication работает в preview-only режиме, а AI dispatch отсутствует.
+Она не является копией machine-local production config.
 
 ```text
 cp configs/task_orchestrator.example.yaml configs/task_orchestrator.yaml
@@ -77,7 +83,15 @@ python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll
 python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
-### M2 production routing and operator dashboard
+Текущий suite содержит 188 тестов; точный модульный инвентарь зафиксирован в
+[TASK_ORCHESTRATOR_TEST_MATRIX_V2_0](../03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).
+
+### Production controller и M2 routing
+
+Production timer вызывает `cycle-once`. M1b управляет durable SQLite/WAL state,
+leases, accepted results, live publication и recovery proof; M2 добавляет
+routing и review/result bindings. GitHub Issues являются control-plane input и
+projection, но не scientific authority.
 
 M2 extends M1b; it does not replace the M1b controller, durable state, quota
 lane, or timer. Enable `routing.enabled` to register roles 00/01/02/03/04/07
@@ -91,7 +105,18 @@ tasks declare `inputs.resource_requirement` and may provide ordered
 `inputs.allowed_lanes`. Local OSS and non-Work lanes remain disabled until a
 real programmatic interface is explicitly verified; persistent chats are never
 claimed as autonomous workers. Exhausting `WORK_CODEX` moves only that lane to
-quota wait and leaves every verified non-Work lane schedulable.
+`QUOTA_WAIT` and leaves every verified non-Work lane schedulable. A bounded
+quota probe may restore the lane automatically; quota refusal does not consume
+the task retry budget and never authorizes paid fallback or another lane.
+
+When `publishing.enabled: true`, the live Publisher projects accepted terminal
+results through a durable idempotent outbox. Ambiguous delivery becomes
+`UNKNOWN` and must be reconciled. Publication recovery never reruns an accepted
+worker result. Ordinary autonomous admission additionally requires durable
+`PROVEN` recovery proof and currently healthy visibility; direct Engine/CLI
+commands cannot advance that proof.
+
+### Read-only operator dashboard
 
 The operator dashboard is a separate service and reads the existing SQLite
 state with SQLite query-only mode. Enable `dashboard.enabled`, then run:
@@ -105,9 +130,5 @@ The stable default URL is <http://127.0.0.1:8765/>; JSON is available at
 to `127.0.0.1`, has no write API, and is intentionally deployed as a separate
 systemd service so a dashboard failure cannot stop orchestration.
 
-`poll-once` только читает GitHub Issues и локально отслеживает labelled tasks,
-включая их ручное закрытие и изменение через web UI. `shadow` и `dry-run`
-никогда не исполняют READY tasks. Для bounded deterministic pilot
-оператор вручную меняет mode на `pilot`, оставляя `llm.dispatch_enabled: false`,
-после отдельного review. `approve` и `resume` являются локальными auditable
-операциями; quota reset сам по себе ничего не возобновляет.
+Dashboard v2 из Issue #27 отложен и не входит в Infrastructure Baseline v1.
+Не следует интерпретировать наличие dashboard service как deployment v2.

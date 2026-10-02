@@ -63,8 +63,9 @@ visibility:
     five_hour: {state: UNKNOWN, observed_at: null, reset_at: null}
     weekly: {state: UNKNOWN, observed_at: null, reset_at: null}
 
-# M1 provides only durable local previews/outbox interfaces. No live publisher
-# is wired by this example configuration.
+# The production controller includes the reviewed live Publisher. This example
+# remains deliberately disabled and preview-only: enabling publication requires
+# a separately reviewed machine-local configuration and authenticated transport.
 publishing:
   enabled: false
   preview_only: true

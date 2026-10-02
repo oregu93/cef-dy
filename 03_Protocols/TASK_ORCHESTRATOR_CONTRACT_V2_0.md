@@ -1,0 +1,135 @@
+---
+title: "CEF Dy - production task orchestrator contract"
+type: protocol
+status: current_production_authority
+version: "2.0"
+updated: 2026-10-02
+source_commit: 25adb37daa28550291e590a1cd2265281570f37e
+---
+
+# Production task orchestrator contract
+
+## Authority and boundaries
+
+The local SQLite database and its WAL are the operational authority for task
+state, events, leases, routes, results, publication outbox state, and recovery
+proof. GitHub Issues are the external task/control-plane source and a
+human-readable projection; they do not replace durable local state or grant
+scientific authority. Canonical Git remains the authority for project code and
+governance.
+
+The production entry point is `cycle-once`. It runs the M1b reliability
+controller and the additive M2 routing layer. The controller may execute only
+an already-authorized TASK envelope. It cannot make scientific or strategic
+decisions, promote a result, change stages, enable exchange, admit Structure-A
+execution, or access raw/private/holdout data. Those decisions remain with
+humans and Project Control.
+
+## Execution and resource lanes
+
+M2 routes work across `LOCAL_DETERMINISTIC`, `LOCAL_OSS_MODEL`, `NON_WORK_AI`,
+`WORK_CODEX`, and `HUMAN_DECISION`. A route is an eligibility decision, not an
+authorization. Disabled or unverified machine interfaces remain unavailable,
+and persistent chats are not autonomous workers.
+
+Work/Codex admission exhaustion moves the Work/Codex lane to `QUOTA_WAIT`.
+With M2 routing enabled, affected tasks wait in `WAITING_RESOURCE`; the legacy
+non-routing path may use task state `QUOTA_WAIT`. A bounded, deterministic quota
+probe uses configured backoff and may restore the lane after successful
+admission, after which routing and admission gates determine whether affected
+work can become executable. Quota exhaustion does not consume the task retry
+budget. It does not authorize a different lane, paid fallback, concurrent LLM
+expansion, or scientific execution.
+
+## Accepted results and publication
+
+An accepted RESULT is identity-bound to its TASK and attempt and is persisted
+before external publication. Publication uses a durable idempotent outbox and
+live GitHub comment transport only when explicitly enabled. `PENDING` and
+`SENDING` are reconciled; ambiguous delivery becomes `UNKNOWN`, never a blind
+retry. `CONFLICT`, `FAILED`, missing required publication identity, or another
+opaque state closes ordinary admission.
+
+Publication-only recovery never reruns an accepted worker result. The accepted
+RESULT bytes and SHA-256 remain authoritative while the controller reconciles
+or republishes only the projection. Historical `PREVIEW` entries are shadow
+evidence, not proof of live acknowledgement and not by themselves a permanent
+breaker after live activation.
+
+## Defect-aware admission and backpressure
+
+The controller projects one of three visibility states:
+
+- `AUTONOMY_VISIBILITY_OK`;
+- `AUTONOMY_VISIBILITY_DEGRADED`;
+- `ADMISSION_PAUSED_OPAQUE_STATE`.
+
+Ordinary autonomous enrollment requires a capable publication path. Disabled
+publishing or preview-only mode in a live ordinary-autonomy configuration
+immediately pauses new ordinary admission. New ordinary source tasks are not
+persisted while paused, preventing deferred-queue amplification. Existing
+ordinary work cannot be newly promoted, claimed, retried, or orphan-recovered
+into execution while the gate is closed.
+
+The derived guards are:
+
+```text
+UNPROJECTED_TERMINAL_HIGH_WATER = max(2, 2 * autonomy.max_batch_tasks)
+UNPROJECTED_TERMINAL_MAX_AGE    = max(600 s, 2 * poll_interval_seconds)
+OUTBOX_REQUIRED_HIGH_WATER      = 4 * UNPROJECTED_TERMINAL_HIGH_WATER
+```
+
+Only unresolved, required lifecycle identities count. Opaque publication
+states, required backlog, and age are reconstructed from SQLite after restart;
+there is no in-memory-only breaker authority.
+
+## Recovery proof
+
+Every live-capable Engine is fail-closed by default. Ordinary execution needs
+both durable proof and currently healthy visibility:
+
+```text
+NOT_PROVEN -> ONE_HEALTHY_OBSERVATION -> PROVEN
+```
+
+The second healthy observation must occur after the configured observation
+interval. Missing, malformed, or intermediate proof blocks ordinary work.
+Durable `PROVEN` does not override a current opaque, unknown, conflicting,
+failed, sending, or missing-projection condition.
+
+Only the reviewed controller reconciliation path advances proof. Direct Engine
+and CLI entry points (`poll-once`, `ingest`, `run-ready`, `approve`, and orphan
+recovery) may consume valid durable proof but cannot create or advance it.
+Restart reconstructs proof and visibility from durable state.
+
+## Bounded exceptions
+
+During a pause, an exact mandatory review can proceed only when all registered
+bindings agree: review task ID, parent task ID, canonical review role, accepted
+parent RESULT SHA-256, and review-material hash. An alternative review identity
+is rejected even when it cites the correct parent result.
+
+A task cannot grant itself `DIAGNOSTIC` or `RECOVERY` authority through its
+inputs, labels, or free text. Controller-native health, reconciliation, and
+lease recovery remain infrastructure operations; there is no task-provided
+bypass or replacement identity for an unresolved accepted result.
+
+## Restart and failure semantics
+
+Each cycle restores uncertain sends, reconciles publication, recomputes
+visibility, advances recovery proof only through the reviewed path, polls the
+control plane, reconciles M2 routing, probes eligible quota lanes, reevaluates
+waiting work, and dispatches only after all gates pass. SQLite integrity errors,
+source outages, route failure, missing authority, and malformed evidence fail
+closed. The controller retains accepted evidence and never rewrites scientific
+state to recover infrastructure.
+
+## Current references
+
+- [Infrastructure Baseline v1](../00_Project/INFRASTRUCTURE_BASELINE_V1.md)
+- [Task Orchestrator Test Matrix v2.0](TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md)
+- [Chat bootstraps](CHAT_BOOTSTRAPS.md)
+
+The v1 contract remains available as
+[historical provenance](TASK_ORCHESTRATOR_CONTRACT_V1_0.md); it is not current
+production authority.

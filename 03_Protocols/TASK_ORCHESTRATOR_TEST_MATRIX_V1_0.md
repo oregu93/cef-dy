@@ -1,13 +1,18 @@
 ---
 title: "CEF Dy - task orchestrator verification matrix"
 type: validation_report
-status: shadow_ready_not_production_authorized
+status: superseded_historical
 version: "1.0"
 updated: 2026-09-23
 baseline_commit: 46fa52555f39408acef67a8052438e64e49c2bc5
+superseded_by: TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md
 ---
 
 # Task orchestrator verification matrix
+
+> Historical provenance only. Counts and gates below describe the v1 shadow
+> checkpoint, not the current production baseline. See
+> [TASK_ORCHESTRATOR_TEST_MATRIX_V2_0](TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).
 
 This report covers the orchestrator feature in the canonical local checkout.
 Feature commits are local only. No push, GitHub mutation, systemd installation,

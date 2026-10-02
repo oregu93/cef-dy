@@ -1558,9 +1558,9 @@ class M1bController:
             AUTONOMY_VISIBILITY_STATE=visibility.state.value,
             AUTONOMY_VISIBILITY_REASONS=list(visibility.reasons),
         )
-        # The dashboard opens an immutable, read-only snapshot and therefore
-        # intentionally ignores WAL files.  Publish the completed cycle to the
-        # main database without making the dashboard a writer or a dependency.
+        # The dashboard reads SQLite in query-only mode and can observe WAL
+        # state.  Checkpoint opportunistically without making it a writer or a
+        # controller dependency.
         self.store.conn.execute("PRAGMA wal_checkpoint(PASSIVE)")
         return {"poll": poll, "cancelled_leases": cancelled,
                 "recovered_results": recovered_results,

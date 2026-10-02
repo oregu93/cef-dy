@@ -1,12 +1,17 @@
 ---
 title: "CEF Dy - local task orchestrator contract"
 type: protocol
-status: draft_for_shadow_validation
+status: superseded_historical
 version: "1.0"
 updated: 2026-09-23
+superseded_by: TASK_ORCHESTRATOR_CONTRACT_V2_0.md
 ---
 
 # Local task orchestrator contract
+
+> Historical provenance only. This contract records the v1 shadow-era design
+> and is not current production authority. See
+> [TASK_ORCHESTRATOR_CONTRACT_V2_0](TASK_ORCHESTRATOR_CONTRACT_V2_0.md).
 
 ## Purpose and authority
 

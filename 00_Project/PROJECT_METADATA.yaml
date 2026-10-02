@@ -3,6 +3,14 @@ project_status: active
 schema_version: '2.2'
 updated: '2026-09-20'
 
+infrastructure_baseline:
+  name: Infrastructure Baseline v1
+  status: review_candidate
+  source_head: 25adb37daa28550291e590a1cd2265281570f37e
+  record_path: 00_Project/INFRASTRUCTURE_BASELINE_V1.md
+  contract_path: 03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V2_0.md
+  test_matrix_path: 03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md
+
 scientific_question: >
   Определить воспроизводимый и физически интерпретируемый эффективный
   гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде
