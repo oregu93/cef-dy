@@ -933,6 +933,12 @@ class M1bController:
         def attention_required(row: sqlite3.Row) -> bool:
             if row["state"] not in attention_states:
                 return False
+            if (
+                row["state"] in {State.BLOCKED.value, State.FAILED.value, State.REJECTED.value}
+                and self.store.lifecycle_disposition(row["task_id"])
+                in {"SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL"}
+            ):
+                return False
             if row["state"] == State.BLOCKED.value:
                 return True
             task = self.store.task(row)

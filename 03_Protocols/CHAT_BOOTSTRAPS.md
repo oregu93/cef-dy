@@ -2,7 +2,7 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "3.5"
+version: "3.6"
 updated: 2026-10-03
 ---
 
@@ -551,6 +551,21 @@ PERSISTENT CHAT / EXECUTION BOUNDARY
   second orchestration authority.
 - These rules survive rN -> rN+1 migration and MUST be included in every
   Project Control re-entry/handoff package.
+
+
+TASK AUTHORING PREFLIGHT
+
+- Before a consequential Issue/TASK create, update, rerun, supersession,
+  close, or reopen operation, prepare and pass the deterministic
+  `authoring-preflight` contract in
+  `03_Protocols/TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0.md`.
+- The preflight MUST use the observed canonical HEAD and exact immutable
+  Issue/TASK, review, dependency, scope, resource/lane, and materialization
+  bindings. A non-authorizing `STATE_SYNC_REQUIRED` result stops dependent
+  authoring until materialization or an exact reviewed delta bridge exists.
+- Route any resulting repository/GitHub execution to a separate bounded Work
+  context. Passing preflight never converts persistent 00 into a worker and
+  never authorizes a ChatGPT scheduled task/automation.
 
 
 ROUTINE OPERATIONAL RECOVERY AUTHORITY

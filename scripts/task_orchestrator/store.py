@@ -99,6 +99,19 @@ CREATE TABLE IF NOT EXISTS chat_health_registry (
   observed_at TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS authoring_receipts (
+  receipt_sha256 TEXT PRIMARY KEY,
+  task_id TEXT NOT NULL,
+  envelope_hash TEXT NOT NULL,
+  operation_type TEXT NOT NULL,
+  lifecycle_disposition TEXT NOT NULL,
+  project_progress TEXT NOT NULL,
+  human_action_required INTEGER NOT NULL,
+  receipt_json TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS authoring_receipts_task_id
+  ON authoring_receipts(task_id);
 """
 
 
@@ -437,3 +450,68 @@ class Store:
         return self.conn.execute(
             "SELECT * FROM chat_health_registry WHERE chat_id=?", (chat_id,)
         ).fetchone()
+
+    def put_authoring_receipt(self, receipt: dict[str, Any]) -> str:
+        """Append one validated Project-Control authoring receipt.
+
+        Receipts are immutable.  A later operation (for example, an explicit
+        REOPEN) is represented by another receipt; history is never rewritten.
+        """
+        from .authoring import validate_preflight_receipt
+
+        value = validate_preflight_receipt(receipt, authorizing=True)
+        task_id = value["lifecycle_target_task_id"]
+        with self.transaction():
+            task_row = self.conn.execute(
+                "SELECT envelope_hash,state FROM tasks WHERE task_id=?", (task_id,)
+            ).fetchone()
+            if task_row is None:
+                raise TransitionError("authoring receipt target TASK is not locally known")
+            if task_row["envelope_hash"] != value["lifecycle_target_envelope_hash"]:
+                raise TransitionError("authoring receipt conflicts with TASK envelope identity")
+            if (
+                value["lifecycle_disposition"] != "CURRENT"
+                and State(task_row["state"]) not in TERMINAL_STATES
+            ):
+                raise TransitionError("historical disposition requires a terminal TASK")
+            existing = self.conn.execute(
+                "SELECT 1 FROM authoring_receipts WHERE receipt_sha256=?",
+                (value["receipt_sha256"],),
+            ).fetchone()
+            if existing:
+                return "duplicate"
+            payload = json.dumps(
+                value, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+            )
+            self.conn.execute(
+                "INSERT INTO authoring_receipts(receipt_sha256,task_id,envelope_hash,"
+                "operation_type,lifecycle_disposition,project_progress,"
+                "human_action_required,receipt_json,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+                (
+                    value["receipt_sha256"], task_id,
+                    value["lifecycle_target_envelope_hash"], value["operation_type"],
+                    value["lifecycle_disposition"], value["project_progress"],
+                    int(value["human_action_required"]), payload, utc_now(),
+                ),
+            )
+            self.append_event(
+                task_id, "AUTHORING_RECEIPT_APPLIED", task_row["state"], task_row["state"],
+                {
+                    "receipt_sha256": value["receipt_sha256"],
+                    "operation_type": value["operation_type"],
+                    "lifecycle_disposition": value["lifecycle_disposition"],
+                    "state_freshness": value["state_freshness"],
+                },
+            )
+            return "created"
+
+    def latest_authoring_receipt(self, task_id: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT receipt_json FROM authoring_receipts WHERE task_id=? "
+            "ORDER BY rowid DESC LIMIT 1", (task_id,),
+        ).fetchone()
+        return json.loads(row["receipt_json"]) if row else None
+
+    def lifecycle_disposition(self, task_id: str) -> str | None:
+        receipt = self.latest_authoring_receipt(task_id)
+        return str(receipt["lifecycle_disposition"]) if receipt else None

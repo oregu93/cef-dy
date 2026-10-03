@@ -3,8 +3,8 @@ title: "CEF Dy - production task orchestrator contract"
 type: protocol
 status: current_production_authority
 version: "2.0"
-updated: 2026-10-02
-source_commit: 25adb37daa28550291e590a1cd2265281570f37e
+updated: 2026-10-03
+source_commit: 55f8ad3a8b6bdb42151532c10a08af5784f867aa
 ---
 
 # Production task orchestrator contract
@@ -124,11 +124,39 @@ source outages, route failure, missing authority, and malformed evidence fail
 closed. The controller retains accepted evidence and never rewrites scientific
 state to recover infrastructure.
 
+## Project-Control authoring preflight
+
+Consequential Issue/TASK authoring is checked by the deterministic
+[authoring preflight](TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0.md). Its
+interface manifest is derived from this executable implementation's TASK
+schema, policy, canonical role aliases, actions, lanes, and routing suitability
+table. It validates immutable Issue/TASK identity, operation type, canonical
+HEAD, labels, repository scope, dependency and review RESULT bindings,
+rerun/supersession links, and materialization state before authoring proceeds.
+
+Accepted state changes use exactly `MATERIALIZED`,
+`PENDING_MATERIALIZATION`, `EXPLICITLY_DEFERRED_WITH_REASON`, or
+`NOT_STATE_CHANGING`. Relevant unbound materialization debt returns the
+non-authorizing `STATE_SYNC_REQUIRED`; an exceptional context-delta bridge must
+be identity/hash/review bound and preserve later materialization.
+
+Validated Project-Control receipts provide an append-only lifecycle and status
+overlay. Only that structured authority may classify a terminal TASK as
+`SUPERSEDED`, `RETIRED`, or `CLOSED_HISTORICAL`. Issue closure, payload hints,
+and free text cannot suppress current attention. FSM state remains distinct
+from `PROJECT_PROGRESS`, `HUMAN_ACTION_REQUIRED`, and semantic, design,
+implementation, deployment, and canonicalization facets.
+
+The persistent Project-Control chat remains NON-WORK and cannot authorize a
+ChatGPT scheduled task/automation. Bounded implementation continues only in a
+separate explicitly authorized execution context.
+
 ## Current references
 
 - [Infrastructure Baseline v1](../00_Project/INFRASTRUCTURE_BASELINE_V1.md)
 - [Task Orchestrator Test Matrix v2.0](TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md)
 - [Chat bootstraps](CHAT_BOOTSTRAPS.md)
+- [Project-Control authoring preflight](TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0.md)
 
 The v1 contract remains available as
 [historical provenance](TASK_ORCHESTRATOR_CONTRACT_V1_0.md); it is not current

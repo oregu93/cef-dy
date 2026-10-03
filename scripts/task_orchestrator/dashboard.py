@@ -17,6 +17,9 @@ import subprocess
 from typing import Any
 from urllib.parse import urlsplit
 
+from .authoring import validate_preflight_receipt
+from .model import ValidationError
+
 
 GRAPH_NODE_LIMIT = 24
 TERMINAL_STATES = {"SUCCEEDED", "FAILED", "REJECTED", "BLOCKED"}
@@ -165,10 +168,15 @@ def _next_condition(task: dict[str, Any]) -> str:
 
 
 def _historical_terminal(task: dict[str, Any]) -> bool:
-    # The current durable task/Issue schema has no provenance-backed,
-    # structured non-actionable disposition.  Issue closure, payload hints and
-    # free text are not sufficient authority to hide a present failure.
-    return False
+    # Only the validated, append-only Project-Control authoring receipt is
+    # authoritative.  Issue closure, payload hints, and free text remain
+    # insufficient to hide a present failure.
+    return (
+        task.get("state") in TERMINAL_STATES
+        and task.get("lifecycle_disposition") in {
+            "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
+        }
+    )
 
 
 def _component(label: str, state: str, detail: str, *, material: bool = True,
@@ -276,7 +284,7 @@ def _task_graph(tasks: list[dict[str, Any]], limit: int = GRAPH_NODE_LIMIT) -> d
         "task_id": task["task_id"], "title": _task_title(task), "state": task["state"],
         "human_state": human_state(task["state"]), "role": task.get("role"),
         "human_role": human_role(task.get("role")), "updated_at": task.get("updated_at"),
-        "user_action_required": task["state"] in {"WAITING_USER", "WAITING_APPROVAL"},
+        "user_action_required": bool(task.get("user_action_required")),
     } for task in selected]
     edges = []
     for task in selected:
@@ -300,6 +308,21 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
             "SELECT task_id,state,reason,attempt,source_issue,created_at,updated_at,payload_json "
             "FROM tasks ORDER BY updated_at DESC,task_id"
         )]
+        authoring_receipts: dict[str, dict[str, Any]] = {}
+        if _table_exists(conn, "authoring_receipts"):
+            for row in conn.execute(
+                "SELECT a.task_id,a.receipt_json FROM authoring_receipts a "
+                "WHERE a.rowid=(SELECT max(b.rowid) FROM authoring_receipts b "
+                "WHERE b.task_id=a.task_id)"
+            ):
+                try:
+                    value = validate_preflight_receipt(
+                        json.loads(row["receipt_json"]), authorizing=True,
+                        require_current_manifest=False,
+                    )
+                except (json.JSONDecodeError, ValidationError, TypeError, ValueError):
+                    continue
+                authoring_receipts[row["task_id"]] = value
         for task in tasks:
             payload = json.loads(task.pop("payload_json"))
             task["role"] = payload.get("role")
@@ -313,7 +336,21 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
             task["human_role"] = human_role(task.get("role"))
             task["title"] = _task_title(task)
             task["next_condition"] = _next_condition(task)
-            task["user_action_required"] = task["state"] in {"WAITING_USER", "WAITING_APPROVAL"}
+            receipt = authoring_receipts.get(task["task_id"])
+            task["fsm_state"] = task["state"]
+            task["authoring_receipt_sha256"] = receipt.get("receipt_sha256") if receipt else None
+            task["lifecycle_disposition"] = receipt.get("lifecycle_disposition", "UNRECORDED") if receipt else "UNRECORDED"
+            task["project_progress"] = receipt.get("project_progress", "UNKNOWN") if receipt else "UNKNOWN"
+            task["human_action_required"] = bool(receipt.get("human_action_required")) if receipt else False
+            for facet in (
+                "semantic_state", "design_state", "implementation_state",
+                "deployment_state", "canonicalization_state",
+            ):
+                task[facet] = receipt.get(facet, "UNKNOWN") if receipt else "UNKNOWN"
+            task["user_action_required"] = (
+                task["state"] in {"WAITING_USER", "WAITING_APPROVAL"}
+                or task["human_action_required"]
+            ) and not _historical_terminal(task)
         events = [dict(row) for row in conn.execute(
             "SELECT event_id,task_id,event_type,old_state,new_state,detail_json,created_at "
             "FROM events ORDER BY event_id DESC LIMIT ?",
@@ -386,9 +423,20 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
     components = {"orchestrator": heartbeat, "repository": repository, "sqlite": sqlite_health,
                   "resources": resources, "publication": publication}
     health = _overall_health(components)
-    attention = [task for task in tasks if task["state"] in ATTENTION_STATES and not _historical_terminal(task)]
-    blockers = [task for task in tasks if task["state"] in {"BLOCKED", "FAILED", "REJECTED"}]
-    active = [task for task in tasks if task["state"] not in TERMINAL_STATES]
+    attention = [task for task in tasks if (
+        task["state"] in ATTENTION_STATES or task["human_action_required"]
+    ) and not _historical_terminal(task)]
+    blockers = [task for task in tasks if (
+        task["state"] in {"BLOCKED", "FAILED", "REJECTED"}
+        and not _historical_terminal(task)
+    )]
+    active = [task for task in tasks if (
+        not _historical_terminal(task)
+        and (
+            task["state"] not in TERMINAL_STATES
+            or task["project_progress"] in {"NOT_STARTED", "IN_PROGRESS", "BLOCKED", "DEFERRED"}
+        )
+    )]
     latest = events[0] if events else None
     next_action = (controller or {}).get("NEXT_EXACT_ACTION")
     if not next_action and active:
@@ -492,9 +540,12 @@ def _current_work_html(tasks: list[dict[str, Any]], now: datetime) -> str:
     cards = []
     for task in tasks[:12]:
         action = '<strong class="needs-user">User action required</strong>' if task["user_action_required"] else ""
+        progress = human_state(task["project_progress"]) if task["project_progress"] != "UNKNOWN" else "Unknown"
         cards.append('<article class="work-item">'
                      f'<div><h3>{html.escape(task["title"])}</h3><p>{html.escape(task["human_role"])} · '
-                     f'<strong>{html.escape(task["human_state"])}</strong> · updated {_time_html(task["updated_at"], now)}</p></div>'
+                     f'<strong>{html.escape(task["human_state"])}</strong> · updated {_time_html(task["updated_at"], now)}</p>'
+                     f'<p>Project progress: <strong>{html.escape(progress)}</strong> · '
+                     f'canonicalization: {html.escape(human_state(task["canonicalization_state"]))}</p></div>'
                      f'<p>{html.escape(task["next_condition"])}</p>{action}'
                      f'<small class="mono">{html.escape(task["task_id"])}</small></article>')
     return "".join(cards)
@@ -539,7 +590,7 @@ details{{margin-top:30px}}summary{{cursor:pointer;font-weight:700;font-size:1.08
 <details><summary>Technical details</summary><div class="diag-scroll"><p>Exact values below are diagnostic data. Quota entries are configuration/projection values, not live telemetry unless an explicit observation source says otherwise.</p>
 <h3>Git identity</h3>{_table([git], ('canonical_head','local_head','branch'))}
 <h3>Quota projections</h3>{_table(quota_rows, ('window','state','observed_at','reset_at'))}
-<h3>All tasks</h3>{_table(data['tasks'], ('task_id','state','role','task_type','dependencies','attempt','reason','created_at','updated_at'))}
+<h3>All tasks</h3>{_table(data['tasks'], ('task_id','fsm_state','project_progress','human_action_required','semantic_state','design_state','implementation_state','deployment_state','canonicalization_state','lifecycle_disposition','authoring_receipt_sha256','role','task_type','dependencies','attempt','reason','created_at','updated_at'))}
 <h3>Workers and leases</h3>{_table(data['workers'], ('task_id','worker_id','attempt_id','claimed_at','lease_expires_at'))}
 <h3>Resource lanes</h3>{_table(data['resource_lanes'], ('lane_id','availability_state','quota_state','next_probe_at','concurrency_limit','capability_json','cost_priority','refusal_count','updated_at'))}
 <h3>Specialist routes</h3>{_table(data['routes'], ('task_id','role_id','suitability','allowed_lanes_json','selected_lane','route_status','reason','updated_at'))}

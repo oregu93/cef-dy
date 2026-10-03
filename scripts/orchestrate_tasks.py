@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import subprocess
 import sys
 import time
 
@@ -29,6 +30,7 @@ from task_orchestrator.autonomy import (
 )
 from task_orchestrator.reliability import M1bController, M1bStore
 from task_orchestrator.dashboard import serve as serve_dashboard
+from task_orchestrator.authoring import interface_manifest, preflight_authoring
 
 
 def parser() -> argparse.ArgumentParser:
@@ -40,6 +42,7 @@ def parser() -> argparse.ArgumentParser:
         "autonomy-plan", "autonomy-status", "cycle-plan", "cycle-once",
         "reliability-status",
         "dashboard-serve",
+        "authoring-manifest",
     ):
         sub.add_parser(name)
     worker_once = sub.add_parser("worker-once")
@@ -57,6 +60,8 @@ def parser() -> argparse.ArgumentParser:
     ingest.add_argument("task", type=Path)
     validate = sub.add_parser("validate-task")
     validate.add_argument("task", type=Path)
+    authoring = sub.add_parser("authoring-preflight")
+    authoring.add_argument("request", type=Path)
     for name in ("approve", "resume", "quota-pause"):
         cmd = sub.add_parser(name)
         cmd.add_argument("task_id")
@@ -70,11 +75,45 @@ def read_task(path: Path):
         raise ValidationError(str(exc)) from exc
 
 
+def read_mapping(path: Path) -> dict:
+    try:
+        value = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        raise ValidationError(str(exc)) from exc
+    if not isinstance(value, dict):
+        raise ValidationError("input document must be a mapping")
+    return value
+
+
+def observed_origin_main(repo: Path) -> str:
+    try:
+        proc = subprocess.run(
+            ["git", "rev-parse", "refs/remotes/origin/main"], cwd=repo,
+            capture_output=True, text=True, timeout=10, shell=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ValidationError(f"canonical Git identity unavailable: {exc}") from exc
+    value = proc.stdout.strip()
+    if proc.returncode != 0 or len(value) != 40:
+        raise ValidationError("canonical Git identity unavailable")
+    return value
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
         cfg = load_config(args.config.resolve())
         state_dir = Path(cfg["state_dir"])
+        if args.command == "authoring-manifest":
+            print(json.dumps(interface_manifest(), indent=2, ensure_ascii=False))
+            return 0
+        if args.command == "authoring-preflight":
+            result = preflight_authoring(
+                read_mapping(args.request), cfg,
+                observed_canonical_head=observed_origin_main(Path(cfg["repository_root"])),
+            )
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0 if result["status"] == "PREFLIGHT_PASS" else 3
         if args.command == "dashboard-serve":
             serve_dashboard(cfg)
             return 0

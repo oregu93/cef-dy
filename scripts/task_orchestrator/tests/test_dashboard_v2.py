@@ -15,6 +15,7 @@ from task_orchestrator.dashboard import (
     GRAPH_NODE_LIMIT, _overall_health, _resource_component, create_server,
     human_time, open_readonly, render, snapshot,
 )
+from task_orchestrator.authoring import preflight_authoring
 from task_orchestrator.reliability import M1bStore
 from task_orchestrator.store import Store
 
@@ -48,6 +49,54 @@ class DashboardV2Tests(unittest.TestCase):
         )
         self.checkpoint()
         return task
+
+    def apply_control_projection(self, task, *, disposition="CURRENT",
+                                 project_progress="IN_PROGRESS",
+                                 human_action_required=False):
+        operation = "CLOSE" if disposition != "CURRENT" else "UPDATE_EXISTING"
+        reason = "Accepted historical disposition." if disposition != "CURRENT" else None
+        request = {
+            "schema_version": 1, "operation_type": operation,
+            "author_role": "00_PROJECT_CONTROL", "canonical_head": self.fx.head,
+            "issue": {"number": task.source_issue,
+                      "state": "closed" if operation == "CLOSE" else "open",
+                      "labels": ["orchestrator:task"]},
+            "task": task.envelope_dict(),
+            "existing_binding": {"source_issue": task.source_issue,
+                                 "task_id": task.task_id,
+                                 "envelope_hash": task.envelope_hash},
+            "required_repository_paths": [], "dependency_bindings": [],
+            "review_binding": None,
+            "accepted_state_changes": [{
+                "identity": "DASHBOARD-PROJECTION-" + task.task_id,
+                "result_sha256": "a" * 64,
+                "materialization_state": "NOT_STATE_CHANGING",
+                "materialization_commit": None, "reason": None,
+            }],
+            "context_delta_bundle": None,
+            "lifecycle": {
+                "disposition": disposition, "target_task_id": task.task_id,
+                "target_envelope_hash": task.envelope_hash,
+                "successor_task_id": None, "reason": reason,
+            },
+            "project_status": {
+                "project_progress": project_progress,
+                "human_action_required": human_action_required,
+                "semantic_state": "ACCEPTED", "design_state": "REVIEWED",
+                "implementation_state": "PENDING",
+                "deployment_state": "NOT_AUTHORIZED",
+                "canonicalization_state": "PENDING_MATERIALIZATION",
+            },
+            "execution_context": "SEPARATE_BOUNDED_WORK",
+            "persistent_chat_role": "00_PROJECT_CONTROL",
+            "chatgpt_scheduler_requested": False,
+        }
+        receipt = preflight_authoring(
+            request, self.fx.cfg, observed_canonical_head=self.fx.head,
+        )
+        self.store.put_authoring_receipt(receipt)
+        self.checkpoint()
+        return receipt
 
     def test_material_stale_or_unknown_component_prevents_global_healthy(self):
         self.store.conn.execute(
@@ -175,6 +224,54 @@ class DashboardV2Tests(unittest.TestCase):
         attention_ids = {item["task_id"] for item in snapshot(self.fx.cfg)["attention"]}
         self.assertIn("HISTORICAL-TEXT-001", attention_ids)
         self.assertIn("APPROVAL-001", attention_ids)
+
+    def test_trusted_historical_disposition_suppresses_only_that_terminal_item(self):
+        historical = self.add_task("HISTORICAL-RECEIPT-001", "FAILED")
+        live = self.add_task("LIVE-FAILURE-002", "FAILED")
+        self.apply_control_projection(
+            historical, disposition="CLOSED_HISTORICAL",
+            project_progress="COMPLETED",
+        )
+        data = snapshot(self.fx.cfg)
+        attention_ids = {item["task_id"] for item in data["attention"]}
+        blocker_ids = {item["task_id"] for item in data["blockers"]}
+        self.assertNotIn(historical.task_id, attention_ids)
+        self.assertNotIn(historical.task_id, blocker_ids)
+        self.assertIn(live.task_id, attention_ids)
+        self.assertIn(live.task_id, blocker_ids)
+
+    def test_corrupt_authoring_receipt_fails_safe_and_keeps_failure_visible(self):
+        task = self.add_task("CORRUPT-RECEIPT-001", "FAILED")
+        self.store.conn.execute(
+            "INSERT INTO authoring_receipts(receipt_sha256,task_id,envelope_hash,"
+            "operation_type,lifecycle_disposition,project_progress,"
+            "human_action_required,receipt_json,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+            ("f" * 64, task.task_id, task.envelope_hash, "CLOSE",
+             "CLOSED_HISTORICAL", "COMPLETED", 0,
+             '{"not":"a validated receipt"}', "2026-10-03T00:00:00Z"),
+        )
+        self.checkpoint()
+        data = snapshot(self.fx.cfg)
+        self.assertIn(task.task_id, {item["task_id"] for item in data["attention"]})
+        projected = next(item for item in data["tasks"] if item["task_id"] == task.task_id)
+        self.assertEqual(projected["lifecycle_disposition"], "UNRECORDED")
+
+    def test_fsm_and_project_control_dimensions_remain_separate(self):
+        task = self.add_task("FACETED-SUCCESS-001", "SUCCEEDED")
+        self.apply_control_projection(
+            task, project_progress="IN_PROGRESS", human_action_required=True,
+        )
+        data = snapshot(self.fx.cfg)
+        projected = next(item for item in data["tasks"] if item["task_id"] == task.task_id)
+        self.assertEqual(projected["fsm_state"], "SUCCEEDED")
+        self.assertEqual(projected["project_progress"], "IN_PROGRESS")
+        self.assertEqual(projected["implementation_state"], "PENDING")
+        self.assertEqual(projected["deployment_state"], "NOT_AUTHORIZED")
+        self.assertTrue(projected["human_action_required"])
+        self.assertIn(task.task_id, {item["task_id"] for item in data["attention"]})
+        page = render(data).decode()
+        self.assertIn("Project progress", page)
+        self.assertIn("canonicalization", page)
 
     def test_resource_observation_freshness_controls_health(self):
         now = datetime(2026, 9, 29, 12, 0, tzinfo=timezone.utc)

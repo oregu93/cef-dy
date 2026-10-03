@@ -104,6 +104,23 @@ def canonical_role(value: str) -> str | None:
     return ROLE_ALIASES.get(key)
 
 
+def resolve_resource_request(task: Task) -> tuple[str, tuple[str, ...], tuple[str, ...]]:
+    """Resolve declared lanes with the same semantics used by live routing.
+
+    The third value is the compatible, ordered subset.  Exposing this small
+    pure helper keeps Project-Control authoring preflight and executable
+    routing on one policy table.
+    """
+    requirement = str(task.inputs.get("resource_requirement") or (
+        "" if task.is_llm else "DETERMINISTIC_REQUIRED"
+    ))
+    defaults = SUITABILITY.get(requirement, ())
+    declared = task.inputs.get("allowed_lanes")
+    allowed = tuple(declared) if isinstance(declared, list) else tuple(defaults)
+    compatible = tuple(lane for lane in allowed if lane in defaults)
+    return requirement, allowed, compatible
+
+
 def load_registry(path: Path) -> dict[str, SpecialistRole]:
     text = path.read_text(encoding="utf-8")
     matches = list(re.finditer(r"(?m)^## (00|01|02|03|04|07) - ([^\n]+)\n", text))
@@ -290,12 +307,10 @@ class ProductionRouter:
 
     @staticmethod
     def requirement(task: Task) -> str:
-        return str(task.inputs.get("resource_requirement") or (
-            "" if task.is_llm else "DETERMINISTIC_REQUIRED"
-        ))
+        return resolve_resource_request(task)[0]
 
     def _select_lane(self, task: Task, lanes: dict[str, dict[str, Any]]) -> tuple[str, str, tuple[str, ...], str]:
-        requirement = self.requirement(task)
+        requirement, declared, allowed = resolve_resource_request(task)
         if (task.is_llm and requirement == "DETERMINISTIC_REQUIRED") or (
             not task.is_llm and requirement not in {"DETERMINISTIC_REQUIRED", "HUMAN_REQUIRED"}
         ):
@@ -303,11 +318,8 @@ class ProductionRouter:
         defaults = SUITABILITY.get(requirement)
         if defaults is None:
             return "HUMAN_DECISION", "INVALID_SUITABILITY", (), "invalid resource suitability"
-        declared = task.inputs.get("allowed_lanes")
-        allowed = tuple(declared) if isinstance(declared, list) else defaults
-        allowed = tuple(lane for lane in allowed if lane in defaults)
         if not allowed:
-            return "HUMAN_DECISION", "INVALID_SUITABILITY", allowed, "no suitable allowed lane"
+            return "HUMAN_DECISION", "INVALID_SUITABILITY", declared, "no suitable allowed lane"
         if requirement == "HUMAN_REQUIRED":
             return "HUMAN_DECISION", "WAITING_USER", allowed, "human decision explicitly required"
         for lane in allowed:
