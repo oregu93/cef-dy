@@ -3,6 +3,15 @@ project_status: active
 schema_version: '2.2'
 updated: '2026-09-20'
 
+canonical_state_freshness:
+  status: DEGRADED_MATERIALIZATION_DEBT
+  assessed_at: '2026-10-03'
+  assessed_head: 234b3223ef67e179a00e22ca43bb519ea222fc4d
+  record_path: 00_Project/CANONICAL_STATE_FRESHNESS.yaml
+  consequential_task_policy: fail_closed_when_relevant_state_is_stale
+  exact_reviewed_delta_bundle_exception: allowed_only_when_identity_and_hash_bound
+  user_action_required: false
+
 infrastructure_baseline:
   name: Infrastructure Baseline v1
   status: review_candidate

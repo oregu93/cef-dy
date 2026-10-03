@@ -1,0 +1,95 @@
+schema_version: 1
+record_id: CANONICAL-STATE-FRESHNESS-2026-10-03-001
+status: DEGRADED_MATERIALIZATION_DEBT
+assessed_at: '2026-10-03'
+assessed_head: 234b3223ef67e179a00e22ca43bb519ea222fc4d
+authority: PROJECT_CONTROL
+purpose: >
+  Fail-closed guard against consequential specialist work being based on
+  descriptive repository state that lags already accepted/reviewed project
+  results. This record is an interim safety barrier pending the full
+  materialization-debt validator and authoring-preflight implementation.
+
+freshness_semantics:
+  FRESH: >
+    No known material accepted delta relevant to the layer is awaiting
+    canonical materialization.
+  CURRENT_WITH_UNMATERIALIZED_SUPPORT: >
+    The governing scientific conclusion remains current, but newer reviewed
+    support/design/provenance has not yet been fully materialized.
+  STALE: >
+    Current-facing canonical descriptions omit material accepted changes that
+    can affect subsequent work.
+  UNKNOWN: >
+    Freshness cannot yet be established from durable identities.
+
+layers:
+  scientific_core:
+    status: CURRENT_WITH_UNMATERIALIZED_SUPPORT
+    current_boundary:
+      milestone: M03R
+      state: LEVEL_2_established_LEVEL_3_blocked
+      stage03d: suspended
+      exchange: deferred
+      holdout: unauthorized
+    note: >
+      Recent reviewed work refined the resolution/scale-bridge and discriminant
+      designs but did not establish LEVEL_3, validate the 18.25 meV assignment,
+      authorize Stage03D, or activate exchange.
+  project_control:
+    status: STALE
+    known_materialization_debt:
+      - issue: 52
+        task_id: INFRA-REPO-WIDE-HYGIENE-LOGIC-AUDIT-001-RERUN-001
+        state: completed_with_actionable_findings_pending_review_and_remediation
+      - issue: 53
+        task_id: ORCH-PC-AUTHORING-PREFLIGHT-ARCH-001
+        state: completed_design_pending_review_and_implementation
+    note: >
+      Accepted governance decisions on canonical-state freshness,
+      accepted-decision fast-follow, negative-knowledge retention, and
+      Project-Control-to-Orch preflight are newer than the current descriptive
+      facades.
+  infrastructure:
+    status: STALE
+    note: >
+      Historical task disposition and dashboard attention semantics are known
+      to misclassify retired/superseded tasks as actionable. The durable
+      lifecycle/preflight correction is not yet canonical.
+  literature_and_supporting_knowledge:
+    status: CURRENT_WITH_UNMATERIALIZED_SUPPORT
+    note: >
+      Several October 2026 reviewed literature findings and methodological
+      comparator results are not yet fully materialized into the durable
+      literature/knowledge layers.
+
+gate:
+  default_for_consequential_work: CHECK_RELEVANT_LAYER
+  if_relevant_layer_is_STALE: STATE_SYNC_REQUIRED
+  if_relevant_layer_is_CURRENT_WITH_UNMATERIALIZED_SUPPORT: >
+    proceed_only_if_the_missing_support_cannot_change_the_task_decision_or_bind_an_exact_reviewed_delta_bundle
+  exact_delta_bundle_exception:
+    allowed: true
+    requirements:
+      - immutable source/result IDs
+      - exact hashes
+      - explicit task binding
+      - later canonical materialization required
+  unrelated_stale_layer_blocks_independent_work: false
+
+materialization_states:
+  - MATERIALIZED
+  - PENDING_MATERIALIZATION
+  - EXPLICITLY_DEFERRED_WITH_REASON
+  - NOT_STATE_CHANGING
+
+known_gaps:
+  - exact repository-wide materialization-debt inventory pending #52 review/remediation
+  - automatic validator/preflight enforcement pending #53 implementation
+  - dashboard STATE_FRESHNESS projection not yet implemented
+
+do_not_do:
+  - do_not_use_chat_memory_as_state_authority
+  - do_not_treat_GitHub_issue_prose_as_canonical_scientific_state
+  - do_not_bump_dates_without_reconciling_exact_state_deltas
+  - do_not_silently_promote_unreviewed_scientific_results

@@ -27,6 +27,37 @@ repository: oregu93/cef-dy
 branch: main
 ```
 
+## Canonical state freshness gate
+
+Before every consequential scientific, governance, or orchestration operation,
+read `00_Project/PROJECT_METADATA.yaml:canonical_state_freshness`.
+
+If its status is not `FRESH`, read the referenced
+`00_Project/CANONICAL_STATE_FRESHNESS.yaml` before proceeding.
+
+Rules:
+
+- Canonical Git is the shared authority for numbered specialist roles. Chat
+  history and GitHub Issue prose are not substitutes for materialized project
+  state.
+- If the task depends on a layer marked stale or carrying materialization debt,
+  do not infer the missing delta from memory. Return:
+  `STATE_SYNC_REQUIRED`.
+- A task may proceed across a stale layer only when it carries an exact reviewed
+  context-delta bundle bound by immutable IDs/hashes and explicitly authorized
+  for that task. This is an exceptional bridge, not the normal path.
+- A stale status in one unrelated layer does not automatically stop independent
+  work. Apply the gate to the task's actual dependencies.
+- Accepted material state changes must be driven toward canonical
+  materialization promptly or receive an explicit defer reason. Prose-only
+  accepted state is not a stable endpoint.
+- Do not treat file age alone as freshness evidence. Freshness is identity- and
+  materialization-based.
+
+This gate is fail-closed for relevant consequential work and is additive to all
+existing scientific, provenance, raw/holdout, and execution boundaries.
+
+
 Bootstrap prompts задают устойчивые роли и ограничения.
 
 Наличие bootstrap для роли **не означает**, что соответствующий chat instance
