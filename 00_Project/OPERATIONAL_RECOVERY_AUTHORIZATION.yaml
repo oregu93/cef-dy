@@ -1,0 +1,45 @@
+schema_version: 1
+authorization_id: PC-OPERATIONAL-RECOVERY-STANDING-001
+status: active
+granted_at: '2026-10-03'
+authority: USER_PROJECT_OWNER
+scope: ROUTINE_INFRASTRUCTURE_RECOVERY
+purpose: >
+  Permit Project Control and CEF-Orch to recover routine infrastructure and
+  orchestration failures autonomously without repeated user approval, while
+  preserving scientific, destructive, privacy, and authority boundaries.
+
+authorized_without_additional_user_approval:
+  - read operational SQLite/WAL and runtime diagnostics
+  - inspect review requirements, routes, leases, outbox, quota/resource and service state
+  - run bounded reconciliation and recovery mechanisms already provided by CEF-Orch
+  - restart orchestrator/dashboard user services when required to restore reviewed normal operation
+  - retry lost review/reconciliation cycles without changing scientific authority
+  - perform safe documentation/state-drift and materialization bookkeeping corrections
+  - create a replacement Orch task/Issue only when immutable task identity technically requires it
+  - run regression/self-tests after recovery
+  - route bounded execution to a separate authorized execution context while persistent 00 remains NON-WORK
+
+still_requires_explicit_human_authority:
+  - scientific execution or scientific promotion
+  - raw or holdout detector data access
+  - private-data access beyond already-authorized non-secret operational metadata
+  - Stage03R/Stage03D authority changes
+  - exchange activation or scientific-model scope changes
+  - new scientific conclusion or CEF assignment
+  - secrets or credential disclosure/change
+  - destructive or irreversible operations
+  - force push, history rewrite, or deletion of unique scientific evidence
+  - production-semantic redesign outside an already reviewed bounded recovery
+
+operational_rule:
+  self_recoverable_blocker: recover_then_verify
+  human_action_required_blocker: notify_immediately_with_exact_minimum_action
+  external_wait: continue_independent_work_and_record_dependency
+  systemic_recovery_failure: notify_user_immediately
+
+persistent_00_constraints:
+  mode: NON_WORK
+  chatgpt_scheduler_automations: forbidden
+  chat_title_or_identity_mutation: forbidden
+  work_execution: separate_context_only

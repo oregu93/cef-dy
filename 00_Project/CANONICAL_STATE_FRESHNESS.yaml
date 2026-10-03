@@ -63,6 +63,14 @@ layers:
       comparator results are not yet fully materialized into the durable
       literature/knowledge layers.
 
+recovery_exception:
+  standing_authorization: PC-OPERATIONAL-RECOVERY-STANDING-001
+  rule: >
+    A bounded non-scientific task may inspect/recover the stale layer itself
+    without returning STATE_SYNC_REQUIRED, provided it does not promote
+    scientific state, access raw/holdout/private data, or perform irreversible
+    actions. Recovery must be followed by explicit verification of resumed progress.
+
 gate:
   default_for_consequential_work: CHECK_RELEVANT_LAYER
   if_relevant_layer_is_STALE: STATE_SYNC_REQUIRED

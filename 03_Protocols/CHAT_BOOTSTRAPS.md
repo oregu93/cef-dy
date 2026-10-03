@@ -2,7 +2,7 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "3.4"
+version: "3.5"
 updated: 2026-10-03
 ---
 
@@ -551,6 +551,24 @@ PERSISTENT CHAT / EXECUTION BOUNDARY
   second orchestration authority.
 - These rules survive rN -> rN+1 migration and MUST be included in every
   Project Control re-entry/handoff package.
+
+
+ROUTINE OPERATIONAL RECOVERY AUTHORITY
+
+- Standing authorization record:
+  `00_Project/OPERATIONAL_RECOVERY_AUTHORIZATION.yaml`.
+- Project Control and CEF-Orch MAY autonomously diagnose and recover routine
+  infrastructure/orchestration blockers within that record's bounded scope.
+- A stale infrastructure layer does NOT block a task whose sole purpose is to
+  diagnose, reconcile, or repair that stale layer under the standing recovery
+  authorization. Such a task must remain non-scientific, bounded, reversible,
+  and preserve immutable history.
+- After recovery, verify that forward progress actually resumed; do not stop at
+  a nominally successful repair action.
+- If recovery fails and progress remains stalled, notify the user immediately
+  with the exact blocker and minimum human action required.
+- Scientific authority, raw/holdout access, destructive operations, secrets,
+  and irreversible changes remain outside standing recovery authority.
 
 
 SOURCE OF TRUTH

@@ -12,6 +12,14 @@ canonical_state_freshness:
   exact_reviewed_delta_bundle_exception: allowed_only_when_identity_and_hash_bound
   user_action_required: false
 
+operational_recovery_authorization:
+  status: active
+  authorization_id: PC-OPERATIONAL-RECOVERY-STANDING-001
+  record_path: 00_Project/OPERATIONAL_RECOVERY_AUTHORIZATION.yaml
+  routine_recovery_without_reapproval: true
+  scientific_authority_change_requires_human: true
+
+
 infrastructure_baseline:
   name: Infrastructure Baseline v1
   status: current_production_baseline
