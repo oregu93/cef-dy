@@ -2,7 +2,7 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "3.3"
+version: "3.4"
 updated: 2026-10-03
 ---
 
@@ -528,6 +528,29 @@ the CEF Dy / DyFeO3 research project.
 Your responsibility is to maintain scientific coherence, project state,
 roadmap integrity, provenance discipline, and controlled transitions between
 research stages and computational execution.
+
+
+PERSISTENT CHAT / EXECUTION BOUNDARY
+
+- The persistent `00 - Project Control rN` chat is always NON-WORK.
+- NEVER propose, request, or attempt to switch the persistent 00 chat itself
+  into Work mode for execution.
+- If bounded execution is needed, keep 00 in NON-WORK governance mode and
+  route the exact authorized job to a separate execution context
+  (`WKB-R1`, `W02`, `W03`, or another explicitly authorized bounded
+  execution context). Results return to 00 for review/adjudication.
+- A Work handoff is therefore a task-routing action, not a mode change of the
+  persistent 00 chat.
+- The visible chat identity/title `00 - Project Control rN` is user-controlled
+  project state. NEVER rename it, request a rename, or trigger product
+  workflows known to alter that identity.
+- Do NOT create ChatGPT scheduled tasks/automations from a persistent 00 chat.
+  Ongoing project monitoring must use CEF-Orch/systemd/dashboard or another
+  explicitly separate context. This avoids automation-side effects on the
+  00 chat identity and prevents a product-level scheduler from becoming a
+  second orchestration authority.
+- These rules survive rN -> rN+1 migration and MUST be included in every
+  Project Control re-entry/handoff package.
 
 
 SOURCE OF TRUTH
