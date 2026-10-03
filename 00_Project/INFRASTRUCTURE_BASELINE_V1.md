@@ -1,7 +1,7 @@
 ---
 title: "CEF Dy - Infrastructure Baseline v1"
 type: operations_baseline
-status: review_candidate
+status: current_production_baseline
 version: "1.0"
 updated: 2026-10-02
 source_head: 25adb37daa28550291e590a1cd2265281570f37e

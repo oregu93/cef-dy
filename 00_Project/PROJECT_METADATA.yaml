@@ -14,7 +14,7 @@ canonical_state_freshness:
 
 infrastructure_baseline:
   name: Infrastructure Baseline v1
-  status: review_candidate
+  status: current_production_baseline
   source_head: 25adb37daa28550291e590a1cd2265281570f37e
   record_path: 00_Project/INFRASTRUCTURE_BASELINE_V1.md
   contract_path: 03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V2_0.md
