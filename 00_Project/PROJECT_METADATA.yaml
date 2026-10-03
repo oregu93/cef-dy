@@ -1,7 +1,7 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-09-20'
+updated: '2026-10-03'
 
 canonical_state_freshness:
   status: DEGRADED_MATERIALIZATION_DEBT

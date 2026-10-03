@@ -2,8 +2,8 @@
 title: "CEF Dy — вводные промпты для чатов"
 type: protocol
 status: active
-version: "3.2"
-updated: 2026-09-17
+version: "3.3"
+updated: 2026-10-03
 ---
 
 # Вводные промпты для чатов проекта
