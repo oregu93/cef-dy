@@ -83,7 +83,7 @@ python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll
 python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
-Текущий candidate suite содержит 208 тестов; точный модульный инвентарь зафиксирован в
+Текущий candidate suite содержит 212 тестов; точный модульный инвентарь зафиксирован в
 [TASK_ORCHESTRATOR_TEST_MATRIX_V2_0](../03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).
 
 ### Project Control authoring preflight
@@ -97,8 +97,10 @@ python scripts/orchestrate_tasks.py --config CONFIG authoring-manifest
 python scripts/orchestrate_tasks.py --config CONFIG authoring-preflight REQUEST.yaml
 ```
 
-Команды не открывают operational SQLite и ничего не публикуют. Они проверяют
-HEAD, immutable Issue/TASK identity, operation, labels, paths, resource lanes,
+Команды не открывают operational SQLite и ничего не публикуют. Preflight
+сначала обязан успешно обновить `origin/main`; stale remote-tracking ref не
+считается доказательством current GitHub main. Они проверяют HEAD, immutable
+Issue/TASK identity, operation, labels, paths, resource lanes,
 review/dependency/rerun/supersession bindings и materialization debt. Unbound
 relevant debt возвращает `STATE_SYNC_REQUIRED`. Полный контракт:
 [TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0](../03_Protocols/TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0.md).

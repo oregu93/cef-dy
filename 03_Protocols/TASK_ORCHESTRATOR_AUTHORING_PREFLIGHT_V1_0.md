@@ -34,9 +34,11 @@ python scripts/orchestrate_tasks.py --config CONFIG authoring-preflight REQUEST.
 
 `authoring-manifest` is derived from the executable constants. It inventories
 TASK fields, task/action types, roles, lanes, suitability, operation types,
-materialization states, and its own SHA-256. `authoring-preflight` reads local
-`refs/remotes/origin/main` and fails closed on canonical HEAD drift. Neither
-command opens the operational database.
+materialization states, and its own SHA-256. Before reading
+`refs/remotes/origin/main`, `authoring-preflight` must successfully refresh
+`origin/main`; an unavailable refresh fails closed, so a stale remote-tracking
+ref is not proof of current GitHub main. Neither command opens the operational
+database.
 
 ## Immutable identities and operations
 
@@ -74,7 +76,9 @@ Every accepted state change has exactly one state:
 Pending materialization without an exact reviewed context-delta bundle returns
 `STATE_SYNC_REQUIRED`; that receipt is non-authorizing. A bundle is accepted
 only when it exactly covers the pending identities, carries immutable hashes
-and review identity, and preserves mandatory later materialization. This is a
+and review identity, and preserves mandatory later materialization. The
+receipt retains both the bundle ID/hash and exact review ID/result hash so the
+authority can be reconstructed durably. This is a
 bounded bridge, not a substitute for accepted-decision fast-follow.
 
 ## Durable receipt and dashboard projection
@@ -90,13 +94,19 @@ An authorizing receipt is deterministic and hash-bound to:
 - `PROJECT_PROGRESS` and `HUMAN_ACTION_REQUIRED`;
 - semantic, design, implementation, deployment, and canonicalization facets.
 
-Validated receipts may later be appended to local operational state through
-the Store integration. Receipts are immutable; a subsequent accepted operation
-creates a new receipt. This task does not apply receipts to production state.
+Validated receipts may later be appended to local operational state only
+through the trusted local Project-Control Store integration. Receipt SHA-256
+provides deterministic integrity, not cryptographic authentication or
+task-provided authority. Receipts are immutable; a subsequent accepted
+operation creates a new receipt. This task does not apply receipts to
+production state.
 
-Only a validated Project-Control receipt can mark a terminal task
-`SUPERSEDED`, `RETIRED`, or `CLOSED_HISTORICAL`. Issue closure, task payload
-hints, and free text cannot hide a current failure. The dashboard keeps FSM
+Only a validated Project-Control receipt bound to the exact TASK ID, envelope,
+operation/disposition, and explicit reason can mark a task `SUPERSEDED`,
+`RETIRED`, or `CLOSED_HISTORICAL`. This overlay may classify a stranded
+non-terminal FSM record as historical without rewriting its FSM or event
+history. Issue closure, task payload hints, age, free text, and FSM state alone
+cannot hide a current task. The dashboard keeps FSM
 state separate from project progress and the semantic/design/implementation/
 deployment/canonicalization facets. `HUMAN_ACTION_REQUIRED` is a separate
 boolean and is never inferred solely from project progress.

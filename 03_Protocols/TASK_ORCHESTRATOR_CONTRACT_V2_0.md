@@ -141,9 +141,13 @@ non-authorizing `STATE_SYNC_REQUIRED`; an exceptional context-delta bridge must
 be identity/hash/review bound and preserve later materialization.
 
 Validated Project-Control receipts provide an append-only lifecycle and status
-overlay. Only that structured authority may classify a terminal TASK as
-`SUPERSEDED`, `RETIRED`, or `CLOSED_HISTORICAL`. Issue closure, payload hints,
-and free text cannot suppress current attention. FSM state remains distinct
+overlay. Only that exact TASK/envelope/operation-bound structured authority
+may classify a TASK, including a stranded non-terminal FSM record, as
+`SUPERSEDED`, `RETIRED`, or `CLOSED_HISTORICAL`. The overlay does not rewrite
+FSM/event history. Issue closure, payload hints, age, free text, and FSM state
+alone cannot suppress current attention. Receipt SHA-256 proves integrity, not
+caller authentication; application remains a trusted local Project-Control
+operation. FSM state remains distinct
 from `PROJECT_PROGRESS`, `HUMAN_ACTION_REQUIRED`, and semantic, design,
 implementation, deployment, and canonicalization facets.
 

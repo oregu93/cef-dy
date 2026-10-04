@@ -99,6 +99,25 @@ def observed_origin_main(repo: Path) -> str:
     return value
 
 
+def refreshed_origin_main(repo: Path) -> str:
+    """Refresh the canonical remote-tracking ref before authoring proof.
+
+    A pre-existing refs/remotes/origin/main value is not evidence that GitHub
+    main is current.  Failure to refresh is therefore a fail-closed preflight
+    error rather than permission to continue from stale local metadata.
+    """
+    try:
+        proc = subprocess.run(
+            ["git", "fetch", "--no-tags", "origin", "main"], cwd=repo,
+            capture_output=True, text=True, timeout=30, shell=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ValidationError(f"canonical Git refresh failed: {exc}") from exc
+    if proc.returncode != 0:
+        raise ValidationError("canonical Git refresh failed")
+    return observed_origin_main(repo)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
@@ -110,7 +129,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "authoring-preflight":
             result = preflight_authoring(
                 read_mapping(args.request), cfg,
-                observed_canonical_head=observed_origin_main(Path(cfg["repository_root"])),
+                observed_canonical_head=refreshed_origin_main(Path(cfg["repository_root"])),
             )
             print(json.dumps(result, indent=2, ensure_ascii=False))
             return 0 if result["status"] == "PREFLIGHT_PASS" else 3

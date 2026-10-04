@@ -3,12 +3,15 @@ from __future__ import annotations
 from contextlib import redirect_stdout
 import io
 import json
+import subprocess
 import unittest
+from unittest import mock
 
 import yaml
 
-from orchestrate_tasks import main
+from orchestrate_tasks import main, refreshed_origin_main
 from task_orchestrator.engine import Engine
+from task_orchestrator.model import ValidationError
 from task_orchestrator.store import Store
 
 from .common import Fixture
@@ -84,12 +87,28 @@ class CliTests(unittest.TestCase):
             request_path = fixture.root / "authoring.yaml"
             request_path.write_text(yaml.safe_dump(request, sort_keys=False), encoding="utf-8")
             output = io.StringIO()
-            with redirect_stdout(output):
+            with mock.patch(
+                "orchestrate_tasks.refreshed_origin_main", return_value=fixture.head,
+            ) as refresh, redirect_stdout(output):
                 code = main(["--config", str(config), "authoring-preflight", str(request_path)])
+            refresh.assert_called_once_with(fixture.root)
             receipt = json.loads(output.getvalue())
             self.assertEqual(code, 0)
             self.assertEqual(receipt["status"], "PREFLIGHT_PASS")
             self.assertFalse((fixture.root / "state" / "state.sqlite3").exists())
+        finally:
+            fixture.close()
+
+    def test_authoring_preflight_fails_closed_when_origin_refresh_fails(self):
+        fixture = Fixture(mode="shadow")
+        try:
+            failed = subprocess.CompletedProcess(
+                ["git", "fetch", "--no-tags", "origin", "main"], 1,
+                stdout="", stderr="network unavailable",
+            )
+            with mock.patch("orchestrate_tasks.subprocess.run", return_value=failed):
+                with self.assertRaisesRegex(ValidationError, "canonical Git refresh failed"):
+                    refreshed_origin_main(fixture.root)
         finally:
             fixture.close()
 

@@ -275,7 +275,12 @@ def enqueue_attention_resolution_preview(
     """Durably clear a previously published attention request."""
     if not isinstance(target, str) or re.fullmatch(r"issue:[1-9][0-9]*", target) is None:
         raise ValidationError("attention target must be an explicit issue:<number>")
-    if task_row["state"] in {"WAITING_USER", "WAITING_APPROVAL", "BLOCKED"}:
+    if (
+        task_row["state"] in {"WAITING_USER", "WAITING_APPROVAL", "BLOCKED"}
+        and not store.is_historical_lifecycle(
+            task_row["task_id"], task_row["envelope_hash"],
+        )
+    ):
         raise ValidationError("attention resolution requires a non-attention task state")
     task = store.task(task_row)
     resolution_sha = hashlib.sha256(

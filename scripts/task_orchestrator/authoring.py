@@ -307,7 +307,7 @@ def _validate_materialization(value: Any) -> tuple[tuple[dict[str, Any], ...], t
     return tuple(sorted(records, key=lambda row: row["identity"])), tuple(sorted(pending))
 
 
-def _validate_context_delta(value: Any, pending: tuple[str, ...]) -> tuple[str, str] | None:
+def _validate_context_delta(value: Any, pending: tuple[str, ...]) -> dict[str, str] | None:
     if value is None:
         return None
     row = _mapping(value, "context_delta_bundle", {
@@ -319,12 +319,14 @@ def _validate_context_delta(value: Any, pending: tuple[str, ...]) -> tuple[str, 
     ids = row["pending_materialization_ids"]
     if not isinstance(ids, list) or tuple(sorted(ids)) != pending or len(ids) != len(set(ids)):
         raise ValidationError("context delta does not exactly bind pending materialization identities")
-    _text(row["review_id"], "context delta review_id", 200)
-    _hex(row["review_result_sha256"], "context delta review result SHA", SHA256)
-    return (
-        _text(row["bundle_id"], "context delta bundle_id", 200),
-        _hex(row["sha256"], "context delta SHA", SHA256),
-    )
+    return {
+        "bundle_id": _text(row["bundle_id"], "context delta bundle_id", 200),
+        "sha256": _hex(row["sha256"], "context delta SHA", SHA256),
+        "review_id": _text(row["review_id"], "context delta review_id", 200),
+        "review_result_sha256": _hex(
+            row["review_result_sha256"], "context delta review result SHA", SHA256,
+        ),
+    }
 
 
 def _validate_lifecycle(
@@ -472,8 +474,12 @@ def preflight_authoring(
         "accepted_state_changes": list(changes),
         "state_freshness": freshness,
         "pending_materialization_ids": list(pending),
-        "context_delta_bundle_id": delta[0] if delta else None,
-        "context_delta_bundle_sha256": delta[1] if delta else None,
+        "context_delta_bundle_id": delta["bundle_id"] if delta else None,
+        "context_delta_bundle_sha256": delta["sha256"] if delta else None,
+        "context_delta_review_id": delta["review_id"] if delta else None,
+        "context_delta_review_result_sha256": (
+            delta["review_result_sha256"] if delta else None
+        ),
         "lifecycle_disposition": lifecycle["disposition"],
         "lifecycle_target_task_id": lifecycle["target_task_id"],
         "lifecycle_target_envelope_hash": lifecycle["target_envelope_hash"],
@@ -495,7 +501,8 @@ RECEIPT_KEYS = {
     "required_repository_paths", "dependency_bindings", "review_binding",
     "accepted_state_changes", "state_freshness",
     "pending_materialization_ids", "context_delta_bundle_id",
-    "context_delta_bundle_sha256", "lifecycle_disposition",
+    "context_delta_bundle_sha256", "context_delta_review_id",
+    "context_delta_review_result_sha256", "lifecycle_disposition",
     "lifecycle_target_task_id", "lifecycle_target_envelope_hash",
     "successor_task_id", "lifecycle_reason", "project_progress",
     "human_action_required", *STATUS_FACETS, "execution_context",
@@ -524,6 +531,12 @@ def validate_preflight_receipt(
     _hex(data["interface_manifest_sha256"], "receipt interface manifest SHA", SHA256)
     _text(data["lifecycle_target_task_id"], "receipt lifecycle target", 128)
     _hex(data["lifecycle_target_envelope_hash"], "receipt lifecycle envelope SHA", SHA256)
+    successor = _optional_text(
+        data["successor_task_id"], "receipt lifecycle successor", 128,
+    )
+    lifecycle_reason = _optional_text(
+        data["lifecycle_reason"], "receipt lifecycle reason", 2000,
+    )
     if authorizing and data["status"] != "PREFLIGHT_PASS":
         raise ValidationError("STATE_SYNC_REQUIRED receipt is not authorizing")
     if data["status"] not in {"PREFLIGHT_PASS", "STATE_SYNC_REQUIRED"}:
@@ -536,6 +549,27 @@ def validate_preflight_receipt(
         raise ValidationError("authorizing receipt cannot carry STATE_SYNC_REQUIRED")
     if data["lifecycle_disposition"] not in LIFECYCLE_DISPOSITIONS:
         raise ValidationError("invalid lifecycle disposition")
+    historical = data["lifecycle_disposition"] != "CURRENT"
+    if data["operation_type"] == "SUPERSEDE":
+        if (
+            data["lifecycle_disposition"] != "SUPERSEDED"
+            or successor != data["task_id"]
+            or not lifecycle_reason
+        ):
+            raise ValidationError("invalid SUPERSEDE lifecycle authority")
+    elif data["operation_type"] == "CLOSE":
+        if (
+            data["lifecycle_disposition"] not in {"RETIRED", "CLOSED_HISTORICAL"}
+            or data["task_id"] != data["lifecycle_target_task_id"]
+            or successor is not None
+            or not lifecycle_reason
+        ):
+            raise ValidationError("invalid CLOSE lifecycle authority")
+    elif (
+        historical or data["task_id"] != data["lifecycle_target_task_id"]
+        or successor is not None or lifecycle_reason is not None
+    ):
+        raise ValidationError("operation cannot authorize historical lifecycle disposition")
     if data["project_progress"] not in PROJECT_PROGRESS_STATES:
         raise ValidationError("invalid PROJECT_PROGRESS")
     if type(data["human_action_required"]) is not bool:
@@ -555,7 +589,15 @@ def validate_preflight_receipt(
     if data["state_freshness"] == "CONTEXT_DELTA_BOUND":
         _text(data["context_delta_bundle_id"], "receipt context delta ID", 200)
         _hex(data["context_delta_bundle_sha256"], "receipt context delta SHA", SHA256)
-    elif data["context_delta_bundle_id"] is not None or data["context_delta_bundle_sha256"] is not None:
+        _text(data["context_delta_review_id"], "receipt context delta review ID", 200)
+        _hex(
+            data["context_delta_review_result_sha256"],
+            "receipt context delta review result SHA", SHA256,
+        )
+    elif any(data[key] is not None for key in (
+        "context_delta_bundle_id", "context_delta_bundle_sha256",
+        "context_delta_review_id", "context_delta_review_result_sha256",
+    )):
         raise ValidationError("receipt context delta is inconsistent with freshness")
     if data["persistent_project_control_mode"] != "NON_WORK":
         raise ValidationError("persistent Project Control must remain NON-WORK")
@@ -567,3 +609,38 @@ def validate_preflight_receipt(
     ):
         raise ValidationError("receipt executable-interface manifest is stale")
     return dict(data)
+
+
+def lifecycle_receipt_for_task(
+    receipt: Any, *, task_id: str, envelope_hash: str,
+) -> dict[str, Any] | None:
+    """Return a validated receipt only when it targets this exact TASK envelope.
+
+    The receipt digest provides integrity, not authentication.  Callers must
+    obtain receipts from the trusted local Project-Control application path;
+    untrusted task payloads, Issue closure, and free text are not authority.
+    """
+    try:
+        value = validate_preflight_receipt(
+            receipt, authorizing=True, require_current_manifest=False,
+        )
+    except (ValidationError, TypeError, ValueError):
+        return None
+    if (
+        value["lifecycle_target_task_id"] != task_id
+        or value["lifecycle_target_envelope_hash"] != envelope_hash
+    ):
+        return None
+    return value
+
+
+def is_historical_lifecycle_receipt(
+    receipt: Any, *, task_id: str, envelope_hash: str,
+) -> bool:
+    """Apply the shared exact structured non-actionable overlay predicate."""
+    value = lifecycle_receipt_for_task(
+        receipt, task_id=task_id, envelope_hash=envelope_hash,
+    )
+    return bool(value and value["lifecycle_disposition"] in {
+        "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
+    })

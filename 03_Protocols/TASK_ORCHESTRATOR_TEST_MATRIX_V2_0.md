@@ -11,7 +11,7 @@ source_commit: 55f8ad3a8b6bdb42151532c10a08af5784f867aa
 
 ## Current accepted suite
 
-The current candidate baseline is **208/208 PASS**. The count is the test inventory at
+The current candidate baseline is **212/212 PASS**. The count is the test inventory at
 the source commit above; validators and compilation are reported separately.
 
 | Module | Tests | Result |
@@ -19,16 +19,16 @@ the source commit above; validators and compilation are reported separately.
 | `test_admission.py` | 7 | PASS |
 | `test_authoring_preflight.py` | 16 | PASS |
 | `test_chat_health.py` | 10 | PASS |
-| `test_cli.py` | 2 | PASS |
-| `test_dashboard_v2.py` | 22 | PASS |
+| `test_cli.py` | 3 | PASS |
+| `test_dashboard_v2.py` | 24 | PASS |
 | `test_m2_routing_dashboard.py` | 42 | PASS |
 | `test_poll_lock_recovery.py` | 13 | PASS |
-| `test_reliability.py` | 45 | PASS |
+| `test_reliability.py` | 46 | PASS |
 | `test_schema_policy.py` | 9 | PASS |
 | `test_store_engine.py` | 20 | PASS |
 | `test_visibility_publishing.py` | 16 | PASS |
 | `test_workers.py` | 6 | PASS |
-| **Total** | **208** | **PASS** |
+| **Total** | **212** | **PASS** |
 
 ## Production invariants covered
 

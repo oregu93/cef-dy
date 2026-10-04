@@ -933,10 +933,8 @@ class M1bController:
         def attention_required(row: sqlite3.Row) -> bool:
             if row["state"] not in attention_states:
                 return False
-            if (
-                row["state"] in {State.BLOCKED.value, State.FAILED.value, State.REJECTED.value}
-                and self.store.lifecycle_disposition(row["task_id"])
-                in {"SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL"}
+            if self.store.is_historical_lifecycle(
+                row["task_id"], row["envelope_hash"],
             ):
                 return False
             if row["state"] == State.BLOCKED.value:
@@ -974,7 +972,12 @@ class M1bController:
                                  "status": OutboxStatus.SUPERSEDED.value})
             elif (
                 row["status"] == OutboxStatus.PUBLISHED.value
-                and row["state"] not in attention_states
+                and (
+                    row["state"] not in attention_states
+                    or self.store.is_historical_lifecycle(
+                        row["task_id"], row["envelope_hash"],
+                    )
+                )
             ):
                 resolved_attention_targets.append(
                     (row["task_id"], row["target"], row["publication_id"])

@@ -240,6 +240,55 @@ class DashboardV2Tests(unittest.TestCase):
         self.assertIn(live.task_id, attention_ids)
         self.assertIn(live.task_id, blocker_ids)
 
+    def test_trusted_historical_overlay_hides_stranded_nonterminal_attention(self):
+        cases = (
+            ("STRANDED-WAITING-USER-001", "WAITING_USER", "CLOSED_HISTORICAL"),
+            ("STRANDED-WAITING-APPROVAL-001", "WAITING_APPROVAL", "RETIRED"),
+        )
+        for task_id, state, disposition in cases:
+            task = self.add_task(task_id, state, reason="historical stranded FSM")
+            before_events = [dict(row) for row in self.store.conn.execute(
+                "SELECT * FROM events WHERE task_id=? ORDER BY event_id", (task_id,),
+            )]
+            self.apply_control_projection(
+                task, disposition=disposition, project_progress="COMPLETED",
+            )
+            self.assertEqual(self.store.get(task_id)["state"], state)
+            self.assertEqual([dict(row) for row in self.store.conn.execute(
+                "SELECT * FROM events WHERE task_id=? ORDER BY event_id", (task_id,),
+            )], before_events)
+
+        data = snapshot(self.fx.cfg)
+        for field in ("attention", "current_work", "blockers"):
+            projected = {item["task_id"] for item in data[field]}
+            for task_id, _, _ in cases:
+                self.assertNotIn(task_id, projected)
+        graph_ids = {item["task_id"] for item in data["task_graph"]["nodes"]}
+        for task_id, _, _ in cases:
+            self.assertNotIn(task_id, graph_ids)
+            self.assertFalse(any(
+                task_id in item for item in data["operator_progress"]["CURRENT"]
+            ))
+            self.assertFalse(any(
+                task_id in item for item in data["operator_progress"]["NEEDS_USER"]
+            ))
+
+    def test_live_nonterminal_attention_without_historical_receipt_remains_visible(self):
+        for task_id, state in (
+            ("LIVE-WAITING-USER-001", "WAITING_USER"),
+            ("LIVE-WAITING-APPROVAL-001", "WAITING_APPROVAL"),
+        ):
+            self.add_task(task_id, state, reason="still actionable")
+        data = snapshot(self.fx.cfg)
+        attention_ids = {item["task_id"] for item in data["attention"]}
+        current_ids = {item["task_id"] for item in data["current_work"]}
+        self.assertTrue({
+            "LIVE-WAITING-USER-001", "LIVE-WAITING-APPROVAL-001",
+        }.issubset(attention_ids))
+        self.assertTrue({
+            "LIVE-WAITING-USER-001", "LIVE-WAITING-APPROVAL-001",
+        }.issubset(current_ids))
+
     def test_corrupt_authoring_receipt_fails_safe_and_keeps_failure_visible(self):
         task = self.add_task("CORRUPT-RECEIPT-001", "FAILED")
         self.store.conn.execute(

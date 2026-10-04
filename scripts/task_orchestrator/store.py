@@ -456,6 +456,9 @@ class Store:
 
         Receipts are immutable.  A later operation (for example, an explicit
         REOPEN) is represented by another receipt; history is never rewritten.
+        This is a trusted local authority boundary: receipt SHA-256 proves
+        integrity, not the identity of an untrusted caller.  TASK payloads and
+        remote Issue content must never call this method as self-authorization.
         """
         from .authoring import validate_preflight_receipt
 
@@ -463,17 +466,12 @@ class Store:
         task_id = value["lifecycle_target_task_id"]
         with self.transaction():
             task_row = self.conn.execute(
-                "SELECT envelope_hash,state FROM tasks WHERE task_id=?", (task_id,)
+                "SELECT envelope_hash FROM tasks WHERE task_id=?", (task_id,)
             ).fetchone()
             if task_row is None:
                 raise TransitionError("authoring receipt target TASK is not locally known")
             if task_row["envelope_hash"] != value["lifecycle_target_envelope_hash"]:
                 raise TransitionError("authoring receipt conflicts with TASK envelope identity")
-            if (
-                value["lifecycle_disposition"] != "CURRENT"
-                and State(task_row["state"]) not in TERMINAL_STATES
-            ):
-                raise TransitionError("historical disposition requires a terminal TASK")
             existing = self.conn.execute(
                 "SELECT 1 FROM authoring_receipts WHERE receipt_sha256=?",
                 (value["receipt_sha256"],),
@@ -494,15 +492,6 @@ class Store:
                     int(value["human_action_required"]), payload, utc_now(),
                 ),
             )
-            self.append_event(
-                task_id, "AUTHORING_RECEIPT_APPLIED", task_row["state"], task_row["state"],
-                {
-                    "receipt_sha256": value["receipt_sha256"],
-                    "operation_type": value["operation_type"],
-                    "lifecycle_disposition": value["lifecycle_disposition"],
-                    "state_freshness": value["state_freshness"],
-                },
-            )
             return "created"
 
     def latest_authoring_receipt(self, task_id: str) -> dict[str, Any] | None:
@@ -515,3 +504,11 @@ class Store:
     def lifecycle_disposition(self, task_id: str) -> str | None:
         receipt = self.latest_authoring_receipt(task_id)
         return str(receipt["lifecycle_disposition"]) if receipt else None
+
+    def is_historical_lifecycle(self, task_id: str, envelope_hash: str) -> bool:
+        from .authoring import is_historical_lifecycle_receipt
+
+        receipt = self.latest_authoring_receipt(task_id)
+        return bool(receipt and is_historical_lifecycle_receipt(
+            receipt, task_id=task_id, envelope_hash=envelope_hash,
+        ))

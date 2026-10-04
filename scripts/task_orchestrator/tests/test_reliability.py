@@ -12,6 +12,7 @@ import time
 import unittest
 from unittest import mock
 
+from task_orchestrator.authoring import preflight_authoring
 from task_orchestrator.engine import Engine
 from task_orchestrator.github import Issue, SourceUnavailable
 from task_orchestrator.model import State
@@ -165,6 +166,52 @@ class ReliabilityTests(unittest.TestCase):
             "AND marker LIKE '<!-- cef-dy-orch-result:v1 %'", (task_id,),
         ).fetchone()[0], "PREVIEW")
         return task, accepted["result_sha256"]
+
+    def apply_historical_disposition(self, task, disposition="CLOSED_HISTORICAL"):
+        receipt = preflight_authoring({
+            "schema_version": 1,
+            "operation_type": "CLOSE",
+            "author_role": "00_PROJECT_CONTROL",
+            "canonical_head": self.fx.head,
+            "issue": {"number": task.source_issue, "state": "closed",
+                      "labels": list(task.labels)},
+            "task": task.envelope_dict(),
+            "existing_binding": {"source_issue": task.source_issue,
+                                 "task_id": task.task_id,
+                                 "envelope_hash": task.envelope_hash},
+            "required_repository_paths": [],
+            "dependency_bindings": [],
+            "review_binding": None,
+            "accepted_state_changes": [{
+                "identity": "ATTENTION-DISPOSITION-" + task.task_id,
+                "result_sha256": "a" * 64,
+                "materialization_state": "NOT_STATE_CHANGING",
+                "materialization_commit": None,
+                "reason": None,
+            }],
+            "context_delta_bundle": None,
+            "lifecycle": {
+                "disposition": disposition,
+                "target_task_id": task.task_id,
+                "target_envelope_hash": task.envelope_hash,
+                "successor_task_id": None,
+                "reason": "Project Control accepted this task as historical.",
+            },
+            "project_status": {
+                "project_progress": "COMPLETED",
+                "human_action_required": False,
+                "semantic_state": "ACCEPTED",
+                "design_state": "REVIEWED",
+                "implementation_state": "COMPLETED",
+                "deployment_state": "NOT_AUTHORIZED",
+                "canonicalization_state": "NOT_STATE_CHANGING",
+            },
+            "execution_context": "SEPARATE_BOUNDED_WORK",
+            "persistent_chat_role": "00_PROJECT_CONTROL",
+            "chatgpt_scheduler_requested": False,
+        }, self.fx.cfg, observed_canonical_head=self.fx.head)
+        self.assertEqual(self.store.put_authoring_receipt(receipt), "created")
+        return receipt
 
     def test_quota_wait_does_not_consume_retry_and_local_work_continues(self):
         self.assertEqual(self.engine.ingest(self.ai_task()), "created")
@@ -432,6 +479,42 @@ class ReliabilityTests(unittest.TestCase):
         controller.cycle(StaticSource([]))
         controller.cycle(StaticSource([]))
         self.assertEqual(sum("ATTENTION_REQUIRED: false" in body for body in transport.bodies), 1)
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM publication_outbox WHERE marker LIKE "
+            "'<!-- cef-dy-orch-attention-resolution:v1 %' AND task_id=?", (task.task_id,)
+        ).fetchone()[0], 1)
+
+    def test_historical_overlay_resolves_published_nonterminal_attention(self):
+        self.fx.cfg["github"]["enabled"] = True
+        self.fx.cfg["publishing"] = {"enabled": True, "preview_only": False,
+                                      "trusted_authors": ["trusted-bot"]}
+        self.mark_recovery_proven()
+        task = self.fx.task(task_id="INFRA-HISTORICAL-ATTN-001", source_issue=41)
+        self.engine.ingest(task)
+        self.store.transition(
+            task.task_id, State.WAITING_USER, "historical unresolved prompt",
+            force_recovery=True,
+        )
+        transport = FakePublication()
+        controller = M1bController(
+            self.fx.cfg, self.store, FakeAI(), publication_transport=transport,
+        )
+        controller.cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 1)
+        self.assertIn("ATTENTION_REQUIRED: true", transport.bodies[0])
+
+        events_before = [dict(row) for row in self.store.conn.execute(
+            "SELECT * FROM events WHERE task_id=? ORDER BY event_id", (task.task_id,),
+        )]
+        self.apply_historical_disposition(task)
+        self.assertEqual(self.store.get(task.task_id)["state"], State.WAITING_USER.value)
+        self.assertEqual([dict(row) for row in self.store.conn.execute(
+            "SELECT * FROM events WHERE task_id=? ORDER BY event_id", (task.task_id,),
+        )], events_before)
+
+        controller.cycle(StaticSource([]))
+        self.assertEqual(transport.sends, 2)
+        self.assertIn("ATTENTION_REQUIRED: false", transport.bodies[1])
         self.assertEqual(self.store.conn.execute(
             "SELECT count(*) FROM publication_outbox WHERE marker LIKE "
             "'<!-- cef-dy-orch-attention-resolution:v1 %' AND task_id=?", (task.task_id,)

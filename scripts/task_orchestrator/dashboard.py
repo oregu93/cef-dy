@@ -17,7 +17,7 @@ import subprocess
 from typing import Any
 from urllib.parse import urlsplit
 
-from .authoring import validate_preflight_receipt
+from .authoring import lifecycle_receipt_for_task, validate_preflight_receipt
 from .model import ValidationError
 
 
@@ -167,16 +167,13 @@ def _next_condition(task: dict[str, Any]) -> str:
     return reason or human_state(state)
 
 
-def _historical_terminal(task: dict[str, Any]) -> bool:
+def _historical_non_actionable(task: dict[str, Any]) -> bool:
     # Only the validated, append-only Project-Control authoring receipt is
     # authoritative.  Issue closure, payload hints, and free text remain
     # insufficient to hide a present failure.
-    return (
-        task.get("state") in TERMINAL_STATES
-        and task.get("lifecycle_disposition") in {
-            "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
-        }
-    )
+    return task.get("lifecycle_disposition") in {
+        "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
+    }
 
 
 def _component(label: str, state: str, detail: str, *, material: bool = True,
@@ -259,8 +256,12 @@ def _telegram_projection(controller: dict[str, Any] | None, now: datetime,
 
 
 def _task_graph(tasks: list[dict[str, Any]], limit: int = GRAPH_NODE_LIMIT) -> dict[str, Any]:
-    active = [task for task in tasks if task["state"] not in TERMINAL_STATES]
-    recent_complete = [task for task in tasks if task["state"] == "SUCCEEDED"]
+    active = [task for task in tasks if (
+        task["state"] not in TERMINAL_STATES and not _historical_non_actionable(task)
+    )]
+    recent_complete = [task for task in tasks if (
+        task["state"] == "SUCCEEDED" and not _historical_non_actionable(task)
+    )]
     selected: list[dict[str, Any]] = []
     seen: set[str] = set()
 
@@ -305,7 +306,7 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
         )] if _table_exists(conn, "issue_snapshots") else []
         issues = {row["issue_number"]: row for row in issue_rows}
         tasks = [dict(row) for row in conn.execute(
-            "SELECT task_id,state,reason,attempt,source_issue,created_at,updated_at,payload_json "
+            "SELECT task_id,envelope_hash,state,reason,attempt,source_issue,created_at,updated_at,payload_json "
             "FROM tasks ORDER BY updated_at DESC,task_id"
         )]
         authoring_receipts: dict[str, dict[str, Any]] = {}
@@ -336,7 +337,10 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
             task["human_role"] = human_role(task.get("role"))
             task["title"] = _task_title(task)
             task["next_condition"] = _next_condition(task)
-            receipt = authoring_receipts.get(task["task_id"])
+            receipt = lifecycle_receipt_for_task(
+                authoring_receipts.get(task["task_id"]),
+                task_id=task["task_id"], envelope_hash=task["envelope_hash"],
+            )
             task["fsm_state"] = task["state"]
             task["authoring_receipt_sha256"] = receipt.get("receipt_sha256") if receipt else None
             task["lifecycle_disposition"] = receipt.get("lifecycle_disposition", "UNRECORDED") if receipt else "UNRECORDED"
@@ -350,7 +354,7 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
             task["user_action_required"] = (
                 task["state"] in {"WAITING_USER", "WAITING_APPROVAL"}
                 or task["human_action_required"]
-            ) and not _historical_terminal(task)
+            ) and not _historical_non_actionable(task)
         events = [dict(row) for row in conn.execute(
             "SELECT event_id,task_id,event_type,old_state,new_state,detail_json,created_at "
             "FROM events ORDER BY event_id DESC LIMIT ?",
@@ -425,13 +429,13 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
     health = _overall_health(components)
     attention = [task for task in tasks if (
         task["state"] in ATTENTION_STATES or task["human_action_required"]
-    ) and not _historical_terminal(task)]
+    ) and not _historical_non_actionable(task)]
     blockers = [task for task in tasks if (
         task["state"] in {"BLOCKED", "FAILED", "REJECTED"}
-        and not _historical_terminal(task)
+        and not _historical_non_actionable(task)
     )]
     active = [task for task in tasks if (
-        not _historical_terminal(task)
+        not _historical_non_actionable(task)
         and (
             task["state"] not in TERMINAL_STATES
             or task["project_progress"] in {"NOT_STARTED", "IN_PROGRESS", "BLOCKED", "DEFERRED"}

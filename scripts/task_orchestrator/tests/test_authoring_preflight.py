@@ -235,6 +235,9 @@ class AuthoringPreflightTests(unittest.TestCase):
         receipt = self.run_preflight(request)
         self.assertEqual(receipt["status"], "PREFLIGHT_PASS")
         self.assertEqual(receipt["state_freshness"], "CONTEXT_DELTA_BOUND")
+        self.assertEqual(receipt["context_delta_review_id"], "REVIEW-001")
+        self.assertEqual(receipt["context_delta_review_result_sha256"], "f" * 64)
+        self.assertEqual(validate_preflight_receipt(receipt), receipt)
 
     def test_all_four_materialization_states_are_exact(self):
         for state in (
@@ -274,23 +277,41 @@ class AuthoringPreflightTests(unittest.TestCase):
             validate_preflight_receipt(receipt)
 
     def test_store_accepts_only_bound_receipt_and_preserves_history(self):
-        task_data = self.task_data("INFRA-HISTORY-001")
-        task = validate_task(task_data, source_issue=21, labels=("orchestrator:task",))
-        existing = {"source_issue": 21, "task_id": task.task_id,
-                    "envelope_hash": task.envelope_hash}
-        request = self.request(operation="CLOSE", task=task_data, issue_number=21,
-                               existing=existing)
-        receipt = self.run_preflight(request)
         store = Store(self.fx.root / "authoring.sqlite3")
         try:
-            store.ingest(task)
-            store.conn.execute("UPDATE tasks SET state='FAILED' WHERE task_id=?", (task.task_id,))
-            self.assertEqual(store.put_authoring_receipt(receipt), "created")
-            self.assertEqual(store.put_authoring_receipt(receipt), "duplicate")
-            self.assertEqual(store.lifecycle_disposition(task.task_id), "CLOSED_HISTORICAL")
+            for index, state in enumerate(("WAITING_USER", "WAITING_APPROVAL"), start=21):
+                task_data = self.task_data(f"INFRA-HISTORY-{index}")
+                task = validate_task(
+                    task_data, source_issue=index, labels=("orchestrator:task",),
+                )
+                existing = {"source_issue": index, "task_id": task.task_id,
+                            "envelope_hash": task.envelope_hash}
+                receipt = self.run_preflight(self.request(
+                    operation="CLOSE", task=task_data, issue_number=index,
+                    existing=existing,
+                ))
+                store.ingest(task)
+                store.conn.execute(
+                    "UPDATE tasks SET state=? WHERE task_id=?", (state, task.task_id),
+                )
+                before_events = [dict(row) for row in store.conn.execute(
+                    "SELECT * FROM events WHERE task_id=? ORDER BY event_id", (task.task_id,),
+                )]
+                self.assertEqual(store.put_authoring_receipt(receipt), "created")
+                self.assertEqual(store.put_authoring_receipt(receipt), "duplicate")
+                self.assertEqual(store.get(task.task_id)["state"], state)
+                self.assertEqual([dict(row) for row in store.conn.execute(
+                    "SELECT * FROM events WHERE task_id=? ORDER BY event_id", (task.task_id,),
+                )], before_events)
+                self.assertEqual(
+                    store.lifecycle_disposition(task.task_id), "CLOSED_HISTORICAL",
+                )
+                self.assertTrue(store.is_historical_lifecycle(
+                    task.task_id, task.envelope_hash,
+                ))
             self.assertEqual(store.conn.execute(
                 "SELECT count(*) FROM authoring_receipts"
-            ).fetchone()[0], 1)
+            ).fetchone()[0], 2)
         finally:
             store.close()
 
