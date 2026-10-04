@@ -83,7 +83,9 @@ python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll
 python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
-Текущий candidate suite содержит 212 тестов; точный модульный инвентарь зафиксирован в
+Текущий accepted suite содержит 212 тестов; Telegram gateway candidate добавляет
+21 focused тест (233 total до independent review). Точный accepted модульный
+инвентарь зафиксирован в
 [TASK_ORCHESTRATOR_TEST_MATRIX_V2_0](../03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).
 
 ### Project Control authoring preflight
@@ -134,6 +136,23 @@ results through a durable idempotent outbox. Ambiguous delivery becomes
 worker result. Ordinary autonomous admission additionally requires durable
 `PROVEN` recovery proof and currently healthy visibility; direct Engine/CLI
 commands cannot advance that proof.
+
+### Telegram attention gateway candidate
+
+`telegram-serve` запускает отдельный private one-user long-polling adapter. В
+example-config он выключен; реальный запуск до independent review и отдельной
+Project-Control deployment authorization запрещён. Token и numeric allowlist
+берутся только из переменных окружения, имена которых заданы в `telegram:`.
+
+```bash
+PYTHONPATH=scripts python -m unittest -v \
+  scripts.task_orchestrator.tests.test_telegram_gateway
+```
+
+Команды и authority/failure semantics описаны в
+[TELEGRAM_ATTENTION_GATEWAY_V1_0](../03_Protocols/TELEGRAM_ATTENTION_GATEWAY_V1_0.md).
+Gateway не является источником scientific или Project-Control authority; отказ
+Telegram не останавливает основной controller.
 
 ### Read-only operator dashboard
 

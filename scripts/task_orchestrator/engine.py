@@ -180,7 +180,45 @@ class Engine:
                 assessment.state,
                 "durable recovery proof and current healthy visibility are required",
             )
+        control_allowed, control_reason = self._telegram_control_allows(task)
+        if decision.allowed and not control_allowed:
+            return AdmissionDecision(
+                False, admission_class, assessment.state, control_reason,
+            )
         return decision
+
+    def _telegram_control_allows(self, task: Task) -> tuple[bool, str]:
+        """Enforce authenticated operational controls at every Engine surface.
+
+        Absence of the optional gateway schema preserves the pre-gateway baseline.
+        Once initialized, holds and fail-safe modes are durable SQLite facts, so
+        direct CLI paths cannot bypass them.
+        """
+        tables = {str(row[0]) for row in self.store.conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name IN "
+            "('telegram_gateway_state','telegram_holds')"
+        )}
+        if not tables:
+            return True, "Telegram operational control is not initialized"
+        if tables != {"telegram_gateway_state", "telegram_holds"}:
+            return False, "Telegram operational control state is incomplete"
+        state = self.store.conn.execute(
+            "SELECT control_mode FROM telegram_gateway_state WHERE singleton=1"
+        ).fetchone()
+        mode = str(state[0]) if state is not None else "INVALID"
+        if mode not in {"NORMAL", "AI_PAUSED", "DRAIN", "QUIESCED", "SAFE"}:
+            return False, "Telegram operational control state is invalid"
+        held = self.store.conn.execute(
+            "SELECT 1 FROM telegram_holds WHERE task_id=? AND state='ACTIVE'",
+            (task.task_id,),
+        ).fetchone()
+        if held is not None:
+            return False, "task is held by authenticated Telegram operational control"
+        if mode in {"DRAIN", "QUIESCED", "SAFE"}:
+            return False, f"Telegram operational control mode is {mode}"
+        if mode == "AI_PAUSED" and task.is_llm:
+            return False, f"Telegram operational control mode is {mode}"
+        return True, "Telegram operational control permits task"
 
     def _identity_bound_review(self, task: Task) -> bool:
         if classify_admission(task.inputs).value != "MANDATORY_REVIEW":

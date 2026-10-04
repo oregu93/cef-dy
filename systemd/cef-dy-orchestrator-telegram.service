@@ -1,0 +1,24 @@
+[Unit]
+Description=CEF Dy private Telegram attention gateway
+After=network-online.target cef-dy-orchestrator.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Документы/CEF/CEF_Dy
+ExecStart=/usr/bin/python3 scripts/orchestrate_tasks.py --config %h/.config/cef-dy-orchestrator/task_orchestrator.yaml telegram-serve
+EnvironmentFile=%h/.config/cef-dy-orchestrator/telegram-environment
+Restart=on-failure
+RestartSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=%h/Документы/CEF/CEF_Dy/CEF_Dy_Backup/task_orchestrator
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=default.target

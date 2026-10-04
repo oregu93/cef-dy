@@ -104,6 +104,25 @@ dashboard:
   stale_after_seconds: 300
   recent_events: 100
 
+# Private one-user attention transport. The repository contains only environment
+# variable names: the token and numeric allowlist values belong in a chmod-600
+# machine-local EnvironmentFile. Keep disabled until the exact candidate has
+# passed independent review and Project Control separately authorizes deployment.
+telegram:
+  enabled: false
+  api_base: https://api.telegram.org
+  token_env: CEF_DY_TELEGRAM_BOT_TOKEN
+  allowed_user_id_env: CEF_DY_TELEGRAM_USER_ID
+  allowed_chat_id_env: CEF_DY_TELEGRAM_CHAT_ID
+  secret_file: ~/.config/cef-dy-orchestrator/telegram-environment
+  request_timeout_seconds: 35
+  long_poll_seconds: 25
+  loop_delay_seconds: 2
+  delivery_lease_seconds: 60
+  max_delivery_attempts: 5
+  confirmation_ttl_seconds: 120
+  notify_major_milestones: false
+
 paths:
   allowed_read_roots:
     - .

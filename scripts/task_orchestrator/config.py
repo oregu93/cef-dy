@@ -80,6 +80,21 @@ DEFAULTS: dict[str, Any] = {
         "stale_after_seconds": 300,
         "recent_events": 100,
     },
+    "telegram": {
+        "enabled": False,
+        "api_base": "https://api.telegram.org",
+        "token_env": "CEF_DY_TELEGRAM_BOT_TOKEN",
+        "allowed_user_id_env": "CEF_DY_TELEGRAM_USER_ID",
+        "allowed_chat_id_env": "CEF_DY_TELEGRAM_CHAT_ID",
+        "secret_file": "~/.config/cef-dy-orchestrator/telegram-environment",
+        "request_timeout_seconds": 35,
+        "long_poll_seconds": 25,
+        "loop_delay_seconds": 2,
+        "delivery_lease_seconds": 60,
+        "max_delivery_attempts": 5,
+        "confirmation_ttl_seconds": 120,
+        "notify_major_milestones": False,
+    },
     "paths": {"allowed_read_roots": ["."], "forbidden_patterns": [".git/**", "CEF_Dy_Data/**", "private/**", "secrets/**", "credentials/**", "04_Results/raw/**", "04_Results/intermediate/**"], "allowed_output_root": "CEF_Dy_Backup/task_orchestrator"},
     "commands": {"allow": {}},
 }
@@ -226,6 +241,34 @@ def load_config(path: Path) -> dict[str, Any]:
         value = dashboard[name]
         if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
             raise ValidationError(f"dashboard.{name} must be an integer from {low} to {high}")
+    telegram = cfg.get("telegram")
+    telegram_keys = {
+        "enabled", "api_base", "token_env", "allowed_user_id_env",
+        "allowed_chat_id_env", "secret_file", "request_timeout_seconds", "long_poll_seconds",
+        "loop_delay_seconds", "delivery_lease_seconds", "max_delivery_attempts",
+        "confirmation_ttl_seconds", "notify_major_milestones",
+    }
+    if not isinstance(telegram, dict) or set(telegram) != telegram_keys:
+        raise ValidationError("telegram fields mismatch")
+    if type(telegram["enabled"]) is not bool or type(telegram["notify_major_milestones"]) is not bool:
+        raise ValidationError("telegram enabled/notify_major_milestones must be boolean")
+    if telegram["api_base"].rstrip("/") != "https://api.telegram.org":
+        raise ValidationError("telegram.api_base must be https://api.telegram.org")
+    for name in ("token_env", "allowed_user_id_env", "allowed_chat_id_env"):
+        value = telegram[name]
+        if not isinstance(value, str) or re.fullmatch(r"[A-Z][A-Z0-9_]{2,63}", value) is None:
+            raise ValidationError(f"telegram.{name} must name a safe environment variable")
+    if not isinstance(telegram["secret_file"], str) or not telegram["secret_file"].strip():
+        raise ValidationError("telegram.secret_file must be a nonempty machine-local path")
+    telegram["secret_file"] = str(Path(telegram["secret_file"]).expanduser())
+    for name, low, high in (
+        ("request_timeout_seconds", 1, 120), ("long_poll_seconds", 1, 60),
+        ("loop_delay_seconds", 1, 60), ("delivery_lease_seconds", 10, 600),
+        ("max_delivery_attempts", 1, 20), ("confirmation_ttl_seconds", 30, 600),
+    ):
+        value = telegram[name]
+        if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:
+            raise ValidationError(f"telegram.{name} must be an integer from {low} to {high}")
     repo = Path(cfg["repository_root"])
     if not repo.is_absolute():
         repo = (path.parent.parent / repo).resolve()

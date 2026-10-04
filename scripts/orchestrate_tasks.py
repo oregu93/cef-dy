@@ -31,6 +31,7 @@ from task_orchestrator.autonomy import (
 from task_orchestrator.reliability import M1bController, M1bStore
 from task_orchestrator.dashboard import serve as serve_dashboard
 from task_orchestrator.authoring import interface_manifest, preflight_authoring
+from task_orchestrator.telegram import TelegramBotAPI, TelegramGateway, TelegramSecrets
 
 
 def parser() -> argparse.ArgumentParser:
@@ -42,6 +43,7 @@ def parser() -> argparse.ArgumentParser:
         "autonomy-plan", "autonomy-status", "cycle-plan", "cycle-once",
         "reliability-status",
         "dashboard-serve",
+        "telegram-serve",
         "authoring-manifest",
     ):
         sub.add_parser(name)
@@ -136,6 +138,20 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "dashboard-serve":
             serve_dashboard(cfg)
             return 0
+        if args.command == "telegram-serve":
+            if not cfg["telegram"]["enabled"]:
+                raise ValidationError("Telegram gateway is disabled")
+            secrets = TelegramSecrets.from_environment(cfg)
+            store = Store(state_dir / "state.sqlite3")
+            try:
+                transport = TelegramBotAPI(
+                    secrets, api_base=cfg["telegram"]["api_base"],
+                    timeout_seconds=int(cfg["telegram"]["request_timeout_seconds"]),
+                )
+                TelegramGateway(cfg, store.conn, transport, secrets).run_forever()
+                return 0
+            finally:
+                store.close()
         if args.command == "autonomy-status":
             print(json.dumps(checkpoint_status(cfg), indent=2, ensure_ascii=False))
             return 0

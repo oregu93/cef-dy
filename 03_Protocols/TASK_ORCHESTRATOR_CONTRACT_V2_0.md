@@ -155,6 +155,18 @@ The persistent Project-Control chat remains NON-WORK and cannot authorize a
 ChatGPT scheduled task/automation. Bounded implementation continues only in a
 separate explicitly authorized execution context.
 
+## Optional Telegram attention transport
+
+The reviewed implementation candidate is specified by the
+[Telegram attention gateway protocol](TELEGRAM_ATTENTION_GATEWAY_V1_0.md).
+It is an optional disabled-by-default projection adapter over the same SQLite
+authority. It uses private exact-ID allowlisting, durable `update_id`
+idempotency, at-least-once delivery with `SEND_OUTCOME_UNKNOWN`, atomic
+first-valid-response-wins, and explicit non-authoritative USER provenance.
+Configuration alone never proves gateway health: the dashboard consumes only a
+fresh explicit `TELEGRAM_GATEWAY` controller observation. Independent review
+and separate deployment authorization are required before activation.
+
 ## Current references
 
 - [Infrastructure Baseline v1](../00_Project/INFRASTRUCTURE_BASELINE_V1.md)
