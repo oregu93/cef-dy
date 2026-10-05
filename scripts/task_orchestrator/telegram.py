@@ -23,7 +23,7 @@ import uuid
 
 from .model import utc_now
 from .reliability import M1bStore
-from .authoring import is_historical_lifecycle_receipt
+from .authoring import task_status_projection
 
 
 TELEGRAM_SCHEMA = """
@@ -134,6 +134,14 @@ CREATE TABLE IF NOT EXISTS telegram_holds (
   released_at TEXT
 );
 """
+
+TELEGRAM_STATE_LABELS = {
+    "WAITING_USER": "Action required",
+    "WAITING_APPROVAL": "Waiting for review",
+    "BLOCKED": "Blocked",
+    "FAILED": "Failed — action required",
+    "REJECTED": "Rejected — action required",
+}
 
 NOTIFICATION_KINDS = {
     "HUMAN_ACTION_REQUIRED", "PROJECT_STALLED", "SCIENTIFIC_DECISION_REQUIRED",
@@ -628,20 +636,36 @@ class TelegramGateway:
         return isinstance(text, str), source, text if isinstance(text, str) else None
 
     def _status(self) -> str:
-        counts = {row["state"]: row["n"] for row in self.conn.execute(
-            "SELECT state,COUNT(*) AS n FROM tasks GROUP BY state"
-        )}
         controller = self.conn.execute(
             "SELECT state_json,updated_at FROM controller_state ORDER BY updated_at DESC LIMIT 1"
         ).fetchone()
         state = json.loads(controller[0]) if controller else {}
         head = str(state.get("CANONICAL_HEAD") or "unknown")[:7]
-        running = counts.get("RUNNING", 0)
-        needs = counts.get("WAITING_USER", 0) + counts.get("WAITING_APPROVAL", 0)
+        rows = list(self.conn.execute(
+            "SELECT task_id,envelope_hash,state FROM tasks ORDER BY task_id"
+        ))
+        projections = [self._task_projection(row) for row in rows]
+        needs = sum(bool(item["human_action_required"]) for item in projections)
+        active = sum(
+            not item["historical_non_actionable"]
+            and (
+                item["execution_fsm_state"] not in {"SUCCEEDED", "FAILED", "REJECTED", "BLOCKED"}
+                or item["project_progress"] in {"NOT_STARTED", "IN_PROGRESS", "BLOCKED", "DEFERRED"}
+            )
+            for item in projections
+        )
         control = self.store.state()["control_mode"]
-        return (f"Orch: {state.get('CURRENT_PHASE', 'UNKNOWN')} | control: {control}\n"
-                f"HEAD: {head} | running: {running} | needs user: {needs}\n"
-                f"AI lane: {state.get('AI_LANE_STATE', 'UNKNOWN')} | next: {_safe_text(state.get('NEXT_EXACT_ACTION'), 100)}")
+        return (
+            "CEF Dy — project status\n\n"
+            f"State: {_safe_text(state.get('CURRENT_PHASE', 'UNKNOWN'), 60)}\n"
+            f"Control: {control}\n"
+            f"HEAD: {head}\n\n"
+            f"Active tasks: {active}\n"
+            f"Needs attention: {needs}\n"
+            f"AI lane: {_safe_text(state.get('AI_LANE_STATE', 'UNKNOWN'), 60)}\n\n"
+            "Next:\n"
+            f"{_safe_text(state.get('NEXT_EXACT_ACTION') or 'next timer cycle', 120)}"
+        )
 
     def _health(self) -> str:
         integrity = self.conn.execute("PRAGMA quick_check").fetchone()[0]
@@ -658,29 +682,55 @@ class TelegramGateway:
         rows = self._current_attention_rows(limit=8)
         if not rows:
             return "No current user-attention items."
-        return "\n".join(f"{row['task_id']}: {row['state']} — {_safe_text(row['reason'], 120)}" for row in rows)
+        return "\n\n".join(
+            f"{TELEGRAM_STATE_LABELS.get(row['state'], 'Action required')}\n"
+            f"{_safe_text(row['reason'], 120)}\n"
+            f"task: {row['task_id']} · state: {row['state']}"
+            for row in rows
+        )
 
-    def _current_attention_rows(self, limit: int | None = None) -> list[sqlite3.Row]:
+    def _latest_authoring_receipt(self, task_id: str) -> dict[str, Any] | None:
+        row = self.conn.execute(
+            "SELECT receipt_json FROM authoring_receipts WHERE task_id=? "
+            "ORDER BY rowid DESC LIMIT 1", (task_id,),
+        ).fetchone()
+        try:
+            value = json.loads(row[0]) if row else None
+        except (TypeError, json.JSONDecodeError):
+            return None
+        return value if isinstance(value, dict) else None
+
+    def _accepted_semantic_verdict(self, task_id: str) -> str | None:
+        row = self.conn.execute(
+            "SELECT result_json FROM accepted_results WHERE task_id=?", (task_id,),
+        ).fetchone()
+        try:
+            value = json.loads(row[0]) if row else None
+        except (TypeError, json.JSONDecodeError):
+            return None
+        verdict = value.get("semantic_verdict") if isinstance(value, dict) else None
+        return verdict.strip() if isinstance(verdict, str) and verdict.strip() else None
+
+    def _task_projection(self, row: sqlite3.Row) -> dict[str, Any]:
+        return task_status_projection(
+            task_id=row["task_id"], envelope_hash=row["envelope_hash"],
+            fsm_state=row["state"],
+            receipt=self._latest_authoring_receipt(row["task_id"]),
+            accepted_semantic_verdict=self._accepted_semantic_verdict(row["task_id"]),
+        )
+
+    def _current_attention_rows(self, limit: int | None = None) -> list[dict[str, Any]]:
         rows = list(self.conn.execute(
             "SELECT task_id,envelope_hash,state,reason,updated_at FROM tasks "
-            "WHERE state IN ('WAITING_USER','WAITING_APPROVAL','BLOCKED') "
+            "WHERE state IN ('WAITING_USER','WAITING_APPROVAL','BLOCKED','FAILED','REJECTED') "
             "ORDER BY updated_at DESC,task_id"
         ))
-        current: list[sqlite3.Row] = []
+        current: list[dict[str, Any]] = []
         for row in rows:
-            receipt_row = self.conn.execute(
-                "SELECT receipt_json FROM authoring_receipts WHERE task_id=? "
-                "ORDER BY rowid DESC LIMIT 1", (row["task_id"],),
-            ).fetchone()
-            try:
-                receipt = json.loads(receipt_row[0]) if receipt_row else None
-            except (TypeError, json.JSONDecodeError):
-                receipt = None
-            if receipt and is_historical_lifecycle_receipt(
-                receipt, task_id=row["task_id"], envelope_hash=row["envelope_hash"],
-            ):
+            projection = self._task_projection(row)
+            if not projection["human_action_required"]:
                 continue
-            current.append(row)
+            current.append({**dict(row), **projection})
             if limit is not None and len(current) >= limit:
                 break
         return current
@@ -696,11 +746,24 @@ class TelegramGateway:
         if _SAFE_ID.fullmatch(task_id) is None:
             return "Invalid task id."
         row = self.conn.execute(
-            "SELECT task_id,state,reason,attempt,updated_at FROM tasks WHERE task_id=?", (task_id,),
+            "SELECT task_id,envelope_hash,state,reason,attempt,updated_at "
+            "FROM tasks WHERE task_id=?", (task_id,),
         ).fetchone()
         if row is None:
             return "Task not found."
-        return f"{row['task_id']}\nstate: {row['state']} | attempt: {row['attempt']}\nupdated: {row['updated_at']}\n{_safe_text(row['reason'], 250)}"
+        projection = self._task_projection(row)
+        action = "yes" if projection["human_action_required"] else "no"
+        return (
+            f"Task: {row['task_id']}\n"
+            f"Execution: {TELEGRAM_STATE_LABELS.get(row['state'], row['state'].replace('_', ' ').title())}\n"
+            f"Semantic verdict: {projection['semantic_verdict']}\n"
+            f"Implementation: {projection['implementation_state']}\n"
+            f"Deployment: {projection['deployment_state']}\n"
+            f"Canonicalization: {projection['canonicalization_state']}\n"
+            f"Human action required: {action}\n"
+            f"Technical: FSM={row['state']} · attempt={row['attempt']} · updated={row['updated_at']}\n"
+            f"{_safe_text(row['reason'], 250)}"
+        )
 
     def _help(self) -> str:
         return ("Read-only: /status /health /attention /last /task <id>\n"
@@ -845,6 +908,9 @@ class TelegramGateway:
                 source_event_id=f"task-state-{row['task_id']}-{row['updated_at']}",
                 task_id=row["task_id"], kind=reason_code,
                 body={"reason_code": row["state"],
+                      "human_label": TELEGRAM_STATE_LABELS.get(
+                          row["state"], row["state"].replace("_", " ").title(),
+                      ),
                       "safe_context": _safe_text(row["reason"], 300),
                       "requested_response": "Use /task for status; answer only an explicit open question.",
                       "consequence_of_no_action": "Task remains waiting.",
@@ -860,9 +926,12 @@ class TelegramGateway:
     def _message_text(self, delivery: sqlite3.Row) -> tuple[str, dict[str, Any] | None]:
         body = json.loads(delivery["body_json"])
         marker = delivery["delivery_id"][:10]
-        text = (f"[{body['reason_code']}] {body['task_id'] or 'Orchestrator'}\n"
-                f"{body['safe_context']}\n{body['requested_response']}\n"
-                f"ref:{marker} (duplicate copies share this ref)")
+        label = body.get("human_label") or TELEGRAM_STATE_LABELS.get(
+            body["reason_code"], body["reason_code"].replace("_", " ").title(),
+        )
+        task_ref = f"\ntask: {body['task_id']}" if body.get("task_id") else ""
+        text = (f"{label}\n{body['safe_context']}\n{body['requested_response']}"
+                f"{task_ref}\nref:{marker} (duplicate copies share this ref)")
         markup = None
         if body.get("reason_code") == "TELEGRAM_COMMAND_REPLY" and body.get("requested_response", "").startswith("{"):
             try:

@@ -47,6 +47,48 @@ STATUS_FACETS = (
     "semantic_state", "design_state", "implementation_state",
     "deployment_state", "canonicalization_state",
 )
+HISTORICAL_LIFECYCLE_DISPOSITIONS = frozenset({
+    "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
+})
+ACTIONABLE_FSM_STATES = frozenset({
+    "WAITING_USER", "WAITING_APPROVAL", "BLOCKED", "FAILED", "REJECTED",
+})
+
+# Project-Control-approved R1 reconciliation targets.  These exact identities
+# are reconciliation input, not attention-filtering shortcuts: every consumer
+# still requires a validated receipt bound to the matching TASK envelope.
+R1_HISTORICAL_DISPOSITIONS: dict[str, dict[str, Any]] = {
+    "INFRA-SHADOW-001": {
+        "source_issue": 1,
+        "envelope_hash": "e30e68e772a43fb1a2f5f39bce7d787866f81905962be41694591361476647d6",
+        "disposition": "CLOSED_HISTORICAL",
+        "reason": (
+            "Project Control renewal plan classifies the completed SHADOW HEAD "
+            "verification as historical; its original WAITING_APPROVAL FSM and "
+            "event history remain unchanged."
+        ),
+        "semantic_state": "SHADOW_VERIFICATION_COMPLETE",
+        "design_state": "NOT_APPLICABLE",
+        "implementation_state": "COMPLETED",
+        "deployment_state": "NOT_APPLICABLE",
+        "canonicalization_state": "NOT_STATE_CHANGING",
+    },
+    "INFRA-CONVERGENCE-DASHBOARD-V2-PRODUCTION-DEPLOYMENT-001": {
+        "source_issue": 27,
+        "envelope_hash": "d099ee9c8aeb551f22371e4c474675102661bd36a64ebbe06b1e9178de707c02",
+        "disposition": "RETIRED",
+        "reason": (
+            "Project Control renewal plan confirms the Dashboard v2 deployment "
+            "handoff is historical after canonical deployment and reboot recovery; "
+            "its original WAITING_USER FSM and event history remain unchanged."
+        ),
+        "semantic_state": "DEPLOYMENT_ACCEPTED",
+        "design_state": "REVIEWED",
+        "implementation_state": "COMPLETED",
+        "deployment_state": "DEPLOYED",
+        "canonicalization_state": "MATERIALIZED",
+    },
+}
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 
@@ -417,7 +459,12 @@ def preflight_authoring(
     )
     task = validate_task(data["task"], source_issue=issue_number, labels=labels)
     validate_task_policy(task, cfg)
-    if task.canonical_head != canonical_head:
+    # CLOSE overlays an immutable historical TASK, whose original canonical
+    # head is intentionally retained.  The operation itself is still bound to
+    # the freshly observed current canonical head, exact Issue/TASK identity,
+    # and exact envelope hash below.  Every operation that authors a new or
+    # executable TASK continues to require the current canonical head.
+    if operation != "CLOSE" and task.canonical_head != canonical_head:
         raise ValidationError("TASK canonical_head differs from preflight canonical HEAD")
     if task.is_llm and cfg["llm"]["require_issue_label"] not in labels:
         raise ValidationError("LLM-class TASK lacks the configured explicit approval label")
@@ -492,6 +539,112 @@ def preflight_authoring(
     }
     receipt["receipt_sha256"] = _digest(receipt)
     return receipt
+
+
+def historical_disposition_receipt(
+    task: Task, cfg: dict[str, Any], *, observed_canonical_head: str,
+    authority_id: str, authority_result_sha256: str,
+    specification: dict[str, Any],
+) -> dict[str, Any]:
+    """Build one exact, non-mutating historical lifecycle receipt.
+
+    This helper is pure policy.  It neither writes SQLite nor treats Issue
+    closure as authority.  A trusted local Project-Control operation must pass
+    an already-reviewed authority identity/hash and later apply the returned
+    receipt through ``Store.put_authoring_receipt``.  The original TASK/FSM and
+    event rows are never rewritten.
+    """
+    required = {
+        "source_issue", "envelope_hash", "disposition", "reason",
+        "semantic_state", "design_state", "implementation_state",
+        "deployment_state", "canonicalization_state",
+    }
+    if not isinstance(specification, dict) or set(specification) != required:
+        raise ValidationError("historical disposition specification is incomplete")
+    if task.source_issue != specification["source_issue"]:
+        raise ValidationError("historical disposition source Issue mismatch")
+    if task.envelope_hash != specification["envelope_hash"]:
+        raise ValidationError("historical disposition TASK envelope mismatch")
+    if specification["disposition"] not in {"RETIRED", "CLOSED_HISTORICAL"}:
+        raise ValidationError("historical disposition must be RETIRED or CLOSED_HISTORICAL")
+    authority = _text(authority_id, "historical authority identity", 200)
+    authority_sha = _hex(
+        authority_result_sha256, "historical authority result SHA", SHA256,
+    )
+    current_head = _hex(observed_canonical_head, "observed canonical head", SHA40)
+    request = {
+        "schema_version": 1,
+        "operation_type": "CLOSE",
+        "author_role": "00_PROJECT_CONTROL",
+        "canonical_head": current_head,
+        "issue": {
+            "number": task.source_issue,
+            "state": "closed",
+            "labels": sorted(set(task.labels)),
+        },
+        "task": task.envelope_dict(),
+        "existing_binding": {
+            "source_issue": task.source_issue,
+            "task_id": task.task_id,
+            "envelope_hash": task.envelope_hash,
+        },
+        "required_repository_paths": [],
+        "dependency_bindings": [],
+        "review_binding": None,
+        "accepted_state_changes": [{
+            "identity": authority,
+            "result_sha256": authority_sha,
+            "materialization_state": "NOT_STATE_CHANGING",
+            "materialization_commit": None,
+            "reason": None,
+        }],
+        "context_delta_bundle": None,
+        "lifecycle": {
+            "disposition": specification["disposition"],
+            "target_task_id": task.task_id,
+            "target_envelope_hash": task.envelope_hash,
+            "successor_task_id": None,
+            "reason": _text(specification["reason"], "historical reason", 2000),
+        },
+        "project_status": {
+            "project_progress": "COMPLETED",
+            "human_action_required": False,
+            "semantic_state": specification["semantic_state"],
+            "design_state": specification["design_state"],
+            "implementation_state": specification["implementation_state"],
+            "deployment_state": specification["deployment_state"],
+            "canonicalization_state": specification["canonicalization_state"],
+        },
+        "execution_context": "SEPARATE_BOUNDED_WORK",
+        "persistent_chat_role": "00_PROJECT_CONTROL",
+        "chatgpt_scheduler_requested": False,
+    }
+    return preflight_authoring(
+        request, cfg, observed_canonical_head=current_head,
+    )
+
+
+def repository_renewal_r1_receipts(
+    tasks: dict[str, Task], cfg: dict[str, Any], *,
+    observed_canonical_head: str,
+    authority_id: str = "ISSUE-52-COMMENT-5994972384",
+    authority_result_sha256: str = (
+        "a8881ae28a4c2502f288fe12c73185ac251953fcdce4677a06c5280b16a8e227"
+    ),
+) -> tuple[dict[str, Any], ...]:
+    """Materialize the reviewed R1 receipts from exact durable TASK records."""
+    if set(tasks) != set(R1_HISTORICAL_DISPOSITIONS):
+        raise ValidationError("R1 reconciliation requires exactly the reviewed TASK identities")
+    return tuple(
+        historical_disposition_receipt(
+            tasks[task_id], cfg,
+            observed_canonical_head=observed_canonical_head,
+            authority_id=authority_id,
+            authority_result_sha256=authority_result_sha256,
+            specification=R1_HISTORICAL_DISPOSITIONS[task_id],
+        )
+        for task_id in sorted(R1_HISTORICAL_DISPOSITIONS)
+    )
 
 
 RECEIPT_KEYS = {
@@ -641,6 +794,43 @@ def is_historical_lifecycle_receipt(
     value = lifecycle_receipt_for_task(
         receipt, task_id=task_id, envelope_hash=envelope_hash,
     )
-    return bool(value and value["lifecycle_disposition"] in {
-        "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
-    })
+    return bool(
+        value and value["lifecycle_disposition"] in HISTORICAL_LIFECYCLE_DISPOSITIONS
+    )
+
+
+def task_status_projection(
+    *, task_id: str, envelope_hash: str, fsm_state: str,
+    receipt: Any = None, accepted_semantic_verdict: str | None = None,
+) -> dict[str, Any]:
+    """Return shared lifecycle/actionability facets for human projections.
+
+    The FSM is immutable execution history.  A validated Project-Control
+    receipt may add semantic, implementation, deployment, canonicalization,
+    and current-attention facets, but never rewrites that FSM value.
+    """
+    value = lifecycle_receipt_for_task(
+        receipt, task_id=task_id, envelope_hash=envelope_hash,
+    ) if receipt is not None else None
+    disposition = value["lifecycle_disposition"] if value else "UNRECORDED"
+    historical = disposition in HISTORICAL_LIFECYCLE_DISPOSITIONS
+    receipt_human_action = bool(value["human_action_required"]) if value else False
+    semantic_state = value["semantic_state"] if value else "UNKNOWN"
+    semantic_verdict = accepted_semantic_verdict or semantic_state
+    return {
+        "execution_fsm_state": fsm_state,
+        "lifecycle_disposition": disposition,
+        "historical_non_actionable": historical,
+        "project_progress": value["project_progress"] if value else "UNKNOWN",
+        "human_action_required": bool(
+            not historical
+            and (fsm_state in ACTIONABLE_FSM_STATES or receipt_human_action)
+        ),
+        "semantic_state": semantic_state,
+        "semantic_verdict": semantic_verdict,
+        "design_state": value["design_state"] if value else "UNKNOWN",
+        "implementation_state": value["implementation_state"] if value else "UNKNOWN",
+        "deployment_state": value["deployment_state"] if value else "UNKNOWN",
+        "canonicalization_state": value["canonicalization_state"] if value else "UNKNOWN",
+        "authoring_receipt_sha256": value["receipt_sha256"] if value else None,
+    }

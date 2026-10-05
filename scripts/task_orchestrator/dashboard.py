@@ -17,7 +17,9 @@ import subprocess
 from typing import Any
 from urllib.parse import urlsplit
 
-from .authoring import lifecycle_receipt_for_task, validate_preflight_receipt
+from .authoring import (
+    task_status_projection, validate_preflight_receipt,
+)
 from .model import ValidationError
 
 
@@ -27,10 +29,10 @@ ATTENTION_STATES = {"WAITING_USER", "WAITING_APPROVAL", "BLOCKED", "FAILED", "RE
 STATE_LABELS = {
     "RECEIVED": "Received", "VALIDATED": "Validated", "READY": "Ready",
     "RUNNING": "Running", "WAITING_USER": "Needs your input",
-    "WAITING_APPROVAL": "Needs approval", "WAITING_DEPENDENCY": "Waiting for dependency",
+    "WAITING_APPROVAL": "Waiting for review", "WAITING_DEPENDENCY": "Waiting for dependency",
     "WAITING_RESOURCE": "Waiting for resource", "QUOTA_WAIT": "Waiting for quota",
     "PAUSED_QUOTA": "Paused for quota", "FAILED_RETRYABLE": "Retry pending",
-    "SUCCEEDED": "Completed", "BLOCKED": "Blocked", "FAILED": "Failed",
+    "SUCCEEDED": "Execution completed", "BLOCKED": "Blocked", "FAILED": "Failed",
     "REJECTED": "Rejected",
 }
 ROLE_LABELS = {
@@ -171,9 +173,7 @@ def _historical_non_actionable(task: dict[str, Any]) -> bool:
     # Only the validated, append-only Project-Control authoring receipt is
     # authoritative.  Issue closure, payload hints, and free text remain
     # insufficient to hide a present failure.
-    return task.get("lifecycle_disposition") in {
-        "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
-    }
+    return task.get("historical_non_actionable") is True
 
 
 def _component(label: str, state: str, detail: str, *, material: bool = True,
@@ -324,6 +324,16 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
                 except (json.JSONDecodeError, ValidationError, TypeError, ValueError):
                     continue
                 authoring_receipts[row["task_id"]] = value
+        semantic_verdicts: dict[str, str] = {}
+        if _table_exists(conn, "accepted_results"):
+            for row in conn.execute("SELECT task_id,result_json FROM accepted_results"):
+                try:
+                    result = json.loads(row["result_json"])
+                except (json.JSONDecodeError, TypeError):
+                    continue
+                verdict = result.get("semantic_verdict") if isinstance(result, dict) else None
+                if isinstance(verdict, str) and verdict.strip():
+                    semantic_verdicts[row["task_id"]] = verdict.strip()
         for task in tasks:
             payload = json.loads(task.pop("payload_json"))
             task["role"] = payload.get("role")
@@ -337,24 +347,15 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
             task["human_role"] = human_role(task.get("role"))
             task["title"] = _task_title(task)
             task["next_condition"] = _next_condition(task)
-            receipt = lifecycle_receipt_for_task(
-                authoring_receipts.get(task["task_id"]),
+            projection = task_status_projection(
                 task_id=task["task_id"], envelope_hash=task["envelope_hash"],
+                fsm_state=task["state"],
+                receipt=authoring_receipts.get(task["task_id"]),
+                accepted_semantic_verdict=semantic_verdicts.get(task["task_id"]),
             )
             task["fsm_state"] = task["state"]
-            task["authoring_receipt_sha256"] = receipt.get("receipt_sha256") if receipt else None
-            task["lifecycle_disposition"] = receipt.get("lifecycle_disposition", "UNRECORDED") if receipt else "UNRECORDED"
-            task["project_progress"] = receipt.get("project_progress", "UNKNOWN") if receipt else "UNKNOWN"
-            task["human_action_required"] = bool(receipt.get("human_action_required")) if receipt else False
-            for facet in (
-                "semantic_state", "design_state", "implementation_state",
-                "deployment_state", "canonicalization_state",
-            ):
-                task[facet] = receipt.get(facet, "UNKNOWN") if receipt else "UNKNOWN"
-            task["user_action_required"] = (
-                task["state"] in {"WAITING_USER", "WAITING_APPROVAL"}
-                or task["human_action_required"]
-            ) and not _historical_non_actionable(task)
+            task.update(projection)
+            task["user_action_required"] = task["human_action_required"]
         events = [dict(row) for row in conn.execute(
             "SELECT event_id,task_id,event_type,old_state,new_state,detail_json,created_at "
             "FROM events ORDER BY event_id DESC LIMIT ?",
@@ -547,8 +548,11 @@ def _current_work_html(tasks: list[dict[str, Any]], now: datetime) -> str:
         progress = human_state(task["project_progress"]) if task["project_progress"] != "UNKNOWN" else "Unknown"
         cards.append('<article class="work-item">'
                      f'<div><h3>{html.escape(task["title"])}</h3><p>{html.escape(task["human_role"])} · '
-                     f'<strong>{html.escape(task["human_state"])}</strong> · updated {_time_html(task["updated_at"], now)}</p>'
-                     f'<p>Project progress: <strong>{html.escape(progress)}</strong> · '
+                     f'Execution: <strong>{html.escape(task["human_state"])}</strong> · updated {_time_html(task["updated_at"], now)}</p>'
+                     f'<p>Semantic verdict: <strong>{html.escape(human_state(task["semantic_verdict"]))}</strong> · '
+                     f'Project progress: {html.escape(progress)}</p>'
+                     f'<p>Implementation: {html.escape(human_state(task["implementation_state"]))} · '
+                     f'deployment: {html.escape(human_state(task["deployment_state"]))} · '
                      f'canonicalization: {html.escape(human_state(task["canonicalization_state"]))}</p></div>'
                      f'<p>{html.escape(task["next_condition"])}</p>{action}'
                      f'<small class="mono">{html.escape(task["task_id"])}</small></article>')
@@ -594,7 +598,7 @@ details{{margin-top:30px}}summary{{cursor:pointer;font-weight:700;font-size:1.08
 <details><summary>Technical details</summary><div class="diag-scroll"><p>Exact values below are diagnostic data. Quota entries are configuration/projection values, not live telemetry unless an explicit observation source says otherwise.</p>
 <h3>Git identity</h3>{_table([git], ('canonical_head','local_head','branch'))}
 <h3>Quota projections</h3>{_table(quota_rows, ('window','state','observed_at','reset_at'))}
-<h3>All tasks</h3>{_table(data['tasks'], ('task_id','fsm_state','project_progress','human_action_required','semantic_state','design_state','implementation_state','deployment_state','canonicalization_state','lifecycle_disposition','authoring_receipt_sha256','role','task_type','dependencies','attempt','reason','created_at','updated_at'))}
+<h3>All tasks</h3>{_table(data['tasks'], ('task_id','fsm_state','project_progress','human_action_required','semantic_state','semantic_verdict','design_state','implementation_state','deployment_state','canonicalization_state','lifecycle_disposition','authoring_receipt_sha256','role','task_type','dependencies','attempt','reason','created_at','updated_at'))}
 <h3>Workers and leases</h3>{_table(data['workers'], ('task_id','worker_id','attempt_id','claimed_at','lease_expires_at'))}
 <h3>Resource lanes</h3>{_table(data['resource_lanes'], ('lane_id','availability_state','quota_state','next_probe_at','concurrency_limit','capability_json','cost_priority','refusal_count','updated_at'))}
 <h3>Specialist routes</h3>{_table(data['routes'], ('task_id','role_id','suitability','allowed_lanes_json','selected_lane','route_status','reason','updated_at'))}
