@@ -121,6 +121,8 @@ telegram:
   delivery_lease_seconds: 60
   max_delivery_attempts: 5
   confirmation_ttl_seconds: 120
+  # /resume accepts the controller checkpoint only within this exact age bound.
+  resume_observation_stale_after_seconds: 300
   notify_major_milestones: false
 
 paths:

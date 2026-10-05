@@ -90,8 +90,13 @@ confirmation plus current-state recheck: `/pause_ai`, `/drain`, `/quiesce`,
 only orchestrator admission, notification mute state, or an exact task hold.
 Engine admission consumes the durable control state so direct CLI paths cannot
 bypass it. `/resume` additionally requires durable recovery proof `PROVEN`,
-current `AUTONOMY_VISIBILITY_OK`, and no hard blocker. There is no arbitrary
-text, shell, Git, stage, holdout, service, or scientific command endpoint.
+current `AUTONOMY_VISIBILITY_OK`, no hard blocker, and a valid UTC controller
+checkpoint no older than the configured
+`telegram.resume_observation_stale_after_seconds` bound. Missing, malformed,
+future-dated, or stale observation time fails closed. Hold/release confirmations
+also bind the exact subject hold state and generation observed when the
+confirmation was issued. There is no arbitrary text, shell, Git, stage,
+holdout, service, or scientific command endpoint.
 
 ## Health and failure isolation
 

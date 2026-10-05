@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from datetime import datetime, timezone
 import json
 import os
 import sqlite3
@@ -57,6 +58,7 @@ class TelegramGatewayTests(unittest.TestCase):
         self.transport = FakeTransport()
         self.secrets = TelegramSecrets("test-placeholder-not-a-real-token", self.USER, self.CHAT)
         self.now = 1_800_000_000.0
+        self.set_controller_observation_age(0)
         self.gateway = TelegramGateway(
             self.fx.cfg, self.store.conn, self.transport, self.secrets,
             clock=lambda: self.now,
@@ -94,6 +96,27 @@ class TelegramGatewayTests(unittest.TestCase):
             if value in {"idle", "muted"}:
                 break
         return outcomes
+
+    def set_controller_observation_age(self, age_seconds):
+        observed = datetime.fromtimestamp(
+            self.now - age_seconds, timezone.utc,
+        ).isoformat().replace("+00:00", "Z")
+        self.store.conn.execute(
+            "UPDATE controller_state SET updated_at=? "
+            "WHERE task_id='ORCH-M1B-RELIABILITY-REBUILD-001'", (observed,),
+        )
+
+    def attempt_resume(self, update_id):
+        self.store.conn.execute("UPDATE telegram_gateway_state SET control_mode='SAFE'")
+        self.assertEqual(self.gateway.process_update(self.update(update_id, "/resume")), "processed")
+        token = self.store.conn.execute(
+            "SELECT token FROM telegram_confirmations WHERE update_id=?", (update_id,),
+        ).fetchone()[0]
+        self.assertEqual(
+            self.gateway.process_update(self.callback(update_id + 1, f"confirm:{token}")),
+            "processed",
+        )
+        return self.gateway.store.state()["control_mode"]
 
     def test_exact_private_allowlist_precedes_command_interpretation(self):
         self.assertEqual(self.gateway.process_update(self.update(1, "/safe", user=999)), "unauthorized")
@@ -252,18 +275,41 @@ class TelegramGatewayTests(unittest.TestCase):
         self.assertEqual(engine.ingest(deterministic), "admission_paused")
         self.assertIsNone(self.store.get(deterministic.task_id))
 
-    def test_resume_requires_fresh_health_and_state_recheck(self):
-        self.store.conn.execute("UPDATE telegram_gateway_state SET control_mode='SAFE'")
-        self.assertEqual(self.gateway.process_update(self.update(60, "/resume")), "processed")
-        token = self.store.conn.execute("SELECT token FROM telegram_confirmations").fetchone()[0]
-        self.assertEqual(self.gateway.process_update(self.callback(61, f"confirm:{token}")), "processed")
-        self.assertEqual(self.gateway.store.state()["control_mode"], "NORMAL")
-        self.store.conn.execute("UPDATE telegram_gateway_state SET control_mode='SAFE'")
+    def test_resume_accepts_fresh_healthy_controller_observation(self):
+        self.set_controller_observation_age(0)
+        self.assertEqual(self.attempt_resume(60), "NORMAL")
+
+    def test_resume_rejects_degraded_current_health(self):
         self.control.checkpoint(AUTONOMY_VISIBILITY_STATE="AUTONOMY_VISIBILITY_DEGRADED")
-        self.gateway.process_update(self.update(62, "/resume"))
-        token = self.store.conn.execute("SELECT token FROM telegram_confirmations WHERE update_id=62").fetchone()[0]
-        self.gateway.process_update(self.callback(63, f"confirm:{token}"))
-        self.assertEqual(self.gateway.store.state()["control_mode"], "SAFE")
+        self.set_controller_observation_age(0)
+        self.assertEqual(self.attempt_resume(62), "SAFE")
+
+    def test_resume_rejects_stale_healthy_controller_observation(self):
+        bound = self.fx.cfg["telegram"]["resume_observation_stale_after_seconds"]
+        self.set_controller_observation_age(bound + 1)
+        self.assertEqual(self.attempt_resume(64), "SAFE")
+
+    def test_resume_rejects_missing_invalid_and_future_observation_time(self):
+        self.store.conn.execute(
+            "DELETE FROM controller_state WHERE task_id='ORCH-M1B-RELIABILITY-REBUILD-001'"
+        )
+        self.assertEqual(self.attempt_resume(66), "SAFE")
+
+        for update_id, observed_at in (
+            (68, "not-a-timestamp"),
+            (70, datetime.fromtimestamp(self.now + 1, timezone.utc).isoformat()),
+        ):
+            with self.subTest(observed_at=observed_at):
+                self.control.checkpoint(
+                    RECOVERY_PROOF_STATE="PROVEN",
+                    AUTONOMY_VISIBILITY_STATE="AUTONOMY_VISIBILITY_OK",
+                    HARD_BLOCKERS=[],
+                )
+                self.store.conn.execute(
+                    "UPDATE controller_state SET updated_at=? "
+                    "WHERE task_id='ORCH-M1B-RELIABILITY-REBUILD-001'", (observed_at,),
+                )
+                self.assertEqual(self.attempt_resume(update_id), "SAFE")
 
     def test_hold_and_release_are_exact_task_bound_and_durable(self):
         task = self.fx.task("HELD-TASK-001")
@@ -275,6 +321,48 @@ class TelegramGatewayTests(unittest.TestCase):
         token = self.store.conn.execute("SELECT token FROM telegram_confirmations WHERE update_id=72").fetchone()[0]
         self.gateway.process_update(self.callback(73, f"confirm:{token}"))
         self.assertEqual(Engine(self.fx.cfg, self.store).ingest(task), "created")
+
+    def test_stale_hold_and_release_confirmations_recheck_subject_generation(self):
+        task_id = "GENERATION-BOUND-TASK-001"
+
+        self.gateway.process_update(self.update(80, f"/hold {task_id}"))
+        stale_hold = self.store.conn.execute(
+            "SELECT token FROM telegram_confirmations WHERE update_id=80"
+        ).fetchone()[0]
+        self.gateway.process_update(self.update(81, f"/hold {task_id}"))
+        current_hold = self.store.conn.execute(
+            "SELECT token FROM telegram_confirmations WHERE update_id=81"
+        ).fetchone()[0]
+        self.gateway.process_update(self.callback(82, f"confirm:{current_hold}"))
+        self.gateway.process_update(self.callback(83, f"confirm:{stale_hold}"))
+        stale_reply = json.loads(self.store.conn.execute(
+            "SELECT body_json FROM telegram_projections WHERE attention_id='reply-83'"
+        ).fetchone()[0])
+        self.assertIn("STATE_CHANGED", stale_reply["safe_context"])
+
+        self.gateway.process_update(self.update(84, f"/release {task_id}"))
+        stale_release = self.store.conn.execute(
+            "SELECT token FROM telegram_confirmations WHERE update_id=84"
+        ).fetchone()[0]
+        self.gateway.process_update(self.update(85, f"/release {task_id}"))
+        current_release = self.store.conn.execute(
+            "SELECT token FROM telegram_confirmations WHERE update_id=85"
+        ).fetchone()[0]
+        self.gateway.process_update(self.callback(86, f"confirm:{current_release}"))
+        self.gateway.process_update(self.update(87, f"/hold {task_id}"))
+        rehold = self.store.conn.execute(
+            "SELECT token FROM telegram_confirmations WHERE update_id=87"
+        ).fetchone()[0]
+        self.gateway.process_update(self.callback(88, f"confirm:{rehold}"))
+        self.gateway.process_update(self.callback(89, f"confirm:{stale_release}"))
+        stale_reply = json.loads(self.store.conn.execute(
+            "SELECT body_json FROM telegram_projections WHERE attention_id='reply-89'"
+        ).fetchone()[0])
+        self.assertIn("STATE_CHANGED", stale_reply["safe_context"])
+        hold = self.store.conn.execute(
+            "SELECT state,source_update_id FROM telegram_holds WHERE task_id=?", (task_id,),
+        ).fetchone()
+        self.assertEqual((hold["state"], hold["source_update_id"]), ("ACTIVE", 88))
 
     def test_gateway_outage_isolated_and_dashboard_observation_is_explicit(self):
         task = self.fx.task("OUTAGE-SAFE-001")

@@ -93,6 +93,7 @@ DEFAULTS: dict[str, Any] = {
         "delivery_lease_seconds": 60,
         "max_delivery_attempts": 5,
         "confirmation_ttl_seconds": 120,
+        "resume_observation_stale_after_seconds": 300,
         "notify_major_milestones": False,
     },
     "paths": {"allowed_read_roots": ["."], "forbidden_patterns": [".git/**", "CEF_Dy_Data/**", "private/**", "secrets/**", "credentials/**", "04_Results/raw/**", "04_Results/intermediate/**"], "allowed_output_root": "CEF_Dy_Backup/task_orchestrator"},
@@ -246,7 +247,8 @@ def load_config(path: Path) -> dict[str, Any]:
         "enabled", "api_base", "token_env", "allowed_user_id_env",
         "allowed_chat_id_env", "secret_file", "request_timeout_seconds", "long_poll_seconds",
         "loop_delay_seconds", "delivery_lease_seconds", "max_delivery_attempts",
-        "confirmation_ttl_seconds", "notify_major_milestones",
+        "confirmation_ttl_seconds", "resume_observation_stale_after_seconds",
+        "notify_major_milestones",
     }
     if not isinstance(telegram, dict) or set(telegram) != telegram_keys:
         raise ValidationError("telegram fields mismatch")
@@ -265,6 +267,7 @@ def load_config(path: Path) -> dict[str, Any]:
         ("request_timeout_seconds", 1, 120), ("long_poll_seconds", 1, 60),
         ("loop_delay_seconds", 1, 60), ("delivery_lease_seconds", 10, 600),
         ("max_delivery_attempts", 1, 20), ("confirmation_ttl_seconds", 30, 600),
+        ("resume_observation_stale_after_seconds", 1, 86400),
     ):
         value = telegram[name]
         if isinstance(value, bool) or not isinstance(value, int) or not low <= value <= high:

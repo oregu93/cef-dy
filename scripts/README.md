@@ -84,7 +84,7 @@ python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
 Текущий accepted suite содержит 212 тестов; Telegram gateway candidate добавляет
-21 focused тест (233 total до independent review). Точный accepted модульный
+25 focused тестов (237 total до independent review). Точный accepted модульный
 инвентарь зафиксирован в
 [TASK_ORCHESTRATOR_TEST_MATRIX_V2_0](../03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).
 

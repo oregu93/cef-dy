@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
+from datetime import datetime
 import hashlib
 import json
 import os
@@ -526,9 +527,23 @@ class TelegramStore:
                        subject_id=row["response_id"])
         return "CANCEL_REQUESTED"
 
+    def _confirmation_state(self, action: str, subject_id: str | None) -> str:
+        state: dict[str, Any] = {"control_mode": self.state()["control_mode"]}
+        if action in {"HOLD", "RELEASE"}:
+            row = self.conn.execute(
+                "SELECT state,source_update_id,created_at,released_at FROM telegram_holds "
+                "WHERE task_id=?", (subject_id,),
+            ).fetchone()
+            state["subject_hold"] = "MISSING" if row is None else {
+                "state": row["state"], "source_update_id": row["source_update_id"],
+                "created_at": row["created_at"], "released_at": row["released_at"],
+            }
+        return _canonical(state)
+
     def create_confirmation(self, *, update_id: int, action: str, subject_id: str | None,
-                            expected_state: str, now_epoch: float, ttl_seconds: int) -> str:
+                            now_epoch: float, ttl_seconds: int) -> str:
         token = hashlib.sha256(f"{update_id}\0{action}\0{subject_id or ''}\0{uuid.uuid4()}".encode()).hexdigest()[:32]
+        expected_state = self._confirmation_state(action, subject_id)
         self.conn.execute(
             "INSERT INTO telegram_confirmations VALUES(?,?,?,?,?,?,?,?,NULL)",
             (token, update_id, action, subject_id, expected_state, now_epoch + ttl_seconds,
@@ -546,10 +561,9 @@ class TelegramStore:
             ).fetchone()
             if row is None or row["state"] != "PENDING" or float(row["expires_at"]) < now_epoch:
                 return "INVALID_OR_EXPIRED_CONFIRMATION"
-            current = self.state()
-            if current["control_mode"] != row["expected_state"]:
-                return "STATE_CHANGED"
             action, subject = row["action"], row["subject_id"]
+            if self._confirmation_state(action, subject) != row["expected_state"]:
+                return "STATE_CHANGED"
             if action == "RESUME":
                 if not resume_health_ok:
                     return "RESUME_HEALTH_CHECK_FAILED"
@@ -697,20 +711,30 @@ class TelegramGateway:
 
     def _resume_health_ok(self) -> bool:
         row = self.conn.execute(
-            "SELECT state_json FROM controller_state WHERE task_id='ORCH-M1B-RELIABILITY-REBUILD-001'"
+            "SELECT state_json,updated_at FROM controller_state "
+            "WHERE task_id='ORCH-M1B-RELIABILITY-REBUILD-001'"
         ).fetchone()
         try:
-            state = json.loads(row[0]) if row else {}
-        except (TypeError, json.JSONDecodeError):
+            if row is None or not isinstance(row["updated_at"], str):
+                return False
+            state = json.loads(row["state_json"])
+            observed = datetime.fromisoformat(row["updated_at"].replace("Z", "+00:00"))
+            if not isinstance(state, dict) or observed.tzinfo is None or observed.utcoffset() is None:
+                return False
+            age = float(self.clock()) - observed.timestamp()
+            stale_after = int(self.cfg["telegram"]["resume_observation_stale_after_seconds"])
+        except (TypeError, ValueError, json.JSONDecodeError, OverflowError):
             return False
+        if age < 0 or age > stale_after:
+            return False
+        blockers = state.get("HARD_BLOCKERS")
         return bool(
             state.get("RECOVERY_PROOF_STATE") == "PROVEN"
             and state.get("AUTONOMY_VISIBILITY_STATE") == "AUTONOMY_VISIBILITY_OK"
-            and not state.get("HARD_BLOCKERS")
+            and isinstance(blockers, list) and not blockers
         )
 
     def _confirmation(self, update_id: int, command: str, args: list[str]) -> tuple[str, dict[str, Any]]:
-        current = self.store.state()["control_mode"]
         action, subject = {
             "/pause_ai": ("AI_PAUSED", None), "/drain": ("DRAIN", None),
             "/quiesce": ("QUIESCED", None), "/safe": ("SAFE", None),
@@ -728,7 +752,7 @@ class TelegramGateway:
             return "Unsupported operation.", {}
         token = self.store.create_confirmation(
             update_id=update_id, action=action, subject_id=subject,
-            expected_state=current, now_epoch=float(self.clock()),
+            now_epoch=float(self.clock()),
             ttl_seconds=int(self.cfg["telegram"]["confirmation_ttl_seconds"]),
         )
         return (f"Confirm {action}. This changes only orchestrator operational control; it grants no scientific authority.",
