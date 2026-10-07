@@ -107,6 +107,23 @@ review/dependency/rerun/supersession bindings и materialization debt. Unbound
 relevant debt возвращает `STATE_SYNC_REQUIRED`. Полный контракт:
 [TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0](../03_Protocols/TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0.md).
 
+Reviewed Repository Renewal R1 lifecycle receipts use one bounded Store-based
+command. It requires explicit durable Project-Control authority, validates the
+two exact historical TASK envelopes, and supports a mutation-free receipt
+preview before the idempotent append:
+
+```bash
+python scripts/orchestrate_tasks.py --config CONFIG \
+  repository-renewal-r1-reconcile \
+  --authority-id AUTHORITY_ID \
+  --authority-result-sha256 AUTHORITY_RESULT_SHA256 \
+  --dry-run
+```
+
+Omit `--dry-run` only for the separately authorized production reconciliation.
+The command appends authoring receipts through the canonical Store API; it does
+not rewrite TASK payloads, FSM history, attempts, events, or accepted results.
+
 ### Production controller и M2 routing
 
 Production timer вызывает `cycle-once`. M1b управляет durable SQLite/WAL state,

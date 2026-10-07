@@ -62,6 +62,7 @@ R1_HISTORICAL_DISPOSITIONS: dict[str, dict[str, Any]] = {
         "source_issue": 1,
         "envelope_hash": "e30e68e772a43fb1a2f5f39bce7d787866f81905962be41694591361476647d6",
         "disposition": "CLOSED_HISTORICAL",
+        "project_progress": "COMPLETED",
         "reason": (
             "Project Control renewal plan classifies the completed SHADOW HEAD "
             "verification as historical; its original WAITING_APPROVAL FSM and "
@@ -77,16 +78,18 @@ R1_HISTORICAL_DISPOSITIONS: dict[str, dict[str, Any]] = {
         "source_issue": 27,
         "envelope_hash": "d099ee9c8aeb551f22371e4c474675102661bd36a64ebbe06b1e9178de707c02",
         "disposition": "RETIRED",
+        "project_progress": "DEFERRED",
         "reason": (
-            "Project Control renewal plan confirms the Dashboard v2 deployment "
-            "handoff is historical after canonical deployment and reboot recovery; "
-            "its original WAITING_USER FSM and event history remain unchanged."
+            "Project Control Issue #27 comment 5943372471 formally deferred "
+            "Dashboard v2 production deployment from Infrastructure Baseline v1; "
+            "the retired task's original WAITING_USER FSM and event history remain "
+            "unchanged."
         ),
-        "semantic_state": "DEPLOYMENT_ACCEPTED",
+        "semantic_state": "DEPLOYMENT_DEFERRED",
         "design_state": "REVIEWED",
-        "implementation_state": "COMPLETED",
-        "deployment_state": "DEPLOYED",
-        "canonicalization_state": "MATERIALIZED",
+        "implementation_state": "DEFERRED",
+        "deployment_state": "DEFERRED",
+        "canonicalization_state": "EXPLICITLY_DEFERRED",
     },
 }
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
@@ -555,7 +558,7 @@ def historical_disposition_receipt(
     event rows are never rewritten.
     """
     required = {
-        "source_issue", "envelope_hash", "disposition", "reason",
+        "source_issue", "envelope_hash", "disposition", "project_progress", "reason",
         "semantic_state", "design_state", "implementation_state",
         "deployment_state", "canonicalization_state",
     }
@@ -607,7 +610,7 @@ def historical_disposition_receipt(
             "reason": _text(specification["reason"], "historical reason", 2000),
         },
         "project_status": {
-            "project_progress": "COMPLETED",
+            "project_progress": specification["project_progress"],
             "human_action_required": False,
             "semantic_state": specification["semantic_state"],
             "design_state": specification["design_state"],
@@ -627,10 +630,7 @@ def historical_disposition_receipt(
 def repository_renewal_r1_receipts(
     tasks: dict[str, Task], cfg: dict[str, Any], *,
     observed_canonical_head: str,
-    authority_id: str = "ISSUE-52-COMMENT-5994972384",
-    authority_result_sha256: str = (
-        "a8881ae28a4c2502f288fe12c73185ac251953fcdce4677a06c5280b16a8e227"
-    ),
+    authority_id: str, authority_result_sha256: str,
 ) -> tuple[dict[str, Any], ...]:
     """Materialize the reviewed R1 receipts from exact durable TASK records."""
     if set(tasks) != set(R1_HISTORICAL_DISPOSITIONS):
@@ -645,6 +645,73 @@ def repository_renewal_r1_receipts(
         )
         for task_id in sorted(R1_HISTORICAL_DISPOSITIONS)
     )
+
+
+def reconcile_repository_renewal_r1(
+    store: Any, cfg: dict[str, Any], *, observed_canonical_head: str,
+    authority_id: str, authority_result_sha256: str, dry_run: bool = False,
+) -> dict[str, Any]:
+    """Apply the exact reviewed R1 lifecycle receipts through the Store API.
+
+    The surface deliberately reads only the two reviewed durable TASK records,
+    validates their complete immutable identities before generating either
+    receipt, and writes only through ``Store.put_authoring_receipt``.  It never
+    changes execution history, TASK payloads, attempts, or accepted results.
+    """
+    authority = _text(authority_id, "R1 authority identity", 200)
+    authority_sha = _hex(
+        authority_result_sha256, "R1 authority result SHA", SHA256,
+    )
+    current_head = _hex(
+        observed_canonical_head, "observed canonical head", SHA40,
+    )
+    tasks: dict[str, Task] = {}
+    for task_id in sorted(R1_HISTORICAL_DISPOSITIONS):
+        specification = R1_HISTORICAL_DISPOSITIONS[task_id]
+        row = store.get(task_id)
+        if row is None:
+            raise ValidationError(f"R1 reconciliation target is missing: {task_id}")
+        task = store.task(row)
+        if (
+            row["task_id"] != task_id
+            or task.task_id != task_id
+            or row["source_issue"] != specification["source_issue"]
+            or task.source_issue != specification["source_issue"]
+            or row["envelope_hash"] != specification["envelope_hash"]
+            or task.envelope_hash != specification["envelope_hash"]
+        ):
+            raise ValidationError(
+                f"R1 reconciliation target identity mismatch: {task_id}"
+            )
+        tasks[task_id] = task
+
+    receipts = repository_renewal_r1_receipts(
+        tasks, cfg, observed_canonical_head=current_head,
+        authority_id=authority, authority_result_sha256=authority_sha,
+    )
+    results = []
+    for receipt in receipts:
+        outcome = "verified" if dry_run else store.put_authoring_receipt(receipt)
+        if outcome not in {"verified", "created", "duplicate"}:
+            raise ValidationError("R1 Store returned an invalid reconciliation result")
+        results.append({
+            "task_id": receipt["lifecycle_target_task_id"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "status": outcome,
+        })
+    statuses = {item["status"] for item in results}
+    overall = (
+        "verified" if dry_run else
+        "duplicate" if statuses == {"duplicate"} else
+        "created"
+    )
+    return {
+        "status": overall,
+        "dry_run": bool(dry_run),
+        "canonical_head": current_head,
+        "authority_id": authority,
+        "results": results,
+    }
 
 
 RECEIPT_KEYS = {

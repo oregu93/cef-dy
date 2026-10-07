@@ -30,7 +30,9 @@ from task_orchestrator.autonomy import (
 )
 from task_orchestrator.reliability import M1bController, M1bStore
 from task_orchestrator.dashboard import serve as serve_dashboard
-from task_orchestrator.authoring import interface_manifest, preflight_authoring
+from task_orchestrator.authoring import (
+    interface_manifest, preflight_authoring, reconcile_repository_renewal_r1,
+)
 from task_orchestrator.telegram import TelegramBotAPI, TelegramGateway, TelegramSecrets
 
 
@@ -64,6 +66,10 @@ def parser() -> argparse.ArgumentParser:
     validate.add_argument("task", type=Path)
     authoring = sub.add_parser("authoring-preflight")
     authoring.add_argument("request", type=Path)
+    renewal = sub.add_parser("repository-renewal-r1-reconcile")
+    renewal.add_argument("--authority-id", required=True)
+    renewal.add_argument("--authority-result-sha256", required=True)
+    renewal.add_argument("--dry-run", action="store_true")
     for name in ("approve", "resume", "quota-pause"):
         cmd = sub.add_parser(name)
         cmd.add_argument("task_id")
@@ -183,6 +189,18 @@ def main(argv: list[str] | None = None) -> int:
                 return 0
             store = Store(state_dir / "state.sqlite3")
             try:
+                if args.command == "repository-renewal-r1-reconcile":
+                    result = reconcile_repository_renewal_r1(
+                        store, cfg,
+                        observed_canonical_head=refreshed_origin_main(
+                            Path(cfg["repository_root"])
+                        ),
+                        authority_id=args.authority_id,
+                        authority_result_sha256=args.authority_result_sha256,
+                        dry_run=args.dry_run,
+                    )
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                    return 0
                 engine = Engine(cfg, store)
                 if args.command == "reliability-status":
                     print(json.dumps(M1bStore(store.conn, cfg).status(), indent=2, ensure_ascii=False))

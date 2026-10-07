@@ -1,12 +1,22 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import redirect_stdout
+import io
+import json
 import unittest
+from unittest import mock
+
+import yaml
+
+from orchestrate_tasks import main as cli_main
 
 from task_orchestrator.authoring import (
     R1_HISTORICAL_DISPOSITIONS,
     historical_disposition_receipt,
     preflight_authoring,
+    reconcile_repository_renewal_r1,
+    repository_renewal_r1_receipts,
     task_status_projection,
 )
 from task_orchestrator.dashboard import snapshot
@@ -102,6 +112,24 @@ class RepositoryRenewalR1Tests(unittest.TestCase):
         self.store.put_authoring_receipt(self._receipt(task, disposition))
         return task
 
+    def _fixture_r1_tasks_and_specs(self):
+        tasks = {
+            "INFRA-SHADOW-001": self.fx.task(
+                "INFRA-SHADOW-001", source_issue=1,
+            ),
+            "INFRA-CONVERGENCE-DASHBOARD-V2-PRODUCTION-DEPLOYMENT-001":
+                self.fx.task(
+                    "INFRA-CONVERGENCE-DASHBOARD-V2-PRODUCTION-DEPLOYMENT-001",
+                    source_issue=27,
+                ),
+        }
+        for task in tasks.values():
+            self.store.ingest(task)
+        specifications = deepcopy(R1_HISTORICAL_DISPOSITIONS)
+        for task_id, task in tasks.items():
+            specifications[task_id]["envelope_hash"] = task.envelope_hash
+        return tasks, specifications
+
     def test_reviewed_reconciliation_targets_are_exact_and_not_task_id_shortcuts(self):
         self.assertEqual(set(R1_HISTORICAL_DISPOSITIONS), {
             "INFRA-SHADOW-001",
@@ -124,13 +152,35 @@ class RepositoryRenewalR1Tests(unittest.TestCase):
         self.assertTrue(forged["human_action_required"])
         self.assertFalse(forged["historical_non_actionable"])
 
+    def test_dashboard_deployment_history_is_deferred_not_deployed(self):
+        specification = R1_HISTORICAL_DISPOSITIONS[
+            "INFRA-CONVERGENCE-DASHBOARD-V2-PRODUCTION-DEPLOYMENT-001"
+        ]
+        self.assertEqual(specification["source_issue"], 27)
+        self.assertEqual(specification["disposition"], "RETIRED")
+        self.assertEqual(specification["project_progress"], "DEFERRED")
+        self.assertEqual(specification["semantic_state"], "DEPLOYMENT_DEFERRED")
+        self.assertEqual(specification["implementation_state"], "DEFERRED")
+        self.assertEqual(specification["deployment_state"], "DEFERRED")
+        self.assertEqual(
+            specification["canonicalization_state"], "EXPLICITLY_DEFERRED",
+        )
+        self.assertIn("Issue #27 comment 5943372471", specification["reason"])
+        for forbidden in ("DEPLOYMENT_ACCEPTED", "DEPLOYED", "MATERIALIZED"):
+            self.assertNotIn(forbidden, {
+                specification["semantic_state"],
+                specification["deployment_state"],
+                specification["canonicalization_state"],
+            })
+
     def test_historical_receipt_allows_only_exact_immutable_task_binding(self):
         old = self.fx.task(
             "IMMUTABLE-HISTORICAL-001", canonical_head="1" * 40, source_issue=88,
         )
         spec = {
             "source_issue": 88, "envelope_hash": old.envelope_hash,
-            "disposition": "CLOSED_HISTORICAL", "reason": "Reviewed closure.",
+            "disposition": "CLOSED_HISTORICAL", "project_progress": "COMPLETED",
+            "reason": "Reviewed closure.",
             "semantic_state": "COMPLETE", "design_state": "REVIEWED",
             "implementation_state": "COMPLETED", "deployment_state": "NOT_APPLICABLE",
             "canonicalization_state": "NOT_STATE_CHANGING",
@@ -150,6 +200,142 @@ class RepositoryRenewalR1Tests(unittest.TestCase):
                 authority_id="ISSUE-52-COMMENT-5994972384",
                 authority_result_sha256="a" * 64, specification=bad,
             )
+
+    def test_r1_authority_is_explicit_and_fails_closed(self):
+        tasks, specifications = self._fixture_r1_tasks_and_specs()
+        with mock.patch.dict(
+            R1_HISTORICAL_DISPOSITIONS, specifications, clear=True,
+        ):
+            with self.assertRaisesRegex(ValidationError, "non-empty string"):
+                repository_renewal_r1_receipts(
+                    tasks, self.fx.cfg, observed_canonical_head=self.fx.head,
+                    authority_id=None, authority_result_sha256="a" * 64,
+                )
+            with self.assertRaisesRegex(ValidationError, "invalid identity format"):
+                repository_renewal_r1_receipts(
+                    tasks, self.fx.cfg, observed_canonical_head=self.fx.head,
+                    authority_id="ISSUE-52-COMMENT-6037522584",
+                    authority_result_sha256="opaque-unverifiable-value",
+                )
+            receipts = repository_renewal_r1_receipts(
+                tasks, self.fx.cfg, observed_canonical_head=self.fx.head,
+                authority_id="ISSUE-52-COMMENT-6037522584",
+                authority_result_sha256="b" * 64,
+            )
+        self.assertEqual(len(receipts), 2)
+        self.assertTrue(all(
+            receipt["accepted_state_changes"][0]["identity"]
+            == "ISSUE-52-COMMENT-6037522584"
+            for receipt in receipts
+        ))
+
+    def test_r1_reconciliation_fails_closed_on_target_identity_drift(self):
+        _tasks, specifications = self._fixture_r1_tasks_and_specs()
+        specifications[
+            "INFRA-CONVERGENCE-DASHBOARD-V2-PRODUCTION-DEPLOYMENT-001"
+        ]["envelope_hash"] = "f" * 64
+        with mock.patch.dict(
+            R1_HISTORICAL_DISPOSITIONS, specifications, clear=True,
+        ), self.assertRaisesRegex(ValidationError, "identity mismatch"):
+            reconcile_repository_renewal_r1(
+                self.store, self.fx.cfg, observed_canonical_head=self.fx.head,
+                authority_id="ISSUE-52-COMMENT-6037522584",
+                authority_result_sha256="d" * 64,
+            )
+        self.assertEqual(
+            self.store.conn.execute(
+                "SELECT count(*) FROM authoring_receipts"
+            ).fetchone()[0], 0,
+        )
+
+    def test_exact_r1_reconciliation_cli_is_dry_run_idempotent_and_append_only(self):
+        tasks, specifications = self._fixture_r1_tasks_and_specs()
+        for task_id in tasks:
+            self.store.conn.execute(
+                "UPDATE tasks SET state='WAITING_USER',reason='historical',attempt=2 "
+                "WHERE task_id=?", (task_id,),
+            )
+        protected_tables = (
+            "tasks", "events", "accepted_results", "attempt_results",
+            "dispatch_attempts",
+        )
+        before = {
+            table: [tuple(row) for row in self.store.conn.execute(
+                f"SELECT * FROM {table} ORDER BY rowid"
+            )]
+            for table in protected_tables
+        }
+        config = self.fx.root / "orchestrator.yaml"
+        config.write_text(
+            yaml.safe_dump(self.fx.cfg, sort_keys=False), encoding="utf-8",
+        )
+        authority_id = "ISSUE-52-COMMENT-6037522584"
+        authority_sha = "c" * 64
+        with mock.patch.dict(
+            R1_HISTORICAL_DISPOSITIONS, specifications, clear=True,
+        ), mock.patch(
+            "orchestrate_tasks.refreshed_origin_main", return_value=self.fx.head,
+        ) as refresh:
+            output = io.StringIO()
+            with redirect_stdout(output):
+                code = cli_main([
+                    "--config", str(config),
+                    "repository-renewal-r1-reconcile",
+                    "--authority-id", authority_id,
+                    "--authority-result-sha256", authority_sha,
+                    "--dry-run",
+                ])
+            dry_run = json.loads(output.getvalue())
+            self.assertEqual(code, 0)
+            self.assertEqual(dry_run["status"], "verified")
+            self.assertTrue(dry_run["dry_run"])
+            self.assertEqual(
+                self.store.conn.execute(
+                    "SELECT count(*) FROM authoring_receipts"
+                ).fetchone()[0], 0,
+            )
+
+            first = reconcile_repository_renewal_r1(
+                self.store, self.fx.cfg, observed_canonical_head=self.fx.head,
+                authority_id=authority_id,
+                authority_result_sha256=authority_sha,
+            )
+            second = reconcile_repository_renewal_r1(
+                self.store, self.fx.cfg, observed_canonical_head=self.fx.head,
+                authority_id=authority_id,
+                authority_result_sha256=authority_sha,
+            )
+        refresh.assert_called_once_with(self.fx.root)
+        self.assertEqual(first["status"], "created")
+        self.assertEqual(
+            [item["status"] for item in first["results"]],
+            ["created", "created"],
+        )
+        self.assertEqual(second["status"], "duplicate")
+        self.assertEqual(
+            [item["status"] for item in second["results"]],
+            ["duplicate", "duplicate"],
+        )
+        after = {
+            table: [tuple(row) for row in self.store.conn.execute(
+                f"SELECT * FROM {table} ORDER BY rowid"
+            )]
+            for table in protected_tables
+        }
+        self.assertEqual(after, before)
+        self.assertEqual(
+            self.store.conn.execute(
+                "SELECT count(*) FROM authoring_receipts"
+            ).fetchone()[0], 2,
+        )
+        dashboard_receipt = self.store.latest_authoring_receipt(
+            "INFRA-CONVERGENCE-DASHBOARD-V2-PRODUCTION-DEPLOYMENT-001"
+        )
+        self.assertEqual(dashboard_receipt["project_progress"], "DEFERRED")
+        self.assertEqual(dashboard_receipt["deployment_state"], "DEFERRED")
+        self.assertEqual(
+            dashboard_receipt["canonicalization_state"], "EXPLICITLY_DEFERRED",
+        )
 
     def test_two_known_false_attention_cases_are_consistent_across_surfaces(self):
         shadow = self._stranded(
