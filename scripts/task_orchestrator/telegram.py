@@ -155,6 +155,14 @@ CONTROL_COMMANDS = {
     "/pause_ai", "/drain", "/quiesce", "/safe", "/resume", "/mute",
     "/unmute", "/hold", "/release",
 }
+READ_ONLY_BOT_COMMANDS = (
+    {"command": "status", "description": "Show project status and next action"},
+    {"command": "attention", "description": "List items that need your attention"},
+    {"command": "health", "description": "Show database and recovery health"},
+    {"command": "last", "description": "Show the latest durable progress event"},
+    {"command": "task", "description": "Show one task by task ID"},
+    {"command": "help", "description": "List read-only commands and usage"},
+)
 _SAFE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}\Z")
 
 
@@ -209,6 +217,7 @@ class TelegramSecrets:
 class TelegramTransport(Protocol):
     def get_updates(self, *, offset: int, timeout_seconds: int) -> list[dict[str, Any]]: ...
     def send_message(self, *, text: str, reply_markup: dict[str, Any] | None = None) -> str: ...
+    def set_commands(self, *, commands: list[dict[str, str]]) -> bool: ...
 
 
 class TelegramTransportError(RuntimeError):
@@ -269,6 +278,15 @@ class TelegramBotAPI:
         if not isinstance(result, dict) or not isinstance(result.get("message_id"), int):
             raise RuntimeError("Telegram send acknowledgement missing message_id")
         return str(result["message_id"])
+
+    def set_commands(self, *, commands: list[dict[str, str]]) -> bool:
+        result = self._call("setMyCommands", {
+            "commands": commands,
+            "scope": {"type": "chat", "chat_id": self._chat_id},
+        })
+        if result is not True:
+            raise TelegramTransportError("Telegram command registration was not acknowledged")
+        return True
 
 
 class TelegramStore:
@@ -615,6 +633,22 @@ class TelegramGateway:
         self.secrets = secrets
         self.clock = clock
         self.owner = "telegram-" + str(uuid.uuid4())
+        self._command_menu_registered = False
+
+    def register_command_menu(self) -> str:
+        """Best-effort idempotent registration of the read-only command menu."""
+        if self._command_menu_registered:
+            return "unchanged"
+        try:
+            acknowledged = self.transport.set_commands(
+                commands=[dict(item) for item in READ_ONLY_BOT_COMMANDS],
+            )
+        except Exception:
+            return "retry"
+        if acknowledged is not True:
+            return "retry"
+        self._command_menu_registered = True
+        return "registered"
 
     def _authorized(self, update: dict[str, Any]) -> tuple[bool, dict[str, Any] | None, str | None]:
         message = update.get("message")
@@ -766,7 +800,14 @@ class TelegramGateway:
         )
 
     def _help(self) -> str:
-        return ("Read-only: /status /health /attention /last /task <id>\n"
+        return ("CEF Dy Telegram — read-only commands\n\n"
+                "/status — project status and next action. Usage: /status\n"
+                "/attention — items needing user attention. Usage: /attention\n"
+                "/health — database, visibility, and recovery health. Usage: /health\n"
+                "/last — latest durable progress event. Usage: /last\n"
+                "/task — one task's status facets. Usage: /task <task_id>\n"
+                "/help — this command list. Usage: /help\n\n"
+                "Compatibility aliases: /start → /help; /waiting → /attention.\n"
                 "Questions: /respond <attention_id> <answer>, /cancel <attention_id>\n"
                 "Confirmed operations: /pause_ai /drain /quiesce /safe /resume "
                 "/mute <seconds> /unmute /hold <task_id> /release <task_id>\n"
@@ -975,6 +1016,7 @@ class TelegramGateway:
 
     def cycle(self) -> dict[str, Any]:
         now = float(self.clock())
+        command_menu = self.register_command_menu()
         expired = self.store.reconcile_expired_claims(now)
         projected = self.sync_attention()
         state = self.store.state()
@@ -994,7 +1036,7 @@ class TelegramGateway:
             observation = {"state": "DEGRADED", "detail": f"Gateway loop: {type(exc).__name__}", "observed_at": utc_now()}
             delivery = "not_attempted"
         M1bStore(self.conn, self.cfg).checkpoint(TELEGRAM_GATEWAY=observation)
-        return {"expired_claims": expired, "projected": projected,
+        return {"command_menu": command_menu, "expired_claims": expired, "projected": projected,
                 "updates": outcomes, "delivery": delivery, "observation": observation}
 
     def run_forever(self) -> None:

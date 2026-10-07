@@ -16,7 +16,8 @@ from task_orchestrator.model import State
 from task_orchestrator.reliability import M1bStore
 from task_orchestrator.store import Store
 from task_orchestrator.telegram import (
-    SendOutcomeUnknown, TelegramBotAPI, TelegramGateway, TelegramSecrets, TelegramStore,
+    READ_ONLY_BOT_COMMANDS, SendOutcomeUnknown, TelegramBotAPI, TelegramGateway,
+    TelegramSecrets, TelegramStore,
 )
 
 from .common import Fixture
@@ -27,6 +28,8 @@ class FakeTransport:
         self.updates = []
         self.sent = []
         self.failure = None
+        self.command_registrations = []
+        self.command_registration_failure = None
 
     def get_updates(self, *, offset, timeout_seconds):
         if self.failure:
@@ -38,6 +41,12 @@ class FakeTransport:
             raise self.failure
         self.sent.append((text, reply_markup))
         return str(100 + len(self.sent))
+
+    def set_commands(self, *, commands):
+        self.command_registrations.append(commands)
+        if self.command_registration_failure:
+            raise self.command_registration_failure
+        return True
 
 
 class TelegramGatewayTests(unittest.TestCase):
@@ -217,6 +226,18 @@ class TelegramGatewayTests(unittest.TestCase):
                 self.assertRaises(SendOutcomeUnknown):
             api.send_message(text="fixture", reply_markup=None)
 
+    def test_bot_api_registers_commands_for_the_configured_private_chat(self):
+        api = TelegramBotAPI(
+            self.secrets, api_base="https://api.telegram.org", timeout_seconds=1,
+        )
+        commands = [dict(item) for item in READ_ONLY_BOT_COMMANDS]
+        with mock.patch.object(api, "_call", return_value=True) as call:
+            self.assertTrue(api.set_commands(commands=commands))
+        call.assert_called_once_with("setMyCommands", {
+            "commands": commands,
+            "scope": {"type": "chat", "chat_id": self.CHAT},
+        })
+
     def test_expired_claim_recovers_as_unknown_not_blind_sent(self):
         self.gateway.store.enqueue_projection(
             attention_id="a-3", source_event_id="event-3", task_id="T-3",
@@ -260,6 +281,53 @@ class TelegramGatewayTests(unittest.TestCase):
         after = tuple(self.store.conn.execute("SELECT state,attempt,approved_at FROM tasks WHERE task_id=?", (task.task_id,)).fetchone())
         self.assertEqual(before, after)
         self.assertNotIn("/shell", self.gateway._help().casefold())
+
+    def test_help_lists_exact_read_only_commands_descriptions_and_usage(self):
+        self.assertEqual(
+            self.gateway._help(),
+            "CEF Dy Telegram — read-only commands\n\n"
+            "/status — project status and next action. Usage: /status\n"
+            "/attention — items needing user attention. Usage: /attention\n"
+            "/health — database, visibility, and recovery health. Usage: /health\n"
+            "/last — latest durable progress event. Usage: /last\n"
+            "/task — one task's status facets. Usage: /task <task_id>\n"
+            "/help — this command list. Usage: /help\n\n"
+            "Compatibility aliases: /start → /help; /waiting → /attention.\n"
+            "Questions: /respond <attention_id> <answer>, /cancel <attention_id>\n"
+            "Confirmed operations: /pause_ai /drain /quiesce /safe /resume "
+            "/mute <seconds> /unmute /hold <task_id> /release <task_id>\n"
+            "Telegram is transport only: it cannot authorize science, holdout "
+            "access, stages, Git, shell, or services.",
+        )
+
+    def test_command_menu_registration_is_exact_and_idempotent(self):
+        expected = [
+            {"command": "status", "description": "Show project status and next action"},
+            {"command": "attention", "description": "List items that need your attention"},
+            {"command": "health", "description": "Show database and recovery health"},
+            {"command": "last", "description": "Show the latest durable progress event"},
+            {"command": "task", "description": "Show one task by task ID"},
+            {"command": "help", "description": "List read-only commands and usage"},
+        ]
+        self.assertEqual(list(READ_ONLY_BOT_COMMANDS), expected)
+        self.assertEqual(self.gateway.register_command_menu(), "registered")
+        self.assertEqual(self.gateway.register_command_menu(), "unchanged")
+        self.assertEqual(self.transport.command_registrations, [expected])
+
+    def test_menu_registration_failure_does_not_break_typed_commands(self):
+        self.transport.command_registration_failure = ConnectionError("temporary")
+        self.transport.updates = [self.update(49, "/status")]
+        result = self.gateway.cycle()
+        self.assertEqual(result["command_menu"], "retry")
+        self.assertEqual(result["updates"], ["processed"])
+        self.assertEqual(result["observation"]["state"], "HEALTHY")
+        self.assertEqual(self.gateway.process_update(self.update(50, "/help")), "processed")
+
+        self.transport.command_registration_failure = None
+        self.transport.updates = []
+        self.assertEqual(self.gateway.cycle()["command_menu"], "registered")
+        self.assertEqual(self.gateway.cycle()["command_menu"], "unchanged")
+        self.assertEqual(len(self.transport.command_registrations), 2)
 
     def test_control_requires_callback_confirmation_and_engine_enforces_it(self):
         task = self.fx.task("CONTROLLED-LLM-001", task_type="llm_semantic", action="semantic_helper")
