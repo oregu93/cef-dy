@@ -7,6 +7,11 @@ import subprocess
 import sys
 import yaml
 
+from task_orchestrator.current_state import (
+    FRESHNESS_PATH, load_repository_authority,
+)
+from task_orchestrator.model import ValidationError
+
 ROOT = Path(__file__).resolve().parents[1]
 
 REPORT = ROOT / "VALIDATION_REPORT.json"
@@ -1542,6 +1547,74 @@ def git_whitespace_checks(issues):
             )
 
 
+def canonical_authority_checks(issues):
+    """Fail strict validation when repository authority no longer fits Git."""
+    freshness_path = ROOT / FRESHNESS_PATH
+    freshness = load_yaml(freshness_path, issues)
+    if not isinstance(freshness, dict):
+        return
+    assessed = str(freshness.get("assessed_head", ""))
+    try:
+        authority = load_repository_authority(
+            ROOT, expected_canonical_head=assessed,
+        )
+    except (ValidationError, OSError, ValueError) as exc:
+        add_issue(issues, "error", rel(freshness_path), str(exc))
+        return
+    try:
+        head = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
+        ).strip()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        add_issue(issues, "error", "git", f"cannot resolve HEAD for freshness: {exc}")
+        return
+    if head != assessed:
+        parent = subprocess.run(
+            ["git", "rev-parse", f"{head}^"], cwd=ROOT,
+            capture_output=True, text=True,
+        )
+        changed = subprocess.run(
+            ["git", "diff", "--name-only", assessed, head], cwd=ROOT,
+            capture_output=True, text=True,
+        )
+        actual = sorted(filter(None, changed.stdout.splitlines()))
+        expected = authority["materialization_paths"]
+        if (
+            parent.returncode != 0 or parent.stdout.strip() != assessed
+            or changed.returncode != 0 or actual != expected
+        ):
+            add_issue(
+                issues, "error", rel(freshness_path),
+                "canonical-state freshness HEAD/materialization delta drift",
+            )
+
+    metadata = load_yaml(META, issues)
+    if isinstance(metadata, dict):
+        projection = metadata.get("canonical_state_freshness", {})
+        if (
+            not isinstance(projection, dict)
+            or projection.get("assessed_head") != assessed
+            or projection.get("record_path") != FRESHNESS_PATH.as_posix()
+            or projection.get("debt_ledger_path")
+            != "00_Project/MATERIALIZATION_DEBT_LEDGER.yaml"
+        ):
+            add_issue(issues, "error", rel(META), "canonical authority facade drift")
+
+    manifest = load_yaml(MANIFEST, issues)
+    authoritative = manifest.get("authoritative", {}) if isinstance(manifest, dict) else {}
+    canonical_repository = (
+        manifest.get("canonical_repository", {}) if isinstance(manifest, dict) else {}
+    )
+    if (
+        canonical_repository.get("assessed_head") != assessed
+        or
+        authoritative.get("canonical_state_freshness") != FRESHNESS_PATH.as_posix()
+        or authoritative.get("materialization_debt_ledger")
+        != "00_Project/MATERIALIZATION_DEBT_LEDGER.yaml"
+    ):
+        add_issue(issues, "error", rel(MANIFEST), "canonical authority manifest drift")
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -1570,6 +1643,7 @@ def main():
     register_checks(issues)
     markdown_and_path_checks(issues)
     reentry_check(issues)
+    canonical_authority_checks(issues)
     file_size_checks(issues)
     git_whitespace_checks(issues)
 

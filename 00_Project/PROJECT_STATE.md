@@ -3,12 +3,27 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "5.0"
-updated: 2026-09-16
+version: "5.1"
+updated: 2026-10-08
 review_status: working
 ---
 
 # DyFeO3 — Project State
+
+## Canonical-state boundary (R2)
+
+Эта re-entry surface оценена на canonical HEAD
+`45fcf89f5a2571d534da6cf3f70018d3de620d7e` и связана с
+[CANONICAL_STATE_FRESHNESS](CANONICAL_STATE_FRESHNESS.yaml) и
+[MATERIALIZATION_DEBT_LEDGER](MATERIALIZATION_DEBT_LEDGER.yaml). Project Control
+и infrastructure слои свежи; R3 operational/navigation и R4 supporting
+scientific/literature materialization перечислены точно и scoped. Они не
+изменяют научную границу ниже.
+
+Научная граница неизменна: M03R `LEVEL_2_established_LEVEL_3_blocked`,
+LEVEL_3/LEVEL_4 отсутствуют, Stage03D suspended, exchange deferred, holdout
+unauthorized. Значение 18.247178 meV остаётся candidate с оговорками, а не
+validated assignment. Новая scientific interpretation в R2 не вводится.
 
 ## Принятый checkpoint Stage03R r2 (2026-09-16)
 

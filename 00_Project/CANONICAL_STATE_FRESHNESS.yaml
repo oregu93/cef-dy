@@ -1,103 +1,84 @@
-schema_version: 1
-record_id: CANONICAL-STATE-FRESHNESS-2026-10-03-001
-status: DEGRADED_MATERIALIZATION_DEBT
-assessed_at: '2026-10-03'
-assessed_head: 234b3223ef67e179a00e22ca43bb519ea222fc4d
+schema_version: 2
+record_id: CANONICAL-STATE-FRESHNESS-2026-10-08-R2-001
+status: CURRENT_WITH_SCOPED_DEBT
+assessed_at: '2026-10-08'
+assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
 authority: PROJECT_CONTROL
 purpose: >
-  Fail-closed guard against consequential specialist work being based on
-  descriptive repository state that lags already accepted/reviewed project
-  results. This record is an interim safety barrier pending the full
-  materialization-debt validator and authoring-preflight implementation.
-
+  Bind fresh re-entry and consequential authoring to repository-derived
+  current truth at the exact canonical input HEAD. Remaining accepted but
+  unmaterialized work is enumerated in the coupled debt ledger and is scoped
+  rather than treated as a global blocker.
 freshness_semantics:
-  FRESH: >
-    No known material accepted delta relevant to the layer is awaiting
-    canonical materialization.
-  CURRENT_WITH_UNMATERIALIZED_SUPPORT: >
-    The governing scientific conclusion remains current, but newer reviewed
-    support/design/provenance has not yet been fully materialized.
-  STALE: >
-    Current-facing canonical descriptions omit material accepted changes that
-    can affect subsequent work.
-  UNKNOWN: >
-    Freshness cannot yet be established from durable identities.
-
+  FRESH: no known relevant accepted delta is awaiting materialization
+  CURRENT_WITH_SCOPED_DEBT: current boundaries are truthful and residual debt is exact, scoped, and non-promotional
+  STALE: assessed_head or coupled authority no longer matches the observed canonical state
+  UNKNOWN: exact repository authority cannot be established
 layers:
   scientific_core:
-    status: CURRENT_WITH_UNMATERIALIZED_SUPPORT
-    current_boundary:
-      milestone: M03R
-      state: LEVEL_2_established_LEVEL_3_blocked
-      stage03d: suspended
-      exchange: deferred
-      holdout: unauthorized
+    status: CURRENT_WITH_SCOPED_DEBT
     note: >
-      Recent reviewed work refined the resolution/scale-bridge and discriminant
-      designs but did not establish LEVEL_3, validate the 18.25 meV assignment,
-      authorize Stage03D, or activate exchange.
+      M03R LEVEL_2 remains established and LEVEL_3/LEVEL_4 remain absent.
+      Pending R4 register/index work is supporting materialization only and
+      does not promote any scientific conclusion.
   project_control:
-    status: STALE
-    known_materialization_debt:
-      - issue: 52
-        task_id: INFRA-REPO-WIDE-HYGIENE-LOGIC-AUDIT-001-RERUN-001
-        state: completed_with_actionable_findings_pending_review_and_remediation
-      - issue: 53
-        task_id: ORCH-PC-AUTHORING-PREFLIGHT-ARCH-001
-        state: completed_design_pending_review_and_implementation
+    status: FRESH
     note: >
-      Accepted governance decisions on canonical-state freshness,
-      accepted-decision fast-follow, negative-knowledge retention, and
-      Project-Control-to-Orch preflight are newer than the current descriptive
-      facades.
+      Authoring preflight, R1 lifecycle convergence, this R2 authority, and
+      the Issue #8 reviewed disposition are represented with exact identities.
   infrastructure:
-    status: STALE
+    status: FRESH
     note: >
-      Historical task disposition and dashboard attention semantics are known
-      to misclassify retired/superseded tasks as actionable. The durable
-      lifecycle/preflight correction is not yet canonical.
+      Current canonical infrastructure through Telegram command
+      discoverability is represented. Independently bounded R3 corrections
+      remain scoped debt and do not redefine the production baseline.
   literature_and_supporting_knowledge:
-    status: CURRENT_WITH_UNMATERIALIZED_SUPPORT
+    status: CURRENT_WITH_SCOPED_DEBT
     note: >
-      Several October 2026 reviewed literature findings and methodological
-      comparator results are not yet fully materialized into the durable
-      literature/knowledge layers.
-
-recovery_exception:
-  standing_authorization: PC-OPERATIONAL-RECOVERY-STANDING-001
-  rule: >
-    A bounded non-scientific task may inspect/recover the stale layer itself
-    without returning STATE_SYNC_REQUIRED, provided it does not promote
-    scientific state, access raw/holdout/private data, or perform irreversible
-    actions. Recovery must be followed by explicit verification of resumed progress.
-
-gate:
-  default_for_consequential_work: CHECK_RELEVANT_LAYER
-  if_relevant_layer_is_STALE: STATE_SYNC_REQUIRED
-  if_relevant_layer_is_CURRENT_WITH_UNMATERIALIZED_SUPPORT: >
-    proceed_only_if_the_missing_support_cannot_change_the_task_decision_or_bind_an_exact_reviewed_delta_bundle
-  exact_delta_bundle_exception:
-    allowed: true
-    requirements:
-      - immutable source/result IDs
-      - exact hashes
-      - explicit task binding
-      - later canonical materialization required
-  unrelated_stale_layer_blocks_independent_work: false
-
-materialization_states:
-  - MATERIALIZED
-  - PENDING_MATERIALIZATION
-  - EXPLICITLY_DEFERRED_WITH_REASON
-  - NOT_STATE_CHANGING
-
-known_gaps:
-  - exact repository-wide materialization-debt inventory pending #52 review/remediation
-  - automatic validator/preflight enforcement pending #53 implementation
-  - dashboard STATE_FRESHNESS projection not yet implemented
-
-do_not_do:
-  - do_not_use_chat_memory_as_state_authority
-  - do_not_treat_GitHub_issue_prose_as_canonical_scientific_state
-  - do_not_bump_dates_without_reconciling_exact_state_deltas
-  - do_not_silently_promote_unreviewed_scientific_results
+      October support/provenance reconciliation remains R4 work. No Issue
+      prose is promoted to scientific evidence or current interpretation.
+materialization_commit_policy: >
+  assessed_head is the exact canonical input parent. A candidate may be one
+  direct commit above it only when that commit changes exactly the declared
+  materialization_paths; any later or different delta is freshness drift.
+materialization_paths:
+  - 00_Project/CANONICAL_STATE_FRESHNESS.yaml
+  - 00_Project/MATERIALIZATION_DEBT_LEDGER.yaml
+  - 00_Project/PROJECT_CONTROL.md
+  - 00_Project/PROJECT_METADATA.yaml
+  - 00_Project/PROJECT_STATE.md
+  - 00_Project/R2_ISSUE8_LIFECYCLE_AUTHORITY.yaml
+  - 03_Protocols/TASK_ORCHESTRATOR_AUTHORING_PREFLIGHT_V1_0.md
+  - 03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V2_0.md
+  - PROJECT_MANIFEST.yaml
+  - README.md
+  - scripts/kb_validate.py
+  - scripts/orchestrate_tasks.py
+  - scripts/task_orchestrator/authoring.py
+  - scripts/task_orchestrator/current_state.py
+  - scripts/task_orchestrator/dashboard.py
+  - scripts/task_orchestrator/store.py
+  - scripts/task_orchestrator/tests/common.py
+  - scripts/task_orchestrator/tests/test_repository_r2.py
+consequential_task_gate:
+  authority_path: 00_Project/MATERIALIZATION_DEBT_LEDGER.yaml
+  omitted_known_relevant_debt: FAIL_CLOSED
+  unrelated_debt: NOT_A_GLOBAL_BLOCKER
+  exact_reviewed_delta_exception: IDENTITY_AND_HASH_BOUND_CONTEXT_DELTA_ONLY
+  unresolved_source_recovery: FAIL_CLOSED_WHEN_RELEVANT
+scientific_boundary:
+  milestone: M03R
+  state: LEVEL_2_established_LEVEL_3_blocked
+  level_3: absent
+  level_4: absent
+  stage03d: suspended
+  exchange: deferred
+  holdout: unauthorized
+  taipan_18_247_meV: candidate_with_caveat_only
+  new_scientific_interpretation: none
+prohibitions:
+  - no_scientific_execution
+  - no_raw_or_holdout_access
+  - no_stage_transition
+  - no_exchange_activation
+  - no_issue_prose_scientific_promotion

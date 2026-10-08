@@ -136,7 +136,12 @@ rerun/supersession links, and materialization state before authoring proceeds.
 
 Accepted state changes use exactly `MATERIALIZED`,
 `PENDING_MATERIALIZATION`, `EXPLICITLY_DEFERRED_WITH_REASON`, or
-`NOT_STATE_CHANGING`. Relevant unbound materialization debt returns the
+`NOT_STATE_CHANGING`; repository debt may additionally be
+`UNRESOLVED_SOURCE_RECOVERY`. The preflight derives relevant debt from the
+exact-head repository ledger rather than trusting only caller declarations.
+Omitted relevant debt or relevant unresolved source recovery fails closed;
+unrelated path/task debt does not become a global block. Relevant unbound
+materialization debt returns the
 non-authorizing `STATE_SYNC_REQUIRED`; an exceptional context-delta bridge must
 be identity/hash/review bound and preserve later materialization.
 

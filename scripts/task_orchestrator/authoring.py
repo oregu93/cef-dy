@@ -15,11 +15,18 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from pathlib import Path
 from typing import Any
+
+import yaml
 
 from .model import Task, ValidationError
 from .policy import normalize_relative, validate_task_policy
 from .routing import SUITABILITY, canonical_role, resolve_resource_request
+from .current_state import (
+    load_repository_authority, relevant_repository_debt,
+    verify_declared_relevant_debt,
+)
 from .schema import (
     ACTIONS, RESOURCE_LANES, RESOURCE_REQUIREMENTS, ROLES, TASK_KEYS,
     TASK_TYPES, validate_task,
@@ -32,6 +39,7 @@ OPERATION_TYPES = (
 MATERIALIZATION_STATES = (
     "MATERIALIZED", "PENDING_MATERIALIZATION",
     "EXPLICITLY_DEFERRED_WITH_REASON", "NOT_STATE_CHANGING",
+    "UNRESOLVED_SOURCE_RECOVERY",
 )
 LIFECYCLE_DISPOSITIONS = (
     "CURRENT", "SUPERSEDED", "RETIRED", "CLOSED_HISTORICAL",
@@ -91,6 +99,35 @@ R1_HISTORICAL_DISPOSITIONS: dict[str, dict[str, Any]] = {
         "deployment_state": "DEFERRED",
         "canonicalization_state": "EXPLICITLY_DEFERRED",
     },
+}
+R2_ISSUE8_TASK_ID = "PROJECT-WIDE-ORCHESTRATION-RELIABILITY-HEALTH-AUDIT-001"
+R2_ISSUE8_DEBT_ID = f"{R2_ISSUE8_TASK_ID}-LIFECYCLE"
+R2_ISSUE8_AUTHORITY_ID = "issue:8#issuecomment-6046506525"
+R2_ISSUE8_AUTHORITY_SHA256 = (
+    "54eac880eb1671ef3de39ffe63686d32fc92a14b21365e181075353aba257288"
+)
+R2_ISSUE8_ACCEPTED_RESULT_SHA256 = (
+    "c699db2f6b619eda08ec5537c735f7405c0264156150ce17f7f66c7c4aaf73af"
+)
+R2_ISSUE8_TASK_CANONICAL_HEAD = "a31ce6b7dd7367737fd56479a516901a159b1934"
+R2_ISSUE8_ENVELOPE_SHA256 = (
+    "f07f68ffa2c0d82c68c0a8bc4ead731093e25c4e320f89060f0a4f2a1cf16a96"
+)
+R2_ISSUE8_AUTHORITY_PATH = Path("00_Project/R2_ISSUE8_LIFECYCLE_AUTHORITY.yaml")
+R2_ISSUE8_DISPOSITION: dict[str, Any] = {
+    "source_issue": 8,
+    "disposition": "CLOSED_HISTORICAL",
+    "project_progress": "COMPLETED",
+    "reason": (
+        "Project Control Issue #8 comment 6046506525 classifies this legacy "
+        "FAILED diagnostic as superseded and non-actionable; its immutable "
+        "FSM, accepted result, attempts, and event history remain unchanged."
+    ),
+    "semantic_state": "SUPERSEDED_DIAGNOSTIC",
+    "design_state": "NOT_APPLICABLE",
+    "implementation_state": "NOT_APPLICABLE",
+    "deployment_state": "NOT_APPLICABLE",
+    "canonicalization_state": "NOT_APPLICABLE",
 }
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -337,7 +374,7 @@ def _validate_materialization(value: Any) -> tuple[tuple[dict[str, Any], ...], t
         else:
             if commit is not None or reason is not None:
                 raise ValidationError(f"{state} must not claim a commit or deferral reason")
-            if state == "PENDING_MATERIALIZATION":
+            if state in {"PENDING_MATERIALIZATION", "UNRESOLVED_SOURCE_RECOVERY"}:
                 pending.append(identity)
         records.append({
             "identity": identity,
@@ -490,6 +527,14 @@ def preflight_authoring(
     dependencies = _validate_dependencies(task, data["dependency_bindings"])
     review = _validate_review(task, data["review_binding"])
     changes, pending = _validate_materialization(data["accepted_state_changes"])
+    repository_authority = load_repository_authority(
+        Path(cfg["repository_root"]), expected_canonical_head=observed,
+    )
+    relevant_debt = relevant_repository_debt(
+        repository_authority, role=task.role, task_id=task.task_id,
+        required_paths=required_paths, allowed_paths=task.allowed_paths,
+    )
+    repository_pending = verify_declared_relevant_debt(relevant_debt, changes)
     delta = _validate_context_delta(data["context_delta_bundle"], pending)
     lifecycle = _validate_lifecycle(data["lifecycle"], operation, task, existing)
 
@@ -507,7 +552,7 @@ def preflight_authoring(
 
     manifest = interface_manifest()
     receipt: dict[str, Any] = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": status,
         "operation_type": operation,
         "author_role": "00_PROJECT_CONTROL",
@@ -516,6 +561,10 @@ def preflight_authoring(
         "task_id": task.task_id,
         "envelope_hash": task.envelope_hash,
         "interface_manifest_sha256": manifest["manifest_sha256"],
+        "repository_authority_sha256": repository_authority["authority_sha256"],
+        "repository_authority_assessed_head": repository_authority["assessed_head"],
+        "repository_authority_observed_head": repository_authority["observed_canonical_head"],
+        "repository_relevant_debt_ids": list(repository_pending),
         "resource_requirement": requirement,
         "allowed_lanes": list(declared_lanes),
         "required_repository_paths": list(required_paths),
@@ -714,7 +763,141 @@ def reconcile_repository_renewal_r1(
     }
 
 
-RECEIPT_KEYS = {
+def reconcile_repository_r2_issue8(
+    store: Any, cfg: dict[str, Any], *, observed_canonical_head: str,
+    authority_id: str, authority_result_sha256: str, dry_run: bool = False,
+) -> dict[str, Any]:
+    """Apply only the reviewed Issue #8 lifecycle overlay through Store API."""
+    authority = _text(authority_id, "R2 Issue #8 authority identity", 200)
+    authority_sha = _hex(
+        authority_result_sha256, "R2 Issue #8 authority result SHA", SHA256,
+    )
+    if authority != R2_ISSUE8_AUTHORITY_ID or authority_sha != R2_ISSUE8_AUTHORITY_SHA256:
+        raise ValidationError("R2 Issue #8 authority does not match reviewed decision")
+    authority_path = Path(cfg["repository_root"]) / R2_ISSUE8_AUTHORITY_PATH
+    try:
+        artifact = yaml.safe_load(authority_path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        raise ValidationError(f"R2 Issue #8 authority artifact unavailable: {exc}") from exc
+    if not isinstance(artifact, dict) or set(artifact) != {
+        "schema_version", "authority_payload", "authority_result_sha256",
+        "target", "preservation", "application",
+    }:
+        raise ValidationError("R2 Issue #8 authority artifact is invalid")
+    payload = artifact["authority_payload"]
+    if (
+        artifact["schema_version"] != 1
+        or not isinstance(payload, dict)
+        or _digest(payload) != authority_sha
+        or artifact["authority_result_sha256"] != authority_sha
+        or payload.get("source") != authority
+        or payload.get("task_id") != R2_ISSUE8_TASK_ID
+        or payload.get("lifecycle_disposition") != "CLOSED_HISTORICAL"
+        or payload.get("semantic_state") != "SUPERSEDED_DIAGNOSTIC"
+        or payload.get("human_action_required") is not False
+        or artifact["target"] != {
+            "source_issue": 8,
+            "envelope_sha256": R2_ISSUE8_ENVELOPE_SHA256,
+            "accepted_result_sha256": R2_ISSUE8_ACCEPTED_RESULT_SHA256,
+        }
+        or artifact["application"] != {
+            "mechanism": "reviewed_lifecycle_receipt",
+            "store_api": "Store.put_authoring_receipt",
+            "direct_sql_mutation": "forbidden",
+        }
+    ):
+        raise ValidationError("R2 Issue #8 authority artifact/hash mismatch")
+    current_head = _hex(observed_canonical_head, "observed canonical head", SHA40)
+    row = store.get(R2_ISSUE8_TASK_ID)
+    if row is None:
+        raise ValidationError("R2 Issue #8 reconciliation target is missing")
+    task = store.task(row)
+    if (
+        row["task_id"] != R2_ISSUE8_TASK_ID
+        or task.task_id != R2_ISSUE8_TASK_ID
+        or row["source_issue"] != R2_ISSUE8_DISPOSITION["source_issue"]
+        or task.source_issue != R2_ISSUE8_DISPOSITION["source_issue"]
+        or task.canonical_head != R2_ISSUE8_TASK_CANONICAL_HEAD
+        or row["envelope_hash"] != R2_ISSUE8_ENVELOPE_SHA256
+        or task.envelope_hash != R2_ISSUE8_ENVELOPE_SHA256
+        or row["state"] != "FAILED"
+    ):
+        raise ValidationError("R2 Issue #8 TASK identity/history mismatch")
+    accepted = store.accepted_result_identity(R2_ISSUE8_TASK_ID)
+    if accepted != R2_ISSUE8_ACCEPTED_RESULT_SHA256:
+        raise ValidationError("R2 Issue #8 accepted result identity mismatch")
+
+    request = {
+        "schema_version": 1,
+        "operation_type": "CLOSE",
+        "author_role": "00_PROJECT_CONTROL",
+        "canonical_head": current_head,
+        "issue": {
+            "number": 8, "state": "closed", "labels": sorted(set(task.labels)),
+        },
+        "task": task.envelope_dict(),
+        "existing_binding": {
+            "source_issue": 8, "task_id": task.task_id,
+            "envelope_hash": task.envelope_hash,
+        },
+        "required_repository_paths": [],
+        "dependency_bindings": [],
+        "review_binding": None,
+        "accepted_state_changes": [{
+            "identity": R2_ISSUE8_DEBT_ID,
+            "result_sha256": authority_sha,
+            "materialization_state": "PENDING_MATERIALIZATION",
+            "materialization_commit": None,
+            "reason": None,
+        }],
+        "context_delta_bundle": {
+            "bundle_id": "R2-ISSUE8-LIFECYCLE-EXACT-DELTA-001",
+            "sha256": authority_sha,
+            "pending_materialization_ids": [R2_ISSUE8_DEBT_ID],
+            "review_id": authority,
+            "review_result_sha256": authority_sha,
+            "mandatory_later_materialization": True,
+        },
+        "lifecycle": {
+            "disposition": R2_ISSUE8_DISPOSITION["disposition"],
+            "target_task_id": task.task_id,
+            "target_envelope_hash": task.envelope_hash,
+            "successor_task_id": None,
+            "reason": R2_ISSUE8_DISPOSITION["reason"],
+        },
+        "project_status": {
+            "project_progress": R2_ISSUE8_DISPOSITION["project_progress"],
+            "human_action_required": False,
+            "semantic_state": R2_ISSUE8_DISPOSITION["semantic_state"],
+            "design_state": R2_ISSUE8_DISPOSITION["design_state"],
+            "implementation_state": R2_ISSUE8_DISPOSITION["implementation_state"],
+            "deployment_state": R2_ISSUE8_DISPOSITION["deployment_state"],
+            "canonicalization_state": R2_ISSUE8_DISPOSITION["canonicalization_state"],
+        },
+        "execution_context": "SEPARATE_BOUNDED_WORK",
+        "persistent_chat_role": "00_PROJECT_CONTROL",
+        "chatgpt_scheduler_requested": False,
+    }
+    receipt = preflight_authoring(
+        request, cfg, observed_canonical_head=current_head,
+    )
+    outcome = "verified" if dry_run else store.put_authoring_receipt(receipt)
+    if outcome not in {"verified", "created", "duplicate"}:
+        raise ValidationError("R2 Store returned an invalid reconciliation result")
+    return {
+        "status": outcome,
+        "dry_run": bool(dry_run),
+        "canonical_head": current_head,
+        "authority_id": authority,
+        "task_id": task.task_id,
+        "envelope_hash": task.envelope_hash,
+        "accepted_result_sha256": accepted,
+        "preserved_fsm_state": row["state"],
+        "receipt_sha256": receipt["receipt_sha256"],
+    }
+
+
+RECEIPT_KEYS_V1 = {
     "schema_version", "status", "operation_type", "author_role",
     "canonical_head", "issue_number", "task_id", "envelope_hash",
     "interface_manifest_sha256", "resource_requirement", "allowed_lanes",
@@ -729,26 +912,54 @@ RECEIPT_KEYS = {
     "persistent_project_control_mode", "chatgpt_scheduler_authorized",
     "receipt_sha256",
 }
+RECEIPT_KEYS = RECEIPT_KEYS_V1 | {
+    "repository_authority_sha256", "repository_authority_assessed_head",
+    "repository_authority_observed_head", "repository_relevant_debt_ids",
+}
 
 
 def validate_preflight_receipt(
     receipt: Any, *, authorizing: bool = True, require_current_manifest: bool = True,
 ) -> dict[str, Any]:
     """Validate a receipt before it is consumed as durable control metadata."""
-    data = _mapping(receipt, "authoring receipt", RECEIPT_KEYS)
+    if not isinstance(receipt, dict):
+        raise ValidationError("authoring receipt must be a mapping")
+    schema_version = receipt.get("schema_version")
+    keys = RECEIPT_KEYS if schema_version == 2 else RECEIPT_KEYS_V1
+    data = _mapping(receipt, "authoring receipt", keys)
     claimed = _hex(data["receipt_sha256"], "receipt_sha256", SHA256)
     unhashed = dict(data)
     unhashed.pop("receipt_sha256")
     if _digest(unhashed) != claimed:
         raise ValidationError("authoring receipt identity mismatch")
-    if data["schema_version"] != 1 or data["author_role"] != "00_PROJECT_CONTROL":
-        raise ValidationError("receipt lacks Project Control v1 authority")
+    if data["schema_version"] not in {1, 2} or data["author_role"] != "00_PROJECT_CONTROL":
+        raise ValidationError("receipt lacks Project Control authority")
     if data["operation_type"] not in OPERATION_TYPES:
         raise ValidationError("invalid receipt operation_type")
     _hex(data["canonical_head"], "receipt canonical_head", SHA40)
     _text(data["task_id"], "receipt task_id", 128)
     _hex(data["envelope_hash"], "receipt envelope_hash", SHA256)
     _hex(data["interface_manifest_sha256"], "receipt interface manifest SHA", SHA256)
+    if data["schema_version"] == 2:
+        _hex(data["repository_authority_sha256"], "repository authority SHA", SHA256)
+        _hex(
+            data["repository_authority_assessed_head"],
+            "repository authority assessed_head", SHA40,
+        )
+        observed_authority_head = _hex(
+            data["repository_authority_observed_head"],
+            "repository authority observed_head", SHA40,
+        )
+        if observed_authority_head != data["canonical_head"]:
+            raise ValidationError("receipt repository authority observed HEAD mismatch")
+        debt_ids = data["repository_relevant_debt_ids"]
+        if (
+            not isinstance(debt_ids, list)
+            or debt_ids != sorted(debt_ids)
+            or len(debt_ids) != len(set(debt_ids))
+            or any(not isinstance(value, str) or not value for value in debt_ids)
+        ):
+            raise ValidationError("receipt repository debt identities are invalid")
     _text(data["lifecycle_target_task_id"], "receipt lifecycle target", 128)
     _hex(data["lifecycle_target_envelope_hash"], "receipt lifecycle envelope SHA", SHA256)
     successor = _optional_text(
@@ -806,6 +1017,10 @@ def validate_preflight_receipt(
         raise ValidationError("receipt materialization records are not canonical")
     if list(pending) != data["pending_materialization_ids"]:
         raise ValidationError("receipt pending materialization identities are inconsistent")
+    if data["schema_version"] == 2 and not set(
+        data["repository_relevant_debt_ids"]
+    ).issubset(set(data["pending_materialization_ids"])):
+        raise ValidationError("receipt repository debt is not exact-delta bound")
     if data["state_freshness"] == "CONTEXT_DELTA_BOUND":
         _text(data["context_delta_bundle_id"], "receipt context delta ID", 200)
         _hex(data["context_delta_bundle_sha256"], "receipt context delta SHA", SHA256)

@@ -494,6 +494,18 @@ class Store:
             )
             return "created"
 
+    def accepted_result_identity(self, task_id: str) -> str | None:
+        """Return one durable accepted-result identity without exposing payloads."""
+        exists = self.conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='accepted_results'"
+        ).fetchone()
+        if not exists:
+            return None
+        row = self.conn.execute(
+            "SELECT result_sha256 FROM accepted_results WHERE task_id=?", (task_id,),
+        ).fetchone()
+        return str(row["result_sha256"]) if row else None
+
     def latest_authoring_receipt(self, task_id: str) -> dict[str, Any] | None:
         row = self.conn.execute(
             "SELECT receipt_json FROM authoring_receipts WHERE task_id=? "

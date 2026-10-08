@@ -1,9 +1,9 @@
 ---
 title: "CEF Dy - Project Control to Orchestrator authoring preflight"
 type: protocol
-status: candidate_for_independent_review
-version: "1.0"
-updated: 2026-10-03
+status: current
+version: "1.1"
+updated: 2026-10-08
 source_commit: 55f8ad3a8b6bdb42151532c10a08af5784f867aa
 parent_semantic_task: ORCH-PC-AUTHORING-PREFLIGHT-IMPLEMENTATION-001
 accepted_semantic_result_sha256: 5f1f1b5b6aaab6d24dc1657362d2310b48ccbb840ea9dce55477325e1b7230f0
@@ -71,6 +71,15 @@ Every accepted state change has exactly one state:
 - `PENDING_MATERIALIZATION`;
 - `EXPLICITLY_DEFERRED_WITH_REASON`;
 - `NOT_STATE_CHANGING`.
+- `UNRESOLVED_SOURCE_RECOVERY`.
+
+The request list is not the debt authority. Before issuing a receipt, the
+preflight loads `00_Project/CANONICAL_STATE_FRESHNESS.yaml` and
+`00_Project/MATERIALIZATION_DEBT_LEDGER.yaml`, validates their exact assessed
+HEAD and durable source identities, and intersects debt with the exact TASK
+identity and repository path scope. Omitted known relevant debt fails closed.
+Debt confined to an unrelated TASK/path does not become a project-wide block.
+Relevant unresolved source recovery always fails closed.
 
 `MATERIALIZED` requires an exact commit. Explicit deferral requires a reason.
 Pending materialization without an exact reviewed context-delta bundle returns
@@ -87,6 +96,8 @@ An authorizing receipt is deterministic and hash-bound to:
 
 - the TASK envelope and canonical HEAD;
 - the executable-interface manifest;
+- the repository authority hash, assessed HEAD, observed HEAD, and exact
+  relevant debt identities;
 - Issue/operation identity;
 - dependency and review material;
 - materialization records and freshness;
@@ -122,6 +133,7 @@ scientific state, accesses raw/holdout data, or deploys services.
 ## Verification
 
 Focused coverage is in
-`scripts/task_orchestrator/tests/test_authoring_preflight.py`, with CLI,
+`scripts/task_orchestrator/tests/test_authoring_preflight.py` and
+`scripts/task_orchestrator/tests/test_repository_r2.py`, with CLI,
 dashboard, Store, routing, and full-suite regression coverage recorded in
 [the v2 matrix](TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).

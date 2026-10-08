@@ -1,0 +1,26 @@
+schema_version: 1
+authority_payload:
+  source: issue:8#issuecomment-6046506525
+  task_id: PROJECT-WIDE-ORCHESTRATION-RELIABILITY-HEALTH-AUDIT-001
+  lifecycle_disposition: CLOSED_HISTORICAL
+  project_progress: COMPLETED
+  semantic_state: SUPERSEDED_DIAGNOSTIC
+  implementation_state: NOT_APPLICABLE
+  deployment_state: NOT_APPLICABLE
+  canonicalization_state: NOT_APPLICABLE
+  human_action_required: false
+authority_result_sha256: 54eac880eb1671ef3de39ffe63686d32fc92a14b21365e181075353aba257288
+target:
+  source_issue: 8
+  envelope_sha256: f07f68ffa2c0d82c68c0a8bc4ead731093e25c4e320f89060f0a4f2a1cf16a96
+  accepted_result_sha256: c699db2f6b619eda08ec5537c735f7405c0264156150ce17f7f66c7c4aaf73af
+preservation:
+  execution_fsm_state: FAILED
+  task_payload: immutable
+  accepted_result: immutable
+  attempts: immutable
+  events: immutable
+application:
+  mechanism: reviewed_lifecycle_receipt
+  store_api: Store.put_authoring_receipt
+  direct_sql_mutation: forbidden

@@ -32,6 +32,7 @@ from task_orchestrator.reliability import M1bController, M1bStore
 from task_orchestrator.dashboard import serve as serve_dashboard
 from task_orchestrator.authoring import (
     interface_manifest, preflight_authoring, reconcile_repository_renewal_r1,
+    reconcile_repository_r2_issue8,
 )
 from task_orchestrator.telegram import TelegramBotAPI, TelegramGateway, TelegramSecrets
 
@@ -70,6 +71,10 @@ def parser() -> argparse.ArgumentParser:
     renewal.add_argument("--authority-id", required=True)
     renewal.add_argument("--authority-result-sha256", required=True)
     renewal.add_argument("--dry-run", action="store_true")
+    issue8 = sub.add_parser("repository-r2-issue8-reconcile")
+    issue8.add_argument("--authority-id", required=True)
+    issue8.add_argument("--authority-result-sha256", required=True)
+    issue8.add_argument("--dry-run", action="store_true")
     for name in ("approve", "resume", "quota-pause"):
         cmd = sub.add_parser(name)
         cmd.add_argument("task_id")
@@ -191,6 +196,18 @@ def main(argv: list[str] | None = None) -> int:
             try:
                 if args.command == "repository-renewal-r1-reconcile":
                     result = reconcile_repository_renewal_r1(
+                        store, cfg,
+                        observed_canonical_head=refreshed_origin_main(
+                            Path(cfg["repository_root"])
+                        ),
+                        authority_id=args.authority_id,
+                        authority_result_sha256=args.authority_result_sha256,
+                        dry_run=args.dry_run,
+                    )
+                    print(json.dumps(result, indent=2, ensure_ascii=False))
+                    return 0
+                if args.command == "repository-r2-issue8-reconcile":
+                    result = reconcile_repository_r2_issue8(
                         store, cfg,
                         observed_canonical_head=refreshed_origin_main(
                             Path(cfg["repository_root"])

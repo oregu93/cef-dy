@@ -1,0 +1,204 @@
+schema_version: 1
+ledger_id: REPOSITORY-DERIVED-MATERIALIZATION-DEBT-2026-10-08-R2-001
+assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
+authority: PROJECT_CONTROL
+derivation_rule: >
+  Inventory accepted or reviewed deltas using exact durable source identity
+  plus canonical repository evidence. Issue prose alone cannot promote a
+  scientific state. Every known item has exactly one enumerated state.
+states:
+  - EXPLICITLY_DEFERRED_WITH_REASON
+  - MATERIALIZED
+  - NOT_STATE_CHANGING
+  - PENDING_MATERIALIZATION
+  - UNRESOLVED_SOURCE_RECOVERY
+inventory_ids:
+  - INFRA-AUTOMATIC-SPECIALIST-HANDOFF-001
+  - INFRA-CURRENT-NAVIGATION-HYGIENE-001
+  - INFRA-ORCH-PC-AUTHORING-PREFLIGHT-001
+  - INFRA-RENEWAL-R1-LIFECYCLE-ATTENTION-CONVERGENCE-001
+  - LITERATURE-OCTOBER-2026-SUPPORT-RECONCILIATION-001
+  - PROJECT-WIDE-ORCHESTRATION-RELIABILITY-HEALTH-AUDIT-001-LIFECYCLE
+  - STAGE03R-ACCEPTED-CHECKPOINT-REGISTER-INDEXING-001
+  - TELEGRAM-COMMAND-DISCOVERABILITY-001
+  - TG-UX-B01
+items:
+  - identity: INFRA-AUTOMATIC-SPECIALIST-HANDOFF-001
+    state: PENDING_MATERIALIZATION
+    reason: null
+    source:
+      kind: project_control_decision
+      identity: issue:52#issuecomment-6040198406
+      result_sha256: 1b6c1e92df10a8ecae94da22ba94e7b5f28a033b81aa8eb43becd66316ee479c
+    evidence_paths:
+      - scripts/task_orchestrator/authoring.py
+      - scripts/task_orchestrator/routing.py
+    affected_roles:
+      - 00_PROJECT_CONTROL
+      - 01_LITERATURE_PHYSICS
+      - 03_CEF_MODELLING_FIT_DESIGN
+      - 04_STRUCTURE_CONVENTIONS
+    affected_paths:
+      - scripts/task_orchestrator/authoring.py
+      - scripts/task_orchestrator/routing.py
+    affected_task_ids: []
+    decision_changing: true
+    target_batch: R3
+    materialization_commit: null
+  - identity: INFRA-CURRENT-NAVIGATION-HYGIENE-001
+    state: PENDING_MATERIALIZATION
+    reason: null
+    source:
+      kind: reviewed_current_state_audit
+      identity: issue:52#issuecomment-6040258389:AUD-M01-M05-M06
+      result_sha256: 697e48ca31f0dc1fe59578618e994c046f84cc98eb2053ad33a7bf38750ca853
+    evidence_paths:
+      - 01_Logbook/RESEARCH_LOGBOOK.md
+      - PROJECT_MANIFEST.yaml
+      - scripts/README.md
+    affected_roles:
+      - 07_INFRASTRUCTURE
+    affected_paths:
+      - 01_Logbook/RESEARCH_LOGBOOK.md
+      - 02_Work_Checkpoints/README.md
+      - 03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md
+      - scripts/README.md
+    affected_task_ids: []
+    decision_changing: false
+    target_batch: R3
+    materialization_commit: null
+  - identity: INFRA-ORCH-PC-AUTHORING-PREFLIGHT-001
+    state: MATERIALIZED
+    reason: null
+    source:
+      kind: canonical_git_commit
+      identity: commit:8dea7dc27204386d7d0c724dc5a9027fc6082766
+      result_sha256: 66991171e737fe67c445e6dd20bd9b431e46a2a6795eac888e8a365bc781c455
+    evidence_paths:
+      - scripts/task_orchestrator/authoring.py
+      - scripts/task_orchestrator/tests/test_authoring_preflight.py
+    affected_roles:
+      - 00_PROJECT_CONTROL
+      - 07_INFRASTRUCTURE
+    affected_paths:
+      - scripts/task_orchestrator/authoring.py
+    affected_task_ids: []
+    decision_changing: true
+    target_batch: R1
+    materialization_commit: 8dea7dc27204386d7d0c724dc5a9027fc6082766
+  - identity: INFRA-RENEWAL-R1-LIFECYCLE-ATTENTION-CONVERGENCE-001
+    state: MATERIALIZED
+    reason: null
+    source:
+      kind: canonical_git_commit
+      identity: commit:7cf37c37dfa28e253875fc0af58854c71c6f223c
+      result_sha256: d9e1d0733ccca49d217ef3eff8d3c260ed7dd23543bc30f762c5ab21c05bec7c
+    evidence_paths:
+      - scripts/task_orchestrator/authoring.py
+      - scripts/task_orchestrator/tests/test_repository_renewal_r1.py
+    affected_roles:
+      - 00_PROJECT_CONTROL
+      - 07_INFRASTRUCTURE
+    affected_paths:
+      - scripts/task_orchestrator/authoring.py
+      - scripts/task_orchestrator/dashboard.py
+    affected_task_ids: []
+    decision_changing: true
+    target_batch: R1
+    materialization_commit: 7cf37c37dfa28e253875fc0af58854c71c6f223c
+  - identity: LITERATURE-OCTOBER-2026-SUPPORT-RECONCILIATION-001
+    state: UNRESOLVED_SOURCE_RECOVERY
+    reason: null
+    source:
+      kind: project_control_routing_boundary
+      identity: issue:52#issuecomment-6046509292:R4-october-literature
+      result_sha256: 0514b35d531c927bc26ae8d5ea22fdc15707a2b730d259ccf9f20e5a40498ae0
+    evidence_paths:
+      - 05_Literature/GAPS.yaml
+      - 05_Literature/SOURCE_REGISTRY.yaml
+    affected_roles:
+      - 01_LITERATURE_PHYSICS
+    affected_paths:
+      - 05_Literature
+    affected_task_ids: []
+    decision_changing: false
+    target_batch: R4
+    materialization_commit: null
+  - identity: PROJECT-WIDE-ORCHESTRATION-RELIABILITY-HEALTH-AUDIT-001-LIFECYCLE
+    state: PENDING_MATERIALIZATION
+    reason: null
+    source:
+      kind: project_control_lifecycle_decision
+      identity: issue:8#issuecomment-6046506525
+      result_sha256: 54eac880eb1671ef3de39ffe63686d32fc92a14b21365e181075353aba257288
+    evidence_paths:
+      - 00_Project/PROJECT_CONTROL.md
+      - 00_Project/R2_ISSUE8_LIFECYCLE_AUTHORITY.yaml
+      - scripts/task_orchestrator/authoring.py
+    affected_roles:
+      - 00_PROJECT_CONTROL
+      - 07_INFRASTRUCTURE
+    affected_paths:
+      - scripts/task_orchestrator/authoring.py
+      - scripts/task_orchestrator/dashboard.py
+    affected_task_ids:
+      - PROJECT-WIDE-ORCHESTRATION-RELIABILITY-HEALTH-AUDIT-001
+    decision_changing: true
+    target_batch: R2
+    materialization_commit: null
+  - identity: STAGE03R-ACCEPTED-CHECKPOINT-REGISTER-INDEXING-001
+    state: PENDING_MATERIALIZATION
+    reason: null
+    source:
+      kind: project_control_routing_boundary
+      identity: issue:52#issuecomment-6046509292:R4-stage03r-index
+      result_sha256: ecb0d9125eb0fe2951b1af21b4fee82cd46d84f8d3c85d1b7a22ee7d5baeb44e
+    evidence_paths:
+      - 00_Project/RESULT_REGISTER.yaml
+      - 04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml
+    affected_roles:
+      - 03_CEF_MODELLING_FIT_DESIGN
+    affected_paths:
+      - 00_Project/EVIDENCE_REGISTER.yaml
+      - 00_Project/RESULT_REGISTER.yaml
+      - 04_Results/Stage03R
+    affected_task_ids: []
+    decision_changing: false
+    target_batch: R4
+    materialization_commit: null
+  - identity: TELEGRAM-COMMAND-DISCOVERABILITY-001
+    state: MATERIALIZED
+    reason: null
+    source:
+      kind: canonical_git_commit
+      identity: commit:45fcf89f5a2571d534da6cf3f70018d3de620d7e
+      result_sha256: f7ef6b1649405115830bc94815d3f175584b62d1bc0e618e8c7313fa58fd768a
+    evidence_paths:
+      - scripts/task_orchestrator/telegram.py
+      - scripts/task_orchestrator/tests/test_telegram_gateway.py
+    affected_roles:
+      - 07_INFRASTRUCTURE
+    affected_paths:
+      - scripts/task_orchestrator/telegram.py
+    affected_task_ids: []
+    decision_changing: false
+    target_batch: R1
+    materialization_commit: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
+  - identity: TG-UX-B01
+    state: PENDING_MATERIALIZATION
+    reason: null
+    source:
+      kind: production_smoke_finding
+      identity: issue:58#issuecomment-6040099792
+      result_sha256: c96446ac49f3bfa8cf92b5c341d8c8af113117ab584e5e19cb160c44cda112ca
+    evidence_paths:
+      - scripts/task_orchestrator/telegram.py
+      - scripts/task_orchestrator/tests/test_telegram_gateway.py
+    affected_roles:
+      - 07_INFRASTRUCTURE
+    affected_paths:
+      - scripts/task_orchestrator/telegram.py
+    affected_task_ids: []
+    decision_changing: true
+    target_batch: R3
+    materialization_commit: null

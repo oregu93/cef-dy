@@ -1,6 +1,6 @@
 project_id: CEF-Dy
 schema_version: '2.2'
-updated: '2026-09-01'
+updated: '2026-10-08'
 
 content_language: ru
 metadata_language: en
@@ -9,11 +9,15 @@ canonical_repository:
   provider: github
   repository: oregu93/cef-dy
   branch: main
+  assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
 
 authoritative:
   project_state: 00_Project/PROJECT_STATE.md
   project_control: 00_Project/PROJECT_CONTROL.md
   project_metadata: 00_Project/PROJECT_METADATA.yaml
+  canonical_state_freshness: 00_Project/CANONICAL_STATE_FRESHNESS.yaml
+  materialization_debt_ledger: 00_Project/MATERIALIZATION_DEBT_LEDGER.yaml
+  issue8_lifecycle_authority: 00_Project/R2_ISSUE8_LIFECYCLE_AUTHORITY.yaml
 
   evidence: 00_Project/EVIDENCE_REGISTER.yaml
   results: 00_Project/RESULT_REGISTER.yaml

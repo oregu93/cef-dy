@@ -3,12 +3,33 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.9"
-updated: 2026-09-16
+version: "5.0"
+updated: 2026-10-08
 control_chat: "00 - Project Control"
 ---
 
 # CEF Dy — Project Control
+
+## Current repository authority (R2)
+
+Canonical input HEAD: `45fcf89f5a2571d534da6cf3f70018d3de620d7e`.
+[Freshness authority](CANONICAL_STATE_FRESHNESS.yaml) и
+[materialization debt ledger](MATERIALIZATION_DEBT_LEDGER.yaml) являются
+current admission inputs. Известный релевантный долг нельзя опустить;
+непересекающийся R3/R4 debt не блокирует unrelated work. Exact reviewed delta
+exception требует identity/hash-bound context bundle.
+
+Issue #8 task `PROJECT-WIDE-ORCHESTRATION-RELIABILITY-HEALTH-AUDIT-001` имеет
+reviewed disposition `CLOSED_HISTORICAL`, `project_progress=COMPLETED`,
+`semantic_state=SUPERSEDED_DIAGNOSTIC`, implementation/deployment/
+canonicalization `NOT_APPLICABLE`, `human_action_required=false`. Применение
+в operational store выполняется только bounded R2 lifecycle-receipt command;
+historical `FSM=FAILED`, accepted result, attempts и events не переписываются.
+
+R3: Telegram TG-UX-B01, automatic specialist handoff и navigation hygiene.
+R4: reviewed Stage03R register indexing и literature/support reconciliation.
+Ни один из этих пунктов не авторизует scientific execution, raw/holdout access,
+Stage03D transition или exchange activation.
 
 > [!abstract] Назначение
 > Этот документ управляет научной дорожной картой, очередью задач,

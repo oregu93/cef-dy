@@ -21,6 +21,7 @@ from .authoring import (
     task_status_projection, validate_preflight_receipt,
 )
 from .model import ValidationError
+from .current_state import freshness_projection
 
 
 GRAPH_NODE_LIMIT = 24
@@ -425,8 +426,21 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
         "No fresh live transport observation is available." if publishing_enabled else "Live publication is disabled; previews remain local.",
         material=publishing_enabled,
     )
+    canonical_freshness = freshness_projection(
+        repo, observed_canonical_head=canonical_head,
+    )
+    freshness_component_state = (
+        "HEALTHY" if canonical_freshness["state"] in {
+            "FRESH", "CURRENT_WITH_SCOPED_DEBT",
+        } else canonical_freshness["state"]
+    )
+    epistemic = _component(
+        "Canonical state authority", freshness_component_state,
+        canonical_freshness["reason"],
+    )
     components = {"orchestrator": heartbeat, "repository": repository, "sqlite": sqlite_health,
-                  "resources": resources, "publication": publication}
+                  "resources": resources, "publication": publication,
+                  "canonical_state": epistemic}
     health = _overall_health(components)
     attention = [task for task in tasks if (
         task["state"] in ATTENTION_STATES or task["human_action_required"]
@@ -466,6 +480,7 @@ def snapshot(cfg: dict[str, Any], *, now: datetime | None = None) -> dict[str, A
         "orchestrator": controller or {"CURRENT_PHASE": "UNKNOWN"},
         "git": {"canonical_head": canonical_head, "local_head": local_head,
                 "branch": _git(repo, "branch", "--show-current"), "projection": sync},
+        "canonical_state_freshness": canonical_freshness,
         "ai_lane": lane,
         "quota_windows": cfg["visibility"]["quota"],
         "quota_evidence": {"main_page_visible": False, "reason": "Configuration projections are not treated as observed quota telemetry."},
