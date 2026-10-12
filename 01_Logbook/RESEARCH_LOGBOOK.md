@@ -2,7 +2,7 @@
 title: "CEF Dy — Research Logbook"
 type: logbook_index
 status: active
-updated: 2026-09-14
+updated: 2026-10-12
 format: hybrid
 ---
 
@@ -13,14 +13,14 @@ format: hybrid
 
 ## Текущая ветка
 
-`Stage 02R` — переход от рецензированного слепого каталога B-001 к
-проектированию подтверждающего анализа `T-02R-05`.
+`M03R` — LEVEL_2 experimental sensitivity established, LEVEL_3/LEVEL_4 absent.
+Operational RESULT #65–#67 опубликованы 2026-10-12 и ожидают Project Control
+review; они не меняют scientific boundary автоматически. Текущий science-first
+вопрос — какой bounded successor действительно следует из этих результатов,
+при сохранении unresolved resolution/acceptance и intensity-scale bridge.
 
-Ближайший научный вопрос: какая заранее специфицированная методика позволит
-проверить BF-каталог на отложенной выборке, оценить устойчивость и разрешимость
-перекрывающихся областей, не меняя признаки после просмотра подтверждающих
-данных? `T-02R-05` имеет статус `design_review_only`; исполнение и доступ
-к детекторным данным 18 сканов отложенной выборки (`holdout`) не авторизованы.
+Stage03D suspended; exchange deferred; raw/holdout unauthorized; Structure-A
+paused; McStas/RESTRAX production unauthorized.
 
 ## Индекс — 2026
 
@@ -35,6 +35,7 @@ format: hybrid
 | 2026-08-31 | [`LOG-2026-08-31-01`](entries/2026/2026-08-31_Local-deployment-and-multi-machine-workflow.md) | Локальное развёртывание и multi-machine workflow | Адаптация под GitHub. |
 | 2026-09-04 | [`LOG-2026-09-04-01`](entries/2026/2026-09-04_Stage02R-B001-blind-catalogue.md) | Stage 02R B-001 — слепой каталог BF | Восемь BF в режиме `monitor_controlled`, все Tier-1; результат принят с ограничениями, физическое назначение не выполнялось. |
 | 2026-09-14 | [`LOG-2026-09-14-01`](entries/2026/2026-09-14_DyFeO3-XRD-campaign-recovery.md) | Восстановление DyFeO3 powder-XRD campaign | Восемь уникальных raw acquisitions и historical FullProf provenance нормализованы в private repo; historical structures не повышены до final authority. |
+| 2026-10-12 | [`CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12`](../02_Work_Checkpoints/CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12/AUDIT_REPORT.md) | Canonical current-state audit and minimal re-entry repair | Зафиксированы #65–#67 RESULT previews без scientific promotion, science-first freeze, autonomy PARTIAL и scoped materialization debt. |
 
 ## Когда создавать отдельную запись
 

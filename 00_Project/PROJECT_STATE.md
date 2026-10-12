@@ -3,12 +3,30 @@ title: "DyFeO3 — Project State"
 type: project_state
 project_id: CEF-Dy
 status: active
-version: "5.0"
-updated: 2026-09-16
+version: "5.1"
+updated: 2026-10-12
 review_status: working
 ---
 
 # DyFeO3 — Project State
+
+## Science-first update (2026-10-12)
+
+Issues #65–#67 выполнены на canonical input HEAD
+`45fcf89f5a2571d534da6cf3f70018d3de620d7e` и имеют опубликованные
+operational RESULT previews. Они ещё ожидают Project Control review;
+`TASK SUCCEEDED` не эквивалентен принятой научной истине.
+
+| Issue | Operational result | Консервативное текущее значение |
+|---|---|---|
+| #65 | `7b9cef1bc5af55c9aff41c62135bf82475d8f067a16d465a33e7c94561c86c64` | Наблюдаемой остаётся энергия 18.247178 ± 0.119021 meV. Q, corrected intensity, T, field/phase, linewidth и splitting остаются unknown. Статус — CEF candidate with magnetic caveat. |
+| #66 | `b2ee572109390095ea1f5424a9f26e1290cd66cf2d88aa0256784dd5fd2c7749` | R7/R5/R3 — близкие, но не идентичные parameter states; это поддерживает weak/non-unique energy-only identifiability, но не доказывает отдельные optimizer basins или distinct physical families. |
+| #67 | `481c09916d1d225e087f6843c2a3af8457420b696329a413c21ea83b36afeb88` | Новый primary full text не восстановлен; новых DyFeO3 claims не продвигать. |
+
+Научная граница не изменилась: M03R LEVEL_2 established; LEVEL_3/LEVEL_4
+absent; Stage03D suspended; exchange deferred; raw/holdout unauthorized;
+Structure-A paused и production unauthorized; McStas/RESTRAX production
+unauthorized; F004/~44.4 meV diagnostic/open assignment; 54–55 meV deferred.
 
 ## Принятый checkpoint Stage03R r2 (2026-09-16)
 
@@ -74,7 +92,7 @@ preregistered design assumption-transparent resolution sensitivity envelope.
 
 **Научная задача.** Определить воспроизводимый и физически интерпретируемый эффективный гамильтониан кристаллического поля Dy3+ в DyFeO3, согласованный прежде всего с энергиями и интенсивностями INS-переходов, а затем проверенный независимыми магнитными наблюдаемыми.
 
-**Текущий научный вопрос.** Как закрыть experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge, необходимый для quantitative model-to-experiment comparison около 38 meV?
+**Текущий научный вопрос.** Какие выводы из опубликованных operational RESULT #65-#67 выдержат Project Control review и какой один bounded scientific successor оправдан, при сохранении unresolved TAIPAN resolution/acceptance и intensity-scale bridge?
 
 **Stage03R.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
@@ -82,9 +100,9 @@ preregistered design assumption-transparent resolution sensitivity envelope.
 
 **Что непосредственно поддерживают экспериментальные данные.** В B-001 из 75 пригодных энергетических сканов 57 использованы для поиска, а 18 заранее отнесены к отложенной выборке. Замороженный каталог содержит восемь monitor_controlled BF с Tier-1; Tier-2 и межрежимной повторяемости положения нет. Один скан для поиска (`discovery`) исключён по замороженному численному правилу nuisance_field_fit_failure без повторного расчёта и замещения. Для accepted 21-scan population около 38 meV установлен fixed-window null (LEVEL_1) и zero-signal expected one-sided 95% sensitivity 6.314726781508e-05 в native normalized count-rate/excess units (LEVEL_2).
 
-**Что является физической интерпретацией.** BF-ID являются алгоритмическими кластерами воспроизводимости, а не физическими назначениями. B-001 не устанавливает число различных возбуждений и не выполняет CEF-назначение. Legacy-идентификаторы F002/F004 принадлежат прежнему слою анализа; их связь с BF-* не установлена. LEVEL_2 sensitivity не является physical upper limit или автоматическим model-rejection threshold. R3/R5/R7 являются historical exploratory probes, а не current/preferred model ensemble.
+**Что является физической интерпретацией.** BF-ID являются алгоритмическими кластерами воспроизводимости, а не физическими назначениями. B-001 не устанавливает число различных возбуждений и не выполняет CEF-назначение. Legacy-идентификаторы F002/F004 принадлежат прежнему слою анализа; их связь с BF-* не установлена. LEVEL_2 sensitivity не является physical upper limit или автоматическим model-rejection threshold. R3/R5/R7 являются historical exploratory probes, а не current/preferred model ensemble. Operational RESULT #65 сохранил 18.247178 ± 0.119021 meV как local-CEF candidate with magnetic caveat: Q, corrected intensity, temperature, field/phase, linewidth и splitting остаются unknown. SUCCEEDED не означает ACCEPTED scientific truth.
 
-**Что показывает текущая модельная картина.** Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно мотивированные модельные семейства. Пятнадцатипараметрическая обратная CEF-задача при подгонке только по энергиям существенно недоопределена. Quantitative model-to-TAIPAN bridge (LEVEL_3) не установлен: требуются experiment-specific resolution/acceptance и cross-section-to-detector/monitor scale. Stage03D suspended; McStas/RESTRAX production не авторизована.
+**Что показывает текущая модельная картина.** Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно мотивированные модельные семейства. Пятнадцатипараметрическая обратная CEF-задача при подгонке только по энергиям существенно недоопределена. Quantitative model-to-TAIPAN bridge (LEVEL_3) не установлен: требуются experiment-specific resolution/acceptance и cross-section-to-detector/monitor scale. Operational RESULT #66 описывает R7/R5/R3 как близкие, но не идентичные parameter states и поддерживает weak/non-unique energy-only identifiability; отдельные optimizer basins не доказаны. Stage03D suspended; McStas/RESTRAX production не авторизована.
 
 **Результат B-001.**
 - Каталог: `8` BF-записей; все относятся к `monitor_controlled`; `8` Tier-1, `0` Tier-2; межрежимная повторяемость положения -- `0`.
@@ -93,6 +111,7 @@ preregistered design assumption-transparent resolution sensitivity envelope.
 - BF-ID обозначают алгоритмические кластеры воспроизводимости; они не устанавливают число различных физических возбуждений; CEF-назначение не выполнялось.
 
 **Основные неопределённости.**
+- Operational RESULT #65-#67 опубликованы, но ещё не являются принятой научной истиной до Project Control review.
 - Не установлен уникальный полный 15-параметрический CEF-гамильтониан и соответствующие волновые функции.
 - Окончательное CEF-назначение особенности около 18.25 meV не подтверждено интенсивностями и другими независимыми наблюдаемыми.
 - Provenance исторических энергий прослежен до Schuchert et al. 1969; полная постраничная проверка Schuchert недоступна. Это не прямые экспериментальные constraints проекта; природа особенности около 44.4 meV остаётся открытой.
@@ -103,7 +122,7 @@ preregistered design assumption-transparent resolution sensitivity envelope.
 
 **Текущий этап.** `M03R` (`LEVEL_2_established_LEVEL_3_blocked`): Stage03R - compatibility и sensitivity bridge
 
-**Следующий шаг.** `await_ANSTO_experiment_1296_archive_response`: Запрос архивных experiment-1296 instrument setup, log и SICS configuration в ANSTO отправлен; ожидать ответа. Ни один архивный ответ пока не допущен. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
+**Следующий шаг.** `review_science_first_results_and_continue_boundedly`: Провести Project Control review опубликованных operational RESULT #65-#67 и выбрать не более одного обоснованного bounded scientific successor для каждой независимой ветви. Параллельно сохраняется ожидание архивных experiment-1296 setup/log/SICS records; McStas/RESTRAX production не авторизована.
 
 **Не следует предполагать.**
 - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.

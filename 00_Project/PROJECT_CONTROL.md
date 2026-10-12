@@ -3,12 +3,32 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "4.9"
-updated: 2026-09-16
+version: "5.0"
+updated: 2026-10-12
 control_chat: "00 - Project Control"
 ---
 
 # CEF Dy — Project Control
+
+## Current Project Control checkpoint (2026-10-12)
+
+Canonical input HEAD: `45fcf89f5a2571d534da6cf3f70018d3de620d7e`.
+Science-first infrastructure freeze активен: infrastructure разрешена только
+для concrete scientific blocker, recovery, provenance, security или truthful
+current-state repair.
+
+- #65, #66 и #67: `SUCCEEDED`, operational RESULT опубликованы, Project Control
+  review ещё не завершён; научное promotion отсутствует.
+- #68: reported local implementation candidate существует, но его exact object
+  не materialized в этом worktree; он не canonical, не deployed, а live
+  RESULT-to-successor behavior не доказан.
+- #69: этот audit/repair candidate требует independent exact-object review.
+- #70: email fallback не принят production; 24-hour unattended soak не выполнен.
+- Autonomy verdict: `PARTIAL`; `HUMAN_ACTION_REQUIRED=false` сейчас.
+
+Точная freshness/debt projection:
+[CANONICAL_STATE_FRESHNESS](CANONICAL_STATE_FRESHNESS.yaml). Полный аудит:
+[CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12](../02_Work_Checkpoints/CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12/AUDIT_REPORT.md).
 
 > [!abstract] Назначение
 > Этот документ управляет научной дорожной картой, очередью задач,
@@ -25,13 +45,13 @@ control_chat: "00 - Project Control"
 <!-- AUTO:CONTROL_REENTRY:START -->
 # 5-minute re-entry
 
-**Сейчас.** Stage02R COMPLETED_WITH_LIMITATIONS. Stage03R около 38 meV: LEVEL_0 coverage, LEVEL_1 fixed-window null и LEVEL_2 experimental sensitivity установлены; LEVEL_3/LEVEL_4 не установлены. R3/R5/R7 - historical exploratory probes. Structure-A PAUSED; Stage03D suspended; exchange и 54-55 meV DEFERRED. LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
+**Сейчас.** Stage02R COMPLETED_WITH_LIMITATIONS. Stage03R около 38 meV: LEVEL_0 coverage, LEVEL_1 fixed-window null и LEVEL_2 experimental sensitivity установлены; LEVEL_3/LEVEL_4 не установлены. R3/R5/R7 - historical exploratory probes. Structure-A PAUSED; Stage03D suspended; exchange и 54-55 meV DEFERRED. #65/#66/#67 SUCCEEDED и опубликовали operational RESULT, но все три результата ожидают Project Control review и не повышены до ACCEPTED scientific truth. Science-first infrastructure freeze активен.
 
-**Почему.** Quantitative forward comparison BLOCKED до experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge. LEVEL_2 sensitivity не является physical upper limit или exclusion threshold; model rejection не установлено.
+**Почему.** Quantitative forward comparison BLOCKED до experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge. LEVEL_2 sensitivity не является physical upper limit или exclusion threshold; model rejection не установлено. #65 оставил основные discriminants unknown, #66 подтвердил weak/non-unique energy-only identifiability без доказательства отдельных basins, а #67 не восстановил новый primary full text.
 
 **Stage03R specifications.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
-**Следующий шаг.** Запрос архивных setup/log/SICS records experiment 1296 в ANSTO отправлен; статус awaiting_response, архивный ответ не допущен. При недоступности records следующий отдельный design - preregistered resolution sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы. Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 Phase 3 read-only integration closed/accepted. Phase 4, Phase 5 и BBT activation не авторизованы.
+**Следующий шаг.** Review #65/#66/#67, затем продолжать только bounded science-first ветви. #68 имеет local noncanonical implementation candidate, но не canonical и не deployed; RESULT-to-successor behavior не доказан live. Email fallback #70 не принят production, 24-hour unattended soak не выполнен. Запрос ANSTO остаётся awaiting_response; McStas/RESTRAX production не авторизована.
 
 **Следующий Work job.** Не назначен. Следующая scientific execution требует отдельного admission review и authorization.
 

@@ -1,6 +1,6 @@
 project_id: CEF-Dy
 schema_version: '2.2'
-updated: '2026-09-01'
+updated: '2026-10-12'
 
 content_language: ru
 metadata_language: en
@@ -9,11 +9,15 @@ canonical_repository:
   provider: github
   repository: oregu93/cef-dy
   branch: main
+  assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
 
 authoritative:
   project_state: 00_Project/PROJECT_STATE.md
   project_control: 00_Project/PROJECT_CONTROL.md
   project_metadata: 00_Project/PROJECT_METADATA.yaml
+  canonical_state_freshness: 00_Project/CANONICAL_STATE_FRESHNESS.yaml
+  infrastructure_baseline: 00_Project/INFRASTRUCTURE_BASELINE_V1.md
+  current_state_audit: 02_Work_Checkpoints/CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12/AUDIT_REPORT.md
 
   evidence: 00_Project/EVIDENCE_REGISTER.yaml
   results: 00_Project/RESULT_REGISTER.yaml
@@ -28,8 +32,12 @@ authoritative:
 
   logbook: 01_Logbook/RESEARCH_LOGBOOK.md
   checkpoints: 02_Work_Checkpoints/
+  scientific_understanding: 06_Scientific_Understanding/
 
   stage02r_contract: 03_Protocols/STAGE02R_TAIPAN_ANALYSIS_CONTRACT.md
+  orchestrator_contract: 03_Protocols/TASK_ORCHESTRATOR_CONTRACT_V2_0.md
+  orchestrator_test_matrix: 03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md
+  telegram_gateway: 03_Protocols/TELEGRAM_ATTENTION_GATEWAY_V1_0.md
 
 automation:
   refresh: scripts/kb_refresh.py

@@ -4,8 +4,8 @@ type: project_index
 project_id: CEF-Dy
 status: active
 schema_version: "2.2"
-version: "5.1"
-updated: 2026-09-16
+version: "5.2"
+updated: 2026-10-12
 language_content: ru
 language_metadata: en
 ---
@@ -23,6 +23,21 @@ CEF-гамильтониана, структурно обусловленные 
 *KB* рассчитана на обычный Markdown/YAML, Git/GitHub и Obsidian.
 ChatGPT используется как рабочий научный интерфейс, но не является
 единственным хранилищем состояния проекта.
+
+## Текущее canonical re-entry
+
+Canonical input HEAD для этого current-state repair:
+`45fcf89f5a2571d534da6cf3f70018d3de620d7e`. Точная оценка актуальности и
+scoped debt находится в
+[CANONICAL_STATE_FRESHNESS](00_Project/CANONICAL_STATE_FRESHNESS.yaml), а
+полный read-only audit — в
+[AUDIT_REPORT](02_Work_Checkpoints/CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12/AUDIT_REPORT.md).
+
+Science-first режим активен. Issues #65–#67 завершили выполнение и
+опубликовали operational RESULT, но эти RESULT ожидают Project Control review
+и не являются автоматически `ACCEPTED` scientific truth. Autonomy остаётся
+`PARTIAL`: #68 не canonical/deployed, #70 email fallback не принят production,
+а 24-hour unattended soak не выполнен.
 
 
 ## Научная задача
@@ -52,7 +67,7 @@ CEF-гамильтониан содержит 15 независимых пара
 
 **Текущий этап.** `M03R` -- Stage03R - compatibility и sensitivity bridge (`LEVEL_2_established_LEVEL_3_blocked`).
 
-**Текущий научный вопрос.** Как закрыть experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge, необходимый для quantitative model-to-experiment comparison около 38 meV?
+**Текущий научный вопрос.** Какие выводы из опубликованных operational RESULT #65-#67 выдержат Project Control review и какой один bounded scientific successor оправдан, при сохранении unresolved TAIPAN resolution/acceptance и intensity-scale bridge?
 
 **Stage03R.** [`STAGE03R-INFERENCE-SPEC`](03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
@@ -81,13 +96,13 @@ CEF-гамильтониан содержит 15 независимых пара
 - LEVEL_3 model-to-TAIPAN quantitative bridge и LEVEL_4 model constraint.
 - Experiment-specific resolution/acceptance и absolute detector/monitor scale.
 
-**Следующий научный шаг.** `await_ANSTO_experiment_1296_archive_response`: Запрос архивных experiment-1296 instrument setup, log и SICS configuration в ANSTO отправлен; ожидать ответа. Ни один архивный ответ пока не допущен. Если records недоступны, отдельно спроектировать preregistered assumption-transparent resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
+**Следующий научный шаг.** `review_science_first_results_and_continue_boundedly`: Провести Project Control review опубликованных operational RESULT #65-#67 и выбрать не более одного обоснованного bounded scientific successor для каждой независимой ветви. Параллельно сохраняется ожидание архивных experiment-1296 setup/log/SICS records; McStas/RESTRAX production не авторизована.
 
 **Дорожная карта.** Stage 02R — независимый повторный анализ TAIPAN → Stage 03R — CEF landscape и идентифицируемость → Stage 03D — совместное ограниченное моделирование энергий и интенсивностей → Stage 05 — независимая магнитная проверка → Последующая структурная и микроскопическая интерпретация.
 
 **Происхождение B-001.** [Научное рецензирование B-001](04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md); [Замороженный каталог BF](04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml); [Контрольная запись B-001](02_Work_Checkpoints/W02-02R-B-001.md); [R-012](00_Project/RESULT_REGISTER.yaml); [EV-007](00_Project/EVIDENCE_REGISTER.yaml); [Активная замороженная спецификация C-001 v1.1](03_Protocols/STAGE02R_T02R05_C001_V1_1_CONFIRMATORY_MODEL_PREPARATION_SPEC.md); [canonical commit `21506b7`](https://github.com/oregu93/cef-dy/commit/21506b7df9eb8dc4b340aa6e19eb720e07329e8d).
 
-**Метаданные обновлены:** `2026-10-03`.
+**Метаданные обновлены:** `2026-10-12`.
 <!-- AUTO:README_STATUS:END -->
 
 
@@ -228,7 +243,7 @@ CEF_Dy/
 │
 ├── 04_Results/
 ├── 05_Literature/          # canonical literature knowledge layer
-├── 06_Scientific_Understanding/  # future SU corpus; created only by separately authorized pilot
+├── 06_Scientific_Understanding/  # reviewed supporting-knowledge notes; not independent scientific authority
 ├── Templates/
 ├── scripts/
 ├── configs/

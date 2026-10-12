@@ -83,9 +83,9 @@ python scripts/orchestrate_tasks.py --config configs/task_orchestrator.yaml poll
 python -m unittest discover -s scripts/task_orchestrator/tests -t scripts -v
 ```
 
-Текущий accepted suite содержит 212 тестов; Telegram gateway candidate добавляет
-25 focused тестов (237 total до independent review). Точный accepted модульный
-инвентарь зафиксирован в
+На canonical HEAD `45fcf89f5a2571d534da6cf3f70018d3de620d7e` полный
+orchestrator suite содержит 250 passing tests, включая 29 Telegram tests.
+Исторический модульный инвентарь исходного production baseline зафиксирован в
 [TASK_ORCHESTRATOR_TEST_MATRIX_V2_0](../03_Protocols/TASK_ORCHESTRATOR_TEST_MATRIX_V2_0.md).
 
 ### Project Control authoring preflight
@@ -154,12 +154,14 @@ worker result. Ordinary autonomous admission additionally requires durable
 `PROVEN` recovery proof and currently healthy visibility; direct Engine/CLI
 commands cannot advance that proof.
 
-### Telegram attention gateway candidate
+### Telegram attention gateway
 
-`telegram-serve` запускает отдельный private one-user long-polling adapter. В
-example-config он выключен; реальный запуск до independent review и отдельной
-Project-Control deployment authorization запрещён. Token и numeric allowlist
-берутся только из переменных окружения, имена которых заданы в `telegram:`.
+`telegram-serve` запускает отдельный private one-user long-polling adapter. Его
+bounded production deployment и R1 attention projection были проверены; typed
+commands работают независимо от command-menu state. В example-config gateway
+по-прежнему выключен. Token и numeric allowlist берутся только из переменных
+окружения, имена которых заданы в `telegram:`. Local TG-UX-B01 correction не
+является canonical/deployed на этом HEAD; outbound email fallback отсутствует.
 
 ```bash
 PYTHONPATH=scripts python -m unittest -v \

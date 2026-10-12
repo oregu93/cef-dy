@@ -1,9 +1,9 @@
 ---
 title: "CEF Dy - Telegram attention gateway"
 type: protocol
-status: candidate_pending_independent_review
-version: "1.0"
-updated: 2026-10-04
+status: production_verified_with_scoped_followup_debt
+version: "1.1"
+updated: 2026-10-12
 ---
 
 # Telegram attention gateway
@@ -16,9 +16,16 @@ shell authority. Canonical Git remains project authority; SQLite/WAL remains
 operational authority; GitHub remains the durable control-plane projection.
 Persistent 00 remains NON-WORK.
 
-The candidate is disabled by default. Production deployment, a real Bot API
-smoke test, service activation, and the one-time activation message require an
-independent review ACCEPT and a separate Project-Control authorization.
+The gateway received independent review and bounded production deployment.
+R1 production verification established idempotent lifecycle reconciliation,
+healthy Telegram/dashboard projections, and removal of the two exact historical
+false-attention items. Example configuration remains disabled by default.
+
+Canonical HEAD `45fcf89f5a2571d534da6cf3f70018d3de620d7e` adds the six-command Bot API
+menu (`status`, `attention`, `health`, `last`, `task`, `help`). Typed commands
+remain independent of menu registration. The later TG-UX-B01 long-reply
+correction is local/noncanonical at this HEAD. Telegram-to-email fallback is a
+#70 requirement and is not a current production capability.
 
 ## Identity and secrets
 
@@ -108,6 +115,9 @@ and GitHub remain independent fallback surfaces.
 
 ## Review, deployment, and rollback
 
+The initial review/deployment gate below is retained as the deployment contract;
+it is historical procedure, not a claim that the gateway is still undeployed.
+
 Review must inspect exact code/tests and verify the candidate is disabled. A
 later separately authorized deployment may install the reviewed unit and local
 config, then perform exactly bounded outbound-attention and `/status` roundtrip
@@ -120,9 +130,11 @@ updates, deliveries, decisions, or events. Orch must continue independently.
 
 ## Current implementation gate
 
-The candidate adds focused deterministic tests for allowlisting, update
+The canonical implementation includes focused deterministic tests for allowlisting, update
 idempotency/conflict/restart, projection filtering, at-least-once delivery,
 ambiguous sends, response arbitration/cancellation, read-only commands,
 confirmed controls, Engine enforcement, outage isolation, explicit dashboard
-observation, and secret/endpoint boundaries. Real Telegram and production
-services are not exercised by these tests.
+observation, command discovery/menu failure isolation, and secret/endpoint
+boundaries. Real Telegram and production services are not exercised by these
+tests. TG-UX-B01 and email escalation retain their separate review/deployment
+gates.

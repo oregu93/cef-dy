@@ -1,16 +1,47 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-10-03'
+updated: '2026-10-12'
 
 canonical_state_freshness:
-  status: DEGRADED_MATERIALIZATION_DEBT
-  assessed_at: '2026-10-03'
-  assessed_head: 234b3223ef67e179a00e22ca43bb519ea222fc4d
+  status: CURRENT_WITH_SCOPED_DEBT
+  assessed_at: '2026-10-12'
+  assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
   record_path: 00_Project/CANONICAL_STATE_FRESHNESS.yaml
   consequential_task_policy: fail_closed_when_relevant_state_is_stale
   exact_reviewed_delta_bundle_exception: allowed_only_when_identity_and_hash_bound
   user_action_required: false
+
+science_first_operating_state:
+  policy: ACTIVE
+  infrastructure_freeze: >
+    Infrastructure work is allowed only for a concrete scientific blocker,
+    recovery, provenance, security, or truthful current-state repair.
+  task_results:
+    - issue: 65
+      task_id: SCI-DYFEO3-18MEV-EVIDENCE-APPLICATION-2026-10-12-001
+      task_state: SUCCEEDED
+      result_sha256: 7b9cef1bc5af55c9aff41c62135bf82475d8f067a16d465a33e7c94561c86c64
+      scientific_authority: OPERATIONAL_RESULT_PENDING_PROJECT_CONTROL_REVIEW
+      boundary_effect: NONE
+    - issue: 66
+      task_id: SCI-CS15-HIST-MINI-ENSEMBLE-FAMILY-ANALYSIS-2026-10-12-001
+      task_state: SUCCEEDED
+      result_sha256: b2ee572109390095ea1f5424a9f26e1290cd66cf2d88aa0256784dd5fd2c7749
+      scientific_authority: OPERATIONAL_RESULT_PENDING_PROJECT_CONTROL_REVIEW
+      boundary_effect: NONE
+    - issue: 67
+      task_id: SCI-ORTHOFERRITE-PRIMARY-SOURCE-DELTA-2026-10-12-001
+      task_state: SUCCEEDED
+      result_sha256: 481c09916d1d225e087f6843c2a3af8457420b696329a413c21ea83b36afeb88
+      scientific_authority: OPERATIONAL_RESULT_PENDING_PROJECT_CONTROL_REVIEW
+      boundary_effect: NONE
+  autonomy:
+    verdict: PARTIAL
+    result_to_successor_live_proof: absent
+    issue68_candidate: LOCAL_NONCANONICAL_NOT_DEPLOYED
+    issue70_email_fallback: NOT_PRODUCTION_ACCEPTED
+    unattended_soak_24h: NOT_RUN
 
 operational_recovery_authorization:
   status: active
@@ -63,8 +94,9 @@ scientific_facade:
     stage03d_reopened: false
     scientific_execution_authorized: false
   current_scientific_question: >
-    Как закрыть experiment-specific TAIPAN resolution/acceptance и intensity-scale bridge,
-    необходимый для quantitative model-to-experiment comparison около 38 meV?
+    Какие выводы из опубликованных operational RESULT #65-#67 выдержат
+    Project Control review и какой один bounded scientific successor оправдан,
+    при сохранении unresolved TAIPAN resolution/acceptance и intensity-scale bridge?
   stage02r_purpose: >
     Stage 02R формирует независимый от CEF-модели слой экспериментальных
     свидетельств до нового цикла физического назначения и CEF-моделирования.
@@ -521,7 +553,10 @@ interpretation_summary: >
   принадлежат прежнему слою анализа; их связь с BF-* не установлена.
   LEVEL_2 sensitivity не является physical upper limit или автоматическим
   model-rejection threshold. R3/R5/R7 являются historical exploratory probes,
-  а не current/preferred model ensemble.
+  а не current/preferred model ensemble. Operational RESULT #65 сохранил
+  18.247178 ± 0.119021 meV как local-CEF candidate with magnetic caveat:
+  Q, corrected intensity, temperature, field/phase, linewidth и splitting
+  остаются unknown. SUCCEEDED не означает ACCEPTED scientific truth.
 
 model_status_summary: >
   Formal-charge PCM и M0/M1 сохраняются как ограниченные структурно
@@ -529,9 +564,13 @@ model_status_summary: >
   CEF-задача при подгонке только по энергиям существенно недоопределена.
   Quantitative model-to-TAIPAN bridge (LEVEL_3) не установлен: требуются
   experiment-specific resolution/acceptance и cross-section-to-detector/monitor
-  scale. Stage03D suspended; McStas/RESTRAX production не авторизована.
+  scale. Operational RESULT #66 описывает R7/R5/R3 как близкие, но не
+  идентичные parameter states и поддерживает weak/non-unique energy-only
+  identifiability; отдельные optimizer basins не доказаны. Stage03D suspended;
+  McStas/RESTRAX production не авторизована.
 
 main_uncertainties:
+  - "Operational RESULT #65-#67 опубликованы, но ещё не являются принятой научной истиной до Project Control review."
   - Не установлен уникальный полный 15-параметрический CEF-гамильтониан и соответствующие волновые функции.
   - Окончательное CEF-назначение особенности около 18.25 meV не подтверждено интенсивностями и другими независимыми наблюдаемыми.
   - Provenance исторических энергий прослежен до Schuchert et al. 1969; полная постраничная проверка Schuchert недоступна. Это не прямые экспериментальные constraints проекта; природа особенности около 44.4 meV остаётся открытой.
@@ -546,11 +585,12 @@ current_milestone:
   status: LEVEL_2_established_LEVEL_3_blocked
 
 immediate_next_step:
-  id: await_ANSTO_experiment_1296_archive_response
+  id: review_science_first_results_and_continue_boundedly
   text: >-
-    Запрос архивных experiment-1296 instrument setup, log и SICS configuration в ANSTO отправлен; ожидать ответа. Ни один архивный ответ пока не допущен.
-    Если records недоступны, отдельно спроектировать preregistered assumption-transparent
-    resolution sensitivity envelope. McStas/RESTRAX production этим состоянием не авторизована.
+    Провести Project Control review опубликованных operational RESULT #65-#67 и
+    выбрать не более одного обоснованного bounded scientific successor для каждой
+    независимой ветви. Параллельно сохраняется ожидание архивных experiment-1296
+    setup/log/SICS records; McStas/RESTRAX production не авторизована.
 do_not_assume:
   - Восемь BF-ID соответствуют восьми различным физическим возбуждениям.
   - Любая BF-запись уже сопоставлена с legacy-идентификатором F002 или F004.
@@ -572,16 +612,22 @@ control:
     LEVEL_1 fixed-window null и LEVEL_2 experimental sensitivity установлены;
     LEVEL_3/LEVEL_4 не установлены. R3/R5/R7 - historical exploratory probes.
     Structure-A PAUSED; Stage03D suspended; exchange и 54-55 meV DEFERRED.
-    LIT-INFRA-01 и LIT-INFRA-02 closed/accepted; INFRA-CI-001 authorized but deferred.
+    #65/#66/#67 SUCCEEDED и опубликовали operational RESULT, но все три результата
+    ожидают Project Control review и не повышены до ACCEPTED scientific truth.
+    Science-first infrastructure freeze активен.
   why: >-
     Quantitative forward comparison BLOCKED до experiment-specific TAIPAN
     resolution/acceptance и intensity-scale bridge. LEVEL_2 sensitivity не является
     physical upper limit или exclusion threshold; model rejection не установлено.
+    #65 оставил основные discriminants unknown, #66 подтвердил weak/non-unique
+    energy-only identifiability без доказательства отдельных basins, а #67 не
+    восстановил новый primary full text.
   next: >-
-    Запрос архивных setup/log/SICS records experiment 1296 в ANSTO отправлен; статус awaiting_response, архивный ответ не допущен.
-    При недоступности records следующий отдельный design - preregistered resolution
-    sensitivity envelope. McStas/RESTRAX production и новые scientific executions не авторизованы.
-    Controlled 01A discovery/provenance сохраняется; LIT-INFRA-03 Phase 3 read-only integration closed/accepted. Phase 4, Phase 5 и BBT activation не авторизованы.
+    Review #65/#66/#67, затем продолжать только bounded science-first ветви.
+    #68 имеет local noncanonical implementation candidate, но не canonical и не
+    deployed; RESULT-to-successor behavior не доказан live. Email fallback #70
+    не принят production, 24-hour unattended soak не выполнен. Запрос ANSTO
+    остаётся awaiting_response; McStas/RESTRAX production не авторизована.
   next_work_job: null
 
   blocked:

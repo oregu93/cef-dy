@@ -1,27 +1,28 @@
 schema_version: 1
-record_id: CANONICAL-STATE-FRESHNESS-2026-10-03-001
-status: DEGRADED_MATERIALIZATION_DEBT
-assessed_at: '2026-10-03'
-assessed_head: 234b3223ef67e179a00e22ca43bb519ea222fc4d
+record_id: CANONICAL-STATE-FRESHNESS-2026-10-12-001
+status: CURRENT_WITH_SCOPED_DEBT
+assessed_at: '2026-10-12'
+assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
 authority: PROJECT_CONTROL
 purpose: >
-  Fail-closed guard against consequential specialist work being based on
-  descriptive repository state that lags already accepted/reviewed project
-  results. This record is an interim safety barrier pending the full
-  materialization-debt validator and authoring-preflight implementation.
+  Bind fresh re-entry to the exact canonical input HEAD while exposing scoped
+  scientific-review, canonicalization, deployment, and autonomy debt. This
+  record does not promote operational RESULT previews to accepted science.
 
 freshness_semantics:
   FRESH: >
-    No known material accepted delta relevant to the layer is awaiting
-    canonical materialization.
+    No known relevant accepted or reviewed delta awaits materialization.
+  CURRENT_WITH_SCOPED_DEBT: >
+    Current scientific and authority boundaries are truthful, while exact
+    review, materialization, deployment, or verification debt remains visible.
   CURRENT_WITH_UNMATERIALIZED_SUPPORT: >
-    The governing scientific conclusion remains current, but newer reviewed
-    support/design/provenance has not yet been fully materialized.
+    The governing scientific conclusion remains current, but newer support or
+    provenance is not yet accepted or durably materialized.
   STALE: >
-    Current-facing canonical descriptions omit material accepted changes that
-    can affect subsequent work.
+    Current-facing canonical descriptions omit a material change that can
+    affect subsequent work.
   UNKNOWN: >
-    Freshness cannot yet be established from durable identities.
+    Freshness cannot be established from durable identities.
 
 layers:
   scientific_core:
@@ -32,72 +33,88 @@ layers:
       stage03d: suspended
       exchange: deferred
       holdout: unauthorized
+      taipan_18_247_meV: candidate_with_magnetic_caveat_only
     note: >
-      Recent reviewed work refined the resolution/scale-bridge and discriminant
-      designs but did not establish LEVEL_3, validate the 18.25 meV assignment,
-      authorize Stage03D, or activate exchange.
+      Issues #65-#67 published operational RESULT previews at this exact HEAD.
+      They await Project Control review and do not establish LEVEL_3/LEVEL_4,
+      promote 18.247 meV, activate exchange, or authorize new execution.
   project_control:
-    status: STALE
-    known_materialization_debt:
-      - issue: 52
-        task_id: INFRA-REPO-WIDE-HYGIENE-LOGIC-AUDIT-001-RERUN-001
-        state: completed_with_actionable_findings_pending_review_and_remediation
-      - issue: 53
-        task_id: ORCH-PC-AUTHORING-PREFLIGHT-ARCH-001
-        state: completed_design_pending_review_and_implementation
+    status: CURRENT_WITH_SCOPED_DEBT
     note: >
-      Accepted governance decisions on canonical-state freshness,
-      accepted-decision fast-follow, negative-knowledge retention, and
-      Project-Control-to-Orch preflight are newer than the current descriptive
-      facades.
+      The re-entry repair is current to the assessed HEAD. Prior R2 authority
+      candidates remain noncanonical and are not silently imported here.
   infrastructure:
-    status: STALE
+    status: CURRENT_WITH_SCOPED_DEBT
     note: >
-      Historical task disposition and dashboard attention semantics are known
-      to misclassify retired/superseded tasks as actionable. The durable
-      lifecycle/preflight correction is not yet canonical.
+      Science-first freeze is active. Autonomy remains PARTIAL: the reported
+      #68 implementation candidate is local, noncanonical, and not deployed;
+      RESULT-to-successor behavior lacks live proof; #70 email fallback is not
+      production-accepted and the 24-hour unattended soak has not run.
   literature_and_supporting_knowledge:
     status: CURRENT_WITH_UNMATERIALIZED_SUPPORT
     note: >
-      Several October 2026 reviewed literature findings and methodological
-      comparator results are not yet fully materialized into the durable
-      literature/knowledge layers.
+      Issue #67 recovered no new primary full text and authorizes no new
+      DyFeO3 claim. Existing unresolved provenance boundaries remain in force.
+
+science_first_result_previews:
+  authority: operational_evidence_only_pending_project_control_review
+  items:
+    - issue: 65
+      task_id: SCI-DYFEO3-18MEV-EVIDENCE-APPLICATION-2026-10-12-001
+      result_sha256: 7b9cef1bc5af55c9aff41c62135bf82475d8f067a16d465a33e7c94561c86c64
+      boundary_effect: none
+    - issue: 66
+      task_id: SCI-CS15-HIST-MINI-ENSEMBLE-FAMILY-ANALYSIS-2026-10-12-001
+      result_sha256: b2ee572109390095ea1f5424a9f26e1290cd66cf2d88aa0256784dd5fd2c7749
+      boundary_effect: none
+    - issue: 67
+      task_id: SCI-ORTHOFERRITE-PRIMARY-SOURCE-DELTA-2026-10-12-001
+      result_sha256: 481c09916d1d225e087f6843c2a3af8457420b696329a413c21ea83b36afeb88
+      boundary_effect: none
 
 recovery_exception:
   standing_authorization: PC-OPERATIONAL-RECOVERY-STANDING-001
   rule: >
-    A bounded non-scientific task may inspect/recover the stale layer itself
-    without returning STATE_SYNC_REQUIRED, provided it does not promote
-    scientific state, access raw/holdout/private data, or perform irreversible
-    actions. Recovery must be followed by explicit verification of resumed progress.
+    Bounded non-scientific recovery may inspect or repair a stale layer without
+    promoting science, accessing raw/holdout/private data, or performing an
+    irreversible action.
 
 gate:
   default_for_consequential_work: CHECK_RELEVANT_LAYER
   if_relevant_layer_is_STALE: STATE_SYNC_REQUIRED
-  if_relevant_layer_is_CURRENT_WITH_UNMATERIALIZED_SUPPORT: >
-    proceed_only_if_the_missing_support_cannot_change_the_task_decision_or_bind_an_exact_reviewed_delta_bundle
-  exact_delta_bundle_exception:
-    allowed: true
-    requirements:
-      - immutable source/result IDs
-      - exact hashes
-      - explicit task binding
-      - later canonical materialization required
+  if_relevant_layer_has_scoped_debt: >
+    proceed only when the debt is irrelevant to the exact task or an exact
+    reviewed delta is identity/hash bound.
   unrelated_stale_layer_blocks_independent_work: false
 
-materialization_states:
-  - MATERIALIZED
-  - PENDING_MATERIALIZATION
-  - EXPLICITLY_DEFERRED_WITH_REASON
-  - NOT_STATE_CHANGING
+materialization_debt:
+  - identity: SCIENCE-FIRST-RESULT-REVIEW-65-67
+    state: PENDING_PROJECT_CONTROL_REVIEW
+    decision_changing: potentially
+  - identity: R2-CANONICAL-TRUTH-ADMISSION-CANDIDATE
+    state: NONCANONICAL_CANDIDATE
+    decision_changing: true
+  - identity: ISSUE-68-SCIENCE-CONTINUATION
+    state: LOCAL_NONCANONICAL_NOT_DEPLOYED
+    decision_changing: true
+  - identity: ISSUE-70-EMAIL-AND-UNATTENDED-ACCEPTANCE
+    state: NOT_PRODUCTION_ACCEPTED_OR_PROVEN
+    decision_changing: true
+  - identity: ISSUE-69-CURRENT-STATE-REENTRY-REPAIR
+    state: CANDIDATE_PENDING_INDEPENDENT_REVIEW
+    decision_changing: false
 
 known_gaps:
-  - exact repository-wide materialization-debt inventory pending #52 review/remediation
-  - automatic validator/preflight enforcement pending #53 implementation
-  - dashboard STATE_FRESHNESS projection not yet implemented
+  - exact #68 candidate branch/commit is not present in this audit worktree
+  - scientific RESULT-to-successor production behavior is not live-proven
+  - outbound email fallback is not production-accepted
+  - 24-hour unattended autonomy soak is not completed
+  - Stage03R accepted checkpoints remain absent from central result/evidence indexes
+  - October literature provenance materialization remains incomplete
 
 do_not_do:
-  - do_not_use_chat_memory_as_state_authority
-  - do_not_treat_GitHub_issue_prose_as_canonical_scientific_state
-  - do_not_bump_dates_without_reconciling_exact_state_deltas
-  - do_not_silently_promote_unreviewed_scientific_results
+  - do_not_use_chat_memory_as_scientific_authority
+  - do_not_treat_task_SUCCEEDED_as_ACCEPTED_scientific_truth
+  - do_not_claim_issue68_or_issue70_deployed_or_proven
+  - do_not_promote_operational_result_previews_without_review
+  - do_not_activate_stage03d_exchange_raw_holdout_structure_a_or_simulation_production
