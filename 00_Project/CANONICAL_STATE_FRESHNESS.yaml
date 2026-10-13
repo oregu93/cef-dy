@@ -1,7 +1,7 @@
 schema_version: 1
-record_id: CANONICAL-STATE-FRESHNESS-2026-10-12-001
+record_id: CANONICAL-STATE-FRESHNESS-2026-10-13-001
 status: CURRENT_WITH_SCOPED_DEBT
-assessed_at: '2026-10-12'
+assessed_at: '2026-10-13'
 assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
 authority: PROJECT_CONTROL
 purpose: >
@@ -41,15 +41,18 @@ layers:
   project_control:
     status: CURRENT_WITH_SCOPED_DEBT
     note: >
-      The re-entry repair is current to the assessed HEAD. Prior R2 authority
-      candidates remain noncanonical and are not silently imported here.
+      The re-entry repair is current to the assessed HEAD and includes the
+      bounded 2026-10-13 timer recovery and RESULT-publication observations.
+      Prior R2 candidates remain noncanonical and are not imported here.
   infrastructure:
     status: CURRENT_WITH_SCOPED_DEBT
     note: >
-      Science-first freeze is active. Autonomy remains PARTIAL: the reported
-      #68 implementation candidate is local, noncanonical, and not deployed;
-      RESULT-to-successor behavior lacks live proof; #70 email fallback is not
-      production-accepted and the 24-hour unattended soak has not run.
+      Science-first freeze is active. A silent timer stall was detected and
+      bounded recovery passed. At least three later automatic cycles exited 0,
+      NextElapse is finite, and SQLite/WAL has no RUNNING tasks, leases, or
+      orphans. Autonomy is PARTIAL/DEGRADED: no longer STALLED, not PROVEN.
+      #68 remains noncanonical/not deployed; #70 implementation, email, live
+      acceptance, and the 24-hour soak are not accepted or deployed.
   literature_and_supporting_knowledge:
     status: CURRENT_WITH_UNMATERIALIZED_SUPPORT
     note: >
@@ -71,6 +74,42 @@ science_first_result_previews:
       task_id: SCI-ORTHOFERRITE-PRIMARY-SOURCE-DELTA-2026-10-12-001
       result_sha256: 481c09916d1d225e087f6843c2a3af8457420b696329a413c21ea83b36afeb88
       boundary_effect: none
+
+operational_state_2026_10_13:
+  github_authentication: CONFIGURED_HEALTHY
+  wkb_transport:
+    status: COMPLETED
+    branch: work/cef-wkb-canonical-audit-recovery-2026-10-12
+    commit: b455fb9a94142fd5efdcbd707da25c1460b85d44
+  timer_recovery:
+    silent_stall_detected: true
+    recovery: PASS
+    automatic_cycles_after_recovery_minimum: 3
+    cycle_exit_code: 0
+    next_elapse: FINITE
+  sqlite_wal:
+    status: HEALTHY
+    quick_check: ok
+    running_tasks: 0
+    leases: 0
+    orphan_running_tasks: 0
+  issue_envelopes:
+    issue_68_timeout_seconds: 3600
+    issue_69_timeout_seconds: 3600
+    issue_70_timeout_seconds: 3600
+  results:
+    - issue: 68
+      result_sha256: 82c330b3252aa1b74149e96f1d9948c795e50ba5a6a75e7fa441ac6c70875f4e
+      semantic_verdict: READY_FOR_WKB_R1_IMPLEMENTATION
+      boundary: implementation_noncanonical_not_deployed
+    - issue: 69
+      result_sha256: 9131facfc44af1b075925061c968b22d7a22380b9fa45df6179747fd946873a4
+      semantic_verdict: BLOCKED_MISSING_REPOSITORY_EVIDENCE
+      boundary: does_not_replace_WKB_repository_audit
+    - issue: 70
+      result_sha256: 1e5f7a4569c02b55d37202787bf3a7bba440483dc8677b318e2c638affcb1804
+      semantic_verdict: READY_FOR_WKB_R1_IMPLEMENTATION
+      boundary: implementation_live_acceptance_email_and_soak_not_accepted
 
 recovery_exception:
   standing_authorization: PC-OPERATIONAL-RECOVERY-STANDING-001
@@ -101,11 +140,11 @@ materialization_debt:
     state: NOT_PRODUCTION_ACCEPTED_OR_PROVEN
     decision_changing: true
   - identity: ISSUE-69-CURRENT-STATE-REENTRY-REPAIR
-    state: CANDIDATE_PENDING_INDEPENDENT_REVIEW
+    state: REFRESH_CANDIDATE_PENDING_INDEPENDENT_REVIEW
     decision_changing: false
 
 known_gaps:
-  - exact #68 candidate branch/commit is not present in this audit worktree
+  - exact #68 implementation remains outside this refresh branch and is not canonical or deployed
   - scientific RESULT-to-successor production behavior is not live-proven
   - outbound email fallback is not production-accepted
   - 24-hour unattended autonomy soak is not completed

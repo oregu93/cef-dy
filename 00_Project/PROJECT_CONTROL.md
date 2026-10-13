@@ -3,14 +3,14 @@ title: "CEF Dy — Project Control"
 type: project_control
 project_id: CEF-Dy
 status: active
-version: "5.0"
-updated: 2026-10-12
+version: "5.1"
+updated: 2026-10-13
 control_chat: "00 - Project Control"
 ---
 
 # CEF Dy — Project Control
 
-## Current Project Control checkpoint (2026-10-12)
+## Current Project Control checkpoint (2026-10-13)
 
 Canonical input HEAD: `45fcf89f5a2571d534da6cf3f70018d3de620d7e`.
 Science-first infrastructure freeze активен: infrastructure разрешена только
@@ -19,16 +19,25 @@ current-state repair.
 
 - #65, #66 и #67: `SUCCEEDED`, operational RESULT опубликованы, Project Control
   review ещё не завершён; научное promotion отсутствует.
-- #68: reported local implementation candidate существует, но его exact object
-  не materialized в этом worktree; он не canonical, не deployed, а live
-  RESULT-to-successor behavior не доказан.
-- #69: этот audit/repair candidate требует independent exact-object review.
-- #70: email fallback не принят production; 24-hour unattended soak не выполнен.
-- Autonomy verdict: `PARTIAL`; `HUMAN_ACTION_REQUIRED=false` сейчас.
+- GitHub authentication настроена и healthy; exact WKB candidate `b455fb9a...`
+  успешно транспортирован на origin.
+- Silent timer stall (`active(elapsed)`, `NextElapse=infinity`) был обнаружен;
+  bounded recovery: `PASS`. После recovery минимум три automatic cycles
+  завершились `exit=0`, timer снова имеет конечный `NextElapse`.
+- SQLite/WAL healthy: `quick_check=ok`, RUNNING=0, leases=0, orphan RUNNING=0.
+- #68/#69/#70 исправлены до `timeout_seconds=3600`, успешно ingest и каждый
+  опубликовал RESULT. #68 verdict: `READY_FOR_WKB_R1_IMPLEMENTATION`.
+- #68 implementation остаётся noncanonical/not deployed. #69 semantic RESULT
+  не заменяет WKB repository audit. #70 implementation/live acceptance/email/
+  24-hour soak всё ещё не accepted/deployed.
+- Autonomy verdict: `PARTIAL/DEGRADED`, но `not STALLED` и `not PROVEN`;
+  `HUMAN_ACTION_REQUIRED=false` сейчас.
 
 Точная freshness/debt projection:
 [CANONICAL_STATE_FRESHNESS](CANONICAL_STATE_FRESHNESS.yaml). Полный аудит:
 [CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12](../02_Work_Checkpoints/CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12/AUDIT_REPORT.md).
+Operational refresh:
+[CEF-WKB-CURRENT-STATE-REFRESH-2026-10-13](../02_Work_Checkpoints/CEF-WKB-CURRENT-STATE-REFRESH-2026-10-13/REFRESH_REPORT.md).
 
 > [!abstract] Назначение
 > Этот документ управляет научной дорожной картой, очередью задач,
@@ -51,7 +60,7 @@ current-state repair.
 
 **Stage03R specifications.** [`STAGE03R-INFERENCE-SPEC`](../03_Protocols/STAGE03R_INFERENCE_SPEC_V1_0.md) и [`STAGE03R-IMPLEMENTATION-SPEC`](../03_Protocols/STAGE03R_IMPLEMENTATION_SPEC_V1_0.md) заморожены; implementation имеет статус `accepted`; Stage03R scientific execution не авторизована.
 
-**Следующий шаг.** Review #65/#66/#67, затем продолжать только bounded science-first ветви. #68 имеет local noncanonical implementation candidate, но не canonical и не deployed; RESULT-to-successor behavior не доказан live. Email fallback #70 не принят production, 24-hour unattended soak не выполнен. Запрос ANSTO остаётся awaiting_response; McStas/RESTRAX production не авторизована.
+**Следующий шаг.** Review #65/#66/#67, затем продолжать только bounded science-first ветви. #68 имеет local noncanonical implementation candidate, но не canonical и не deployed; его semantic RESULT READY_FOR_WKB_R1_IMPLEMENTATION не является deployment proof. Timer silent stall был boundedly recovered, после чего минимум три automatic cycles завершились exit=0; autonomy остаётся PARTIAL/DEGRADED, не STALLED и не PROVEN. Email fallback и live acceptance #70 не приняты production, 24-hour unattended soak не выполнен. Запрос ANSTO остаётся awaiting_response; McStas/RESTRAX production не авторизована.
 
 **Следующий Work job.** Не назначен. Следующая scientific execution требует отдельного admission review и authorization.
 

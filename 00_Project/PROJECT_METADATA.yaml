@@ -1,11 +1,11 @@
 project_id: CEF-Dy
 project_status: active
 schema_version: '2.2'
-updated: '2026-10-12'
+updated: '2026-10-13'
 
 canonical_state_freshness:
   status: CURRENT_WITH_SCOPED_DEBT
-  assessed_at: '2026-10-12'
+  assessed_at: '2026-10-13'
   assessed_head: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
   record_path: 00_Project/CANONICAL_STATE_FRESHNESS.yaml
   consequential_task_policy: fail_closed_when_relevant_state_is_stale
@@ -38,10 +38,53 @@ science_first_operating_state:
       boundary_effect: NONE
   autonomy:
     verdict: PARTIAL
+    operational_health: DEGRADED_RECOVERED
+    stalled: false
+    proven: false
     result_to_successor_live_proof: absent
     issue68_candidate: LOCAL_NONCANONICAL_NOT_DEPLOYED
     issue70_email_fallback: NOT_PRODUCTION_ACCEPTED
     unattended_soak_24h: NOT_RUN
+  operational_recovery_2026_10_13:
+    github_authentication: CONFIGURED_HEALTHY
+    wkb_candidate_transport:
+      status: COMPLETED
+      branch: work/cef-wkb-canonical-audit-recovery-2026-10-12
+      commit: b455fb9a94142fd5efdcbd707da25c1460b85d44
+      tree: d27d11635eaeca3ff8383b42bcf5cc7bc1f3e963
+      parent: 45fcf89f5a2571d534da6cf3f70018d3de620d7e
+    timer:
+      silent_stall_detected: true
+      bounded_recovery: PASS
+      automatic_cycles_after_recovery_minimum: 3
+      cycle_exit_code: 0
+      next_elapse: FINITE
+    sqlite_wal:
+      health: HEALTHY
+      quick_check: ok
+      running_tasks: 0
+      active_leases: 0
+      orphan_running_tasks: 0
+    issue_timeout_seconds:
+      issue_68: 3600
+      issue_69: 3600
+      issue_70: 3600
+    operational_result_previews:
+      - issue: 68
+        task_id: INFRA-SCIENCE-FIRST-AUTONOMOUS-CONTINUATION-001
+        result_sha256: 82c330b3252aa1b74149e96f1d9948c795e50ba5a6a75e7fa441ac6c70875f4e
+        semantic_verdict: READY_FOR_WKB_R1_IMPLEMENTATION
+        authority: OPERATIONAL_EVIDENCE_ONLY
+      - issue: 69
+        task_id: INFRA-CURRENT-STATE-REENTRY-REPAIR-2026-10-12-001
+        result_sha256: 9131facfc44af1b075925061c968b22d7a22380b9fa45df6179747fd946873a4
+        semantic_verdict: BLOCKED_MISSING_REPOSITORY_EVIDENCE
+        authority: DOES_NOT_REPLACE_WKB_REPOSITORY_AUDIT
+      - issue: 70
+        task_id: INFRA-UNATTENDED-AUTONOMY-ACCEPTANCE-AND-ESCALATION-001
+        result_sha256: 1e5f7a4569c02b55d37202787bf3a7bba440483dc8677b318e2c638affcb1804
+        semantic_verdict: READY_FOR_WKB_R1_IMPLEMENTATION
+        authority: OPERATIONAL_EVIDENCE_ONLY
 
 operational_recovery_authorization:
   status: active
@@ -625,8 +668,11 @@ control:
   next: >-
     Review #65/#66/#67, затем продолжать только bounded science-first ветви.
     #68 имеет local noncanonical implementation candidate, но не canonical и не
-    deployed; RESULT-to-successor behavior не доказан live. Email fallback #70
-    не принят production, 24-hour unattended soak не выполнен. Запрос ANSTO
+    deployed; его semantic RESULT READY_FOR_WKB_R1_IMPLEMENTATION не является
+    deployment proof. Timer silent stall был boundedly recovered, после чего
+    минимум три automatic cycles завершились exit=0; autonomy остаётся
+    PARTIAL/DEGRADED, не STALLED и не PROVEN. Email fallback и live acceptance
+    #70 не приняты production, 24-hour unattended soak не выполнен. Запрос ANSTO
     остаётся awaiting_response; McStas/RESTRAX production не авторизована.
   next_work_job: null
 

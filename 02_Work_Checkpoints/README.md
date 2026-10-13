@@ -55,3 +55,5 @@ verified logical dataset identity
   semantic-result review correction evidence.
 - [`CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12`](CEF-WKB-CANONICAL-AUDIT-RECOVERY-2026-10-12/AUDIT_REPORT.md) —
   current-state audit and minimal repair candidate.
+- [`CEF-WKB-CURRENT-STATE-REFRESH-2026-10-13`](CEF-WKB-CURRENT-STATE-REFRESH-2026-10-13/REFRESH_REPORT.md) —
+  bounded operational refresh after timer recovery and RESULT publication.
