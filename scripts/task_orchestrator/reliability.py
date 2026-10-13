@@ -396,6 +396,22 @@ class M1bStore:
             if current is None or current["state"] != State.READY.value:
                 self.conn.execute("ROLLBACK")
                 return None
+            if self.cfg.get("science_continuation", {}).get("enabled"):
+                from .routing import canonical_role
+                role = canonical_role(json.loads(row["payload_json"])["role"])
+                if role in {"01", "02", "03", "04"}:
+                    active_roles = [
+                        canonical_role(json.loads(r[0])["role"])
+                        for r in self.conn.execute(
+                            "SELECT t.payload_json FROM tasks t "
+                            "JOIN worker_leases w ON w.task_id=t.task_id"
+                        )
+                    ]
+                    if (role in active_roles
+                            or sum(r in {"01", "02", "03", "04"}
+                                   for r in active_roles) >= 3):
+                        self.conn.execute("ROLLBACK")
+                        return None
             lane = "AI_BOUNDED_SPECIALIST" if self._is_ai(row["task_id"]) else "LOCAL_DETERMINISTIC"
             if self.cfg.get("routing", {}).get("enabled"):
                 route = self.conn.execute(

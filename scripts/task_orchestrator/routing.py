@@ -433,6 +433,7 @@ class ProductionRouter:
                 )
                 return status
             labels = ("orchestrator:llm-approved",)
+            from .science_continuation import review_instruction
             review = Task(
                 schema_version=1, task_id=review_id, role=review_role,
                 canonical_head=task.canonical_head, task_type="llm_worker",
@@ -444,7 +445,8 @@ class ProductionRouter:
                 inputs={"review_of": task.task_id, "independent_review": True,
                         "parent_role": role_id, "resource_requirement": "WORK_PREFERRED",
                         "allowed_lanes": ["LOCAL_OSS_MODEL", "NON_WORK_AI", "WORK_CODEX"],
-                        "review_material": review_material},
+                        "review_material": review_material,
+                        **review_instruction(self.cfg, task, self.conn)},
                 allowed_paths=(), expected_artifacts=(), timeout_seconds=task.timeout_seconds,
                 stop_condition="Independently return PASS or actionable findings; do not modify files or project authority.",
                 source_issue=None, labels=labels,
@@ -672,7 +674,11 @@ class ProductionRouter:
             if task.inputs.get("review_required", False) is True:
                 self._review(task, role_id)
                 reviews += 1
-        return {"status": "OPERATIONAL", "roles": len(roles), "lanes": len(lanes), "routes": routed, "reviews": reviews}
+        from .science_continuation import reconcile
+        closures = reconcile(self)
+        return {"status": "OPERATIONAL", "roles": len(roles),
+                "lanes": len(lanes), "routes": routed, "reviews": reviews,
+                "scientific_closures": closures}
 
     def status(self) -> dict[str, Any]:
         if not self.enabled:

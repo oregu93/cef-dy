@@ -73,6 +73,7 @@ DEFAULTS: dict[str, Any] = {
         "bootstrap_path": "03_Protocols/CHAT_BOOTSTRAPS.md",
         "auto_create_reviews": True,
     },
+    "science_continuation": {"enabled": False, "seed_task_ids": []},
     "dashboard": {
         "enabled": False,
         "host": "127.0.0.1",
@@ -221,6 +222,26 @@ def load_config(path: Path) -> dict[str, Any]:
     ):
         raise ValidationError("live publishing requires active pilot autonomy")
     routing = cfg.get("routing")
+    continuation = cfg.get("science_continuation")
+    if (not isinstance(continuation, dict)
+            or set(continuation) != {"enabled", "seed_task_ids"}
+            or type(continuation["enabled"]) is not bool
+            or not isinstance(continuation["seed_task_ids"], list)
+            or len(continuation["seed_task_ids"]) > 3
+            or any(not isinstance(x, str)
+                   or re.fullmatch(r"SCI-[A-Z0-9._-]{1,123}", x) is None
+                   for x in continuation["seed_task_ids"])
+            or len(set(continuation["seed_task_ids"]))
+            != len(continuation["seed_task_ids"])):
+        raise ValidationError(
+            "science_continuation requires up to three exact science seeds"
+        )
+    if continuation["enabled"] and (
+        not continuation["seed_task_ids"] or not routing["enabled"]
+    ):
+        raise ValidationError(
+            "science_continuation requires explicit seeds and routing"
+        )
     if not isinstance(routing, dict) or set(routing) != {
         "enabled", "bootstrap_path", "auto_create_reviews",
     }:
