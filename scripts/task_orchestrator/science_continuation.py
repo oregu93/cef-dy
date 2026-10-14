@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS scientific_continuation_observations (
 CREATE TABLE IF NOT EXISTS scientific_closures (
  parent_task_id TEXT PRIMARY KEY,
  parent_result_sha256 TEXT NOT NULL,
- review_result_sha256 TEXT NOT NULL,
+ planner_result_sha256 TEXT NOT NULL,
  canonical_head TEXT NOT NULL,
  decision_json TEXT NOT NULL,
  successor_task_id TEXT UNIQUE,
@@ -33,6 +33,77 @@ CREATE TABLE IF NOT EXISTS scientific_closures (
  updated_at TEXT NOT NULL
 );
 """
+
+
+class CanonicalRefreshUnavailable(RuntimeError):
+    """The remote canonical identity could not be refreshed this cycle."""
+
+
+def _git_identity(repo, ref):
+    try:
+        proc = subprocess.run(
+            ["git", "rev-parse", "--verify", ref], cwd=repo,
+            capture_output=True, text=True, timeout=10, shell=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CanonicalRefreshUnavailable(
+            "canonical Git identity unavailable"
+        ) from exc
+    value = proc.stdout.strip()
+    if proc.returncode != 0 or len(value) != 40:
+        raise CanonicalRefreshUnavailable("canonical Git identity unavailable")
+    return value
+
+
+def refresh_origin_main(repo):
+    """Boundedly refresh origin/main immediately before new authoring."""
+    try:
+        proc = subprocess.run(
+            ["git", "fetch", "--no-tags", "origin", "main"], cwd=repo,
+            capture_output=True, text=True, timeout=30, shell=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise CanonicalRefreshUnavailable(
+            "canonical Git refresh unavailable"
+        ) from exc
+    if proc.returncode != 0:
+        raise CanonicalRefreshUnavailable("canonical Git refresh unavailable")
+    return _git_identity(repo, "refs/remotes/origin/main")
+
+
+def _fresh_authoring_head(repo):
+    try:
+        canonical = refresh_origin_main(repo)
+        head = _git_identity(repo, "HEAD")
+    except CanonicalRefreshUnavailable:
+        return None, {
+            "state": "WAITING_CANONICAL_REFRESH",
+            "reason": "canonical Git refresh unavailable; retry next cycle",
+        }
+    if head != canonical:
+        return None, {
+            "state": "WAITING_CANONICAL_HEAD",
+            "reason": "local HEAD does not match refreshed origin/main",
+        }
+    return head, None
+
+
+def _existing_plan(router, parent, review, parent_result_sha256):
+    matches = []
+    for row in router.conn.execute(
+        "SELECT * FROM tasks WHERE task_id LIKE 'SCI-CLOSURE-PLAN-%' "
+        "ORDER BY task_id"
+    ):
+        task = router.store.task(row)
+        if (task.dependencies == (parent.task_id, review.task_id)
+                and task.inputs.get("parent_result_sha256")
+                == parent_result_sha256
+                and task.inputs.get("original_envelope")
+                == parent.envelope_dict()):
+            matches.append(task)
+    if len(matches) > 1:
+        raise ValueError("multiple planning identities for parent result")
+    return matches[0] if matches else None
 
 
 def _reserved_descendant(conn, task_id):
@@ -147,16 +218,15 @@ def reconcile(router):
         eligible = expanded
     scoped_cfg = {**cfg, "science_continuation": {"enabled": True, "seed_task_ids": sorted(eligible)}}
     repo = Path(cfg["repository_root"])
-    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
-    canonical = subprocess.check_output(["git", "rev-parse", "origin/main"], cwd=repo, text=True).strip()
     outcomes = []
     for task_id in sorted(eligible):
         row = router.store.get(task_id)
         if row is None:
             continue
         task = router.store.task(row)
-        if not delegated(scoped_cfg, task) or head != canonical:
-            outcomes.append({"task_id": task_id, "state": "WAITING_USER", "reason": "scope or HEAD drift"})
+        if not delegated(scoped_cfg, task):
+            outcomes.append({"task_id": task_id, "state": "WAITING_USER",
+                             "reason": "scientific continuation scope invalid"})
             continue
         relation = conn.execute("SELECT * FROM review_requirements WHERE parent_task_id=?", (task_id,)).fetchone()
         if relation is None or not relation["review_task_id"]:
@@ -174,23 +244,39 @@ def reconcile(router):
             review_accepted, review_result = router._accepted_review_result(review)
             if review_result["semantic_verdict"] != "PASS":
                 raise ValueError("independent parent review has not passed")
+            plan = _existing_plan(
+                router, task, review, parent_accepted["result_sha256"]
+            )
+            if plan is None:
+                head, refresh_wait = _fresh_authoring_head(repo)
+                if refresh_wait is not None:
+                    outcomes.append({"task_id": task_id, **refresh_wait})
+                    continue
+                # A fresh bounded planner revalidates historical accepted inputs
+                # against the current HEAD; never require rewriting parent history.
+                plan = planning_task(
+                    scoped_cfg, task, review, parent_accepted,
+                    review_accepted, head,
+                )
+                plan_receipt = authoring_receipt(
+                    cfg, plan, task, review, parent_accepted, review_accepted
+                )
+                outcome = router.engine.ingest(plan)
+                if outcome not in {"created", "duplicate", "metadata_updated"}:
+                    outcomes.append({"task_id": task_id, "state": outcome,
+                                     "reason": "planner admission"})
+                    continue
+                router.store.put_authoring_receipt(plan_receipt)
+                router._record_route(
+                    plan,
+                    load_registry(Path(cfg["routing"]["bootstrap_path"])),
+                    router.sync_lanes(),
+                )
+            head = plan.canonical_head
             previous = conn.execute("SELECT * FROM scientific_closures WHERE parent_task_id=?", (task_id,)).fetchone()
             if previous is not None and previous["canonical_head"] != head:
                 outcomes.append({"task_id": task_id, "state": "WAITING_USER", "reason": "existing closure bound to earlier HEAD"})
                 continue
-            # A fresh bounded planner revalidates historical accepted inputs
-            # against the current HEAD; never require rewriting parent history.
-            plan = planning_task(scoped_cfg, task, review, parent_accepted, review_accepted, head)
-            plan_receipt = authoring_receipt(cfg, plan, task, review, parent_accepted, review_accepted)
-            prior_plan = router.store.get(plan.task_id)
-            if prior_plan is not None and router.store.task(prior_plan).payload_hash != plan.payload_hash:
-                raise ValueError("planning task identity conflict")
-            outcome = router.engine.ingest(plan)
-            if outcome not in {"created", "duplicate", "metadata_updated"}:
-                outcomes.append({"task_id": task_id, "state": outcome, "reason": "planner admission"})
-                continue
-            router.store.put_authoring_receipt(plan_receipt)
-            router._record_route(plan, load_registry(Path(cfg["routing"]["bootstrap_path"])), router.sync_lanes())
             if router.store.get(plan.task_id)["state"] != "SUCCEEDED":
                 outcomes.append({"task_id": task_id, "state": "WAITING_PLAN", "planner_task_id": plan.task_id})
                 continue
@@ -256,12 +342,24 @@ def reconcile(router):
                                     "and parent_stop_condition. Answer only the reviewed follow-up within that inherited scope, then stop. "
                                     "No infrastructure, raw/holdout, scientific execution, stage transition, "
                                     "exchange activation or ACCEPTED promotion."))
+            existing = router.store.get(successor_id)
+            if existing is None:
+                fresh_head, refresh_wait = _fresh_authoring_head(repo)
+                if refresh_wait is not None:
+                    outcomes.append({"task_id": task_id, **refresh_wait})
+                    continue
+                if fresh_head != head:
+                    outcomes.append({
+                        "task_id": task_id,
+                        "state": "WAITING_CANONICAL_HEAD",
+                        "reason": "planner HEAD no longer matches refreshed origin/main",
+                    })
+                    continue
             try:
                 receipt = authoring_receipt(cfg, successor, task, plan, parent_accepted, plan_accepted)
             except ValueError as exc:
                 outcomes.append({"task_id": task_id, "state": "WAITING_USER", "reason": str(exc)})
                 continue
-            existing = router.store.get(successor_id)
             if existing is not None and router.store.task(existing).payload_hash != successor.payload_hash:
                 state = "CONFLICT"
             else:

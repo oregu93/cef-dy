@@ -2,14 +2,17 @@ import json
 import subprocess
 import unittest
 from dataclasses import replace
+from unittest import mock
 
 from task_orchestrator.engine import Engine
 from task_orchestrator.reliability import Admission, M1bController
 from task_orchestrator.store import Store
 from task_orchestrator.science_continuation import (
+    CanonicalRefreshUnavailable,
     delegated,
     planning_task,
     reconcile,
+    refresh_origin_main,
 )
 from task_orchestrator.routing import canonical_role
 from .common import Fixture
@@ -23,6 +26,18 @@ class ScienceClosureTests(unittest.TestCase):
         self.fx.cfg["routing"].update(enabled=True, bootstrap_path=str(BOOTSTRAPS))
         self.fx.cfg["llm"].update(dispatch_enabled=True, detached_workers=False, require_local_approval=False)
         self.fx.cfg["science_continuation"].update(enabled=True, seed_task_ids=["SCI-SEED-001"])
+        self.remote = self.fx.root / ".science-origin.git"
+        subprocess.run(
+            ["git", "init", "--bare", "-q", str(self.remote)], check=True
+        )
+        subprocess.run(
+            ["git", "remote", "add", "origin", str(self.remote)],
+            cwd=self.fx.root, check=True,
+        )
+        subprocess.run(
+            ["git", "push", "-q", "origin", "HEAD:refs/heads/main"],
+            cwd=self.fx.root, check=True,
+        )
         self.store = Store(self.fx.root / "state/state.sqlite3")
         self.engine = Engine(self.fx.cfg, self.store)
         self.parent = self.fx.task("SCI-SEED-001", role="03_CEF", task_type="llm_worker", action="semantic_helper",
@@ -41,7 +56,7 @@ class ScienceClosureTests(unittest.TestCase):
         self.store.close()
         self.fx.close()
 
-    def review(self, decision="FOLLOW_UP", verdict="PASS", wrong_sha=False):
+    def reviewer(self, decision="FOLLOW_UP", verdict="PASS", wrong_sha=False):
         sha = self.store.conn.execute("SELECT result_sha256 FROM accepted_results WHERE task_id=?", (self.parent.task_id,)).fetchone()[0]
         closure = {"decision": decision, "parent_result_sha256": "0" * 64 if wrong_sha else sha,
                    "canonical_head": self.fx.head, "rationale": "One unresolved comparison within parent scope",
@@ -50,7 +65,10 @@ class ScienceClosureTests(unittest.TestCase):
             def execute(self, task, attempt):
                 return Admission("ACCEPTED", {"status": verdict, "summary": "Independent review",
                     "checks": [{"scientific_closure": closure}], "artifacts": [], "error": None})
-        self.controller.transport = Reviewer()
+        return Reviewer()
+
+    def review(self, decision="FOLLOW_UP", verdict="PASS", wrong_sha=False):
+        self.controller.transport = self.reviewer(decision, verdict, wrong_sha)
         self.controller.cycle()
         self.controller.cycle()
         return reconcile(self.controller.router)
@@ -74,8 +92,12 @@ class ScienceClosureTests(unittest.TestCase):
         self.assertIn("stage transition", task.stop_condition)
         self.assertIn("exchange activation", task.stop_condition)
         self.assertIn("ACCEPTED promotion", task.stop_condition)
-        for _ in range(3):
-            reconcile(self.controller.router)
+        with mock.patch(
+            "task_orchestrator.science_continuation.refresh_origin_main"
+        ) as refresh:
+            for _ in range(3):
+                reconcile(self.controller.router)
+            refresh.assert_not_called()
         self.assertEqual(self.store.conn.execute("SELECT count(*) FROM scientific_closures").fetchone()[0], 1)
         self.controller.transport = FakeAI()
         self.controller.cycle()
@@ -111,6 +133,8 @@ class ScienceClosureTests(unittest.TestCase):
         self.assertEqual(self.review(wrong_sha=True)[0]["state"], "WAITING_USER")
 
     def test_head_drift_fails_closed(self):
+        self.controller.transport = self.reviewer()
+        self.controller.cycle()
         self.engine.ingest(self.fx.task(
             "INFRA-ALREADY-AUTHORIZED-001", action="test_command",
             inputs={"command_id": "pass"},
@@ -124,17 +148,81 @@ class ScienceClosureTests(unittest.TestCase):
             cwd=self.fx.root, text=True,
         ).strip()
         subprocess.run(
-            ["git", "update-ref", "refs/remotes/origin/main", remote_head],
+            ["git", "push", "-q", "origin",
+             remote_head + ":refs/heads/main"],
             cwd=self.fx.root, check=True,
         )
-        outcome = reconcile(self.controller.router)[0]
-        self.assertEqual(outcome["reason"], "scope or HEAD drift")
+        subprocess.run(
+            ["git", "update-ref", "refs/remotes/origin/main", self.fx.head],
+            cwd=self.fx.root, check=True,
+        )
+        self.assertEqual(
+            subprocess.check_output(
+                ["git", "rev-parse", "refs/remotes/origin/main"],
+                cwd=self.fx.root, text=True,
+            ).strip(),
+            self.fx.head,
+        )
+        self.controller.cycle()
         self.assertEqual(self.store.conn.execute(
             "SELECT count(*) FROM tasks WHERE task_id LIKE 'SCI-CLOSURE-PLAN-%'"
         ).fetchone()[0], 0)
-        self.controller.cycle()
+        observation = self.store.conn.execute(
+            "SELECT state,detail_json FROM scientific_continuation_observations "
+            "WHERE task_id=?", (self.parent.task_id,),
+        ).fetchone()
+        self.assertEqual(observation["state"], "WAITING_CANONICAL_HEAD")
+        self.assertNotIn("WAITING_USER", observation["detail_json"])
+        self.assertEqual(
+            subprocess.check_output(
+                ["git", "rev-parse", "refs/remotes/origin/main"],
+                cwd=self.fx.root, text=True,
+            ).strip(),
+            remote_head,
+        )
         independent = self.store.get("INFRA-ALREADY-AUTHORIZED-001")
         self.assertEqual(independent["state"], "SUCCEEDED", dict(independent))
+
+    def test_fetch_failure_is_retryable_and_recovers_without_blocking(self):
+        self.controller.transport = self.reviewer()
+        self.controller.cycle()
+        self.engine.ingest(self.fx.task(
+            "INFRA-FETCH-INDEPENDENT-001", action="test_command",
+            inputs={"command_id": "pass"},
+        ))
+        with mock.patch(
+            "task_orchestrator.science_continuation.refresh_origin_main",
+            side_effect=CanonicalRefreshUnavailable("timeout"),
+        ):
+            outcomes = reconcile(self.controller.router)
+            self.assertEqual(
+                outcomes[0]["state"], "WAITING_CANONICAL_REFRESH"
+            )
+            self.assertEqual(self.store.conn.execute(
+                "SELECT count(*) FROM tasks "
+                "WHERE task_id LIKE 'SCI-CLOSURE-PLAN-%'"
+            ).fetchone()[0], 0)
+            self.controller.cycle()
+        self.assertEqual(
+            self.store.get("INFRA-FETCH-INDEPENDENT-001")["state"],
+            "SUCCEEDED",
+        )
+        self.assertEqual(self.store.get(self.parent.task_id)["state"], "SUCCEEDED")
+        self.controller.cycle()
+        recovered = reconcile(self.controller.router)
+        self.assertEqual(recovered[0]["state"], "ENROLLED")
+        self.assertEqual(self.store.conn.execute(
+            "SELECT count(*) FROM scientific_closures WHERE parent_task_id=?",
+            (self.parent.task_id,),
+        ).fetchone()[0], 1)
+
+    def test_fetch_timeout_is_classified_as_transient(self):
+        with mock.patch(
+            "task_orchestrator.science_continuation.subprocess.run",
+            side_effect=subprocess.TimeoutExpired("git fetch", 30),
+        ):
+            with self.assertRaises(CanonicalRefreshUnavailable):
+                refresh_origin_main(self.fx.root)
 
     def test_old_unstructured_review_does_not_authorize(self):
         self.controller.cycle()
