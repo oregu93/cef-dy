@@ -1,0 +1,230 @@
+task: MANUSCRIPT_INTENSITY_ADMISSION_RECOVERY_V2
+mode: BOUNDED_SALVAGE_ONLY
+manuscript_intensity_gate: FAIL_CLEANLY
+W03_allowed_objective_ceiling: ENERGY_ONLY
+energy_only_caveat: Not execution authorization. V1 holdout-mixed aggregate remains
+  historical; an independently authorized energy input is required.
+previous_remote_branch: work/manuscript-taipan-input-recovery-v1
+previous_remote_commit: 415dd1751b7bf232476674af4e7e2571dd89a113
+previous_remote_tree: f85afbf06db5daf6f5ae8e1e60b0edc512709420
+canonical_main_verified: c65cfb1daa8edf4ce85684b5093869c0f287d269
+nonholdout_profiles_reconstructed: 30
+holdout_contaminated_profiles_excluded: 16
+excluded_holdout_scan_count: 17
+non_discovery_scans_not_used:
+- SCAN-02R-46abc72aaf86494c
+- SCAN-02R-616075842b1e4c6e
+- SCAN-02R-643ff7e40bd97888
+- SCAN-02R-7a0b878c4f9bf5c8
+discovery_scans_used: 45
+fit_points: 480
+Q_semantics: VERIFIED_HKL_AND_Q for 30 reconstructed profiles / 45 scans; excluded
+  groups not newly admitted
+Q_formula: Q_Pbnm=2*pi*(h/a,k/b,l/c); Q_CEF=2*pi*(k/b,l/c,h/a)
+Q_point_checks: 1516
+Q_rounding_interval_failures: 0
+mixed_point_table_access:
+  path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+  selected_columns:
+  - scan_record_id
+  - point_index
+  - q_raw
+  - h_raw
+  - k_raw
+  - l_raw
+  - ei_raw
+  - ef_raw
+  - S2_raw
+  detector_or_monitor_columns_selected: false
+legacy_metadata_inventory_sha256: e23b01ee3c51ffe79fd287be59fd5b3ae85ea44427b4498fa3fed7d25d403853
+W03_Q_requirement: Full vector in the transition-tensor frame for polarization contraction;
+  magnitude alone supplies only the form factor. No powder averaging substituted.
+temperature_semantics: UNKNOWN
+temperature_calculations:
+  '18.24717836149484':
+    gap_meV: 18.24717836149484
+    T_K_sensitivity_values:
+    - 3.4
+    - 10.0
+    excited_to_ground_equal_doublet_population:
+    - 8.962556902025185e-28
+    - 6.365416929187217e-10
+    two_doublet_ground_population:
+    - 1.0
+    - 0.9999999993634583
+    relative_ground_population_change: 6.365417082321301e-10
+  '6.447':
+    gap_meV: 6.447
+    T_K_sensitivity_values:
+    - 3.4
+    - 10.0
+    excited_to_ground_equal_doublet_population:
+    - 2.777737409848085e-10
+    - 0.0005634495078134193
+    two_doublet_ground_population:
+    - 0.9999999997222262
+    - 0.9994368677887537
+    relative_ground_population_change: 0.0005631319336288909
+  '1.0':
+    gap_meV: 1.0
+    T_K_sensitivity_values:
+    - 3.4
+    - 10.0
+    excited_to_ground_equal_doublet_population:
+    - 0.03293914320924288
+    - 0.3133445760013402
+    two_doublet_ground_population:
+    - 0.9681112450566021
+    - 0.7614148017762701
+    relative_ground_population_change: 0.21350484702638406
+temperature_assessment: 18.247-meV thermal occupation is negligible over hypothetical
+  3.4-10 K. This does not bound ground population if D0->D2..D7 assignments allow
+  lower levels. The 1-meV illustrative gap is not an assignment. For a single transition
+  at a common temperature, the population factor can be absorbed by A_b, even if T
+  is unknown. SG042/SG044 have raw channels near 10, so temperature is not an independent
+  demonstrated blocker for that pair; channel-to-sample binding and common sample
+  condition remain unverified. Do not combine 3.4/10 regimes for an unrestricted model
+  without checking this. No sample T invented.
+blocks:
+  inst_4615972084:
+    status: NOT_ADMISSIBLE
+    admitted_rows: 0
+    original_profiles: 37
+    reconstructed_profiles: 23
+    open_scans: 38
+    quality_passing_rows:
+    - TAIPAN-F002-AREA-SG042
+    - TAIPAN-F002-AREA-SG044
+    raw_temp_channel_range:
+    - 3.397
+    - 10.013
+    Ef_meV_range:
+    - 14.8709
+    - 14.8715
+    kf_Ainv_range:
+    - 2.6789256872788725
+    - 2.6789797303831766
+    recorded_invariants:
+      monochromator:
+      - PG
+      analyzer:
+      - PG
+      collimation:
+      - o-40-40-o
+      preset_type:
+      - normal
+      preset_channel:
+      - monitor
+      latticeconstants_raw:
+      - 5.310000 5.588000 7.617000 90.000000 90.000000 90.000000
+      ubmatrix_raw:
+      - 0.000000 0.004623 0.131241     0.000000 0.178895 -0.003392     -0.188324 0.000000
+        0.000000
+    preset_values:
+    - 750000.0
+    - 950000.0
+    - 1000000.0
+    missing_field_classification:
+      absolute_cross_section_scale: NOT_APPLICABLE
+      overall_block_scale_A_b: CONSTANT_BUT_VALUE_UNKNOWN
+      detector_monitor_hardware_gain_invariance: UNRESOLVED
+      filter_higher_order_suppression_invariance: UNRESOLVED
+      attenuator_invariance: UNRESOLVED
+      focusing_aperture_state: UNRESOLVED
+      Q_dependent_resolution_acceptance: MATERIAL_FOR_RELATIVE_INTENSITY
+    reason: Unknown constant calibration is absorbable by A_b; scan invariance of
+      response/acceptance is not demonstrated. Missing state is not evidence of a
+      constant state.
+  inst_f4703b6bd8:
+    status: NOT_ADMISSIBLE
+    admitted_rows: 0
+    original_profiles: 9
+    reconstructed_profiles: 7
+    open_scans: 7
+    quality_passing_rows:
+    - TAIPAN-F002-AREA-SG032
+    raw_temp_channel_range:
+    - 3.705
+    - 3.809
+    Ef_meV_range:
+    - 14.871
+    - 14.8714
+    kf_Ainv_range:
+    - 2.6789346945386336
+    - 2.6789707232748357
+    recorded_invariants:
+      monochromator:
+      - PG
+      analyzer:
+      - PG
+      collimation:
+      - o-40-40-o
+      preset_type:
+      - normal
+      preset_channel:
+      - monitor
+      latticeconstants_raw:
+      - 5.310000 5.594000 7.629000 90.000000 90.000000 90.000000
+      ubmatrix_raw:
+      - 0.000000 0.090597 0.112998     0.000000 0.154105 -0.066430     -0.188324 0.000000
+        0.000000
+    preset_values:
+    - 240000.0
+    - 750000.0
+    missing_field_classification:
+      absolute_cross_section_scale: NOT_APPLICABLE
+      overall_block_scale_A_b: CONSTANT_BUT_VALUE_UNKNOWN
+      detector_monitor_hardware_gain_invariance: UNRESOLVED
+      filter_higher_order_suppression_invariance: UNRESOLVED
+      attenuator_invariance: UNRESOLVED
+      focusing_aperture_state: UNRESOLVED
+      Q_dependent_resolution_acceptance: MATERIAL_FOR_RELATIVE_INTENSITY
+    reason: Unknown constant calibration is absorbable by A_b; scan invariance of
+      response/acceptance is not demonstrated. Missing state is not evidence of a
+      constant state.
+detected_rows_reviewed_V1: 8
+detected_rows_admitted: 0
+V1_detected_clean_diagnostic_only: 5
+V1_detected_holdout_exclusions: 3
+V2_detected_quality_pass: 3
+fit_collapses_V2: 1
+primary_decision_counts:
+  OTHER_EXCLUSION: 26
+  HOLDOUT_CONTAMINATED: 16
+  NORMALIZATION_AMBIGUOUS: 3
+  FIT_COLLAPSE: 1
+censored_rows_admitted: 0
+original_nondetections_diagnostic_only: 38
+censoring: Legacy A+1.64485*sigma is a Wald upper limit, not the z=3 detection threshold.
+  The selected bounded shared fit supplies no calibrated censoring likelihood; V1
+  CENSOR_ADMISSIBLE label superseded.
+energy_systematic_status: ENERGY_SYSTEMATIC_UNAVAILABLE
+energy_systematic_reason: No traceable absolute reference uncertainty/zero-offset
+  calibration in the reviewed inputs; empirical elastic width is not an energy calibration
+  uncertainty.
+holdout_detector_access_count: 0
+raw_detector_files_opened: false
+CEF_fitting_performed: false
+stage_transition: false
+remaining_material_blockers:
+- Within-block response/acceptance invariance not established; A_b cannot absorb unknown
+  scan-dependent factors.
+- Block inst_f4703b6bd8 has only one quality-passing fresh detection under the chosen
+  diagnostic extraction.
+conditional_temperature_limitation: 'General D0->Dn models can have lower levels:
+  thermal negligibility is not guaranteed across differing sample temperatures. Not
+  treated as a separate decisive blocker for the near-10-channel detected pair.'
+quality_rule:
+  area_z_min: 3
+  area_collapse_floor: 1.0e-08
+  maximum_background_abs_correlation: 0.95
+  global_reduced_deviance_max: 2
+  require_full_rank_finite_covariance: true
+  require_optimizer_success_and_interior_center_width_area: true
+  selection_uses_CEF_agreement: false
+source_hashes:
+  04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml: a9bccf72660efcd0711fcc34cc06cf861f661662fbad970b8a3bd7637e44809c
+  04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  04_Results/Stage02R/W02-02R-A-002/parsed_header_metadata.jsonl: 5fe552c66b8bbf3543801a921d4afe6ca0852e98c8e8f12fc9ac153f3b6af37d
+  06_Scientific_Understanding/neutron-polarization-intrinsic-strength.md: 646307649e9d214f0f22024c74533bb6855b55668f7fd36d654235ad450fe2c9
+  06_Scientific_Understanding/dyfeo3-pbnm-pnma-cef-frame-binding.md: b9e1d2e882079902f259d5096efe6d6e1e4ba356bac300e1f14516d355e8111d

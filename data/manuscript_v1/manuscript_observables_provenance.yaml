@@ -1,1841 +1,2130 @@
-schema_version: manuscript_taipan_observables_provenance_v1
-task: MANUSCRIPT_TAIPAN_INPUT_RECOVERY_V1
-mode: REDUCTION_AND_PROVENANCE_ONLY
-created_date: '2026-10-19'
-canonical_base:
-  commit: c65cfb1daa8edf4ce85684b5093869c0f287d269
-  branch: origin/main
+schema_version: manuscript_taipan_observables_provenance_v2
+task: MANUSCRIPT_INTENSITY_ADMISSION_RECOVERY_V2
 manuscript_input_gate: DRAFT_PROVENANCE_INCOMPLETE
-cef_fitting_performed: false
-exchange_active: false
-access_boundary:
-  raw_detector_files_opened: false
-  protected_stage02r_holdout_products_opened: false
-  new_stage02r_holdout_detector_access_count: 0
-  legacy_processed_archive_contains_scans_later_assigned_holdout: true
-  later_holdout_source_scan_count: 17
-  profile_groups_containing_later_holdout_scan: 16
-  note: The archived Stage03A fit predates the Stage02R blind split. Recovery used only its processed rows and manifests.
-sources:
-  legacy_stage01_script:
-    filename: 18_taipan_ingest_qc_colab.py
-    discovered_local_path: /home/oleg/Загрузки/18_taipan_ingest_qc_colab.py
-    sha256: 19b770f41ff96f3edf4db060a49b60419a3b41e97f93b9a1069b9d8479fb3aaf
-    bytes: 55974
-  legacy_stage01_points:
-    filename: DyFeO3_TAIPAN_points_canonical.csv.gz
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_points_canonical.csv.gz
-    sha256: 4de3f25efc8f64afddf070ba7acb3f8fdbd4736bf30b3a06ed0d62f749ec9d08
-    bytes: 707465
-  legacy_stage01_inventory:
-    filename: DyFeO3_TAIPAN_scan_inventory.csv
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_scan_inventory.csv
-    sha256: e23b01ee3c51ffe79fd287be59fd5b3ae85ea44427b4498fa3fed7d25d403853
-    bytes: 236035
-  legacy_stage01_manifest:
-    filename: DyFeO3_TAIPAN_stage01_manifest.json
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage01_manifest.json
-    sha256: 36061139b2c542169741e3ad651dce3c64251b40fd2484fa8d0ec65eeeefd3ac
-    bytes: 33606
-  legacy_stage02_script:
-    filename: 19_taipan_background_peak_discovery_colab.py
-    discovered_local_path: /home/oleg/Загрузки/19_taipan_background_peak_discovery_colab.py
-    sha256: a796489c4f75bbdf5462e50f8e53c3904a9e5b6506c240ca291459e637b3a678
-    bytes: 83021
-  legacy_stage02_candidates:
-    filename: DyFeO3_TAIPAN_stage02_global_candidates.csv
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_global_candidates.csv
-    sha256: 25e0645db19968681c82a5e518f075160f103d7800251d57295c74ac14308a65
-    bytes: 2899
-  legacy_stage02_measurements:
-    filename: DyFeO3_TAIPAN_stage02_feature_measurements.csv.gz
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_feature_measurements.csv.gz
-    sha256: 6337f3e2411d007f22d563e47b91a3a778d24e77f24ca7edc28a0b1ecaa3f914
-    bytes: 16887
-  legacy_stage02_q_trends:
-    filename: DyFeO3_TAIPAN_stage02_feature_Q_trends.csv
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_feature_Q_trends.csv
-    sha256: 1510c4b8089e284149c378a203466a7a7e45584f6f55619be9ba4a471e643430
-    bytes: 2363
-  legacy_stage02_manifest:
-    filename: DyFeO3_TAIPAN_stage02_manifest.json
-    discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_manifest.json
-    sha256: ed07490a8ce98ad4fa3f52680e2b8861323bf42be18bb117f4c23be70f242622
-    bytes: 5728
-  legacy_stage03a_script:
-    filename: 20_taipan_confirmatory_profiles_colab.py
-    discovered_local_path: /home/oleg/Загрузки/20_taipan_confirmatory_profiles_colab.py
-    sha256: 09dd945c036a6f9286fc8c7fdcd905a75e73528f7b0ab54082f58ef82db5d9e1
-    bytes: 65540
-  legacy_stage03a_archive:
-    filename: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip
-    discovered_local_path: /home/oleg/Загрузки/stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip
-    sha256: 15b10df93a4300b20ecbfd93c5a2e22aee0df906bc4addf6a26437fba8af4b03
-    bytes: 1603428
-  scan_inventory_c2d98e:
-    repository_path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
-    sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
-    bytes: 331285
-  semantic_verification_report_e97f46:
-    repository_path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
-    sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
-    bytes: 5776579
-  scan_classification_cf0078:
-    repository_path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
-    sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
-    bytes: 137024
-  instrument_configs_824fd4:
-    repository_path: 04_Results/Stage02R/W02-02R-A-003/instrument_configs.yaml
-    sha256: 3e71224b264a1f926868cb1b4b80a21092d0af58a1813d9b311170893eb96441
-    bytes: 6880
-  normalization_compatibility_groups_5c33ae:
-    repository_path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility_groups.yaml
-    sha256: cbc1907a38e8fdd23ab3f72fd22b8412c561ebff8ebad58ee80928b9e27b51e9
-    bytes: 10063
-  blind_split_8c5811:
-    repository_path: 04_Results/Stage02R/W02-02R-B-001/blind_split.csv
-    sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
-    bytes: 32522
-stage03a_archive_entries:
-  stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_physical_line_summary.csv:
-    sha256: 657c812a890e99c2889e835cdba7d46bb7b00d00c02fad0b408a08c770a28f12
-    bytes: 1280
-  stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv:
-    sha256: b44ada5ae6745c1fc3a85784109b4df663b08b9466699e14470fef52641f03a0
-    bytes: 17862
-  stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_points.csv.gz:
-    sha256: 6e480cadeaba4a410df3587260242ef42ffe5aa6d070342622ad1670b8cb340c
-    bytes: 50240
-  stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_background_model_comparison.csv:
-    sha256: bad36e5283d6350c3f693c0b8c71b73501106fc9f7456aca4191657e17155471
-    bytes: 1590
-  stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_manifest.json:
-    sha256: 15337c347d6ecd349fda2104f255903a71a764bbea3ce1fa5b658251042580f1
-    bytes: 6771
-scan_identity_crosswalk:
-  f002_source_scan_count: 76
-  legacy_raw_scan_ids:
-  - '104093'
-  - '104094'
-  - '104095'
-  - '104096'
-  - '104097'
-  - '104098'
-  - '104099'
-  - '104100'
-  - '104101'
-  - '104147'
-  - '104148'
-  - '104149'
-  - '104150'
-  - '104151'
-  - '104152'
-  - '104153'
-  - '104154'
-  - '104156'
-  - '104157'
-  - '104159'
-  - '104163'
-  - '104164'
-  - '104165'
-  - '104166'
-  - '104167'
-  - '104168'
-  - '104169'
-  - '104170'
-  - '104171'
-  - '104172'
-  - '104173'
-  - '104174'
-  - '104175'
-  - '104176'
-  - '104177'
-  - '104198'
-  - '104199'
-  - '104200'
-  - '104201'
-  - '104202'
-  - '104203'
-  - '104204'
-  - '104205'
-  - '104206'
-  - '104207'
-  - '104208'
-  - '104209'
-  - '104210'
-  - '104211'
-  - '104212'
-  - '104215'
-  - '104216'
-  - '104217'
-  - '104218'
-  - '104219'
-  - '104220'
-  - '104221'
-  - '104222'
-  - '104223'
-  - '104224'
-  - '104225'
-  - '104226'
-  - '104227'
-  - '104228'
-  - '104229'
-  - '104230'
-  - '104231'
-  - '104232'
-  - '104233'
-  - '104234'
-  - '104235'
-  - '104236'
-  - '104237'
-  - '104238'
-  - '104239'
-  - '104240'
-  stage02r_scan_record_ids:
-  - SCAN-02R-8ca6316615b8cbae
-  - SCAN-02R-43979cdff2eef525
-  - SCAN-02R-8dcd5041a8a4e044
-  - SCAN-02R-54bfea84553b4c65
-  - SCAN-02R-91de8f7a5ce6984b
-  - SCAN-02R-731f452fb62a55bd
-  - SCAN-02R-8641a638f4880175
-  - SCAN-02R-5e02dde1da14be55
-  - SCAN-02R-774f62fc1777bc6b
-  - SCAN-02R-432159a75d80f2b3
-  - SCAN-02R-f71173d3ec0c732c
-  - SCAN-02R-ef6a11424f751d3f
-  - SCAN-02R-79e659b84aa4786d
-  - SCAN-02R-1e5b02c69224108d
-  - SCAN-02R-2a0e91f43e0fe127
-  - SCAN-02R-d2b7e9ee069bd20e
-  - SCAN-02R-762111064d108c6d
-  - SCAN-02R-7a0b878c4f9bf5c8
+manuscript_intensity_gate: FAIL_CLEANLY
+V2_admission_is_authoritative: true
+V1_history:
+  commit: 415dd1751b7bf232476674af4e7e2571dd89a113
+  tree: f85afbf06db5daf6f5ae8e1e60b0edc512709420
+  original_manifest_sha256: 8f43bc5957fb7a8c147ed1a0734bae7a390a6312b65c0101f05844d04d5fcf58
+  superseded_fields:
+  - dataset-wide Q ambiguity for reconstructed subset
+  - CENSOR_ADMISSIBLE diagnostic label
+  - ENERGY role for holdout-mixed aggregate
+  original_manifest:
+    schema_version: manuscript_taipan_observables_provenance_v1
+    task: MANUSCRIPT_TAIPAN_INPUT_RECOVERY_V1
+    mode: REDUCTION_AND_PROVENANCE_ONLY
+    created_date: '2026-10-19'
+    canonical_base:
+      commit: c65cfb1daa8edf4ce85684b5093869c0f287d269
+      branch: origin/main
+    manuscript_input_gate: DRAFT_PROVENANCE_INCOMPLETE
+    cef_fitting_performed: false
+    exchange_active: false
+    access_boundary:
+      raw_detector_files_opened: false
+      protected_stage02r_holdout_products_opened: false
+      new_stage02r_holdout_detector_access_count: 0
+      legacy_processed_archive_contains_scans_later_assigned_holdout: true
+      later_holdout_source_scan_count: 17
+      profile_groups_containing_later_holdout_scan: 16
+      note: The archived Stage03A fit predates the Stage02R blind split. Recovery
+        used only its processed rows and manifests.
+    sources:
+      legacy_stage01_script:
+        filename: 18_taipan_ingest_qc_colab.py
+        discovered_local_path: /home/oleg/Загрузки/18_taipan_ingest_qc_colab.py
+        sha256: 19b770f41ff96f3edf4db060a49b60419a3b41e97f93b9a1069b9d8479fb3aaf
+        bytes: 55974
+      legacy_stage01_points:
+        filename: DyFeO3_TAIPAN_points_canonical.csv.gz
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_points_canonical.csv.gz
+        sha256: 4de3f25efc8f64afddf070ba7acb3f8fdbd4736bf30b3a06ed0d62f749ec9d08
+        bytes: 707465
+      legacy_stage01_inventory:
+        filename: DyFeO3_TAIPAN_scan_inventory.csv
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_scan_inventory.csv
+        sha256: e23b01ee3c51ffe79fd287be59fd5b3ae85ea44427b4498fa3fed7d25d403853
+        bytes: 236035
+      legacy_stage01_manifest:
+        filename: DyFeO3_TAIPAN_stage01_manifest.json
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage01_manifest.json
+        sha256: 36061139b2c542169741e3ad651dce3c64251b40fd2484fa8d0ec65eeeefd3ac
+        bytes: 33606
+      legacy_stage02_script:
+        filename: 19_taipan_background_peak_discovery_colab.py
+        discovered_local_path: /home/oleg/Загрузки/19_taipan_background_peak_discovery_colab.py
+        sha256: a796489c4f75bbdf5462e50f8e53c3904a9e5b6506c240ca291459e637b3a678
+        bytes: 83021
+      legacy_stage02_candidates:
+        filename: DyFeO3_TAIPAN_stage02_global_candidates.csv
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_global_candidates.csv
+        sha256: 25e0645db19968681c82a5e518f075160f103d7800251d57295c74ac14308a65
+        bytes: 2899
+      legacy_stage02_measurements:
+        filename: DyFeO3_TAIPAN_stage02_feature_measurements.csv.gz
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_feature_measurements.csv.gz
+        sha256: 6337f3e2411d007f22d563e47b91a3a778d24e77f24ca7edc28a0b1ecaa3f914
+        bytes: 16887
+      legacy_stage02_q_trends:
+        filename: DyFeO3_TAIPAN_stage02_feature_Q_trends.csv
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_feature_Q_trends.csv
+        sha256: 1510c4b8089e284149c378a203466a7a7e45584f6f55619be9ba4a471e643430
+        bytes: 2363
+      legacy_stage02_manifest:
+        filename: DyFeO3_TAIPAN_stage02_manifest.json
+        discovered_local_path: /home/oleg/Загрузки/DyFeO3_TAIPAN_stage02_manifest.json
+        sha256: ed07490a8ce98ad4fa3f52680e2b8861323bf42be18bb117f4c23be70f242622
+        bytes: 5728
+      legacy_stage03a_script:
+        filename: 20_taipan_confirmatory_profiles_colab.py
+        discovered_local_path: /home/oleg/Загрузки/20_taipan_confirmatory_profiles_colab.py
+        sha256: 09dd945c036a6f9286fc8c7fdcd905a75e73528f7b0ab54082f58ef82db5d9e1
+        bytes: 65540
+      legacy_stage03a_archive:
+        filename: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip
+        discovered_local_path: /home/oleg/Загрузки/stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip
+        sha256: 15b10df93a4300b20ecbfd93c5a2e22aee0df906bc4addf6a26437fba8af4b03
+        bytes: 1603428
+      scan_inventory_c2d98e:
+        repository_path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+        sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+        bytes: 331285
+      semantic_verification_report_e97f46:
+        repository_path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+        sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+        bytes: 5776579
+      scan_classification_cf0078:
+        repository_path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+        sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
+        bytes: 137024
+      instrument_configs_824fd4:
+        repository_path: 04_Results/Stage02R/W02-02R-A-003/instrument_configs.yaml
+        sha256: 3e71224b264a1f926868cb1b4b80a21092d0af58a1813d9b311170893eb96441
+        bytes: 6880
+      normalization_compatibility_groups_5c33ae:
+        repository_path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility_groups.yaml
+        sha256: cbc1907a38e8fdd23ab3f72fd22b8412c561ebff8ebad58ee80928b9e27b51e9
+        bytes: 10063
+      blind_split_8c5811:
+        repository_path: 04_Results/Stage02R/W02-02R-B-001/blind_split.csv
+        sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+        bytes: 32522
+    stage03a_archive_entries:
+      stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_physical_line_summary.csv:
+        sha256: 657c812a890e99c2889e835cdba7d46bb7b00d00c02fad0b408a08c770a28f12
+        bytes: 1280
+      stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv:
+        sha256: b44ada5ae6745c1fc3a85784109b4df663b08b9466699e14470fef52641f03a0
+        bytes: 17862
+      stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_points.csv.gz:
+        sha256: 6e480cadeaba4a410df3587260242ef42ffe5aa6d070342622ad1670b8cb340c
+        bytes: 50240
+      stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_background_model_comparison.csv:
+        sha256: bad36e5283d6350c3f693c0b8c71b73501106fc9f7456aca4191657e17155471
+        bytes: 1590
+      stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_manifest.json:
+        sha256: 15337c347d6ecd349fda2104f255903a71a764bbea3ce1fa5b658251042580f1
+        bytes: 6771
+    scan_identity_crosswalk:
+      f002_source_scan_count: 76
+      legacy_raw_scan_ids:
+      - '104093'
+      - '104094'
+      - '104095'
+      - '104096'
+      - '104097'
+      - '104098'
+      - '104099'
+      - '104100'
+      - '104101'
+      - '104147'
+      - '104148'
+      - '104149'
+      - '104150'
+      - '104151'
+      - '104152'
+      - '104153'
+      - '104154'
+      - '104156'
+      - '104157'
+      - '104159'
+      - '104163'
+      - '104164'
+      - '104165'
+      - '104166'
+      - '104167'
+      - '104168'
+      - '104169'
+      - '104170'
+      - '104171'
+      - '104172'
+      - '104173'
+      - '104174'
+      - '104175'
+      - '104176'
+      - '104177'
+      - '104198'
+      - '104199'
+      - '104200'
+      - '104201'
+      - '104202'
+      - '104203'
+      - '104204'
+      - '104205'
+      - '104206'
+      - '104207'
+      - '104208'
+      - '104209'
+      - '104210'
+      - '104211'
+      - '104212'
+      - '104215'
+      - '104216'
+      - '104217'
+      - '104218'
+      - '104219'
+      - '104220'
+      - '104221'
+      - '104222'
+      - '104223'
+      - '104224'
+      - '104225'
+      - '104226'
+      - '104227'
+      - '104228'
+      - '104229'
+      - '104230'
+      - '104231'
+      - '104232'
+      - '104233'
+      - '104234'
+      - '104235'
+      - '104236'
+      - '104237'
+      - '104238'
+      - '104239'
+      - '104240'
+      stage02r_scan_record_ids:
+      - SCAN-02R-8ca6316615b8cbae
+      - SCAN-02R-43979cdff2eef525
+      - SCAN-02R-8dcd5041a8a4e044
+      - SCAN-02R-54bfea84553b4c65
+      - SCAN-02R-91de8f7a5ce6984b
+      - SCAN-02R-731f452fb62a55bd
+      - SCAN-02R-8641a638f4880175
+      - SCAN-02R-5e02dde1da14be55
+      - SCAN-02R-774f62fc1777bc6b
+      - SCAN-02R-432159a75d80f2b3
+      - SCAN-02R-f71173d3ec0c732c
+      - SCAN-02R-ef6a11424f751d3f
+      - SCAN-02R-79e659b84aa4786d
+      - SCAN-02R-1e5b02c69224108d
+      - SCAN-02R-2a0e91f43e0fe127
+      - SCAN-02R-d2b7e9ee069bd20e
+      - SCAN-02R-762111064d108c6d
+      - SCAN-02R-7a0b878c4f9bf5c8
+      - SCAN-02R-46abc72aaf86494c
+      - SCAN-02R-616075842b1e4c6e
+      - SCAN-02R-074afad5a6b92ea4
+      - SCAN-02R-a88a59b9d2315a05
+      - SCAN-02R-41d12941c2dac178
+      - SCAN-02R-4f5e09d1864ac832
+      - SCAN-02R-4650765ebe11f415
+      - SCAN-02R-b704f6a14f738619
+      - SCAN-02R-26cdfd757f62fb5b
+      - SCAN-02R-5e52d7e5fbefbc05
+      - SCAN-02R-4d54ea7698000638
+      - SCAN-02R-fb62d31e5c3c1dbf
+      - SCAN-02R-c7a73b4824a01210
+      - SCAN-02R-5215f80c458dc1c4
+      - SCAN-02R-4eb3495e2e32dd73
+      - SCAN-02R-5f553db9674e6d45
+      - SCAN-02R-598c5cedd335b846
+      - SCAN-02R-643ff7e40bd97888
+      - SCAN-02R-42d0a4d8bd2d58cc
+      - SCAN-02R-abcd8030795bc9cb
+      - SCAN-02R-26c5588a4a75efc2
+      - SCAN-02R-ebc55d8b20e3cec0
+      - SCAN-02R-a1d82bdc331e2df4
+      - SCAN-02R-77b71bd09c7eb4b4
+      - SCAN-02R-7118d0dce593edea
+      - SCAN-02R-306a96179bd778b6
+      - SCAN-02R-baae22000a534323
+      - SCAN-02R-68a1fdbd8955d9a4
+      - SCAN-02R-7acd4c14a0007418
+      - SCAN-02R-51f6ed2eb7632349
+      - SCAN-02R-91f840c137c7a43c
+      - SCAN-02R-4ad1398a663b7933
+      - SCAN-02R-75faa4a614a8f130
+      - SCAN-02R-48f6ae0dc1c99d07
+      - SCAN-02R-8e62e3b1b9deee81
+      - SCAN-02R-f380a5a0600b447a
+      - SCAN-02R-f36bb8e354cf21b7
+      - SCAN-02R-c5843105fb81b54c
+      - SCAN-02R-87edbdf74d1e5fb1
+      - SCAN-02R-45d1daf515e218b6
+      - SCAN-02R-89614c0503a95275
+      - SCAN-02R-58a76874c3967085
+      - SCAN-02R-f56f915bc229d6aa
+      - SCAN-02R-f87c8c3cd06321c2
+      - SCAN-02R-0e6d00a831c04e8d
+      - SCAN-02R-b14e49e20117cb08
+      - SCAN-02R-3f903a520f921d83
+      - SCAN-02R-ae86f327e3ed5623
+      - SCAN-02R-eea1fadd4abbd144
+      - SCAN-02R-79960ffd3b8a968b
+      - SCAN-02R-c74434b3ed5fc9b8
+      - SCAN-02R-957a8834d758202b
+      - SCAN-02R-8345a5938afc1084
+      - SCAN-02R-059bd02c78268a2b
+      - SCAN-02R-fede66c26a275769
+      - SCAN-02R-6fded6b51e0642a8
+      - SCAN-02R-708cf4d83a29d78f
+      - SCAN-02R-2f690557cfd20bec
+      source_checksum_matches: 76
+      source_checksum_mismatches: []
+      current_split_composition:
+        discovery: 55
+        holdout: 17
+        not_applicable: 4
+    f002_energy_provenance:
+      classification: global_shared_fit
+      source_profile_groups: 46
+      source_fit_points: 571
+      source_raw_scans: 76
+      derivation_chain:
+      - Stage01 parsed the recorded detector, monitor, e, q, h, k, l, and temp columns.
+      - Stage02 selected fixed-HKL energy spectra and coadded repeat bins by summing
+        detector counts and monitor exposure.
+      - Stage02 blind search yielded F002 at 18.255809880373345 meV with median matched-filter
+        FWHM 2.5 meV.
+      - Stage03A fit 46 spectrum groups simultaneously in a ±6 meV window with one
+        shared centroid, one empirical FWHM per legacy instrument block, one nonnegative
+        unit-area Gaussian area per spectrum, and an independent positive log-polynomial
+        background per spectrum.
+      - Poisson-deviance least-squares fits compared background orders 0, 1, and 2;
+        BIC selected order 1.
+      - Total centroid sigma is sqrt(statistical covariance sigma^2 + background-family
+        center half-range^2).
+      fit_interval:
+        center_initial_meV: 18.255809880373345
+        half_width_meV: 6.0
+        nominal_bounds_meV:
+        - 12.255809880373345
+        - 24.255809880373345
+      peak_model: nonnegative area times unit-area Gaussian; shared centroid; empirical
+        FWHM shared within legacy instrument block
+      background_model: positive exp(polynomial) per spectrum; selected log-linear
+        order 1 by BIC from orders 0/1/2
+      optimizer: scipy.optimize.least_squares, trf, x_scale=jac, max_nfev=3000, ftol=xtol=gtol=1e-10
+      energy_transfer_convention: Ei_minus_Ef
+      archived_energy_meV: 18.24717836149484
+      archived_sigma_stat_meV: 0.07207378752783855
+      archived_sigma_background_model_meV: 0.09471714619743388
+      archived_sigma_total_meV: 0.11902087477578914
+      observed_fwhm_by_instrument_meV:
+        inst_4615972084:
+          fwhm: 2.252624728581626
+          sigma_stat: 0.23083045146896589
+        inst_f4703b6bd8:
+          fwhm: 2.2018084149247317
+          sigma_stat: 0.28730340536856736
+      linewidth_interpretation: Observed empirical FWHM only; not intrinsic lifetime
+        linewidth.
+      single_integrated_area: not_defined; 46 profile-specific areas are fitted
+      covariance_storage_status: full covariance matrix not stored; archived diagonal-derived
+        standard errors only
+      neighbor_peak_covariance: not stored; the F002 model is a single Gaussian in
+        its fit window
+      background_order_results:
+        '0':
+          center_meV: 18.08052949111099
+          center_sigma_stat_meV: 0.08686375889439805
+          bic: 1405.0813643672732
+          reduced_deviance: 1.6850407341385552
+        '1':
+          center_meV: 18.24717836149484
+          center_sigma_stat_meV: 0.07207378752783855
+          bic: 1399.7911301289146
+          reduced_deviance: 1.1739750036451557
+        '2':
+          center_meV: 18.269963783505858
+          center_sigma_stat_meV: 0.06256139454635118
+          bic: 1627.2784873471112
+          reduced_deviance: 1.1466580863058264
+      reproduction_status: PROVENANCE_PARTIAL
+      processed_data_reproduction_runtime:
+        python: 3.12.3
+        numpy: 2.3.0
+        pandas: 2.3.0
+        scipy: 1.15.3
+      processed_data_reproduction:
+        selected_center_meV: 18.24717840287773
+        selected_center_delta_meV: 4.138289000366058e-08
+        selected_center_sigma_stat_meV: 0.07207380461770627
+        selected_center_sigma_stat_delta_meV: 1.708986777093635e-08
+        max_profile_area_abs_delta: 0.0002699379458299678
+        max_profile_area_sigma_abs_delta: 0.0053970337230211385
+        detected_count: 8
+        reason_not_bit_exact: Original Python 3.13.15 / NumPy 2.1.3 / pandas 2.2.3
+          / SciPy 1.16.3 runtime is unavailable locally; original Stage02 coadded/group
+          inputs are not locally complete.
+      absolute_energy_calibration_systematic_included: false
+      production_energy_likelihood_admitted: true
+    instrument_blocks:
+    - instrument_block_id: inst_4615972084
+      included_profile_groups:
+      - SG000
+      - SG001
+      - SG002
+      - SG003
+      - SG004
+      - SG005
+      - SG006
+      - SG007
+      - SG008
+      - SG009
+      - SG010
+      - SG011
+      - SG013
+      - SG014
+      - SG015
+      - SG016
+      - SG017
+      - SG018
+      - SG019
+      - SG020
+      - SG021
+      - SG022
+      - SG023
+      - SG024
+      - SG034
+      - SG035
+      - SG036
+      - SG037
+      - SG038
+      - SG039
+      - SG040
+      - SG041
+      - SG042
+      - SG043
+      - SG044
+      - SG045
+      - SG046
+      included_raw_scan_ids:
+      - '104147'
+      - '104148'
+      - '104149'
+      - '104150'
+      - '104151'
+      - '104152'
+      - '104153'
+      - '104154'
+      - '104156'
+      - '104157'
+      - '104159'
+      - '104163'
+      - '104164'
+      - '104165'
+      - '104166'
+      - '104167'
+      - '104168'
+      - '104169'
+      - '104170'
+      - '104171'
+      - '104172'
+      - '104173'
+      - '104174'
+      - '104175'
+      - '104176'
+      - '104177'
+      - '104198'
+      - '104199'
+      - '104200'
+      - '104201'
+      - '104202'
+      - '104203'
+      - '104204'
+      - '104205'
+      - '104206'
+      - '104207'
+      - '104208'
+      - '104209'
+      - '104210'
+      - '104211'
+      - '104212'
+      - '104215'
+      - '104216'
+      - '104217'
+      - '104218'
+      - '104219'
+      - '104220'
+      - '104221'
+      - '104222'
+      - '104223'
+      - '104224'
+      - '104225'
+      - '104226'
+      - '104227'
+      - '104228'
+      - '104229'
+      - '104230'
+      - '104231'
+      - '104232'
+      - '104233'
+      - '104234'
+      - '104235'
+      - '104236'
+      - '104237'
+      - '104238'
+      - '104239'
+      - '104240'
+      included_scan_record_ids:
+      - SCAN-02R-432159a75d80f2b3
+      - SCAN-02R-f71173d3ec0c732c
+      - SCAN-02R-ef6a11424f751d3f
+      - SCAN-02R-79e659b84aa4786d
+      - SCAN-02R-1e5b02c69224108d
+      - SCAN-02R-2a0e91f43e0fe127
+      - SCAN-02R-d2b7e9ee069bd20e
+      - SCAN-02R-762111064d108c6d
+      - SCAN-02R-7a0b878c4f9bf5c8
+      - SCAN-02R-46abc72aaf86494c
+      - SCAN-02R-616075842b1e4c6e
+      - SCAN-02R-074afad5a6b92ea4
+      - SCAN-02R-a88a59b9d2315a05
+      - SCAN-02R-41d12941c2dac178
+      - SCAN-02R-4f5e09d1864ac832
+      - SCAN-02R-4650765ebe11f415
+      - SCAN-02R-b704f6a14f738619
+      - SCAN-02R-26cdfd757f62fb5b
+      - SCAN-02R-5e52d7e5fbefbc05
+      - SCAN-02R-4d54ea7698000638
+      - SCAN-02R-fb62d31e5c3c1dbf
+      - SCAN-02R-c7a73b4824a01210
+      - SCAN-02R-5215f80c458dc1c4
+      - SCAN-02R-4eb3495e2e32dd73
+      - SCAN-02R-5f553db9674e6d45
+      - SCAN-02R-598c5cedd335b846
+      - SCAN-02R-643ff7e40bd97888
+      - SCAN-02R-42d0a4d8bd2d58cc
+      - SCAN-02R-abcd8030795bc9cb
+      - SCAN-02R-26c5588a4a75efc2
+      - SCAN-02R-ebc55d8b20e3cec0
+      - SCAN-02R-a1d82bdc331e2df4
+      - SCAN-02R-77b71bd09c7eb4b4
+      - SCAN-02R-7118d0dce593edea
+      - SCAN-02R-306a96179bd778b6
+      - SCAN-02R-baae22000a534323
+      - SCAN-02R-68a1fdbd8955d9a4
+      - SCAN-02R-7acd4c14a0007418
+      - SCAN-02R-51f6ed2eb7632349
+      - SCAN-02R-91f840c137c7a43c
+      - SCAN-02R-4ad1398a663b7933
+      - SCAN-02R-75faa4a614a8f130
+      - SCAN-02R-48f6ae0dc1c99d07
+      - SCAN-02R-8e62e3b1b9deee81
+      - SCAN-02R-f380a5a0600b447a
+      - SCAN-02R-f36bb8e354cf21b7
+      - SCAN-02R-c5843105fb81b54c
+      - SCAN-02R-87edbdf74d1e5fb1
+      - SCAN-02R-45d1daf515e218b6
+      - SCAN-02R-89614c0503a95275
+      - SCAN-02R-58a76874c3967085
+      - SCAN-02R-f56f915bc229d6aa
+      - SCAN-02R-f87c8c3cd06321c2
+      - SCAN-02R-0e6d00a831c04e8d
+      - SCAN-02R-b14e49e20117cb08
+      - SCAN-02R-3f903a520f921d83
+      - SCAN-02R-ae86f327e3ed5623
+      - SCAN-02R-eea1fadd4abbd144
+      - SCAN-02R-79960ffd3b8a968b
+      - SCAN-02R-c74434b3ed5fc9b8
+      - SCAN-02R-957a8834d758202b
+      - SCAN-02R-8345a5938afc1084
+      - SCAN-02R-059bd02c78268a2b
+      - SCAN-02R-fede66c26a275769
+      - SCAN-02R-6fded6b51e0642a8
+      - SCAN-02R-708cf4d83a29d78f
+      - SCAN-02R-2f690557cfd20bec
+      grouping_rationale: Legacy Stage01 SHA-256-derived identity over monochromator,
+        analyzer, collimation, preset type/channel, lattice text, and UB text.
+      known_configuration:
+        Ef_range_meV:
+        - 14.8709
+        - 14.8716
+        monochromator:
+        - PG
+        analyzer:
+        - PG
+        collimation:
+        - o-40-40-o
+        preset_type:
+        - normal
+        preset_channel:
+        - monitor
+        preset_values_not_in_legacy_block_hash:
+        - '1000000.0'
+        - '750000.0'
+        - '950000.0'
+        lattice_id:
+        - lattice_691fb0e1a5
+        ub_id:
+        - ub_91081dcbab
+        monitor_normalization: actual monitor counts; 1e6 reference
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      production_likelihood_admitted: false
+      missing_configuration_fields:
+      - monochromator_reflection
+      - monochromator_mosaic
+      - analyzer_reflection
+      - analyzer_mosaic
+      - filter_state
+      - higher_order_suppression_state
+      - attenuation_state
+      - detector_hardware_identity
+      - monitor_hardware_identity
+      - gain_state
+      - focusing_or_aperture_state
+    - instrument_block_id: inst_f4703b6bd8
+      included_profile_groups:
+      - SG025
+      - SG026
+      - SG027
+      - SG028
+      - SG029
+      - SG030
+      - SG031
+      - SG032
+      - SG033
+      included_raw_scan_ids:
+      - '104093'
+      - '104094'
+      - '104095'
+      - '104096'
+      - '104097'
+      - '104098'
+      - '104099'
+      - '104100'
+      - '104101'
+      included_scan_record_ids:
+      - SCAN-02R-8ca6316615b8cbae
+      - SCAN-02R-43979cdff2eef525
+      - SCAN-02R-8dcd5041a8a4e044
+      - SCAN-02R-54bfea84553b4c65
+      - SCAN-02R-91de8f7a5ce6984b
+      - SCAN-02R-731f452fb62a55bd
+      - SCAN-02R-8641a638f4880175
+      - SCAN-02R-5e02dde1da14be55
+      - SCAN-02R-774f62fc1777bc6b
+      grouping_rationale: Legacy Stage01 SHA-256-derived identity over monochromator,
+        analyzer, collimation, preset type/channel, lattice text, and UB text.
+      known_configuration:
+        Ef_range_meV:
+        - 14.871
+        - 14.8714
+        monochromator:
+        - PG
+        analyzer:
+        - PG
+        collimation:
+        - o-40-40-o
+        preset_type:
+        - normal
+        preset_channel:
+        - monitor
+        preset_values_not_in_legacy_block_hash:
+        - '240000.0'
+        - '750000.0'
+        lattice_id:
+        - lattice_0c3ef52ef2
+        ub_id:
+        - ub_859a03811f
+        monitor_normalization: actual monitor counts; 1e6 reference
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      production_likelihood_admitted: false
+      missing_configuration_fields:
+      - monochromator_reflection
+      - monochromator_mosaic
+      - analyzer_reflection
+      - analyzer_mosaic
+      - filter_state
+      - higher_order_suppression_state
+      - attenuation_state
+      - detector_hardware_identity
+      - monitor_hardware_identity
+      - gain_state
+      - focusing_or_aperture_state
+    cross_block_normalization:
+      status: NOT_COMPARABLE
+      reason: Distinct legacy instrument block IDs and orientation/lattice states;
+        no reviewed cross-block scale bridge.
+    q_semantics:
+      status: unresolved
+      row_status: AMBIGUOUS
+      csv_policy: leave h_pbnm/k_pbnm/l_pbnm/Q_Ainv blank
+      legacy_values_location: per_observation_provenance
+      reason: Stage02R verified h/k/l only partially and did not establish raw q units/convention
+        or a Pbnm mapping.
+    temperature_semantics:
+      status: unresolved
+      row_status: AMBIGUOUS
+      csv_policy: leave temperature_K blank
+      legacy_values_location: per_observation_provenance
+      reason: Stage02R found no unique temperature sensor or units; legacy temp channel
+        values are retained without mapping them to sample temperature.
+    intensity_recovery:
+      profile_rows_recovered: 46
+      detected_z_ge_3: 8
+      non_detections_z_lt_3: 38
+      intensity_units: counts_per_1e6_monitor_meV
+      normalization_basis: actual monitor counts normalized to 1e6; no arbitrary per-scan
+        scale introduced
+      production_detected_intensity_rows_admitted: 0
+    censoring:
+      candidate_rows_found: 38
+      construction: max(fitted_nonnegative_area,0) + scipy.stats.norm.ppf(0.95) *
+        area_sigma
+      confidence: 0.95
+      status: CENSOR_ADMISSIBLE
+      production_censored_rows_admitted: 0
+      admission_blocker: normalization/Q/temperature semantics and later-holdout composition
+        require independent input review
+    per_observation_provenance:
+    - observation_id: TAIPAN-F002-AREA-SG000
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104147'
+      - '104165'
+      source_scan_record_ids:
+      - SCAN-02R-432159a75d80f2b3
+      - SCAN-02R-41d12941c2dac178
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.448
+      legacy_hkl_raw:
+      - 0.0
+      - 1.8002
+      - 3.0
+      legacy_q_raw: 3.1971
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG001
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104199'
+      source_scan_record_ids:
+      - SCAN-02R-42d0a4d8bd2d58cc
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.46
+      legacy_hkl_raw:
+      - 0.0
+      - 1.9003
+      - 3.0
+      legacy_q_raw: 3.2694
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG002
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104148'
+      - '104156'
+      - '104166'
+      - '104212'
+      source_scan_record_ids:
+      - SCAN-02R-f71173d3ec0c732c
+      - SCAN-02R-7a0b878c4f9bf5c8
+      - SCAN-02R-4f5e09d1864ac832
+      - SCAN-02R-4ad1398a663b7933
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.44925
+      legacy_hkl_raw:
+      - 0.0
+      - 2.0002000000000004
+      - 2.99995
+      legacy_q_raw: 3.3439
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 3
+        not_applicable: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG003
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104200'
+      source_scan_record_ids:
+      - SCAN-02R-abcd8030795bc9cb
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.452
+      legacy_hkl_raw:
+      - 0.0
+      - 2.1003
+      - 3.0
+      legacy_q_raw: 3.4206
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG004
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104149'
+      - '104157'
+      - '104167'
+      source_scan_record_ids:
+      - SCAN-02R-ef6a11424f751d3f
+      - SCAN-02R-46abc72aaf86494c
+      - SCAN-02R-4650765ebe11f415
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.4245
+      legacy_hkl_raw:
+      - 0.0
+      - 2.2003
+      - 3.0
+      legacy_q_raw: 3.4991
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+        not_applicable: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG005
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104201'
+      source_scan_record_ids:
+      - SCAN-02R-26c5588a4a75efc2
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.447
+      legacy_hkl_raw:
+      - 0.0
+      - 2.3003
+      - 2.99995
+      legacy_q_raw: 3.5796
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG006
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104150'
+      - '104168'
+      source_scan_record_ids:
+      - SCAN-02R-79e659b84aa4786d
+      - SCAN-02R-b704f6a14f738619
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.422
+      legacy_hkl_raw:
+      - 0.0
+      - 2.4002
+      - 3.0
+      legacy_q_raw: 3.6616
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG007
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104202'
+      source_scan_record_ids:
+      - SCAN-02R-ebc55d8b20e3cec0
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.454
+      legacy_hkl_raw:
+      - 0.0
+      - 2.5003
+      - 3.0
+      legacy_q_raw: 3.7453
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG008
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104151'
+      - '104159'
+      - '104169'
+      source_scan_record_ids:
+      - SCAN-02R-1e5b02c69224108d
+      - SCAN-02R-616075842b1e4c6e
+      - SCAN-02R-26cdfd757f62fb5b
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.437
+      legacy_hkl_raw:
+      - 0.0
+      - 2.6003
+      - 3.0
+      legacy_q_raw: 3.8303
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+        not_applicable: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG009
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104203'
+      source_scan_record_ids:
+      - SCAN-02R-a1d82bdc331e2df4
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.456
+      legacy_hkl_raw:
+      - 0.0
+      - 2.7003
+      - 2.9999
+      legacy_q_raw: 3.9169
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG010
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104152'
+      - '104170'
+      source_scan_record_ids:
+      - SCAN-02R-2a0e91f43e0fe127
+      - SCAN-02R-5e52d7e5fbefbc05
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.442
+      legacy_hkl_raw:
+      - 0.0
+      - 2.80025
+      - 3.0
+      legacy_q_raw: 4.0046
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG011
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104204'
+      source_scan_record_ids:
+      - SCAN-02R-77b71bd09c7eb4b4
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.448
+      legacy_hkl_raw:
+      - 0.0
+      - 2.9003
+      - 3.0
+      legacy_q_raw: 4.0937
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG013
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104153'
+      - '104171'
+      - '104198'
+      - '104211'
+      source_scan_record_ids:
+      - SCAN-02R-d2b7e9ee069bd20e
+      - SCAN-02R-4d54ea7698000638
+      - SCAN-02R-643ff7e40bd97888
+      - SCAN-02R-91f840c137c7a43c
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.45975
+      legacy_hkl_raw:
+      - 0.0
+      - 3.0002000000000004
+      - 2.99995
+      legacy_q_raw: 4.18375
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 3
+        not_applicable: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG014
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104205'
+      source_scan_record_ids:
+      - SCAN-02R-7118d0dce593edea
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.448
+      legacy_hkl_raw:
+      - 0.0
+      - 3.1002
+      - 2.9999
+      legacy_q_raw: 4.275
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG015
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104154'
+      - '104172'
+      source_scan_record_ids:
+      - SCAN-02R-762111064d108c6d
+      - SCAN-02R-fb62d31e5c3c1dbf
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.454
+      legacy_hkl_raw:
+      - 0.0
+      - 3.2002
+      - 3.0
+      legacy_q_raw: 4.3671
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG016
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104206'
+      source_scan_record_ids:
+      - SCAN-02R-306a96179bd778b6
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.4585
+      legacy_hkl_raw:
+      - 0.0
+      - 3.3002
+      - 2.9999
+      legacy_q_raw: 4.4602
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG017
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104163'
+      - '104173'
+      source_scan_record_ids:
+      - SCAN-02R-074afad5a6b92ea4
+      - SCAN-02R-c7a73b4824a01210
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.442
+      legacy_hkl_raw:
+      - 0.0
+      - 3.4002
+      - 3.0001
+      legacy_q_raw: 4.5542
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG018
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104207'
+      source_scan_record_ids:
+      - SCAN-02R-baae22000a534323
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.449
+      legacy_hkl_raw:
+      - 0.0
+      - 3.5002500000000003
+      - 3.0
+      legacy_q_raw: 4.649
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG019
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104164'
+      - '104174'
+      - '104177'
+      source_scan_record_ids:
+      - SCAN-02R-a88a59b9d2315a05
+      - SCAN-02R-5215f80c458dc1c4
+      - SCAN-02R-598c5cedd335b846
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.445
+      legacy_hkl_raw:
+      - 0.0
+      - 3.6002
+      - 3.0001
+      legacy_q_raw: 4.7446
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG020
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104208'
+      source_scan_record_ids:
+      - SCAN-02R-68a1fdbd8955d9a4
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.453
+      legacy_hkl_raw:
+      - 0.0
+      - 3.70015
+      - 3.00015
+      legacy_q_raw: 4.8409
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG021
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104175'
+      source_scan_record_ids:
+      - SCAN-02R-4eb3495e2e32dd73
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.445
+      legacy_hkl_raw:
+      - 0.0
+      - 3.80015
+      - 3.0002
+      legacy_q_raw: 4.9378
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG022
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104209'
+      source_scan_record_ids:
+      - SCAN-02R-7acd4c14a0007418
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.458
+      legacy_hkl_raw:
+      - 0.0
+      - 3.9001
+      - 3.00015
+      legacy_q_raw: 5.0355
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG023
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104176'
+      source_scan_record_ids:
+      - SCAN-02R-5f553db9674e6d45
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.452
+      legacy_hkl_raw:
+      - 0.0
+      - 4.0001
+      - 3.0002
+      legacy_q_raw: 5.1337
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG024
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104210'
+      source_scan_record_ids:
+      - SCAN-02R-51f6ed2eb7632349
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 3.455
+      legacy_hkl_raw:
+      - 0.0
+      - 4.1001
+      - 3.0003
+      legacy_q_raw: 5.2325
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG025
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104094'
+      source_scan_record_ids:
+      - SCAN-02R-43979cdff2eef525
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.791
+      legacy_hkl_raw:
+      - 0.0
+      - 2.50005
+      - 1.0
+      legacy_q_raw: 2.9264
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG026
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104099'
+      source_scan_record_ids:
+      - SCAN-02R-8641a638f4880175
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.723
+      legacy_hkl_raw:
+      - 0.0
+      - 2.5501
+      - 1.0
+      legacy_q_raw: 2.9803
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG027
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104095'
+      source_scan_record_ids:
+      - SCAN-02R-8dcd5041a8a4e044
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.776
+      legacy_hkl_raw:
+      - 0.0
+      - 2.6001
+      - 1.0
+      legacy_q_raw: 3.0343
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG028
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104100'
+      source_scan_record_ids:
+      - SCAN-02R-5e02dde1da14be55
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.729
+      legacy_hkl_raw:
+      - 0.0
+      - 2.6501
+      - 1.0
+      legacy_q_raw: 3.0884
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG029
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104096'
+      source_scan_record_ids:
+      - SCAN-02R-54bfea84553b4c65
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.715
+      legacy_hkl_raw:
+      - 0.0
+      - 2.7001
+      - 1.0
+      legacy_q_raw: 3.1426
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG030
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104101'
+      source_scan_record_ids:
+      - SCAN-02R-774f62fc1777bc6b
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.744
+      legacy_hkl_raw:
+      - 0.0
+      - 2.7501
+      - 1.0
+      legacy_q_raw: 3.1968
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG031
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104097'
+      source_scan_record_ids:
+      - SCAN-02R-91de8f7a5ce6984b
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.717
+      legacy_hkl_raw:
+      - 0.0
+      - 2.8000499999999997
+      - 1.0
+      legacy_q_raw: 3.2511
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG032
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104098'
+      source_scan_record_ids:
+      - SCAN-02R-731f452fb62a55bd
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.719
+      legacy_hkl_raw:
+      - 0.0
+      - 2.9001
+      - 1.0
+      legacy_q_raw: 3.3599
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG033
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104093'
+      source_scan_record_ids:
+      - SCAN-02R-8ca6316615b8cbae
+      instrument_block_id: inst_f4703b6bd8
+      legacy_temperature_channel_value: 3.788
+      legacy_hkl_raw:
+      - 0.0
+      - 2.9871
+      - 1.0
+      legacy_q_raw: 3.4547
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG034
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104215'
+      - '104228'
+      source_scan_record_ids:
+      - SCAN-02R-75faa4a614a8f130
+      - SCAN-02R-b14e49e20117cb08
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 9.995
+      legacy_hkl_raw:
+      - 0.0
+      - 2.7901
+      - 1.0
+      legacy_q_raw: 3.24385
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG035
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104216'
+      - '104229'
+      source_scan_record_ids:
+      - SCAN-02R-48f6ae0dc1c99d07
+      - SCAN-02R-3f903a520f921d83
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 9.99875
+      legacy_hkl_raw:
+      - 0.0
+      - 2.8251
+      - 1.0
+      legacy_q_raw: 3.2819
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG036
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104217'
+      - '104230'
+      source_scan_record_ids:
+      - SCAN-02R-8e62e3b1b9deee81
+      - SCAN-02R-ae86f327e3ed5623
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.00225
+      legacy_hkl_raw:
+      - 0.0
+      - 2.8601
+      - 1.0
+      legacy_q_raw: 3.32005
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG037
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104218'
+      - '104231'
+      source_scan_record_ids:
+      - SCAN-02R-f380a5a0600b447a
+      - SCAN-02R-eea1fadd4abbd144
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.002
+      legacy_hkl_raw:
+      - 0.0
+      - 2.8951
+      - 1.0
+      legacy_q_raw: 3.358175
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG038
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104219'
+      - '104232'
+      source_scan_record_ids:
+      - SCAN-02R-f36bb8e354cf21b7
+      - SCAN-02R-79960ffd3b8a968b
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.0
+      legacy_hkl_raw:
+      - 0.0
+      - 2.9301
+      - 1.0
+      legacy_q_raw: 3.39635
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG039
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104220'
+      - '104233'
+      source_scan_record_ids:
+      - SCAN-02R-c5843105fb81b54c
+      - SCAN-02R-c74434b3ed5fc9b8
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.00525
+      legacy_hkl_raw:
+      - 0.0
+      - 2.9651
+      - 1.0
+      legacy_q_raw: 3.4345
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG040
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104221'
+      - '104234'
+      source_scan_record_ids:
+      - SCAN-02R-87edbdf74d1e5fb1
+      - SCAN-02R-957a8834d758202b
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.00625
+      legacy_hkl_raw:
+      - 0.0
+      - 3.0001
+      - 1.0
+      legacy_q_raw: 3.47275
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG041
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104222'
+      - '104235'
+      source_scan_record_ids:
+      - SCAN-02R-45d1daf515e218b6
+      - SCAN-02R-8345a5938afc1084
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.00075
+      legacy_hkl_raw:
+      - 0.0
+      - 3.0351
+      - 1.0
+      legacy_q_raw: 3.511
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG042
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104223'
+      - '104236'
+      source_scan_record_ids:
+      - SCAN-02R-89614c0503a95275
+      - SCAN-02R-059bd02c78268a2b
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 9.9975
+      legacy_hkl_raw:
+      - 0.0
+      - 3.07015
+      - 1.00005
+      legacy_q_raw: 3.54925
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG043
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104224'
+      - '104237'
+      source_scan_record_ids:
+      - SCAN-02R-58a76874c3967085
+      - SCAN-02R-fede66c26a275769
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 9.9965
+      legacy_hkl_raw:
+      - 0.0
+      - 3.1051
+      - 1.0
+      legacy_q_raw: 3.5875
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 1
+        holdout: 1
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG044
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104225'
+      - '104238'
+      source_scan_record_ids:
+      - SCAN-02R-f56f915bc229d6aa
+      - SCAN-02R-6fded6b51e0642a8
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 9.995
+      legacy_hkl_raw:
+      - 0.0
+      - 3.1401
+      - 1.000025
+      legacy_q_raw: 3.62585
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: DETECTED_Z_GE_3
+      censor_status: not_applicable_detected
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: DETECTED_INTENSITY
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG045
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104226'
+      - '104239'
+      source_scan_record_ids:
+      - SCAN-02R-f87c8c3cd06321c2
+      - SCAN-02R-708cf4d83a29d78f
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.002
+      legacy_hkl_raw:
+      - 0.0
+      - 3.1751
+      - 1.00005
+      legacy_q_raw: 3.6642
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    - observation_id: TAIPAN-F002-AREA-SG046
+      source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
+      source_raw_scan_ids:
+      - '104227'
+      - '104240'
+      source_scan_record_ids:
+      - SCAN-02R-0e6d00a831c04e8d
+      - SCAN-02R-2f690557cfd20bec
+      instrument_block_id: inst_4615972084
+      legacy_temperature_channel_value: 10.00225
+      legacy_hkl_raw:
+      - 0.0
+      - 3.2101
+      - 1.0
+      legacy_q_raw: 3.7025
+      q_status: AMBIGUOUS
+      temperature_status: AMBIGUOUS
+      detection_status: NONDETECTION_Z_LT_3
+      censor_status: CENSOR_ADMISSIBLE
+      normalization_status: PROVISIONALLY_COMPATIBLE
+      current_split_composition:
+        discovery: 2
+      production_likelihood_admitted: false
+      candidate_likelihood_role: CENSORED_NONDETECTION
+      csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
+    explicit_exclusions:
+    - observation: 6.447 meV
+      role: LITERATURE_CONTEXT
+      baseline_likelihood: false
+    - observation: 18.226 meV
+      role: LITERATURE_CONTEXT
+      baseline_likelihood: false
+    - observation: 27.896 meV
+      role: LITERATURE_CONTEXT
+      baseline_likelihood: false
+    - observation: 44.31645666035749 meV legacy F004
+      role: DIAGNOSTIC_ONLY
+      baseline_likelihood: false
+      physical_assignment: not_established
+    - observation: Stage03R approximately 38 meV LEVEL_2 sensitivity
+      materialized_as_censored_row: false
+      reason: detector/observable sensitivity is not a physical transition-strength
+        upper limit
+    validation:
+      admitted_rows_have_source_scan_id: PASS (one energy row admitted)
+      admitted_energies_have_sigma: PASS
+      admitted_detected_intensities_have_sigma: PASS (none production-admitted; all
+        8 recovered detected rows have sigma)
+      censored_rows_have_threshold_and_sigma_model: PASS (all 38 candidate rows; none
+        production-admitted)
+      stage03r_sensitivity_not_physical_upper_limit: PASS
+      historical_6p447_27p896_excluded: PASS
+      feature_44p4_diagnostic_only: PASS
+      no_per_scan_free_normalization: PASS
+      instrument_block_rationale_recorded: PASS
+      q_t_ambiguity_preserved: PASS
+      raw_holdout_boundary: PASS with declared legacy processed-artifact overlap
+      cef_fitting_not_performed: PASS
+    row_counts:
+      total: 51
+      ready_for_energy_likelihood: 1
+      ready_for_intensity_likelihood: 0
+      ready_for_censored_likelihood: 0
+      diagnostic_only: 1
+      excluded_or_context_or_pending: 49
+    unresolved_blockers:
+    - Verify raw q convention and Pbnm h/k/l mapping for manuscript rows.
+    - Identify the temp channel and units as sample temperature or retain it only
+      as an instrument sensor value.
+    - Review missing filter, attenuation, higher-order suppression, detector/monitor
+      identity, gain, and focusing/aperture metadata before intensity-scale admission.
+    - Review the pre-split Stage03A aggregate and 16 profile groups that contain scans
+      later assigned to holdout.
+    - Add the absolute energy-calibration systematic or explicitly accept its omission.
+    - Recover the exact original Stage03A runtime and missing Stage02 coadded/group
+      inputs if bit-exact reproduction is required.
+V2:
+  task: MANUSCRIPT_INTENSITY_ADMISSION_RECOVERY_V2
+  mode: BOUNDED_SALVAGE_ONLY
+  manuscript_intensity_gate: FAIL_CLEANLY
+  W03_allowed_objective_ceiling: ENERGY_ONLY
+  energy_only_caveat: Not execution authorization. V1 holdout-mixed aggregate remains
+    historical; an independently authorized energy input is required.
+  previous_remote_branch: work/manuscript-taipan-input-recovery-v1
+  previous_remote_commit: 415dd1751b7bf232476674af4e7e2571dd89a113
+  previous_remote_tree: f85afbf06db5daf6f5ae8e1e60b0edc512709420
+  canonical_main_verified: c65cfb1daa8edf4ce85684b5093869c0f287d269
+  nonholdout_profiles_reconstructed: 30
+  holdout_contaminated_profiles_excluded: 16
+  excluded_holdout_scan_count: 17
+  non_discovery_scans_not_used:
   - SCAN-02R-46abc72aaf86494c
   - SCAN-02R-616075842b1e4c6e
-  - SCAN-02R-074afad5a6b92ea4
-  - SCAN-02R-a88a59b9d2315a05
-  - SCAN-02R-41d12941c2dac178
-  - SCAN-02R-4f5e09d1864ac832
-  - SCAN-02R-4650765ebe11f415
-  - SCAN-02R-b704f6a14f738619
-  - SCAN-02R-26cdfd757f62fb5b
-  - SCAN-02R-5e52d7e5fbefbc05
-  - SCAN-02R-4d54ea7698000638
-  - SCAN-02R-fb62d31e5c3c1dbf
-  - SCAN-02R-c7a73b4824a01210
-  - SCAN-02R-5215f80c458dc1c4
-  - SCAN-02R-4eb3495e2e32dd73
-  - SCAN-02R-5f553db9674e6d45
-  - SCAN-02R-598c5cedd335b846
   - SCAN-02R-643ff7e40bd97888
-  - SCAN-02R-42d0a4d8bd2d58cc
-  - SCAN-02R-abcd8030795bc9cb
-  - SCAN-02R-26c5588a4a75efc2
-  - SCAN-02R-ebc55d8b20e3cec0
-  - SCAN-02R-a1d82bdc331e2df4
-  - SCAN-02R-77b71bd09c7eb4b4
-  - SCAN-02R-7118d0dce593edea
-  - SCAN-02R-306a96179bd778b6
-  - SCAN-02R-baae22000a534323
-  - SCAN-02R-68a1fdbd8955d9a4
-  - SCAN-02R-7acd4c14a0007418
-  - SCAN-02R-51f6ed2eb7632349
-  - SCAN-02R-91f840c137c7a43c
-  - SCAN-02R-4ad1398a663b7933
-  - SCAN-02R-75faa4a614a8f130
-  - SCAN-02R-48f6ae0dc1c99d07
-  - SCAN-02R-8e62e3b1b9deee81
-  - SCAN-02R-f380a5a0600b447a
-  - SCAN-02R-f36bb8e354cf21b7
-  - SCAN-02R-c5843105fb81b54c
-  - SCAN-02R-87edbdf74d1e5fb1
-  - SCAN-02R-45d1daf515e218b6
-  - SCAN-02R-89614c0503a95275
-  - SCAN-02R-58a76874c3967085
-  - SCAN-02R-f56f915bc229d6aa
-  - SCAN-02R-f87c8c3cd06321c2
-  - SCAN-02R-0e6d00a831c04e8d
-  - SCAN-02R-b14e49e20117cb08
-  - SCAN-02R-3f903a520f921d83
-  - SCAN-02R-ae86f327e3ed5623
-  - SCAN-02R-eea1fadd4abbd144
-  - SCAN-02R-79960ffd3b8a968b
-  - SCAN-02R-c74434b3ed5fc9b8
-  - SCAN-02R-957a8834d758202b
-  - SCAN-02R-8345a5938afc1084
-  - SCAN-02R-059bd02c78268a2b
-  - SCAN-02R-fede66c26a275769
-  - SCAN-02R-6fded6b51e0642a8
-  - SCAN-02R-708cf4d83a29d78f
-  - SCAN-02R-2f690557cfd20bec
-  source_checksum_matches: 76
-  source_checksum_mismatches: []
-  current_split_composition:
-    discovery: 55
-    holdout: 17
-    not_applicable: 4
-f002_energy_provenance:
-  classification: global_shared_fit
-  source_profile_groups: 46
-  source_fit_points: 571
-  source_raw_scans: 76
-  derivation_chain:
-  - Stage01 parsed the recorded detector, monitor, e, q, h, k, l, and temp columns.
-  - Stage02 selected fixed-HKL energy spectra and coadded repeat bins by summing detector counts and monitor exposure.
-  - Stage02 blind search yielded F002 at 18.255809880373345 meV with median matched-filter FWHM 2.5 meV.
-  - Stage03A fit 46 spectrum groups simultaneously in a ±6 meV window with one shared centroid, one empirical FWHM per legacy
-    instrument block, one nonnegative unit-area Gaussian area per spectrum, and an independent positive log-polynomial background
-    per spectrum.
-  - Poisson-deviance least-squares fits compared background orders 0, 1, and 2; BIC selected order 1.
-  - Total centroid sigma is sqrt(statistical covariance sigma^2 + background-family center half-range^2).
-  fit_interval:
-    center_initial_meV: 18.255809880373345
-    half_width_meV: 6.0
-    nominal_bounds_meV:
-    - 12.255809880373345
-    - 24.255809880373345
-  peak_model: nonnegative area times unit-area Gaussian; shared centroid; empirical FWHM shared within legacy instrument block
-  background_model: positive exp(polynomial) per spectrum; selected log-linear order 1 by BIC from orders 0/1/2
-  optimizer: scipy.optimize.least_squares, trf, x_scale=jac, max_nfev=3000, ftol=xtol=gtol=1e-10
-  energy_transfer_convention: Ei_minus_Ef
-  archived_energy_meV: 18.24717836149484
-  archived_sigma_stat_meV: 0.07207378752783855
-  archived_sigma_background_model_meV: 0.09471714619743388
-  archived_sigma_total_meV: 0.11902087477578914
-  observed_fwhm_by_instrument_meV:
+  - SCAN-02R-7a0b878c4f9bf5c8
+  discovery_scans_used: 45
+  fit_points: 480
+  Q_semantics: VERIFIED_HKL_AND_Q for 30 reconstructed profiles / 45 scans; excluded
+    groups not newly admitted
+  Q_formula: Q_Pbnm=2*pi*(h/a,k/b,l/c); Q_CEF=2*pi*(k/b,l/c,h/a)
+  Q_point_checks: 1516
+  Q_rounding_interval_failures: 0
+  mixed_point_table_access:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+    selected_columns:
+    - scan_record_id
+    - point_index
+    - q_raw
+    - h_raw
+    - k_raw
+    - l_raw
+    - ei_raw
+    - ef_raw
+    - S2_raw
+    detector_or_monitor_columns_selected: false
+  legacy_metadata_inventory_sha256: e23b01ee3c51ffe79fd287be59fd5b3ae85ea44427b4498fa3fed7d25d403853
+  W03_Q_requirement: Full vector in the transition-tensor frame for polarization contraction;
+    magnitude alone supplies only the form factor. No powder averaging substituted.
+  temperature_semantics: UNKNOWN
+  temperature_calculations:
+    '18.24717836149484':
+      gap_meV: 18.24717836149484
+      T_K_sensitivity_values:
+      - 3.4
+      - 10.0
+      excited_to_ground_equal_doublet_population:
+      - 8.962556902025185e-28
+      - 6.365416929187217e-10
+      two_doublet_ground_population:
+      - 1.0
+      - 0.9999999993634583
+      relative_ground_population_change: 6.365417082321301e-10
+    '6.447':
+      gap_meV: 6.447
+      T_K_sensitivity_values:
+      - 3.4
+      - 10.0
+      excited_to_ground_equal_doublet_population:
+      - 2.777737409848085e-10
+      - 0.0005634495078134193
+      two_doublet_ground_population:
+      - 0.9999999997222262
+      - 0.9994368677887537
+      relative_ground_population_change: 0.0005631319336288909
+    '1.0':
+      gap_meV: 1.0
+      T_K_sensitivity_values:
+      - 3.4
+      - 10.0
+      excited_to_ground_equal_doublet_population:
+      - 0.03293914320924288
+      - 0.3133445760013402
+      two_doublet_ground_population:
+      - 0.9681112450566021
+      - 0.7614148017762701
+      relative_ground_population_change: 0.21350484702638406
+  temperature_assessment: 18.247-meV thermal occupation is negligible over hypothetical
+    3.4-10 K. This does not bound ground population if D0->D2..D7 assignments allow
+    lower levels. The 1-meV illustrative gap is not an assignment. For a single transition
+    at a common temperature, the population factor can be absorbed by A_b, even if
+    T is unknown. SG042/SG044 have raw channels near 10, so temperature is not an
+    independent demonstrated blocker for that pair; channel-to-sample binding and
+    common sample condition remain unverified. Do not combine 3.4/10 regimes for an
+    unrestricted model without checking this. No sample T invented.
+  blocks:
     inst_4615972084:
-      fwhm: 2.252624728581626
-      sigma_stat: 0.23083045146896589
+      status: NOT_ADMISSIBLE
+      admitted_rows: 0
+      original_profiles: 37
+      reconstructed_profiles: 23
+      open_scans: 38
+      quality_passing_rows:
+      - TAIPAN-F002-AREA-SG042
+      - TAIPAN-F002-AREA-SG044
+      raw_temp_channel_range:
+      - 3.397
+      - 10.013
+      Ef_meV_range:
+      - 14.8709
+      - 14.8715
+      kf_Ainv_range:
+      - 2.6789256872788725
+      - 2.6789797303831766
+      recorded_invariants:
+        monochromator:
+        - PG
+        analyzer:
+        - PG
+        collimation:
+        - o-40-40-o
+        preset_type:
+        - normal
+        preset_channel:
+        - monitor
+        latticeconstants_raw:
+        - 5.310000 5.588000 7.617000 90.000000 90.000000 90.000000
+        ubmatrix_raw:
+        - 0.000000 0.004623 0.131241     0.000000 0.178895 -0.003392     -0.188324
+          0.000000 0.000000
+      preset_values:
+      - 750000.0
+      - 950000.0
+      - 1000000.0
+      missing_field_classification:
+        absolute_cross_section_scale: NOT_APPLICABLE
+        overall_block_scale_A_b: CONSTANT_BUT_VALUE_UNKNOWN
+        detector_monitor_hardware_gain_invariance: UNRESOLVED
+        filter_higher_order_suppression_invariance: UNRESOLVED
+        attenuator_invariance: UNRESOLVED
+        focusing_aperture_state: UNRESOLVED
+        Q_dependent_resolution_acceptance: MATERIAL_FOR_RELATIVE_INTENSITY
+      reason: Unknown constant calibration is absorbable by A_b; scan invariance of
+        response/acceptance is not demonstrated. Missing state is not evidence of
+        a constant state.
     inst_f4703b6bd8:
-      fwhm: 2.2018084149247317
-      sigma_stat: 0.28730340536856736
-  linewidth_interpretation: Observed empirical FWHM only; not intrinsic lifetime linewidth.
-  single_integrated_area: not_defined; 46 profile-specific areas are fitted
-  covariance_storage_status: full covariance matrix not stored; archived diagonal-derived standard errors only
-  neighbor_peak_covariance: not stored; the F002 model is a single Gaussian in its fit window
-  background_order_results:
-    '0':
-      center_meV: 18.08052949111099
-      center_sigma_stat_meV: 0.08686375889439805
-      bic: 1405.0813643672732
-      reduced_deviance: 1.6850407341385552
-    '1':
-      center_meV: 18.24717836149484
-      center_sigma_stat_meV: 0.07207378752783855
-      bic: 1399.7911301289146
-      reduced_deviance: 1.1739750036451557
-    '2':
-      center_meV: 18.269963783505858
-      center_sigma_stat_meV: 0.06256139454635118
-      bic: 1627.2784873471112
-      reduced_deviance: 1.1466580863058264
-  reproduction_status: PROVENANCE_PARTIAL
-  processed_data_reproduction_runtime:
-    python: 3.12.3
-    numpy: 2.3.0
-    pandas: 2.3.0
-    scipy: 1.15.3
-  processed_data_reproduction:
-    selected_center_meV: 18.24717840287773
-    selected_center_delta_meV: 4.138289000366058e-08
-    selected_center_sigma_stat_meV: 0.07207380461770627
-    selected_center_sigma_stat_delta_meV: 1.708986777093635e-08
-    max_profile_area_abs_delta: 0.0002699379458299678
-    max_profile_area_sigma_abs_delta: 0.0053970337230211385
-    detected_count: 8
-    reason_not_bit_exact: Original Python 3.13.15 / NumPy 2.1.3 / pandas 2.2.3 / SciPy 1.16.3 runtime is unavailable locally;
-      original Stage02 coadded/group inputs are not locally complete.
-  absolute_energy_calibration_systematic_included: false
-  production_energy_likelihood_admitted: true
-instrument_blocks:
-- instrument_block_id: inst_4615972084
-  included_profile_groups:
-  - SG000
-  - SG001
-  - SG002
-  - SG003
-  - SG004
-  - SG005
-  - SG006
-  - SG007
-  - SG008
-  - SG009
-  - SG010
-  - SG011
-  - SG013
-  - SG014
-  - SG015
-  - SG016
-  - SG017
-  - SG018
-  - SG019
-  - SG020
-  - SG021
-  - SG022
-  - SG023
-  - SG024
-  - SG034
-  - SG035
-  - SG036
-  - SG037
-  - SG038
-  - SG039
-  - SG040
-  - SG041
-  - SG042
-  - SG043
-  - SG044
-  - SG045
-  - SG046
-  included_raw_scan_ids:
-  - '104147'
-  - '104148'
-  - '104149'
-  - '104150'
-  - '104151'
-  - '104152'
-  - '104153'
-  - '104154'
-  - '104156'
-  - '104157'
-  - '104159'
-  - '104163'
-  - '104164'
-  - '104165'
-  - '104166'
-  - '104167'
-  - '104168'
-  - '104169'
-  - '104170'
-  - '104171'
-  - '104172'
-  - '104173'
-  - '104174'
-  - '104175'
-  - '104176'
-  - '104177'
-  - '104198'
-  - '104199'
-  - '104200'
-  - '104201'
-  - '104202'
-  - '104203'
-  - '104204'
-  - '104205'
-  - '104206'
-  - '104207'
-  - '104208'
-  - '104209'
-  - '104210'
-  - '104211'
-  - '104212'
-  - '104215'
-  - '104216'
-  - '104217'
-  - '104218'
-  - '104219'
-  - '104220'
-  - '104221'
-  - '104222'
-  - '104223'
-  - '104224'
-  - '104225'
-  - '104226'
-  - '104227'
-  - '104228'
-  - '104229'
-  - '104230'
-  - '104231'
-  - '104232'
-  - '104233'
-  - '104234'
-  - '104235'
-  - '104236'
-  - '104237'
-  - '104238'
-  - '104239'
-  - '104240'
-  included_scan_record_ids:
-  - SCAN-02R-432159a75d80f2b3
-  - SCAN-02R-f71173d3ec0c732c
-  - SCAN-02R-ef6a11424f751d3f
-  - SCAN-02R-79e659b84aa4786d
-  - SCAN-02R-1e5b02c69224108d
-  - SCAN-02R-2a0e91f43e0fe127
-  - SCAN-02R-d2b7e9ee069bd20e
-  - SCAN-02R-762111064d108c6d
-  - SCAN-02R-7a0b878c4f9bf5c8
-  - SCAN-02R-46abc72aaf86494c
-  - SCAN-02R-616075842b1e4c6e
-  - SCAN-02R-074afad5a6b92ea4
-  - SCAN-02R-a88a59b9d2315a05
-  - SCAN-02R-41d12941c2dac178
-  - SCAN-02R-4f5e09d1864ac832
-  - SCAN-02R-4650765ebe11f415
-  - SCAN-02R-b704f6a14f738619
-  - SCAN-02R-26cdfd757f62fb5b
-  - SCAN-02R-5e52d7e5fbefbc05
-  - SCAN-02R-4d54ea7698000638
-  - SCAN-02R-fb62d31e5c3c1dbf
-  - SCAN-02R-c7a73b4824a01210
-  - SCAN-02R-5215f80c458dc1c4
-  - SCAN-02R-4eb3495e2e32dd73
-  - SCAN-02R-5f553db9674e6d45
-  - SCAN-02R-598c5cedd335b846
-  - SCAN-02R-643ff7e40bd97888
-  - SCAN-02R-42d0a4d8bd2d58cc
-  - SCAN-02R-abcd8030795bc9cb
-  - SCAN-02R-26c5588a4a75efc2
-  - SCAN-02R-ebc55d8b20e3cec0
-  - SCAN-02R-a1d82bdc331e2df4
-  - SCAN-02R-77b71bd09c7eb4b4
-  - SCAN-02R-7118d0dce593edea
-  - SCAN-02R-306a96179bd778b6
-  - SCAN-02R-baae22000a534323
-  - SCAN-02R-68a1fdbd8955d9a4
-  - SCAN-02R-7acd4c14a0007418
-  - SCAN-02R-51f6ed2eb7632349
-  - SCAN-02R-91f840c137c7a43c
-  - SCAN-02R-4ad1398a663b7933
-  - SCAN-02R-75faa4a614a8f130
-  - SCAN-02R-48f6ae0dc1c99d07
-  - SCAN-02R-8e62e3b1b9deee81
-  - SCAN-02R-f380a5a0600b447a
-  - SCAN-02R-f36bb8e354cf21b7
-  - SCAN-02R-c5843105fb81b54c
-  - SCAN-02R-87edbdf74d1e5fb1
-  - SCAN-02R-45d1daf515e218b6
-  - SCAN-02R-89614c0503a95275
-  - SCAN-02R-58a76874c3967085
-  - SCAN-02R-f56f915bc229d6aa
-  - SCAN-02R-f87c8c3cd06321c2
-  - SCAN-02R-0e6d00a831c04e8d
-  - SCAN-02R-b14e49e20117cb08
-  - SCAN-02R-3f903a520f921d83
-  - SCAN-02R-ae86f327e3ed5623
-  - SCAN-02R-eea1fadd4abbd144
-  - SCAN-02R-79960ffd3b8a968b
-  - SCAN-02R-c74434b3ed5fc9b8
-  - SCAN-02R-957a8834d758202b
-  - SCAN-02R-8345a5938afc1084
-  - SCAN-02R-059bd02c78268a2b
-  - SCAN-02R-fede66c26a275769
-  - SCAN-02R-6fded6b51e0642a8
-  - SCAN-02R-708cf4d83a29d78f
-  - SCAN-02R-2f690557cfd20bec
-  grouping_rationale: Legacy Stage01 SHA-256-derived identity over monochromator, analyzer, collimation, preset type/channel,
-    lattice text, and UB text.
-  known_configuration:
-    Ef_range_meV:
-    - 14.8709
-    - 14.8716
-    monochromator:
-    - PG
-    analyzer:
-    - PG
-    collimation:
-    - o-40-40-o
-    preset_type:
-    - normal
-    preset_channel:
-    - monitor
-    preset_values_not_in_legacy_block_hash:
-    - '1000000.0'
-    - '750000.0'
-    - '950000.0'
-    lattice_id:
-    - lattice_691fb0e1a5
-    ub_id:
-    - ub_91081dcbab
-    monitor_normalization: actual monitor counts; 1e6 reference
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  production_likelihood_admitted: false
-  missing_configuration_fields:
-  - monochromator_reflection
-  - monochromator_mosaic
-  - analyzer_reflection
-  - analyzer_mosaic
-  - filter_state
-  - higher_order_suppression_state
-  - attenuation_state
-  - detector_hardware_identity
-  - monitor_hardware_identity
-  - gain_state
-  - focusing_or_aperture_state
-- instrument_block_id: inst_f4703b6bd8
-  included_profile_groups:
-  - SG025
-  - SG026
-  - SG027
-  - SG028
-  - SG029
-  - SG030
-  - SG031
-  - SG032
-  - SG033
-  included_raw_scan_ids:
-  - '104093'
-  - '104094'
-  - '104095'
-  - '104096'
-  - '104097'
-  - '104098'
-  - '104099'
-  - '104100'
-  - '104101'
-  included_scan_record_ids:
-  - SCAN-02R-8ca6316615b8cbae
-  - SCAN-02R-43979cdff2eef525
-  - SCAN-02R-8dcd5041a8a4e044
-  - SCAN-02R-54bfea84553b4c65
-  - SCAN-02R-91de8f7a5ce6984b
-  - SCAN-02R-731f452fb62a55bd
-  - SCAN-02R-8641a638f4880175
-  - SCAN-02R-5e02dde1da14be55
-  - SCAN-02R-774f62fc1777bc6b
-  grouping_rationale: Legacy Stage01 SHA-256-derived identity over monochromator, analyzer, collimation, preset type/channel,
-    lattice text, and UB text.
-  known_configuration:
-    Ef_range_meV:
-    - 14.871
-    - 14.8714
-    monochromator:
-    - PG
-    analyzer:
-    - PG
-    collimation:
-    - o-40-40-o
-    preset_type:
-    - normal
-    preset_channel:
-    - monitor
-    preset_values_not_in_legacy_block_hash:
-    - '240000.0'
-    - '750000.0'
-    lattice_id:
-    - lattice_0c3ef52ef2
-    ub_id:
-    - ub_859a03811f
-    monitor_normalization: actual monitor counts; 1e6 reference
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  production_likelihood_admitted: false
-  missing_configuration_fields:
-  - monochromator_reflection
-  - monochromator_mosaic
-  - analyzer_reflection
-  - analyzer_mosaic
-  - filter_state
-  - higher_order_suppression_state
-  - attenuation_state
-  - detector_hardware_identity
-  - monitor_hardware_identity
-  - gain_state
-  - focusing_or_aperture_state
-cross_block_normalization:
-  status: NOT_COMPARABLE
-  reason: Distinct legacy instrument block IDs and orientation/lattice states; no reviewed cross-block scale bridge.
-q_semantics:
-  status: unresolved
-  row_status: AMBIGUOUS
-  csv_policy: leave h_pbnm/k_pbnm/l_pbnm/Q_Ainv blank
-  legacy_values_location: per_observation_provenance
-  reason: Stage02R verified h/k/l only partially and did not establish raw q units/convention or a Pbnm mapping.
-temperature_semantics:
-  status: unresolved
-  row_status: AMBIGUOUS
-  csv_policy: leave temperature_K blank
-  legacy_values_location: per_observation_provenance
-  reason: Stage02R found no unique temperature sensor or units; legacy temp channel values are retained without mapping them
-    to sample temperature.
-intensity_recovery:
-  profile_rows_recovered: 46
-  detected_z_ge_3: 8
-  non_detections_z_lt_3: 38
-  intensity_units: counts_per_1e6_monitor_meV
-  normalization_basis: actual monitor counts normalized to 1e6; no arbitrary per-scan scale introduced
-  production_detected_intensity_rows_admitted: 0
-censoring:
-  candidate_rows_found: 38
-  construction: max(fitted_nonnegative_area,0) + scipy.stats.norm.ppf(0.95) * area_sigma
-  confidence: 0.95
-  status: CENSOR_ADMISSIBLE
-  production_censored_rows_admitted: 0
-  admission_blocker: normalization/Q/temperature semantics and later-holdout composition require independent input review
-per_observation_provenance:
-- observation_id: TAIPAN-F002-AREA-SG000
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104147'
-  - '104165'
-  source_scan_record_ids:
-  - SCAN-02R-432159a75d80f2b3
-  - SCAN-02R-41d12941c2dac178
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.448
-  legacy_hkl_raw:
-  - 0.0
-  - 1.8002
-  - 3.0
-  legacy_q_raw: 3.1971
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG001
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104199'
-  source_scan_record_ids:
-  - SCAN-02R-42d0a4d8bd2d58cc
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.46
-  legacy_hkl_raw:
-  - 0.0
-  - 1.9003
-  - 3.0
-  legacy_q_raw: 3.2694
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG002
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104148'
-  - '104156'
-  - '104166'
-  - '104212'
-  source_scan_record_ids:
-  - SCAN-02R-f71173d3ec0c732c
-  - SCAN-02R-7a0b878c4f9bf5c8
-  - SCAN-02R-4f5e09d1864ac832
-  - SCAN-02R-4ad1398a663b7933
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.44925
-  legacy_hkl_raw:
-  - 0.0
-  - 2.0002000000000004
-  - 2.99995
-  legacy_q_raw: 3.3439
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 3
-    not_applicable: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG003
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104200'
-  source_scan_record_ids:
-  - SCAN-02R-abcd8030795bc9cb
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.452
-  legacy_hkl_raw:
-  - 0.0
-  - 2.1003
-  - 3.0
-  legacy_q_raw: 3.4206
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG004
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104149'
-  - '104157'
-  - '104167'
-  source_scan_record_ids:
-  - SCAN-02R-ef6a11424f751d3f
-  - SCAN-02R-46abc72aaf86494c
-  - SCAN-02R-4650765ebe11f415
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.4245
-  legacy_hkl_raw:
-  - 0.0
-  - 2.2003
-  - 3.0
-  legacy_q_raw: 3.4991
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-    not_applicable: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG005
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104201'
-  source_scan_record_ids:
-  - SCAN-02R-26c5588a4a75efc2
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.447
-  legacy_hkl_raw:
-  - 0.0
-  - 2.3003
-  - 2.99995
-  legacy_q_raw: 3.5796
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG006
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104150'
-  - '104168'
-  source_scan_record_ids:
-  - SCAN-02R-79e659b84aa4786d
-  - SCAN-02R-b704f6a14f738619
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.422
-  legacy_hkl_raw:
-  - 0.0
-  - 2.4002
-  - 3.0
-  legacy_q_raw: 3.6616
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG007
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104202'
-  source_scan_record_ids:
-  - SCAN-02R-ebc55d8b20e3cec0
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.454
-  legacy_hkl_raw:
-  - 0.0
-  - 2.5003
-  - 3.0
-  legacy_q_raw: 3.7453
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG008
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104151'
-  - '104159'
-  - '104169'
-  source_scan_record_ids:
-  - SCAN-02R-1e5b02c69224108d
-  - SCAN-02R-616075842b1e4c6e
-  - SCAN-02R-26cdfd757f62fb5b
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.437
-  legacy_hkl_raw:
-  - 0.0
-  - 2.6003
-  - 3.0
-  legacy_q_raw: 3.8303
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-    not_applicable: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG009
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104203'
-  source_scan_record_ids:
-  - SCAN-02R-a1d82bdc331e2df4
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.456
-  legacy_hkl_raw:
-  - 0.0
-  - 2.7003
-  - 2.9999
-  legacy_q_raw: 3.9169
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG010
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104152'
-  - '104170'
-  source_scan_record_ids:
-  - SCAN-02R-2a0e91f43e0fe127
-  - SCAN-02R-5e52d7e5fbefbc05
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.442
-  legacy_hkl_raw:
-  - 0.0
-  - 2.80025
-  - 3.0
-  legacy_q_raw: 4.0046
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG011
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104204'
-  source_scan_record_ids:
-  - SCAN-02R-77b71bd09c7eb4b4
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.448
-  legacy_hkl_raw:
-  - 0.0
-  - 2.9003
-  - 3.0
-  legacy_q_raw: 4.0937
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG013
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104153'
-  - '104171'
-  - '104198'
-  - '104211'
-  source_scan_record_ids:
-  - SCAN-02R-d2b7e9ee069bd20e
-  - SCAN-02R-4d54ea7698000638
-  - SCAN-02R-643ff7e40bd97888
-  - SCAN-02R-91f840c137c7a43c
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.45975
-  legacy_hkl_raw:
-  - 0.0
-  - 3.0002000000000004
-  - 2.99995
-  legacy_q_raw: 4.18375
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 3
-    not_applicable: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG014
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104205'
-  source_scan_record_ids:
-  - SCAN-02R-7118d0dce593edea
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.448
-  legacy_hkl_raw:
-  - 0.0
-  - 3.1002
-  - 2.9999
-  legacy_q_raw: 4.275
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG015
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104154'
-  - '104172'
-  source_scan_record_ids:
-  - SCAN-02R-762111064d108c6d
-  - SCAN-02R-fb62d31e5c3c1dbf
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.454
-  legacy_hkl_raw:
-  - 0.0
-  - 3.2002
-  - 3.0
-  legacy_q_raw: 4.3671
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG016
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104206'
-  source_scan_record_ids:
-  - SCAN-02R-306a96179bd778b6
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.4585
-  legacy_hkl_raw:
-  - 0.0
-  - 3.3002
-  - 2.9999
-  legacy_q_raw: 4.4602
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG017
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104163'
-  - '104173'
-  source_scan_record_ids:
-  - SCAN-02R-074afad5a6b92ea4
-  - SCAN-02R-c7a73b4824a01210
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.442
-  legacy_hkl_raw:
-  - 0.0
-  - 3.4002
-  - 3.0001
-  legacy_q_raw: 4.5542
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG018
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104207'
-  source_scan_record_ids:
-  - SCAN-02R-baae22000a534323
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.449
-  legacy_hkl_raw:
-  - 0.0
-  - 3.5002500000000003
-  - 3.0
-  legacy_q_raw: 4.649
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG019
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104164'
-  - '104174'
-  - '104177'
-  source_scan_record_ids:
-  - SCAN-02R-a88a59b9d2315a05
-  - SCAN-02R-5215f80c458dc1c4
-  - SCAN-02R-598c5cedd335b846
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.445
-  legacy_hkl_raw:
-  - 0.0
-  - 3.6002
-  - 3.0001
-  legacy_q_raw: 4.7446
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG020
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104208'
-  source_scan_record_ids:
-  - SCAN-02R-68a1fdbd8955d9a4
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.453
-  legacy_hkl_raw:
-  - 0.0
-  - 3.70015
-  - 3.00015
-  legacy_q_raw: 4.8409
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG021
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104175'
-  source_scan_record_ids:
-  - SCAN-02R-4eb3495e2e32dd73
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.445
-  legacy_hkl_raw:
-  - 0.0
-  - 3.80015
-  - 3.0002
-  legacy_q_raw: 4.9378
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG022
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104209'
-  source_scan_record_ids:
-  - SCAN-02R-7acd4c14a0007418
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.458
-  legacy_hkl_raw:
-  - 0.0
-  - 3.9001
-  - 3.00015
-  legacy_q_raw: 5.0355
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG023
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104176'
-  source_scan_record_ids:
-  - SCAN-02R-5f553db9674e6d45
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.452
-  legacy_hkl_raw:
-  - 0.0
-  - 4.0001
-  - 3.0002
-  legacy_q_raw: 5.1337
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG024
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104210'
-  source_scan_record_ids:
-  - SCAN-02R-51f6ed2eb7632349
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 3.455
-  legacy_hkl_raw:
-  - 0.0
-  - 4.1001
-  - 3.0003
-  legacy_q_raw: 5.2325
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG025
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104094'
-  source_scan_record_ids:
-  - SCAN-02R-43979cdff2eef525
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.791
-  legacy_hkl_raw:
-  - 0.0
-  - 2.50005
-  - 1.0
-  legacy_q_raw: 2.9264
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG026
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104099'
-  source_scan_record_ids:
-  - SCAN-02R-8641a638f4880175
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.723
-  legacy_hkl_raw:
-  - 0.0
-  - 2.5501
-  - 1.0
-  legacy_q_raw: 2.9803
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG027
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104095'
-  source_scan_record_ids:
-  - SCAN-02R-8dcd5041a8a4e044
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.776
-  legacy_hkl_raw:
-  - 0.0
-  - 2.6001
-  - 1.0
-  legacy_q_raw: 3.0343
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG028
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104100'
-  source_scan_record_ids:
-  - SCAN-02R-5e02dde1da14be55
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.729
-  legacy_hkl_raw:
-  - 0.0
-  - 2.6501
-  - 1.0
-  legacy_q_raw: 3.0884
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG029
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104096'
-  source_scan_record_ids:
-  - SCAN-02R-54bfea84553b4c65
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.715
-  legacy_hkl_raw:
-  - 0.0
-  - 2.7001
-  - 1.0
-  legacy_q_raw: 3.1426
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG030
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104101'
-  source_scan_record_ids:
-  - SCAN-02R-774f62fc1777bc6b
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.744
-  legacy_hkl_raw:
-  - 0.0
-  - 2.7501
-  - 1.0
-  legacy_q_raw: 3.1968
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG031
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104097'
-  source_scan_record_ids:
-  - SCAN-02R-91de8f7a5ce6984b
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.717
-  legacy_hkl_raw:
-  - 0.0
-  - 2.8000499999999997
-  - 1.0
-  legacy_q_raw: 3.2511
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG032
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104098'
-  source_scan_record_ids:
-  - SCAN-02R-731f452fb62a55bd
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.719
-  legacy_hkl_raw:
-  - 0.0
-  - 2.9001
-  - 1.0
-  legacy_q_raw: 3.3599
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG033
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104093'
-  source_scan_record_ids:
-  - SCAN-02R-8ca6316615b8cbae
-  instrument_block_id: inst_f4703b6bd8
-  legacy_temperature_channel_value: 3.788
-  legacy_hkl_raw:
-  - 0.0
-  - 2.9871
-  - 1.0
-  legacy_q_raw: 3.4547
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG034
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104215'
-  - '104228'
-  source_scan_record_ids:
-  - SCAN-02R-75faa4a614a8f130
-  - SCAN-02R-b14e49e20117cb08
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 9.995
-  legacy_hkl_raw:
-  - 0.0
-  - 2.7901
-  - 1.0
-  legacy_q_raw: 3.24385
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG035
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104216'
-  - '104229'
-  source_scan_record_ids:
-  - SCAN-02R-48f6ae0dc1c99d07
-  - SCAN-02R-3f903a520f921d83
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 9.99875
-  legacy_hkl_raw:
-  - 0.0
-  - 2.8251
-  - 1.0
-  legacy_q_raw: 3.2819
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG036
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104217'
-  - '104230'
-  source_scan_record_ids:
-  - SCAN-02R-8e62e3b1b9deee81
-  - SCAN-02R-ae86f327e3ed5623
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.00225
-  legacy_hkl_raw:
-  - 0.0
-  - 2.8601
-  - 1.0
-  legacy_q_raw: 3.32005
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG037
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104218'
-  - '104231'
-  source_scan_record_ids:
-  - SCAN-02R-f380a5a0600b447a
-  - SCAN-02R-eea1fadd4abbd144
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.002
-  legacy_hkl_raw:
-  - 0.0
-  - 2.8951
-  - 1.0
-  legacy_q_raw: 3.358175
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG038
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104219'
-  - '104232'
-  source_scan_record_ids:
-  - SCAN-02R-f36bb8e354cf21b7
-  - SCAN-02R-79960ffd3b8a968b
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.0
-  legacy_hkl_raw:
-  - 0.0
-  - 2.9301
-  - 1.0
-  legacy_q_raw: 3.39635
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG039
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104220'
-  - '104233'
-  source_scan_record_ids:
-  - SCAN-02R-c5843105fb81b54c
-  - SCAN-02R-c74434b3ed5fc9b8
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.00525
-  legacy_hkl_raw:
-  - 0.0
-  - 2.9651
-  - 1.0
-  legacy_q_raw: 3.4345
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG040
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104221'
-  - '104234'
-  source_scan_record_ids:
-  - SCAN-02R-87edbdf74d1e5fb1
-  - SCAN-02R-957a8834d758202b
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.00625
-  legacy_hkl_raw:
-  - 0.0
-  - 3.0001
-  - 1.0
-  legacy_q_raw: 3.47275
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG041
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104222'
-  - '104235'
-  source_scan_record_ids:
-  - SCAN-02R-45d1daf515e218b6
-  - SCAN-02R-8345a5938afc1084
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.00075
-  legacy_hkl_raw:
-  - 0.0
-  - 3.0351
-  - 1.0
-  legacy_q_raw: 3.511
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG042
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104223'
-  - '104236'
-  source_scan_record_ids:
-  - SCAN-02R-89614c0503a95275
-  - SCAN-02R-059bd02c78268a2b
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 9.9975
-  legacy_hkl_raw:
-  - 0.0
-  - 3.07015
-  - 1.00005
-  legacy_q_raw: 3.54925
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG043
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104224'
-  - '104237'
-  source_scan_record_ids:
-  - SCAN-02R-58a76874c3967085
-  - SCAN-02R-fede66c26a275769
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 9.9965
-  legacy_hkl_raw:
-  - 0.0
-  - 3.1051
-  - 1.0
-  legacy_q_raw: 3.5875
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 1
-    holdout: 1
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG044
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104225'
-  - '104238'
-  source_scan_record_ids:
-  - SCAN-02R-f56f915bc229d6aa
-  - SCAN-02R-6fded6b51e0642a8
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 9.995
-  legacy_hkl_raw:
-  - 0.0
-  - 3.1401
-  - 1.000025
-  legacy_q_raw: 3.62585
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: DETECTED_Z_GE_3
-  censor_status: not_applicable_detected
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: DETECTED_INTENSITY
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG045
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104226'
-  - '104239'
-  source_scan_record_ids:
-  - SCAN-02R-f87c8c3cd06321c2
-  - SCAN-02R-708cf4d83a29d78f
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.002
-  legacy_hkl_raw:
-  - 0.0
-  - 3.1751
-  - 1.00005
-  legacy_q_raw: 3.6642
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-- observation_id: TAIPAN-F002-AREA-SG046
-  source_artifact: stage03a_confirmatory_profiles-20260824T135404Z-1-001.zip#stage03a_confirmatory_profiles/DyFeO3_TAIPAN_stage03a_profile_measurements.csv
-  source_raw_scan_ids:
-  - '104227'
-  - '104240'
-  source_scan_record_ids:
-  - SCAN-02R-0e6d00a831c04e8d
-  - SCAN-02R-2f690557cfd20bec
-  instrument_block_id: inst_4615972084
-  legacy_temperature_channel_value: 10.00225
-  legacy_hkl_raw:
-  - 0.0
-  - 3.2101
-  - 1.0
-  legacy_q_raw: 3.7025
-  q_status: AMBIGUOUS
-  temperature_status: AMBIGUOUS
-  detection_status: NONDETECTION_Z_LT_3
-  censor_status: CENSOR_ADMISSIBLE
-  normalization_status: PROVISIONALLY_COMPATIBLE
-  current_split_composition:
-    discovery: 2
-  production_likelihood_admitted: false
-  candidate_likelihood_role: CENSORED_NONDETECTION
-  csv_likelihood_role: EXCLUDED_FROM_BASELINE_LIKELIHOOD
-explicit_exclusions:
-- observation: 6.447 meV
-  role: LITERATURE_CONTEXT
-  baseline_likelihood: false
-- observation: 18.226 meV
-  role: LITERATURE_CONTEXT
-  baseline_likelihood: false
-- observation: 27.896 meV
-  role: LITERATURE_CONTEXT
-  baseline_likelihood: false
-- observation: 44.31645666035749 meV legacy F004
-  role: DIAGNOSTIC_ONLY
-  baseline_likelihood: false
-  physical_assignment: not_established
-- observation: Stage03R approximately 38 meV LEVEL_2 sensitivity
-  materialized_as_censored_row: false
-  reason: detector/observable sensitivity is not a physical transition-strength upper limit
-validation:
-  admitted_rows_have_source_scan_id: PASS (one energy row admitted)
-  admitted_energies_have_sigma: PASS
-  admitted_detected_intensities_have_sigma: PASS (none production-admitted; all 8 recovered detected rows have sigma)
-  censored_rows_have_threshold_and_sigma_model: PASS (all 38 candidate rows; none production-admitted)
-  stage03r_sensitivity_not_physical_upper_limit: PASS
-  historical_6p447_27p896_excluded: PASS
-  feature_44p4_diagnostic_only: PASS
-  no_per_scan_free_normalization: PASS
-  instrument_block_rationale_recorded: PASS
-  q_t_ambiguity_preserved: PASS
-  raw_holdout_boundary: PASS with declared legacy processed-artifact overlap
-  cef_fitting_not_performed: PASS
-row_counts:
-  total: 51
-  ready_for_energy_likelihood: 1
-  ready_for_intensity_likelihood: 0
-  ready_for_censored_likelihood: 0
-  diagnostic_only: 1
-  excluded_or_context_or_pending: 49
-unresolved_blockers:
-- Verify raw q convention and Pbnm h/k/l mapping for manuscript rows.
-- Identify the temp channel and units as sample temperature or retain it only as an instrument sensor value.
-- Review missing filter, attenuation, higher-order suppression, detector/monitor identity, gain, and focusing/aperture metadata
-  before intensity-scale admission.
-- Review the pre-split Stage03A aggregate and 16 profile groups that contain scans later assigned to holdout.
-- Add the absolute energy-calibration systematic or explicitly accept its omission.
-- Recover the exact original Stage03A runtime and missing Stage02 coadded/group inputs if bit-exact reproduction is required.
+      status: NOT_ADMISSIBLE
+      admitted_rows: 0
+      original_profiles: 9
+      reconstructed_profiles: 7
+      open_scans: 7
+      quality_passing_rows:
+      - TAIPAN-F002-AREA-SG032
+      raw_temp_channel_range:
+      - 3.705
+      - 3.809
+      Ef_meV_range:
+      - 14.871
+      - 14.8714
+      kf_Ainv_range:
+      - 2.6789346945386336
+      - 2.6789707232748357
+      recorded_invariants:
+        monochromator:
+        - PG
+        analyzer:
+        - PG
+        collimation:
+        - o-40-40-o
+        preset_type:
+        - normal
+        preset_channel:
+        - monitor
+        latticeconstants_raw:
+        - 5.310000 5.594000 7.629000 90.000000 90.000000 90.000000
+        ubmatrix_raw:
+        - 0.000000 0.090597 0.112998     0.000000 0.154105 -0.066430     -0.188324
+          0.000000 0.000000
+      preset_values:
+      - 240000.0
+      - 750000.0
+      missing_field_classification:
+        absolute_cross_section_scale: NOT_APPLICABLE
+        overall_block_scale_A_b: CONSTANT_BUT_VALUE_UNKNOWN
+        detector_monitor_hardware_gain_invariance: UNRESOLVED
+        filter_higher_order_suppression_invariance: UNRESOLVED
+        attenuator_invariance: UNRESOLVED
+        focusing_aperture_state: UNRESOLVED
+        Q_dependent_resolution_acceptance: MATERIAL_FOR_RELATIVE_INTENSITY
+      reason: Unknown constant calibration is absorbable by A_b; scan invariance of
+        response/acceptance is not demonstrated. Missing state is not evidence of
+        a constant state.
+  detected_rows_reviewed_V1: 8
+  detected_rows_admitted: 0
+  V1_detected_clean_diagnostic_only: 5
+  V1_detected_holdout_exclusions: 3
+  V2_detected_quality_pass: 3
+  fit_collapses_V2: 1
+  primary_decision_counts:
+    OTHER_EXCLUSION: 26
+    HOLDOUT_CONTAMINATED: 16
+    NORMALIZATION_AMBIGUOUS: 3
+    FIT_COLLAPSE: 1
+  censored_rows_admitted: 0
+  original_nondetections_diagnostic_only: 38
+  censoring: Legacy A+1.64485*sigma is a Wald upper limit, not the z=3 detection threshold.
+    The selected bounded shared fit supplies no calibrated censoring likelihood; V1
+    CENSOR_ADMISSIBLE label superseded.
+  energy_systematic_status: ENERGY_SYSTEMATIC_UNAVAILABLE
+  energy_systematic_reason: No traceable absolute reference uncertainty/zero-offset
+    calibration in the reviewed inputs; empirical elastic width is not an energy calibration
+    uncertainty.
+  holdout_detector_access_count: 0
+  raw_detector_files_opened: false
+  CEF_fitting_performed: false
+  stage_transition: false
+  remaining_material_blockers:
+  - Within-block response/acceptance invariance not established; A_b cannot absorb
+    unknown scan-dependent factors.
+  - Block inst_f4703b6bd8 has only one quality-passing fresh detection under the chosen
+    diagnostic extraction.
+  conditional_temperature_limitation: 'General D0->Dn models can have lower levels:
+    thermal negligibility is not guaranteed across differing sample temperatures.
+    Not treated as a separate decisive blocker for the near-10-channel detected pair.'
+  quality_rule:
+    area_z_min: 3
+    area_collapse_floor: 1.0e-08
+    maximum_background_abs_correlation: 0.95
+    global_reduced_deviance_max: 2
+    require_full_rank_finite_covariance: true
+    require_optimizer_success_and_interior_center_width_area: true
+    selection_uses_CEF_agreement: false
+  source_hashes:
+    04_Results/Stage03R/STAGE03R-R2-SCIENTIFIC-CHECKPOINT-MATERIALIZATION-001/CHECKPOINT.yaml: a9bccf72660efcd0711fcc34cc06cf861f661662fbad970b8a3bd7637e44809c
+    04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+    04_Results/Stage02R/W02-02R-A-002/parsed_header_metadata.jsonl: 5fe552c66b8bbf3543801a921d4afe6ca0852e98c8e8f12fc9ac153f3b6af37d
+    06_Scientific_Understanding/neutron-polarization-intrinsic-strength.md: 646307649e9d214f0f22024c74533bb6855b55668f7fd36d654235ad450fe2c9
+    06_Scientific_Understanding/dyfeo3-pbnm-pnma-cef-frame-binding.md: b9e1d2e882079902f259d5096efe6d6e1e4ba356bac300e1f14516d355e8111d
+observables_sha256: 8662962f53b2b30ad33844ab198ecb0fe4d3e3cfeea49556c151816c39c5c7c5
+review_path: data/manuscript_v1/recovery_v2/ADMISSION_REVIEW.md
+V2_artifacts:
+  data/manuscript_v1/recovery_v2/ADMISSION_REVIEW.md: c5e7252be18284f2ea86e256fc1ec5a2efdb5900c386cadc3ee0a47ef0dcfeab
+  data/manuscript_v1/recovery_v2/admission_summary.yaml: ba6fed2f59c2e8f99eb7489a3b44d51b9f47957dd07209f1867547d3400dec64
+  data/manuscript_v1/recovery_v2/all_background_measurements.csv: 5dc830545aeefc05188da3b8de97b72b6a327cd0827d792368453f2804af2e0c
+  data/manuscript_v1/recovery_v2/audit.py: e69bf733ebaff39a1e867dfb70b2201a944e96e0683d728180ca998478e7f2d5
+  data/manuscript_v1/recovery_v2/covariance_order0.npy: 25e4e9602130005f2f6ed395fd496c005b2bb09f16bc1232ffceb61d0958883a
+  data/manuscript_v1/recovery_v2/covariance_order1.npy: 435a44306665fb17ba4574c7f75bc5dd2fd0c121adfc076ff2ec76e4a7cbafcc
+  data/manuscript_v1/recovery_v2/covariance_order2.npy: 89408889f884f55b0d7440fac5ab9981914f630cbb3186f5efd8f8d3b9f41d51
+  data/manuscript_v1/recovery_v2/discovery_fit_points.csv: 2da55185f5eb2ed864cd175967b7091b3ce81f0e4ef08df2bb051d068b89f293
+  data/manuscript_v1/recovery_v2/fit_summary.json: 70ff8a7f2c75a94bce4460c027e77508c8ced243e26c7772059d3150bba5abec
+  data/manuscript_v1/recovery_v2/membership.json: 1d150c728c00bdbe4a194e32c86e24dc2ae369381134090f155ce15329a49c2d
+  data/manuscript_v1/recovery_v2/open_scan_geometry.csv: f2d2c63238005e2ad126896391feb466cd63b5a33feceeecc9fca14136de54e6
+  data/manuscript_v1/recovery_v2/parameters_order0.json: 3bffa3f1cf2a2f14fa19ecab6cf9c2cd5ae6553929235e4f4e9617412b4e2db1
+  data/manuscript_v1/recovery_v2/parameters_order1.json: 54e4b66daf7b576520326e48fbd21aa8e0b00029ffea19b2120204df04c6a7d0
+  data/manuscript_v1/recovery_v2/parameters_order2.json: 1aa1a04bd7ddd82c15f61e4532962ea61a36d6f1299460fe6409e4b757a9ae0d
+  data/manuscript_v1/recovery_v2/q_semantics_checks.csv: 76744cbb656adfc9baac30b5a129c021adb9cd3cd01c6ee5f2698ccdb5155a7f
+  data/manuscript_v1/recovery_v2/reconstruct.py: cdf7e93fbde58d7583a4f98e17898a97ceff5aac1da77e26a38f699885c7151a
+  data/manuscript_v1/recovery_v2/row_admission.csv: a030bc0ff1f53d6729f235fb0bac2d850528991b115cf1fc93643091f81c4b18
+  data/manuscript_v1/recovery_v2/verify.py: 38995797d4c20b50fd2be38cb71e1cb01a92905af087fa72bfcad5826e1e686a

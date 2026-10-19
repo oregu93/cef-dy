@@ -1,0 +1,868 @@
+[
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG000",
+    "original_source_scans": [
+      "SCAN-02R-432159a75d80f2b3",
+      "SCAN-02R-41d12941c2dac178"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-41d12941c2dac178"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG001",
+    "original_source_scans": [
+      "SCAN-02R-42d0a4d8bd2d58cc"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-42d0a4d8bd2d58cc"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG002",
+    "original_source_scans": [
+      "SCAN-02R-f71173d3ec0c732c",
+      "SCAN-02R-7a0b878c4f9bf5c8",
+      "SCAN-02R-4f5e09d1864ac832",
+      "SCAN-02R-4ad1398a663b7933"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [
+      "SCAN-02R-7a0b878c4f9bf5c8"
+    ],
+    "reconstruction_source_scans": [
+      "SCAN-02R-f71173d3ec0c732c",
+      "SCAN-02R-4f5e09d1864ac832",
+      "SCAN-02R-4ad1398a663b7933"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG003",
+    "original_source_scans": [
+      "SCAN-02R-abcd8030795bc9cb"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-abcd8030795bc9cb"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG004",
+    "original_source_scans": [
+      "SCAN-02R-ef6a11424f751d3f",
+      "SCAN-02R-46abc72aaf86494c",
+      "SCAN-02R-4650765ebe11f415"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-4650765ebe11f415"
+    ],
+    "excluded_non_discovery_scans": [
+      "SCAN-02R-46abc72aaf86494c"
+    ],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG005",
+    "original_source_scans": [
+      "SCAN-02R-26c5588a4a75efc2"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-26c5588a4a75efc2"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG006",
+    "original_source_scans": [
+      "SCAN-02R-79e659b84aa4786d",
+      "SCAN-02R-b704f6a14f738619"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-79e659b84aa4786d",
+      "SCAN-02R-b704f6a14f738619"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG007",
+    "original_source_scans": [
+      "SCAN-02R-ebc55d8b20e3cec0"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-ebc55d8b20e3cec0"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG008",
+    "original_source_scans": [
+      "SCAN-02R-1e5b02c69224108d",
+      "SCAN-02R-616075842b1e4c6e",
+      "SCAN-02R-26cdfd757f62fb5b"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-26cdfd757f62fb5b"
+    ],
+    "excluded_non_discovery_scans": [
+      "SCAN-02R-616075842b1e4c6e"
+    ],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG009",
+    "original_source_scans": [
+      "SCAN-02R-a1d82bdc331e2df4"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-a1d82bdc331e2df4"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG010",
+    "original_source_scans": [
+      "SCAN-02R-2a0e91f43e0fe127",
+      "SCAN-02R-5e52d7e5fbefbc05"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-2a0e91f43e0fe127",
+      "SCAN-02R-5e52d7e5fbefbc05"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG011",
+    "original_source_scans": [
+      "SCAN-02R-77b71bd09c7eb4b4"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-77b71bd09c7eb4b4"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG013",
+    "original_source_scans": [
+      "SCAN-02R-d2b7e9ee069bd20e",
+      "SCAN-02R-4d54ea7698000638",
+      "SCAN-02R-643ff7e40bd97888",
+      "SCAN-02R-91f840c137c7a43c"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [
+      "SCAN-02R-643ff7e40bd97888"
+    ],
+    "reconstruction_source_scans": [
+      "SCAN-02R-d2b7e9ee069bd20e",
+      "SCAN-02R-4d54ea7698000638",
+      "SCAN-02R-91f840c137c7a43c"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG014",
+    "original_source_scans": [
+      "SCAN-02R-7118d0dce593edea"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-7118d0dce593edea"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG015",
+    "original_source_scans": [
+      "SCAN-02R-762111064d108c6d",
+      "SCAN-02R-fb62d31e5c3c1dbf"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-762111064d108c6d",
+      "SCAN-02R-fb62d31e5c3c1dbf"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG016",
+    "original_source_scans": [
+      "SCAN-02R-306a96179bd778b6"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-306a96179bd778b6"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG017",
+    "original_source_scans": [
+      "SCAN-02R-074afad5a6b92ea4",
+      "SCAN-02R-c7a73b4824a01210"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-074afad5a6b92ea4",
+      "SCAN-02R-c7a73b4824a01210"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG018",
+    "original_source_scans": [
+      "SCAN-02R-baae22000a534323"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-baae22000a534323"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG019",
+    "original_source_scans": [
+      "SCAN-02R-a88a59b9d2315a05",
+      "SCAN-02R-5215f80c458dc1c4",
+      "SCAN-02R-598c5cedd335b846"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-a88a59b9d2315a05",
+      "SCAN-02R-598c5cedd335b846"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG020",
+    "original_source_scans": [
+      "SCAN-02R-68a1fdbd8955d9a4"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-68a1fdbd8955d9a4"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG021",
+    "original_source_scans": [
+      "SCAN-02R-4eb3495e2e32dd73"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-4eb3495e2e32dd73"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG022",
+    "original_source_scans": [
+      "SCAN-02R-7acd4c14a0007418"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-7acd4c14a0007418"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG023",
+    "original_source_scans": [
+      "SCAN-02R-5f553db9674e6d45"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-5f553db9674e6d45"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG024",
+    "original_source_scans": [
+      "SCAN-02R-51f6ed2eb7632349"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-51f6ed2eb7632349"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG025",
+    "original_source_scans": [
+      "SCAN-02R-43979cdff2eef525"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-43979cdff2eef525"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG026",
+    "original_source_scans": [
+      "SCAN-02R-8641a638f4880175"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-8641a638f4880175"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG027",
+    "original_source_scans": [
+      "SCAN-02R-8dcd5041a8a4e044"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-8dcd5041a8a4e044"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG028",
+    "original_source_scans": [
+      "SCAN-02R-5e02dde1da14be55"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-5e02dde1da14be55"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG029",
+    "original_source_scans": [
+      "SCAN-02R-54bfea84553b4c65"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-54bfea84553b4c65"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG030",
+    "original_source_scans": [
+      "SCAN-02R-774f62fc1777bc6b"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-774f62fc1777bc6b"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG031",
+    "original_source_scans": [
+      "SCAN-02R-91de8f7a5ce6984b"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-91de8f7a5ce6984b"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG032",
+    "original_source_scans": [
+      "SCAN-02R-731f452fb62a55bd"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-731f452fb62a55bd"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 12
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG033",
+    "original_source_scans": [
+      "SCAN-02R-8ca6316615b8cbae"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-8ca6316615b8cbae"
+    ],
+    "instrument_block_id": "inst_f4703b6bd8",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG034",
+    "original_source_scans": [
+      "SCAN-02R-75faa4a614a8f130",
+      "SCAN-02R-b14e49e20117cb08"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-b14e49e20117cb08"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG035",
+    "original_source_scans": [
+      "SCAN-02R-48f6ae0dc1c99d07",
+      "SCAN-02R-3f903a520f921d83"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-48f6ae0dc1c99d07"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG036",
+    "original_source_scans": [
+      "SCAN-02R-8e62e3b1b9deee81",
+      "SCAN-02R-ae86f327e3ed5623"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-8e62e3b1b9deee81",
+      "SCAN-02R-ae86f327e3ed5623"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG037",
+    "original_source_scans": [
+      "SCAN-02R-f380a5a0600b447a",
+      "SCAN-02R-eea1fadd4abbd144"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-f380a5a0600b447a",
+      "SCAN-02R-eea1fadd4abbd144"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG038",
+    "original_source_scans": [
+      "SCAN-02R-f36bb8e354cf21b7",
+      "SCAN-02R-79960ffd3b8a968b"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-79960ffd3b8a968b"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG039",
+    "original_source_scans": [
+      "SCAN-02R-c5843105fb81b54c",
+      "SCAN-02R-c74434b3ed5fc9b8"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-c74434b3ed5fc9b8"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG040",
+    "original_source_scans": [
+      "SCAN-02R-87edbdf74d1e5fb1",
+      "SCAN-02R-957a8834d758202b"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-87edbdf74d1e5fb1"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG041",
+    "original_source_scans": [
+      "SCAN-02R-45d1daf515e218b6",
+      "SCAN-02R-8345a5938afc1084"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-45d1daf515e218b6",
+      "SCAN-02R-8345a5938afc1084"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG042",
+    "original_source_scans": [
+      "SCAN-02R-89614c0503a95275",
+      "SCAN-02R-059bd02c78268a2b"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-89614c0503a95275",
+      "SCAN-02R-059bd02c78268a2b"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG043",
+    "original_source_scans": [
+      "SCAN-02R-58a76874c3967085",
+      "SCAN-02R-fede66c26a275769"
+    ],
+    "excluded_holdout_scans": [
+      "SCAN-02R-58a76874c3967085"
+    ],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": false,
+    "new_area_independent_of_holdout_content": false,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "EXCLUDE_HOLDOUT_CONTAMINATED"
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG044",
+    "original_source_scans": [
+      "SCAN-02R-f56f915bc229d6aa",
+      "SCAN-02R-6fded6b51e0642a8"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-f56f915bc229d6aa",
+      "SCAN-02R-6fded6b51e0642a8"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "DETECTED_Z_GE_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG045",
+    "original_source_scans": [
+      "SCAN-02R-f87c8c3cd06321c2",
+      "SCAN-02R-708cf4d83a29d78f"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-f87c8c3cd06321c2",
+      "SCAN-02R-708cf4d83a29d78f"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  },
+  {
+    "observation_id": "TAIPAN-F002-AREA-SG046",
+    "original_source_scans": [
+      "SCAN-02R-0e6d00a831c04e8d",
+      "SCAN-02R-2f690557cfd20bec"
+    ],
+    "excluded_holdout_scans": [],
+    "excluded_non_discovery_scans": [],
+    "reconstruction_source_scans": [
+      "SCAN-02R-0e6d00a831c04e8d",
+      "SCAN-02R-2f690557cfd20bec"
+    ],
+    "instrument_block_id": "inst_4615972084",
+    "original_detection_status": "NONDETECTION_Z_LT_3",
+    "recomputation_uses_only_open_scans": true,
+    "new_area_independent_of_holdout_content": true,
+    "legacy_area_independent_of_holdout_content": false,
+    "status": "RECONSTRUCTED_DISCOVERY_ONLY",
+    "fit_points": 24
+  }
+]
