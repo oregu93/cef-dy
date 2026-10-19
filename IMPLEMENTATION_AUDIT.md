@@ -35,15 +35,28 @@ code was copied from an unavailable mid-refactor artifact.
 ## Known technical debt
 
 - Exact scan-level TAIPAN relative-intensity rows and grouping provenance are
-  missing.
+  missing; the W02-Lin V2 intensity-admission result is still pending.
 - The admitted low-temperature structural input needed to rebuild formal PCM
   from coordinates is absent from the manuscript table; current PCM smoke uses
   the reviewed legacy formal O8 seed and labels it accordingly.
-- Direct-to-canonical publication tables remain behind a numerical regression
-  gate; no label renaming is used.
-- McPhase cross-code numerical regression is not part of the first smoke gate.
+- Direct-to-canonical Hamiltonian, level, transition-tensor, and g-tensor
+  covariance are covered by independent-diagonalization regressions; no label
+  renaming is used.
+- A representative McPhase numerical cross-check remains required.
 - CrysFieldExplorer exposes distribution version 1.0.11 while its runtime
   banner reports 1.0.0; its internal objective is non-authoritative.
+
+## Recorded pre-production gaps
+
+These are recorded only and are not implemented by the bounded review
+correction:
+
+1. a real CFE/CMA-ES multistart production adapter;
+2. a representative McPhase numerical cross-check;
+3. the W02-Lin V2 intensity-admission result.
+
+Production remains disabled in configuration pending independent review and
+closure of the applicable input gate.
 
 ## Backend capability probe (2026-10-19)
 

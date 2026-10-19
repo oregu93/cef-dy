@@ -46,7 +46,32 @@ Machine-readable wavefunction coefficients use the explicit ascending
 
 ## Input gate
 
-`audit-inputs` currently returns `DRAFT_PROVENANCE_INCOMPLETE`.  This blocks a
-manuscript-grade joint intensity fit but deliberately does not block code
-tests, PCM smoke, energy-only Cs15 diagnostics, wavefunction/g calculations,
-or magnetization code.
+The audit reports one of three objective-readiness classes when all admitted
+rows are valid:
+
+- `ENERGY_ONLY`;
+- `ENERGY_PLUS_DETECTED_INTENSITY`;
+- `ENERGY_PLUS_DETECTED_INTENSITY_PLUS_CENSORING`.
+
+The manuscript intensity gate requires at least the second class. Censored
+rows are an optional enhancement, but any censored row presented for admission
+is validated fail-closed. Provenance and normalization status vocabularies are
+configured under `inputs.admission`; scientific status names do not need to be
+renamed to a hard-coded token.
+
+An aggregate energy may omit a single temperature and Q only when its
+aggregation status, exact source artifact, and source scan set (directly or by
+provenance manifest) are explicit. The current 18.247178-meV table row does not
+invent the still-missing source scan set, so `audit-inputs` remains
+`INPUT_INVALID` and production remains blocked. This does not block code tests,
+PCM smoke, energy-only Cs15 diagnostics, wavefunction/g calculations, or
+magnetization code.
+
+## Publication-frame regression gate
+
+The frozen nontrivial R7 regression independently diagonalizes the direct and
+rotated canonical Hamiltonians. It covers Hamiltonian covariance, invariant
+levels, every ground-state transition tensor, and ground-doublet g principal
+values/eigenspaces. Tensor and g-axis comparisons use
+`R_CAN_FROM_DIRECT`; signed eigenvectors and degenerate-axis bases are not
+treated as physical observables.

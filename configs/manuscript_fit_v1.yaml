@@ -20,7 +20,13 @@ conventions:
 inputs:
   observables: data/manuscript_v1/manuscript_observables.csv
   literature_magnetization: data/manuscript_v1/literature_magnetization.csv
-  required_production_provenance: REVIEWED
+  admission:
+    accepted_energy_provenance_statuses: [REVIEWED_ENERGY_ONLY, REVIEWED]
+    accepted_intensity_provenance_statuses: [REVIEWED]
+    accepted_censor_provenance_statuses: [REVIEWED]
+    accepted_normalization_statuses: [REVIEWED]
+    minimum_detected_rows_per_block: 2
+    require_Q_Ainv_for_intensity: true
 
 assignment:
   strategy: explicit_branch_enumeration
@@ -70,14 +76,11 @@ profiles:
   production:
     enabled: false
     requires_independent_review: true
-    requires_input_status: MANUSCRIPT_PRODUCTION_READY
+    requires_input_readiness: ENERGY_PLUS_DETECTED_INTENSITY
 
 magnetization:
   field_T: {start: 0.0, stop: 14.0, step: 0.1}
-  directions_abc:
-    a: [1.0, 0.0, 0.0]
-    b: [0.0, 1.0, 0.0]
-    c: [0.0, 0.0, 1.0]
+  directions: [a, b, c]
   temperatures_source: data/manuscript_v1/literature_magnetization.csv
 
 outputs:

@@ -1,6 +1,13 @@
-import numpy as np
+from pathlib import Path
 
-from cef_fit.magnetization import abc_direction_in_direct_frame, magnetization_curve
+import numpy as np
+import yaml
+
+from cef_fit.magnetization import (
+    abc_direction_in_direct_frame,
+    configured_directions_in_direct_frame,
+    magnetization_curve,
+)
 
 
 def test_free_ion_magnetization_is_odd_and_bounded():
@@ -15,3 +22,16 @@ def test_crystallographic_direction_mapping():
     assert np.array_equal(abc_direction_in_direct_frame("a"), [0, 0, 1])
     assert np.array_equal(abc_direction_in_direct_frame("b"), [1, 0, 0])
     assert np.array_equal(abc_direction_in_direct_frame("c"), [0, 1, 0])
+
+
+def test_configured_crystallographic_directions_use_direct_frame_mapping():
+    repository = Path(__file__).resolve().parents[2]
+    config = yaml.safe_load(
+        (repository / "configs/manuscript_fit_v1.yaml").read_text(encoding="utf-8")
+    )
+    assert config["magnetization"]["directions"] == ["a", "b", "c"]
+    assert "directions_abc" not in config["magnetization"]
+    directions = configured_directions_in_direct_frame(config["magnetization"])
+    assert np.array_equal(directions["a"], [0, 0, 1])
+    assert np.array_equal(directions["b"], [1, 0, 0])
+    assert np.array_equal(directions["c"], [0, 1, 0])

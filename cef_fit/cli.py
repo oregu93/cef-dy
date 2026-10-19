@@ -14,7 +14,13 @@ from .fit_pcm import run_pcm_smoke
 from .cef_model import CEFModel
 from .conventions import DIRECT_LM
 from .provenance import git_provenance, sha256_file, write_json
-from .taipan_observables import admitted_energy_rows, audit_observations, load_observations
+from .taipan_observables import (
+    AdmissionPolicy,
+    InputAudit,
+    admitted_energy_rows,
+    audit_observations,
+    load_observations,
+)
 from .wavefunctions import export_wavefunctions
 
 
@@ -33,17 +39,23 @@ def _resolve(repository: Path, value: str) -> Path:
 def _audit_payload(config: dict[str, Any], config_path: Path, repository: Path) -> dict[str, Any]:
     observables_path = _resolve(repository, config["inputs"]["observables"])
     rows = load_observations(observables_path)
-    audit = audit_observations(rows)
+    policy = AdmissionPolicy.from_mapping(config["inputs"].get("admission"))
+    audit = audit_observations(rows, policy)
     return {
         "design_id": config["design_id"],
         "status": audit.status,
+        "objective_readiness": (
+            audit.objective_readiness.value if audit.objective_readiness is not None else None
+        ),
         "production_ready": audit.production_ready,
+        "full_joint_ready": audit.full_joint_ready,
         "counts": {
             "rows": audit.row_count,
             "admitted_energy": audit.admitted_energy_count,
             "admitted_detected_intensity": audit.admitted_detected_intensity_count,
             "admitted_censored": audit.admitted_censored_count,
         },
+        "admissible_instrument_blocks": list(audit.admissible_instrument_blocks),
         "blockers": list(audit.blockers),
         "warnings": list(audit.warnings),
         "inputs": {
@@ -63,19 +75,21 @@ def audit_inputs(args: argparse.Namespace) -> int:
     return 0
 
 
-def _require_smoke(profile: str, config: dict[str, Any], audit_status: str) -> None:
+def _require_smoke(profile: str, config: dict[str, Any], audit: InputAudit) -> None:
     if profile == "smoke":
         return
     production = config["profiles"]["production"]
     if not production.get("enabled", False):
         raise SystemExit("Production profile is disabled pending independent review")
-    if audit_status != production["requires_input_status"]:
-        raise SystemExit(f"Production input gate failed: {audit_status}")
+    required = production["requires_input_readiness"]
+    if not audit.satisfies(required):
+        raise SystemExit(f"Production input gate failed: {audit.status}; requires {required}")
 
 
 def _candidate(config: dict[str, Any], repository: Path):
     rows = load_observations(_resolve(repository, config["inputs"]["observables"]))
-    audit = audit_observations(rows)
+    policy = AdmissionPolicy.from_mapping(config["inputs"].get("admission"))
+    audit = audit_observations(rows, policy)
     admitted = admitted_energy_rows(rows)
     if len(admitted) != 1:
         raise SystemExit(f"Expected exactly one admitted manuscript-v1 energy candidate; found {len(admitted)}")
@@ -85,7 +99,7 @@ def _candidate(config: dict[str, Any], repository: Path):
 def fit_pcm(args: argparse.Namespace) -> int:
     config, config_path, repository = _load_config(args.config)
     candidate, audit = _candidate(config, repository)
-    _require_smoke(args.profile, config, audit.status)
+    _require_smoke(args.profile, config, audit)
     result = run_pcm_smoke(
         formal_parameters=config["pcm"]["formal_parameters_meV"],
         energy_meV=float(candidate.energy_meV),
@@ -112,7 +126,7 @@ def fit_pcm(args: argparse.Namespace) -> int:
 def fit_cs15(args: argparse.Namespace) -> int:
     config, config_path, repository = _load_config(args.config)
     candidate, audit = _candidate(config, repository)
-    _require_smoke(args.profile, config, audit.status)
+    _require_smoke(args.profile, config, audit)
     seed_path = _resolve(repository, config["cs15"]["seed_bundle"])
     seed = yaml.safe_load(seed_path.read_text(encoding="utf-8"))
     profile = config["profiles"][args.profile]

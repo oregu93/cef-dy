@@ -2,6 +2,19 @@
 
 from .cef_model import Transition
 from .g_tensor import GTensor, g_tensor
-from .magnetization import MagnetizationCurve, magnetization_curve
+from .magnetization import (
+    MagnetizationCurve,
+    abc_direction_in_direct_frame,
+    configured_directions_in_direct_frame,
+    magnetization_curve,
+)
 
-__all__ = ["Transition", "GTensor", "g_tensor", "MagnetizationCurve", "magnetization_curve"]
+__all__ = [
+    "Transition",
+    "GTensor",
+    "g_tensor",
+    "MagnetizationCurve",
+    "magnetization_curve",
+    "abc_direction_in_direct_frame",
+    "configured_directions_in_direct_frame",
+]

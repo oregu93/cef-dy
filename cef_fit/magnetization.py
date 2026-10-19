@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Sequence
+from typing import Mapping, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
@@ -61,3 +61,18 @@ def abc_direction_in_direct_frame(axis: str) -> NDArray[np.float64]:
         return mapping[axis.lower()].copy()
     except KeyError as error:
         raise ValueError("axis must be one of a, b, c") from error
+
+
+def configured_directions_in_direct_frame(
+    magnetization_config: Mapping[str, object],
+) -> dict[str, NDArray[np.float64]]:
+    """Resolve configured crystallographic labels in the internal direct frame."""
+    labels = magnetization_config.get("directions")
+    if not isinstance(labels, list) or not labels:
+        raise ValueError("magnetization.directions must be a non-empty list of a/b/c labels")
+    if not all(isinstance(label, str) for label in labels):
+        raise ValueError("magnetization.directions must contain only a/b/c labels")
+    normalized = [label.lower() for label in labels]
+    if len(normalized) != len(set(normalized)):
+        raise ValueError("magnetization.directions must not contain duplicate labels")
+    return {label: abc_direction_in_direct_frame(label) for label in normalized}
