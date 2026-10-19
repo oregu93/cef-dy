@@ -1,0 +1,4150 @@
+{
+  "task": "HOLDOUT_CLEAN_ENERGY_ADMISSION_V1",
+  "base_commit": "dc339abbc70b0e355c7e27beada8474d1af0ba5a",
+  "grid_policy": {
+    "background_orders": [
+      0,
+      1,
+      2
+    ],
+    "half_windows_meV": [
+      5.0,
+      6.0,
+      7.0
+    ],
+    "width_modes": [
+      "shared",
+      "per_block"
+    ],
+    "starts": [
+      [
+        17.5,
+        2.0
+      ],
+      [
+        18.0,
+        2.5
+      ],
+      [
+        18.5,
+        3.0
+      ]
+    ],
+    "center_bounds_meV": [
+      16.75,
+      19.25
+    ],
+    "width_bounds_meV": [
+      0.65,
+      8.0
+    ],
+    "selection": "No comparator energy enters fitting or model validity. All valid joint models form the sensitivity ensemble."
+  },
+  "joint_shared_centroid_models": [
+    {
+      "model_id": "joint_w5.0_b0_shared",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 62,
+      "dof": 338,
+      "deviance": 517.0908288758321,
+      "reduced_deviance": 1.5298545233012786,
+      "aic": 641.0908288758321,
+      "aicc": 664.2718377779092,
+      "bic": 888.561630796527,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 16,
+      "optimality": 0.0006178690178257046,
+      "jacobian_rank": 62,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.96811056960554
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09812881811531429
+      },
+      "widths_meV": {
+        "shared": 2.230210297348921
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.25756872730888525
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 517.0908288758321,
+          "centers_meV": {
+            "shared": 17.96811056960554
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 517.0908288760385,
+          "centers_meV": {
+            "shared": 17.96811043600723
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 517.0908288815885,
+          "centers_meV": {
+            "shared": 17.968104764772118
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 5.804833421052535e-06,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.99999751903
+    },
+    {
+      "model_id": "joint_w5.0_b0_per_block",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 0,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 63,
+      "dof": 337,
+      "deviance": 516.6877808054053,
+      "reduced_deviance": 1.5331981626273155,
+      "aic": 642.6877808054053,
+      "aicc": 666.6877808054053,
+      "bic": 894.1500472732082,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.0015127305244420368,
+      "jacobian_rank": 63,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.949940232199705
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09852557084650236
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.3569164935284133,
+        "inst_f4703b6bd8": 2.0435028570603233
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.33378280510684605,
+        "inst_f4703b6bd8": 0.40364663547404356
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 516.6877808054053,
+          "centers_meV": {
+            "shared": 17.949940232199705
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 516.6877808072624,
+          "centers_meV": {
+            "shared": 17.94993975645997
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 516.6877808128148,
+          "centers_meV": {
+            "shared": 17.949939050613285
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.181586419818359e-06,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20808.0000049419
+    },
+    {
+      "model_id": "joint_w5.0_b1_shared",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 92,
+      "dof": 308,
+      "deviance": 402.25838778264296,
+      "reduced_deviance": 1.3060337265670225,
+      "aic": 586.258387782643,
+      "aicc": 641.9978014634248,
+      "bic": 953.4731261165773,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.0013278566518945402,
+      "jacobian_rank": 92,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.06649204753211
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09440007479160621
+      },
+      "widths_meV": {
+        "shared": 2.215568749496031
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.23943630072306632
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 402.25838778264296,
+          "centers_meV": {
+            "shared": 18.06649204753211
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 402.2583877864339,
+          "centers_meV": {
+            "shared": 18.066492874189297
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 402.25838779146693,
+          "centers_meV": {
+            "shared": 18.066492404598723
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 8.266571889237184e-07,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20808.00000066605
+    },
+    {
+      "model_id": "joint_w5.0_b1_per_block",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 1,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 93,
+      "dof": 307,
+      "deviance": 402.0843535930377,
+      "reduced_deviance": 1.3097210214756927,
+      "aic": 588.0843535930377,
+      "aicc": 645.2216084949985,
+      "bic": 959.29055647408,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 21,
+      "optimality": 0.0033095749515967663,
+      "jacobian_rank": 93,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.0739806716211
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09444323617023231
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.144007578655223,
+        "inst_f4703b6bd8": 2.3415621587015236
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.2929564941123347,
+        "inst_f4703b6bd8": 0.4129839909566493
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 402.0843535930377,
+          "centers_meV": {
+            "shared": 18.0739806716211
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 402.08435360066494,
+          "centers_meV": {
+            "shared": 18.07398099332064
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 402.0843536039637,
+          "centers_meV": {
+            "shared": 18.073972208715315
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 8.784605324052563e-06,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.9999843389
+    },
+    {
+      "model_id": "joint_w5.0_b2_shared",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 122,
+      "dof": 278,
+      "deviance": 354.7390962032219,
+      "reduced_deviance": 1.2760399144000787,
+      "aic": 598.7390962032218,
+      "aicc": 707.0856666003338,
+      "bic": 1085.6977709503956,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 24,
+      "optimality": 0.00021465244359995694,
+      "jacobian_rank": 122,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.065177168573697
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.08344563151350837
+      },
+      "widths_meV": {
+        "shared": 2.253533313537802
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.28389272752262606
+      },
+      "active_area_bounds": 4,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 354.7390962032219,
+          "centers_meV": {
+            "shared": 18.065177168573697
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 354.7390962098729,
+          "centers_meV": {
+            "shared": 18.065184121857946
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 354.7390962144042,
+          "centers_meV": {
+            "shared": 18.065186073314496
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 8.90474079895398e-06,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.99999427561
+    },
+    {
+      "model_id": "joint_w5.0_b2_per_block",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 2,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 123,
+      "dof": 277,
+      "deviance": 354.7377951907183,
+      "reduced_deviance": 1.28064185989429,
+      "aic": 600.7377951907183,
+      "aicc": 711.2595343211531,
+      "bic": 1091.687934485,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 35,
+      "optimality": 0.0009732456585402418,
+      "jacobian_rank": 123,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.063737400660802
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.08369310442563198
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.2587026539025854,
+        "inst_f4703b6bd8": 2.2325156659132186
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.3421204135162883,
+        "inst_f4703b6bd8": 0.510557456678958
+      },
+      "active_area_bounds": 4,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 354.7377951907183,
+          "centers_meV": {
+            "shared": 18.063737400660802
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 354.7377952275216,
+          "centers_meV": {
+            "shared": 18.063708613093123
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 354.73779529291664,
+          "centers_meV": {
+            "shared": 18.06375249094987
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 4.387785674708766e-05,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.999987425053
+    },
+    {
+      "model_id": "joint_w6.0_b0_shared",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 62,
+      "dof": 418,
+      "deviance": 664.5871023953263,
+      "reduced_deviance": 1.5899212975964743,
+      "aic": 788.5871023953263,
+      "aicc": 807.3209153449666,
+      "bic": 1047.3618408372463,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 15,
+      "optimality": 0.0014646849055242478,
+      "jacobian_rank": 62,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.94465766002255
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.10176258822729496
+      },
+      "widths_meV": {
+        "shared": 2.221414447085221
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.25878689089086954
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 664.5871023953263,
+          "centers_meV": {
+            "shared": 17.94465766002255
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 664.5871023959471,
+          "centers_meV": {
+            "shared": 17.944652238906546
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 664.5871023986102,
+          "centers_meV": {
+            "shared": 17.944655487963367
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 5.421116004100668e-06,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24774.9999950694
+    },
+    {
+      "model_id": "joint_w6.0_b0_per_block",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 0,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 63,
+      "dof": 417,
+      "deviance": 664.0256817198108,
+      "reduced_deviance": 1.5923877259467885,
+      "aic": 790.0256817198108,
+      "aicc": 809.4102971044261,
+      "bic": 1052.9742062656328,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.0010993302537248503,
+      "jacobian_rank": 63,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.929823457923714
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.10204077345540889
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.358267065445973,
+        "inst_f4703b6bd8": 2.01304982361138
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.33528016059485105,
+        "inst_f4703b6bd8": 0.3971289677998029
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 664.0256817198108,
+          "centers_meV": {
+            "shared": 17.929823457923714
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 664.0256817248173,
+          "centers_meV": {
+            "shared": 17.92982248698777
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 664.0256817319303,
+          "centers_meV": {
+            "shared": 17.929819953098193
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 3.504825521360999e-06,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24775.00000809222
+    },
+    {
+      "model_id": "joint_w6.0_b1_shared",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 92,
+      "dof": 388,
+      "deviance": 512.1714191467889,
+      "reduced_deviance": 1.3200294307906932,
+      "aic": 696.1714191467889,
+      "aicc": 740.3884734103548,
+      "bic": 1080.159740705767,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 22,
+      "optimality": 0.0020879813453420124,
+      "jacobian_rank": 92,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.045830450980002
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09528294116122976
+      },
+      "widths_meV": {
+        "shared": 2.2119821390081884
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.2364598011362357
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 512.1714191467889,
+          "centers_meV": {
+            "shared": 18.045830450980002
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 512.1714191659667,
+          "centers_meV": {
+            "shared": 18.04582957895961
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 512.1714191666574,
+          "centers_meV": {
+            "shared": 18.045840845027826
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.1266068216997382e-05,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24775.000005612113
+    },
+    {
+      "model_id": "joint_w6.0_b1_per_block",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 1,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 93,
+      "dof": 387,
+      "deviance": 512.1688931131483,
+      "reduced_deviance": 1.3234338323337167,
+      "aic": 698.1688931131483,
+      "aicc": 743.4642299007131,
+      "bic": 1086.3310007760283,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 25,
+      "optimality": 0.000696669363486394,
+      "jacobian_rank": 93,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.04520009354869
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09541597680061704
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.220290514849793,
+        "inst_f4703b6bd8": 2.19765268859615
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.29920409541970133,
+        "inst_f4703b6bd8": 0.3870891574578064
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 512.1688931131483,
+          "centers_meV": {
+            "shared": 18.04520009354869
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 512.16889314908,
+          "centers_meV": {
+            "shared": 18.045204244853455
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 512.1688931520171,
+          "centers_meV": {
+            "shared": 18.04520430675853
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 4.213209841452681e-06,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24774.999998229232
+    },
+    {
+      "model_id": "joint_w6.0_b2_shared",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 122,
+      "dof": 358,
+      "deviance": 468.1953750706672,
+      "reduced_deviance": 1.3078083102532603,
+      "aic": 712.1953750706672,
+      "aicc": 796.2626019614235,
+      "bic": 1221.3972797467036,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 20,
+      "optimality": 0.0008875847526819396,
+      "jacobian_rank": 122,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.09982857935357
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.08565889084384783
+      },
+      "widths_meV": {
+        "shared": 2.1243903373451256
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.2527289875116667
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 468.1953750706672,
+          "centers_meV": {
+            "shared": 18.09982857935357
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 468.1953750762477,
+          "centers_meV": {
+            "shared": 18.09982630116842
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 468.1953750920653,
+          "centers_meV": {
+            "shared": 18.099814123519312
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.445583425763175e-05,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24775.00000324439
+    },
+    {
+      "model_id": "joint_w6.0_b2_per_block",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 2,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 123,
+      "dof": 357,
+      "deviance": 467.77831019651035,
+      "reduced_deviance": 1.3103033899061916,
+      "aic": 713.7783101965103,
+      "aicc": 799.4637034549373,
+      "bic": 1227.1540009764485,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 34,
+      "optimality": 0.0008789530807467061,
+      "jacobian_rank": 123,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.13090493378874
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.0856517984229256
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.015134760112061,
+        "inst_f4703b6bd8": 2.4115220947805995
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.2917211183361662,
+        "inst_f4703b6bd8": 0.4997256908242705
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 467.77831019651035,
+          "centers_meV": {
+            "shared": 18.13090493378874
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 467.7783101997016,
+          "centers_meV": {
+            "shared": 18.13093530041737
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 467.7783102070365,
+          "centers_meV": {
+            "shared": 18.130902395846768
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 3.290457060245444e-05,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24774.999989650787
+    },
+    {
+      "model_id": "joint_w7.0_b0_shared",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 62,
+      "dof": 498,
+      "deviance": 860.9241787147041,
+      "reduced_deviance": 1.7287634110737031,
+      "aic": 984.9241787147041,
+      "aicc": 1000.642488573859,
+      "bic": 1253.2562593059142,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 15,
+      "optimality": 0.004203952672191598,
+      "jacobian_rank": 62,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.938918397491424
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.10843352330905079
+      },
+      "widths_meV": {
+        "shared": 2.181035924285494
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.2678375937382422
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 860.9241787147041,
+          "centers_meV": {
+            "shared": 17.938918397491424
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 860.9241787161272,
+          "centers_meV": {
+            "shared": 17.938918523824697
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 860.9241787267322,
+          "centers_meV": {
+            "shared": 17.938909384230037
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 9.139594659757222e-06,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28828.000010386302
+    },
+    {
+      "model_id": "joint_w7.0_b0_per_block",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 0,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 63,
+      "dof": 497,
+      "deviance": 860.0794448114707,
+      "reduced_deviance": 1.7305421424778082,
+      "aic": 986.0794448114707,
+      "aicc": 1002.3375093275997,
+      "bic": 1258.73946218641,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 16,
+      "optimality": 0.00197934795604583,
+      "jacobian_rank": 63,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.92222252972972
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.1088397538202497
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.340822586080536,
+        "inst_f4703b6bd8": 1.9342174993955379
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.3485850592645033,
+        "inst_f4703b6bd8": 0.40762032322879027
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 860.0794448114707,
+          "centers_meV": {
+            "shared": 17.92222252972972
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 860.0794448123925,
+          "centers_meV": {
+            "shared": 17.92222327139428
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 860.0794448257383,
+          "centers_meV": {
+            "shared": 17.92222185869976
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.4126945195869212e-06,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28828.00000369061
+    },
+    {
+      "model_id": "joint_w7.0_b1_shared",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 92,
+      "dof": 468,
+      "deviance": 613.1491676774764,
+      "reduced_deviance": 1.3101477941826418,
+      "aic": 797.1491676774764,
+      "aicc": 833.7915659644143,
+      "bic": 1195.3193517805623,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.0006843999951976791,
+      "jacobian_rank": 92,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.05880937742004
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09626334855215843
+      },
+      "widths_meV": {
+        "shared": 2.1842669726918396
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.23505956922964794
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 613.1491676774764,
+          "centers_meV": {
+            "shared": 18.05880937742004
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 613.1491676784904,
+          "centers_meV": {
+            "shared": 18.058810577573304
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 613.1491676881109,
+          "centers_meV": {
+            "shared": 18.058807514773875
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 3.062799429187635e-06,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28827.999991585202
+    },
+    {
+      "model_id": "joint_w7.0_b1_per_block",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 1,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 93,
+      "dof": 467,
+      "deviance": 613.0720408431811,
+      "reduced_deviance": 1.3127880960239424,
+      "aic": 799.0720408431811,
+      "aicc": 836.591354147902,
+      "bic": 1201.570161729996,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 22,
+      "optimality": 0.00035844929172419655,
+      "jacobian_rank": 93,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.0556751670678
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09642469651929937
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.230162671336538,
+        "inst_f4703b6bd8": 2.1078387921446278
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.2983722234125672,
+        "inst_f4703b6bd8": 0.3816783348714261
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 613.0720408431811,
+          "centers_meV": {
+            "shared": 18.0556751670678
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 613.0720408694151,
+          "centers_meV": {
+            "shared": 18.055671937216072
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 613.0720409069648,
+          "centers_meV": {
+            "shared": 18.05568179214283
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 9.854926759089722e-06,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28828.000005643327
+    },
+    {
+      "model_id": "joint_w7.0_b2_shared",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 122,
+      "dof": 438,
+      "deviance": 563.8418469862381,
+      "reduced_deviance": 1.2873101529366167,
+      "aic": 807.8418469862381,
+      "aicc": 876.5191925239956,
+      "bic": 1335.8501346012,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 19,
+      "optimality": 0.002977836557955379,
+      "jacobian_rank": 122,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.091185586865713
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.08543197015350446
+      },
+      "widths_meV": {
+        "shared": 2.1559815641691
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.23957028881299436
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 563.8418469862381,
+          "centers_meV": {
+            "shared": 18.091185586865713
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 563.8418469904998,
+          "centers_meV": {
+            "shared": 18.09116838820256
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 563.8418469925978,
+          "centers_meV": {
+            "shared": 18.091182309562676
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.7198663151418714e-05,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28828.000003365196
+    },
+    {
+      "model_id": "joint_w7.0_b2_per_block",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 2,
+      "width_mode": "per_block",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 123,
+      "dof": 437,
+      "deviance": 562.729175271891,
+      "reduced_deviance": 1.287709783230872,
+      "aic": 808.729175271891,
+      "aicc": 878.6924780241845,
+      "bic": 1341.0653996705819,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 23,
+      "optimality": 0.00473839114886708,
+      "jacobian_rank": 123,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.126548095563336
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.08530793318735547
+      },
+      "widths_meV": {
+        "inst_4615972084": 1.9900465966501408,
+        "inst_f4703b6bd8": 2.5457212612778175
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.2780174438354609,
+        "inst_f4703b6bd8": 0.4531691328386905
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 562.729175271891,
+          "centers_meV": {
+            "shared": 18.126548095563336
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 562.7291752732134,
+          "centers_meV": {
+            "shared": 18.12655395478795
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 562.7291752992913,
+          "centers_meV": {
+            "shared": 18.12653097219315
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 2.2982594799714207e-05,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28828.000008529852
+    }
+  ],
+  "joint_separate_centroid_models": [
+    {
+      "model_id": "separate_centers_w5.0_b0_per_block",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 0,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 64,
+      "dof": 336,
+      "deviance": 513.1690049826922,
+      "reduced_deviance": 1.5272887053056314,
+      "aic": 641.1690049826922,
+      "aicc": 666.0048258782145,
+      "bic": 896.6227359976031,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 24,
+      "optimality": 0.002108383371411141,
+      "jacobian_rank": 64,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 17.82508229246032,
+        "inst_f4703b6bd8": 18.235126654832417
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.1284041038270441,
+        "inst_f4703b6bd8": 0.17721063259594905
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.47947973761972,
+        "inst_f4703b6bd8": 2.415936168385668
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.3492209396002333,
+        "inst_f4703b6bd8": 0.47789946269500305
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 513.1690049826922,
+          "centers_meV": {
+            "inst_4615972084": 17.82508229246032,
+            "inst_f4703b6bd8": 18.235126654832417
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 513.1690049869744,
+          "centers_meV": {
+            "inst_4615972084": 17.825084686406257,
+            "inst_f4703b6bd8": 18.235137583057643
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 513.1690050211123,
+          "centers_meV": {
+            "inst_4615972084": 17.825093403997126,
+            "inst_f4703b6bd8": 18.235065278627953
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 7.230442968975126e-05,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.99998778801
+    },
+    {
+      "model_id": "separate_centers_w5.0_b1_per_block",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 1,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 94,
+      "dof": 306,
+      "deviance": 401.9985456390171,
+      "reduced_deviance": 1.313720737382409,
+      "aic": 589.998545639017,
+      "aicc": 648.5559226881974,
+      "bic": 965.1962130671673,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 25,
+      "optimality": 0.003474554308535882,
+      "jacobian_rank": 94,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 18.092868148638583,
+        "inst_f4703b6bd8": 18.034885959310632
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.11713255198081446,
+        "inst_f4703b6bd8": 0.1581426629891103
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.1431622327684066,
+        "inst_f4703b6bd8": 2.3060835151602688
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.29360919333512003,
+        "inst_f4703b6bd8": 0.40705141824254
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 401.9985456390171,
+          "centers_meV": {
+            "inst_4615972084": 18.092868148638583,
+            "inst_f4703b6bd8": 18.034885959310632
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 401.99854564358384,
+          "centers_meV": {
+            "inst_4615972084": 18.092857642761597,
+            "inst_f4703b6bd8": 18.034888653735756
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 401.99854565246955,
+          "centers_meV": {
+            "inst_4615972084": 18.092869313726297,
+            "inst_f4703b6bd8": 18.034885611436696
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.1670964699561637e-05,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.999981688303
+    },
+    {
+      "model_id": "separate_centers_w5.0_b2_per_block",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 2,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 400,
+      "n_parameters": 124,
+      "dof": 276,
+      "deviance": 354.0694670169863,
+      "reduced_deviance": 1.282860387742704,
+      "aic": 602.0694670169863,
+      "aicc": 714.7967397442591,
+      "bic": 1097.0110708583761,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 24,
+      "optimality": 0.0010335614795948262,
+      "jacobian_rank": 124,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 18.10198320656,
+        "inst_f4703b6bd8": 17.934090311491214
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.09975849803471848,
+        "inst_f4703b6bd8": 0.14676522212490237
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.248964592001098,
+        "inst_f4703b6bd8": 1.9716480329766568
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.3409440530946996,
+        "inst_f4703b6bd8": 0.4262399536534055
+      },
+      "active_area_bounds": 5,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 354.0694670169863,
+          "centers_meV": {
+            "inst_4615972084": 18.10198320656,
+            "inst_f4703b6bd8": 17.934090311491214
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 354.0694670895556,
+          "centers_meV": {
+            "inst_4615972084": 18.101987958084322,
+            "inst_f4703b6bd8": 17.93410998262246
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 354.0694672930298,
+          "centers_meV": {
+            "inst_4615972084": 18.101987550877364,
+            "inst_f4703b6bd8": 17.934134267310917
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 4.3955819702290455e-05,
+      "valid": true,
+      "counts_sum": 20808.0,
+      "expected_sum": 20807.999993034704
+    },
+    {
+      "model_id": "separate_centers_w6.0_b0_per_block",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 0,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 64,
+      "dof": 416,
+      "deviance": 660.9175562381914,
+      "reduced_deviance": 1.5887441255725756,
+      "aic": 788.9175562381914,
+      "aicc": 808.9657490092758,
+      "bic": 1056.0398668879154,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 24,
+      "optimality": 0.0009091902938311816,
+      "jacobian_rank": 64,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 17.810409072771723,
+        "inst_f4703b6bd8": 18.166742710922144
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.13291767744579913,
+        "inst_f4703b6bd8": 0.17586712967774434
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.431578127898176,
+        "inst_f4703b6bd8": 2.2507239993145025
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.34379735295431463,
+        "inst_f4703b6bd8": 0.44699393886189576
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 660.9175562381914,
+          "centers_meV": {
+            "inst_4615972084": 17.810409072771723,
+            "inst_f4703b6bd8": 18.166742710922144
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 660.91755624146,
+          "centers_meV": {
+            "inst_4615972084": 17.810408065327767,
+            "inst_f4703b6bd8": 18.16674472369068
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 660.9175562467229,
+          "centers_meV": {
+            "inst_4615972084": 17.810410223864192,
+            "inst_f4703b6bd8": 18.166695669931926
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 4.905375875452478e-05,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24775.000003682275
+    },
+    {
+      "model_id": "separate_centers_w6.0_b1_per_block",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 1,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 94,
+      "dof": 386,
+      "deviance": 512.1614127431956,
+      "reduced_deviance": 1.326843038194807,
+      "aic": 700.1614127431956,
+      "aicc": 746.551023132806,
+      "bic": 1092.4973065099775,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 20,
+      "optimality": 0.004006464983654447,
+      "jacobian_rank": 94,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 18.039277137453624,
+        "inst_f4703b6bd8": 18.056146722264657
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.12060313702490616,
+        "inst_f4703b6bd8": 0.1569874217948342
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.2193881305312413,
+        "inst_f4703b6bd8": 2.206776121752053
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.299523680549787,
+        "inst_f4703b6bd8": 0.3894051709240377
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 512.1614127431956,
+          "centers_meV": {
+            "inst_4615972084": 18.039277137453624,
+            "inst_f4703b6bd8": 18.056146722264657
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 512.1614127483451,
+          "centers_meV": {
+            "inst_4615972084": 18.03929302857975,
+            "inst_f4703b6bd8": 18.05614074178841
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 512.161412750069,
+          "centers_meV": {
+            "inst_4615972084": 18.039293109115025,
+            "inst_f4703b6bd8": 18.056141278799686
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.597166140143713e-05,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24774.999987420124
+    },
+    {
+      "model_id": "separate_centers_w6.0_b2_per_block",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 2,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 480,
+      "n_parameters": 124,
+      "dof": 356,
+      "deviance": 467.7311662765906,
+      "reduced_deviance": 1.3138515906645805,
+      "aic": 715.7311662765906,
+      "aicc": 803.0551099385624,
+      "bic": 1233.2806431604308,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 60,
+      "optimality": 0.0013716308104438917,
+      "jacobian_rank": 124,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 18.121753860390164,
+        "inst_f4703b6bd8": 18.18383709229791
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.10266724025990781,
+        "inst_f4703b6bd8": 0.15891587782467206
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.0216530765105025,
+        "inst_f4703b6bd8": 2.5311947802178985
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.2928499865446602,
+        "inst_f4703b6bd8": 0.5252172258412154
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 467.7311662765906,
+          "centers_meV": {
+            "inst_4615972084": 18.121753860390164,
+            "inst_f4703b6bd8": 18.18383709229791
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 467.7311662815166,
+          "centers_meV": {
+            "inst_4615972084": 18.12175325621138,
+            "inst_f4703b6bd8": 18.18383933952995
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 467.7311663740015,
+          "centers_meV": {
+            "inst_4615972084": 18.12175381457104,
+            "inst_f4703b6bd8": 18.183645359466496
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 0.00019398006345383578,
+      "valid": true,
+      "counts_sum": 24775.0,
+      "expected_sum": 24774.999992307105
+    },
+    {
+      "model_id": "separate_centers_w7.0_b0_per_block",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 0,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 64,
+      "dof": 496,
+      "deviance": 857.1410254570424,
+      "reduced_deviance": 1.7281069061633918,
+      "aic": 985.1410254570424,
+      "aicc": 1001.9491062651232,
+      "bic": 1262.1289796157107,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 20,
+      "optimality": 0.0036184299027484804,
+      "jacobian_rank": 64,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 17.802480443834447,
+        "inst_f4703b6bd8": 18.1467892256792
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.14157190151782661,
+        "inst_f4703b6bd8": 0.18521880978283928
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.4068568195584783,
+        "inst_f4703b6bd8": 2.1173869099790457
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.3566587193702623,
+        "inst_f4703b6bd8": 0.45455009452542067
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 857.1410254570424,
+          "centers_meV": {
+            "inst_4615972084": 17.802480443834447,
+            "inst_f4703b6bd8": 18.1467892256792
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 857.1410254683374,
+          "centers_meV": {
+            "inst_4615972084": 17.802479476522645,
+            "inst_f4703b6bd8": 18.146839280081515
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 857.1410255293513,
+          "centers_meV": {
+            "inst_4615972084": 17.802476804109844,
+            "inst_f4703b6bd8": 18.146858814618458
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 6.958893925812504e-05,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28827.999998771393
+    },
+    {
+      "model_id": "separate_centers_w7.0_b1_per_block",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 1,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 94,
+      "dof": 466,
+      "deviance": 613.0719893815387,
+      "reduced_deviance": 1.3156051274281948,
+      "aic": 801.0719893815387,
+      "aicc": 839.4805915320763,
+      "bic": 1207.898047052083,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 19,
+      "optimality": 0.0012220443520133083,
+      "jacobian_rank": 94,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 18.05617116768097,
+        "inst_f4703b6bd8": 18.054770967247496
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.12180203836950455,
+        "inst_f4703b6bd8": 0.15824640356377243
+      },
+      "widths_meV": {
+        "inst_4615972084": 2.2302712957826127,
+        "inst_f4703b6bd8": 2.1071849933569413
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.29877083235814006,
+        "inst_f4703b6bd8": 0.3819323326730086
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 613.0719893815387,
+          "centers_meV": {
+            "inst_4615972084": 18.05617116768097,
+            "inst_f4703b6bd8": 18.054770967247496
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 613.071989382792,
+          "centers_meV": {
+            "inst_4615972084": 18.056178213712727,
+            "inst_f4703b6bd8": 18.054771198890425
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 613.0719893971898,
+          "centers_meV": {
+            "inst_4615972084": 18.056170160946763,
+            "inst_f4703b6bd8": 18.054764319259913
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 8.052765963384445e-06,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28828.0000074438
+    },
+    {
+      "model_id": "separate_centers_w7.0_b2_per_block",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 2,
+      "width_mode": "per_block",
+      "center_mode": "per_block",
+      "blocks": [
+        "inst_4615972084",
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 30,
+      "n_scans": 45,
+      "n_points": 560,
+      "n_parameters": 124,
+      "dof": 436,
+      "deviance": 562.5669090121695,
+      "reduced_deviance": 1.2902910757159851,
+      "aic": 810.5669090121695,
+      "aicc": 881.8312768282615,
+      "bic": 1347.2310701945896,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 22,
+      "optimality": 0.0031666179873071475,
+      "jacobian_rank": 124,
+      "covariance_finite": true,
+      "centers_meV": {
+        "inst_4615972084": 18.105332629118795,
+        "inst_f4703b6bd8": 18.193585668437194
+      },
+      "center_sigma_stat_meV": {
+        "inst_4615972084": 0.10391842638717229,
+        "inst_f4703b6bd8": 0.15305083612740603
+      },
+      "widths_meV": {
+        "inst_4615972084": 1.9987806409168931,
+        "inst_f4703b6bd8": 2.6619212378260655
+      },
+      "width_sigma_stat_meV": {
+        "inst_4615972084": 0.2787343071682516,
+        "inst_f4703b6bd8": 0.47241686277696326
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 562.5669090121695,
+          "centers_meV": {
+            "inst_4615972084": 18.105332629118795,
+            "inst_f4703b6bd8": 18.193585668437194
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 562.5669090136689,
+          "centers_meV": {
+            "inst_4615972084": 18.105342527687736,
+            "inst_f4703b6bd8": 18.193559931700726
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 562.5669090368672,
+          "centers_meV": {
+            "inst_4615972084": 18.10534233677832,
+            "inst_f4703b6bd8": 18.193639931238497
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 7.99995377711582e-05,
+      "valid": true,
+      "counts_sum": 28828.0,
+      "expected_sum": 28827.999995751237
+    }
+  ],
+  "single_block_models": [
+    {
+      "model_id": "block_inst_4615972084_w5.0_b0",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 320,
+      "n_parameters": 48,
+      "dof": 272,
+      "deviance": 424.9911321169167,
+      "reduced_deviance": 1.5624673974886643,
+      "aic": 520.9911321169167,
+      "aicc": 538.3490656962524,
+      "bic": 701.8705399150177,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 29,
+      "optimality": 0.0018931591160001595,
+      "jacobian_rank": 48,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.82508337812283
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.12987432491404566
+      },
+      "widths_meV": {
+        "shared": 2.479475805349584
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.3532193991841975
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 424.9911321169167,
+          "centers_meV": {
+            "shared": 17.82508337812283
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 424.9911321182829,
+          "centers_meV": {
+            "shared": 17.825082962978193
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 424.9911322048803,
+          "centers_meV": {
+            "shared": 17.825067741401423
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.5636721407474852e-05,
+      "valid": true,
+      "counts_sum": 11555.0,
+      "expected_sum": 11555.000006396833
+    },
+    {
+      "model_id": "block_inst_4615972084_w5.0_b1",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 320,
+      "n_parameters": 71,
+      "dof": 249,
+      "deviance": 327.38207835842974,
+      "reduced_deviance": 1.3147874632868664,
+      "aic": 469.38207835842974,
+      "aicc": 510.60788481004266,
+      "bic": 736.9328690597875,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 26,
+      "optimality": 0.002500970438704338,
+      "jacobian_rank": 71,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.092858706228256
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.1171818995729775
+      },
+      "widths_meV": {
+        "shared": 2.1432002982834124
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.2937346442093097
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 327.38207835842974,
+          "centers_meV": {
+            "shared": 18.092858706228256
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 327.38207836178947,
+          "centers_meV": {
+            "shared": 18.09286821469665
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 327.3820783645708,
+          "centers_meV": {
+            "shared": 18.09285764220415
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.0572492499250075e-05,
+      "valid": true,
+      "counts_sum": 11555.0,
+      "expected_sum": 11554.999999809874
+    },
+    {
+      "model_id": "block_inst_4615972084_w5.0_b2",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 320,
+      "n_parameters": 94,
+      "dof": 226,
+      "deviance": 283.25528731693646,
+      "reduced_deviance": 1.25334197927848,
+      "aic": 471.25528731693646,
+      "aicc": 550.6330650947142,
+      "bic": 825.477460921551,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 22,
+      "optimality": 0.0002709547004757852,
+      "jacobian_rank": 94,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.101986059460327
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.09860404481170074
+      },
+      "widths_meV": {
+        "shared": 2.248960508864972
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.3369979405159593
+      },
+      "active_area_bounds": 4,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 283.25528731693646,
+          "centers_meV": {
+            "shared": 18.101986059460327
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 283.25528731874283,
+          "centers_meV": {
+            "shared": 18.101987163379935
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 283.2552873318814,
+          "centers_meV": {
+            "shared": 18.1019783160423
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 8.847337635842223e-06,
+      "valid": true,
+      "counts_sum": 11555.0,
+      "expected_sum": 11555.00000520054
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w5.0_b0",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 80,
+      "n_parameters": 16,
+      "dof": 64,
+      "deviance": 88.1778728567824,
+      "reduced_deviance": 1.377779263387225,
+      "aic": 120.1778728567824,
+      "aicc": 128.81279349170305,
+      "bic": 158.2902990115645,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 33,
+      "optimality": 0.0003143025134568308,
+      "jacobian_rank": 16,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.23511741604134
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.1683123214210058
+      },
+      "widths_meV": {
+        "shared": 2.4159098172729343
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.45390100031497027
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 88.1778728567824,
+          "centers_meV": {
+            "shared": 18.23511741604134
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 88.17787286477378,
+          "centers_meV": {
+            "shared": 18.235104037105685
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 88.17787286479961,
+          "centers_meV": {
+            "shared": 18.23513080358007
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 2.6766474384487537e-05,
+      "valid": true,
+      "counts_sum": 9253.0,
+      "expected_sum": 9252.999974469989
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w5.0_b1",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 80,
+      "n_parameters": 23,
+      "dof": 57,
+      "deviance": 74.61646727919339,
+      "reduced_deviance": 1.3090608294595332,
+      "aic": 120.61646727919339,
+      "aicc": 140.3307529934791,
+      "bic": 175.40307987669266,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 21,
+      "optimality": 0.000430260299823023,
+      "jacobian_rank": 23,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.034890727734247
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.15786256091771325
+      },
+      "widths_meV": {
+        "shared": 2.3060949453247304
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.40633286396921076
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 74.61646727919339,
+          "centers_meV": {
+            "shared": 18.034890727734247
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 74.6164672807884,
+          "centers_meV": {
+            "shared": 18.03489297659368
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 74.61646728105255,
+          "centers_meV": {
+            "shared": 18.034877840603688
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.5135989993808607e-05,
+      "valid": true,
+      "counts_sum": 9253.0,
+      "expected_sum": 9253.000002769355
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w5.0_b2",
+      "half_window_meV": 5.0,
+      "window_meV": [
+        13.0,
+        23.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 80,
+      "n_parameters": 30,
+      "dof": 50,
+      "deviance": 70.8141796906865,
+      "reduced_deviance": 1.41628359381373,
+      "aic": 130.8141796906865,
+      "aicc": 168.7733633641559,
+      "bic": 202.27497873090294,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 30,
+      "optimality": 0.0005106965517749814,
+      "jacobian_rank": 30,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.934085726266087
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.15420807593927627
+      },
+      "widths_meV": {
+        "shared": 1.9716286804111451
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.44785200530404035
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 70.8141796906865,
+          "centers_meV": {
+            "shared": 17.934085726266087
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 70.81417969090165,
+          "centers_meV": {
+            "shared": 17.934085841670946
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 70.81417969190568,
+          "centers_meV": {
+            "shared": 17.93408685551515
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.1292490640357755e-06,
+      "valid": true,
+      "counts_sum": 9253.0,
+      "expected_sum": 9252.999998817952
+    },
+    {
+      "model_id": "block_inst_4615972084_w6.0_b0",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 384,
+      "n_parameters": 48,
+      "dof": 336,
+      "deviance": 557.1044405828854,
+      "reduced_deviance": 1.6580489303062067,
+      "aic": 653.1044405828854,
+      "aicc": 667.1462316276616,
+      "bic": 842.7352831070964,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.0020850418449934365,
+      "jacobian_rank": 48,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.810402061552665
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.13578697274102816
+      },
+      "widths_meV": {
+        "shared": 2.4316045432838242
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.35121906804308545
+      },
+      "active_area_bounds": 1,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 557.1044405828854,
+          "centers_meV": {
+            "shared": 17.810402061552665
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 557.1044405836105,
+          "centers_meV": {
+            "shared": 17.810401883504063
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 557.1044405906125,
+          "centers_meV": {
+            "shared": 17.8103999683969
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 2.0931557642711596e-06,
+      "valid": true,
+      "counts_sum": 13769.0,
+      "expected_sum": 13769.000004001651
+    },
+    {
+      "model_id": "block_inst_4615972084_w6.0_b1",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 384,
+      "n_parameters": 71,
+      "dof": 313,
+      "deviance": 421.2765545812459,
+      "reduced_deviance": 1.3459314842851307,
+      "aic": 563.2765545812458,
+      "aicc": 596.0457853504765,
+      "bic": 843.7721758149745,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 25,
+      "optimality": 0.002150957637294732,
+      "jacobian_rank": 71,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.03928784642909
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.12146538359556167
+      },
+      "widths_meV": {
+        "shared": 2.2193431850594383
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.30166367898387325
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 421.2765545812459,
+          "centers_meV": {
+            "shared": 18.03928784642909
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 421.2765545887282,
+          "centers_meV": {
+            "shared": 18.039288987047335
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 421.27655459419657,
+          "centers_meV": {
+            "shared": 18.039289720752752
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.8743236616103331e-06,
+      "valid": true,
+      "counts_sum": 13769.0,
+      "expected_sum": 13768.999995251319
+    },
+    {
+      "model_id": "block_inst_4615972084_w6.0_b2",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 384,
+      "n_parameters": 94,
+      "dof": 290,
+      "deviance": 381.5144287532083,
+      "reduced_deviance": 1.3155669957007181,
+      "aic": 569.5144287532082,
+      "aicc": 631.3137367116857,
+      "bic": 940.8748286964546,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 25,
+      "optimality": 0.0013048499432744879,
+      "jacobian_rank": 94,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.121740717081202
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.10273498081484536
+      },
+      "widths_meV": {
+        "shared": 2.0216840879775435
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.29304658059916655
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 381.5144287532083,
+          "centers_meV": {
+            "shared": 18.121740717081202
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 381.51442875472475,
+          "centers_meV": {
+            "shared": 18.121739398515945
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 381.5144287564734,
+          "centers_meV": {
+            "shared": 18.121739954097368
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.3185652569802642e-06,
+      "valid": true,
+      "counts_sum": 13769.0,
+      "expected_sum": 13768.999996697357
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w6.0_b0",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 96,
+      "n_parameters": 16,
+      "dof": 80,
+      "deviance": 103.81311565391603,
+      "reduced_deviance": 1.2976639456739503,
+      "aic": 135.81311565391604,
+      "aicc": 142.69919160328314,
+      "bic": 176.84268671740142,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 26,
+      "optimality": 0.0003845269769639739,
+      "jacobian_rank": 16,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.166732654283393
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.15894038569874638
+      },
+      "widths_meV": {
+        "shared": 2.25069325429376
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.4039704078018557
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 103.81311565391603,
+          "centers_meV": {
+            "shared": 18.166732654283393
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 103.81311565459839,
+          "centers_meV": {
+            "shared": 18.16673363517142
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 103.81311565560713,
+          "centers_meV": {
+            "shared": 18.166712493530504
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 2.1141640914379423e-05,
+      "valid": true,
+      "counts_sum": 11006.0,
+      "expected_sum": 11005.999996712533
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w6.0_b1",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 96,
+      "n_parameters": 23,
+      "dof": 73,
+      "deviance": 90.88485811638132,
+      "reduced_deviance": 1.2449980563887852,
+      "aic": 136.88485811638134,
+      "aicc": 152.21819144971468,
+      "bic": 195.86486652014156,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 20,
+      "optimality": 0.00038159764922856843,
+      "jacobian_rank": 23,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.05614523803152
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.15206836158594203
+      },
+      "widths_meV": {
+        "shared": 2.206773026726369
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.37720318569084677
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 90.88485811638132,
+          "centers_meV": {
+            "shared": 18.05614523803152
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 90.88485811696918,
+          "centers_meV": {
+            "shared": 18.056137085093486
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 90.88485811834838,
+          "centers_meV": {
+            "shared": 18.0561477205344
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.0635440915507388e-05,
+      "valid": true,
+      "counts_sum": 11006.0,
+      "expected_sum": 11005.999995433716
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w6.0_b2",
+      "half_window_meV": 6.0,
+      "window_meV": [
+        12.0,
+        24.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 96,
+      "n_parameters": 30,
+      "dof": 66,
+      "deviance": 86.21673746744435,
+      "reduced_deviance": 1.3063142040521871,
+      "aic": 146.21673746744435,
+      "aicc": 174.83212208282896,
+      "bic": 223.14718321147942,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 61,
+      "optimality": 0.0008418643105284687,
+      "jacobian_rank": 30,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.183720529830065
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.15845353412636662
+      },
+      "widths_meV": {
+        "shared": 2.5308815159522235
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.5236440206557168
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 86.21673746744435,
+          "centers_meV": {
+            "shared": 18.183720529830065
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 86.21673746823197,
+          "centers_meV": {
+            "shared": 18.183794685775432
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 86.21673746992502,
+          "centers_meV": {
+            "shared": 18.18379621298287
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 7.568315280437332e-05,
+      "valid": true,
+      "counts_sum": 11006.0,
+      "expected_sum": 11005.999990805602
+    },
+    {
+      "model_id": "block_inst_4615972084_w7.0_b0",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 448,
+      "n_parameters": 48,
+      "dof": 400,
+      "deviance": 729.6287736948227,
+      "reduced_deviance": 1.8240719342370568,
+      "aic": 825.6287736948227,
+      "aicc": 837.4182473790332,
+      "bic": 1022.6588488507421,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.002590346445819987,
+      "jacobian_rank": 48,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 17.802471617584313
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.14545126333345515
+      },
+      "widths_meV": {
+        "shared": 2.4068885851932964
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.3664332164401387
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.0,
+        2.5
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 729.6287736948227,
+          "centers_meV": {
+            "shared": 17.802471617584313
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 729.6287736970235,
+          "centers_meV": {
+            "shared": 17.802471176052787
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 729.6287737013934,
+          "centers_meV": {
+            "shared": 17.802470296635715
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.3209485985044012e-06,
+      "valid": true,
+      "counts_sum": 15995.0,
+      "expected_sum": 15995.00001027267
+    },
+    {
+      "model_id": "block_inst_4615972084_w7.0_b1",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 448,
+      "n_parameters": 71,
+      "dof": 377,
+      "deviance": 506.69556609281176,
+      "reduced_deviance": 1.3440200692117024,
+      "aic": 648.6955660928118,
+      "aicc": 675.8870554545139,
+      "bic": 940.1358855942757,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 19,
+      "optimality": 0.0007601614386625138,
+      "jacobian_rank": 71,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.056174164158488
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.12310965768911848
+      },
+      "widths_meV": {
+        "shared": 2.2302560026175096
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.3019805804338737
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 506.69556609281176,
+          "centers_meV": {
+            "shared": 18.056174164158488
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 506.6955660950167,
+          "centers_meV": {
+            "shared": 18.05617066179723
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 506.69556609673293,
+          "centers_meV": {
+            "shared": 18.056169112594773
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 5.0515637148862425e-06,
+      "valid": true,
+      "counts_sum": 15995.0,
+      "expected_sum": 15994.999997279878
+    },
+    {
+      "model_id": "block_inst_4615972084_w7.0_b2",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_4615972084"
+      ],
+      "n_profiles": 23,
+      "n_scans": 38,
+      "n_points": 448,
+      "n_parameters": 94,
+      "dof": 354,
+      "deviance": 468.2282824499574,
+      "reduced_deviance": 1.3226787639829305,
+      "aic": 656.2282824499574,
+      "aicc": 706.8231832998158,
+      "bic": 1042.078846296966,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 21,
+      "optimality": 0.0010322974217728026,
+      "jacobian_rank": 94,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.105331685420083
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.10521445158440011
+      },
+      "widths_meV": {
+        "shared": 1.9987781240622513
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.2822108715226064
+      },
+      "active_area_bounds": 2,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 468.2282824499574,
+          "centers_meV": {
+            "shared": 18.105331685420083
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 468.22828247529117,
+          "centers_meV": {
+            "shared": 18.105334606909445
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 468.2282824805459,
+          "centers_meV": {
+            "shared": 18.10534873113807
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 1.704571798555321e-05,
+      "valid": true,
+      "counts_sum": 15995.0,
+      "expected_sum": 15994.99999776187
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w7.0_b0",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 0,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 112,
+      "n_parameters": 16,
+      "dof": 96,
+      "deviance": 127.51225176260526,
+      "reduced_deviance": 1.328252622527138,
+      "aic": 159.51225176260527,
+      "aicc": 165.23856755207896,
+      "bic": 203.00823370332677,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 24,
+      "optimality": 0.0005184988866063196,
+      "jacobian_rank": 16,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.146823346642467
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.16238497769741853
+      },
+      "widths_meV": {
+        "shared": 2.1174244113424083
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.39851610375643975
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 127.51225176260526,
+          "centers_meV": {
+            "shared": 18.146823346642467
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 127.51225176411269,
+          "centers_meV": {
+            "shared": 18.146827272982776
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 127.51225176505196,
+          "centers_meV": {
+            "shared": 18.146802294375586
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 2.4978607189751756e-05,
+      "valid": true,
+      "counts_sum": 12833.0,
+      "expected_sum": 12833.00000414438
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w7.0_b1",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 1,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 112,
+      "n_parameters": 23,
+      "dof": 89,
+      "deviance": 106.37642328610798,
+      "reduced_deviance": 1.1952407110798648,
+      "aic": 152.37642328610798,
+      "aicc": 164.9218778315625,
+      "bic": 214.90189732589516,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 18,
+      "optimality": 0.0011819350018720369,
+      "jacobian_rank": 23,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.05476331444159
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.15083373956728277
+      },
+      "widths_meV": {
+        "shared": 2.1071821454484536
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.3640409775634803
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        17.5,
+        2.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 106.37642328610798,
+          "centers_meV": {
+            "shared": 18.05476331444159
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 106.3764232864287,
+          "centers_meV": {
+            "shared": 18.054771279944394
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 106.37642328659356,
+          "centers_meV": {
+            "shared": 18.054772692236472
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 9.377794881970658e-06,
+      "valid": true,
+      "counts_sum": 12833.0,
+      "expected_sum": 12832.99999118994
+    },
+    {
+      "model_id": "block_inst_f4703b6bd8_w7.0_b2",
+      "half_window_meV": 7.0,
+      "window_meV": [
+        11.0,
+        25.0
+      ],
+      "background_order": 2,
+      "width_mode": "shared",
+      "center_mode": "shared",
+      "blocks": [
+        "inst_f4703b6bd8"
+      ],
+      "n_profiles": 7,
+      "n_scans": 7,
+      "n_points": 112,
+      "n_parameters": 30,
+      "dof": 82,
+      "deviance": 94.33862654780441,
+      "reduced_deviance": 1.1504710554610293,
+      "aic": 154.3386265478044,
+      "aicc": 177.30158951076737,
+      "bic": 235.89359268665723,
+      "success": true,
+      "optimizer_status": 2,
+      "optimizer_message": "`ftol` termination condition is satisfied.",
+      "nfev": 30,
+      "optimality": 0.0006390139115286716,
+      "jacobian_rank": 30,
+      "covariance_finite": true,
+      "centers_meV": {
+        "shared": 18.193607076477054
+      },
+      "center_sigma_stat_meV": {
+        "shared": 0.14452132231432432
+      },
+      "widths_meV": {
+        "shared": 2.6619590598766774
+      },
+      "width_sigma_stat_meV": {
+        "shared": 0.44609243440706264
+      },
+      "active_area_bounds": 0,
+      "best_start": [
+        18.5,
+        3.0
+      ],
+      "starts": [
+        {
+          "center_start_meV": 18.5,
+          "width_start_meV": 3.0,
+          "deviance": 94.33862654780441,
+          "centers_meV": {
+            "shared": 18.193607076477054
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 18.0,
+          "width_start_meV": 2.5,
+          "deviance": 94.33862654823317,
+          "centers_meV": {
+            "shared": 18.193587072611898
+          },
+          "success": true,
+          "status": 2
+        },
+        {
+          "center_start_meV": 17.5,
+          "width_start_meV": 2.0,
+          "deviance": 94.33862654855096,
+          "centers_meV": {
+            "shared": 18.193580434009828
+          },
+          "success": true,
+          "status": 2
+        }
+      ],
+      "max_start_center_spread_meV": 2.664246722616781e-05,
+      "valid": true,
+      "counts_sum": 12833.0,
+      "expected_sum": 12832.999999214415
+    }
+  ],
+  "common_vs_separate_center_lrt": [
+    {
+      "half_window_meV": 5.0,
+      "background_order": 0,
+      "common_model_id": "joint_w5.0_b0_per_block",
+      "separate_model_id": "separate_centers_w5.0_b0_per_block",
+      "delta_deviance": 3.51877582271311,
+      "degrees_of_freedom": 1,
+      "p_value": 0.06067724926946348,
+      "block_centers_meV": {
+        "inst_4615972084": 17.82508229246032,
+        "inst_f4703b6bd8": 18.235126654832417
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.1284041038270441,
+        "inst_f4703b6bd8": 0.17721063259594905
+      }
+    },
+    {
+      "half_window_meV": 5.0,
+      "background_order": 1,
+      "common_model_id": "joint_w5.0_b1_per_block",
+      "separate_model_id": "separate_centers_w5.0_b1_per_block",
+      "delta_deviance": 0.08580795402059493,
+      "degrees_of_freedom": 1,
+      "p_value": 0.7695756977585805,
+      "block_centers_meV": {
+        "inst_4615972084": 18.092868148638583,
+        "inst_f4703b6bd8": 18.034885959310632
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.11713255198081446,
+        "inst_f4703b6bd8": 0.1581426629891103
+      }
+    },
+    {
+      "half_window_meV": 5.0,
+      "background_order": 2,
+      "common_model_id": "joint_w5.0_b2_per_block",
+      "separate_model_id": "separate_centers_w5.0_b2_per_block",
+      "delta_deviance": 0.668328173731993,
+      "degrees_of_freedom": 1,
+      "p_value": 0.4136350896185438,
+      "block_centers_meV": {
+        "inst_4615972084": 18.10198320656,
+        "inst_f4703b6bd8": 17.934090311491214
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.09975849803471848,
+        "inst_f4703b6bd8": 0.14676522212490237
+      }
+    },
+    {
+      "half_window_meV": 6.0,
+      "background_order": 0,
+      "common_model_id": "joint_w6.0_b0_per_block",
+      "separate_model_id": "separate_centers_w6.0_b0_per_block",
+      "delta_deviance": 3.1081254816193677,
+      "degrees_of_freedom": 1,
+      "p_value": 0.07790257130806648,
+      "block_centers_meV": {
+        "inst_4615972084": 17.810409072771723,
+        "inst_f4703b6bd8": 18.166742710922144
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.13291767744579913,
+        "inst_f4703b6bd8": 0.17586712967774434
+      }
+    },
+    {
+      "half_window_meV": 6.0,
+      "background_order": 1,
+      "common_model_id": "joint_w6.0_b1_per_block",
+      "separate_model_id": "separate_centers_w6.0_b1_per_block",
+      "delta_deviance": 0.007480369952759247,
+      "degrees_of_freedom": 1,
+      "p_value": 0.9310775951124795,
+      "block_centers_meV": {
+        "inst_4615972084": 18.039277137453624,
+        "inst_f4703b6bd8": 18.056146722264657
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.12060313702490616,
+        "inst_f4703b6bd8": 0.1569874217948342
+      }
+    },
+    {
+      "half_window_meV": 6.0,
+      "background_order": 2,
+      "common_model_id": "joint_w6.0_b2_per_block",
+      "separate_model_id": "separate_centers_w6.0_b2_per_block",
+      "delta_deviance": 0.047143919919733435,
+      "degrees_of_freedom": 1,
+      "p_value": 0.8281097573055581,
+      "block_centers_meV": {
+        "inst_4615972084": 18.121753860390164,
+        "inst_f4703b6bd8": 18.18383709229791
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.10266724025990781,
+        "inst_f4703b6bd8": 0.15891587782467206
+      }
+    },
+    {
+      "half_window_meV": 7.0,
+      "background_order": 0,
+      "common_model_id": "joint_w7.0_b0_per_block",
+      "separate_model_id": "separate_centers_w7.0_b0_per_block",
+      "delta_deviance": 2.9384193544283335,
+      "degrees_of_freedom": 1,
+      "p_value": 0.08649533641551879,
+      "block_centers_meV": {
+        "inst_4615972084": 17.802480443834447,
+        "inst_f4703b6bd8": 18.1467892256792
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.14157190151782661,
+        "inst_f4703b6bd8": 0.18521880978283928
+      }
+    },
+    {
+      "half_window_meV": 7.0,
+      "background_order": 1,
+      "common_model_id": "joint_w7.0_b1_per_block",
+      "separate_model_id": "separate_centers_w7.0_b1_per_block",
+      "delta_deviance": 5.146164232883166e-05,
+      "degrees_of_freedom": 1,
+      "p_value": 0.9942762829345833,
+      "block_centers_meV": {
+        "inst_4615972084": 18.05617116768097,
+        "inst_f4703b6bd8": 18.054770967247496
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.12180203836950455,
+        "inst_f4703b6bd8": 0.15824640356377243
+      }
+    },
+    {
+      "half_window_meV": 7.0,
+      "background_order": 2,
+      "common_model_id": "joint_w7.0_b2_per_block",
+      "separate_model_id": "separate_centers_w7.0_b2_per_block",
+      "delta_deviance": 0.16226625972149122,
+      "degrees_of_freedom": 1,
+      "p_value": 0.6870785399234436,
+      "block_centers_meV": {
+        "inst_4615972084": 18.105332629118795,
+        "inst_f4703b6bd8": 18.193585668437194
+      },
+      "block_sigma_stat_meV": {
+        "inst_4615972084": 0.10391842638717229,
+        "inst_f4703b6bd8": 0.15305083612740603
+      }
+    }
+  ],
+  "source_scan_ids": [
+    "SCAN-02R-059bd02c78268a2b",
+    "SCAN-02R-074afad5a6b92ea4",
+    "SCAN-02R-0e6d00a831c04e8d",
+    "SCAN-02R-26c5588a4a75efc2",
+    "SCAN-02R-2a0e91f43e0fe127",
+    "SCAN-02R-2f690557cfd20bec",
+    "SCAN-02R-306a96179bd778b6",
+    "SCAN-02R-43979cdff2eef525",
+    "SCAN-02R-45d1daf515e218b6",
+    "SCAN-02R-4ad1398a663b7933",
+    "SCAN-02R-4d54ea7698000638",
+    "SCAN-02R-4eb3495e2e32dd73",
+    "SCAN-02R-4f5e09d1864ac832",
+    "SCAN-02R-51f6ed2eb7632349",
+    "SCAN-02R-5e52d7e5fbefbc05",
+    "SCAN-02R-68a1fdbd8955d9a4",
+    "SCAN-02R-6fded6b51e0642a8",
+    "SCAN-02R-708cf4d83a29d78f",
+    "SCAN-02R-7118d0dce593edea",
+    "SCAN-02R-731f452fb62a55bd",
+    "SCAN-02R-762111064d108c6d",
+    "SCAN-02R-774f62fc1777bc6b",
+    "SCAN-02R-77b71bd09c7eb4b4",
+    "SCAN-02R-79e659b84aa4786d",
+    "SCAN-02R-7acd4c14a0007418",
+    "SCAN-02R-8345a5938afc1084",
+    "SCAN-02R-8641a638f4880175",
+    "SCAN-02R-89614c0503a95275",
+    "SCAN-02R-8ca6316615b8cbae",
+    "SCAN-02R-8dcd5041a8a4e044",
+    "SCAN-02R-8e62e3b1b9deee81",
+    "SCAN-02R-91de8f7a5ce6984b",
+    "SCAN-02R-91f840c137c7a43c",
+    "SCAN-02R-abcd8030795bc9cb",
+    "SCAN-02R-ae86f327e3ed5623",
+    "SCAN-02R-b704f6a14f738619",
+    "SCAN-02R-c7a73b4824a01210",
+    "SCAN-02R-d2b7e9ee069bd20e",
+    "SCAN-02R-ebc55d8b20e3cec0",
+    "SCAN-02R-eea1fadd4abbd144",
+    "SCAN-02R-f380a5a0600b447a",
+    "SCAN-02R-f56f915bc229d6aa",
+    "SCAN-02R-f71173d3ec0c732c",
+    "SCAN-02R-f87c8c3cd06321c2",
+    "SCAN-02R-fb62d31e5c3c1dbf"
+  ],
+  "source_scan_count": 45,
+  "profile_count": 30,
+  "holdout_detector_access_count": 0,
+  "donor_sha256": "09dd945c036a6f9286fc8c7fdcd905a75e73528f7b0ab54082f58ef82db5d9e1",
+  "split_sha256": "a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670",
+  "count_source_sha256": "e8f1f0298df74b1948804614ac43ec4580f333d87ad8c68b610acc3933c97b21",
+  "runtime": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "numpy": "2.3.0",
+    "scipy": "1.15.3"
+  }
+}
