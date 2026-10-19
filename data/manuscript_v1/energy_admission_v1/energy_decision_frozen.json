@@ -1,0 +1,613 @@
+{
+  "task": "HOLDOUT_CLEAN_ENERGY_ADMISSION_V1",
+  "mode": "ADJUDICATION_ONLY",
+  "checkpoint_commit": "45a0c7964b12f23806e2a3c128263d0614a7914d",
+  "checkpoint_tree": "d469861a685bedb8811fa877a78da61af80895fc",
+  "base_commit": "dc339abbc70b0e355c7e27beada8474d1af0ba5a",
+  "terminal_scientific_state": "MODEL_DEPENDENT_ENERGY",
+  "energy_admission": "MODEL_DEPENDENT_ENERGY",
+  "admitted_energy_meV": null,
+  "stat_sigma_meV": null,
+  "scalar_model_sigma_meV": null,
+  "scientifically_admissible_models": 18,
+  "scientifically_admissible_scope": "conditional common-centroid sensitivity ensemble only",
+  "numerically_valid_models": 45,
+  "diagnostic_only_models": 27,
+  "rejected_models": 0,
+  "rationale": "Between-model centroid span is about twice a conditional covariance sigma and follows background choice. Block offset changes with background; equality is not established. Do not promote a single precise centroid.",
+  "common_centroid_ensemble_meV": {
+    "n": 18,
+    "minimum": 17.92222252972972,
+    "maximum": 18.13090493378874,
+    "median": 18.05724227224392,
+    "mean": 18.032057912219347,
+    "full_range": 0.20868240405902228,
+    "descriptive_sample_sd": 0.06992838175133477,
+    "max_absolute_excursion_from_median": 0.13501974251419924
+  },
+  "conditional_stat_sigma_meV": {
+    "n": 18,
+    "minimum": 0.08344563151350837,
+    "maximum": 0.1088397538202497,
+    "median": 0.0953494589809234,
+    "mean": 0.09439725723976321,
+    "full_range": 0.025394122306741332,
+    "descriptive_sample_sd": 0.008076872802260219,
+    "max_absolute_excursion_from_median": 0.013490294839326303
+  },
+  "sigma_definition": "Saved sqrt(diag(pseudoinverse(J.T@J))*max(deviance/dof,1)); local covariance approximation, not calibrated coverage. Contains residual-dispersion scaling, but NOT between-model sensitivity. Raw curvature sigmas are in w03_energy_variants.csv.",
+  "sensitivity_components": {
+    "background": {
+      "paired_full_range_summary": {
+        "n": 6,
+        "minimum": 0.09838147792656926,
+        "maximum": 0.20432556583361716,
+        "median": 0.15371905435265454,
+        "mean": 0.15587784462531987,
+        "full_range": 0.1059440879070479,
+        "descriptive_sample_sd": 0.04176969977369226,
+        "max_absolute_excursion_from_median": 0.05533757642608528
+      },
+      "paired_strata": [
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 5.0,
+            "width_mode": "per_block"
+          },
+          "n": 3,
+          "minimum": 17.949940232199705,
+          "maximum": 18.0739806716211,
+          "median": 18.063737400660802,
+          "mean": 18.0292194348272,
+          "full_range": 0.12404043942139609,
+          "descriptive_sample_sd": 0.06884856662945438,
+          "max_absolute_excursion_from_median": 0.11379716846109744
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 5.0,
+            "width_mode": "shared"
+          },
+          "n": 3,
+          "minimum": 17.96811056960554,
+          "maximum": 18.06649204753211,
+          "median": 18.065177168573697,
+          "mean": 18.03325992857045,
+          "full_range": 0.09838147792656926,
+          "descriptive_sample_sd": 0.05642483014438563,
+          "max_absolute_excursion_from_median": 0.0970665989681585
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 6.0,
+            "width_mode": "per_block"
+          },
+          "n": 3,
+          "minimum": 17.929823457923714,
+          "maximum": 18.13090493378874,
+          "median": 18.04520009354869,
+          "mean": 18.03530949508705,
+          "full_range": 0.20108147586502767,
+          "descriptive_sample_sd": 0.10090494505950387,
+          "max_absolute_excursion_from_median": 0.11537663562497613
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 6.0,
+            "width_mode": "shared"
+          },
+          "n": 3,
+          "minimum": 17.94465766002255,
+          "maximum": 18.09982857935357,
+          "median": 18.045830450980002,
+          "mean": 18.03010556345204,
+          "full_range": 0.15517091933102023,
+          "descriptive_sample_sd": 0.07877155335102755,
+          "max_absolute_excursion_from_median": 0.10117279095745246
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 7.0,
+            "width_mode": "per_block"
+          },
+          "n": 3,
+          "minimum": 17.92222252972972,
+          "maximum": 18.126548095563336,
+          "median": 18.0556751670678,
+          "mean": 18.034815264120287,
+          "full_range": 0.20432556583361716,
+          "descriptive_sample_sd": 0.10374770299405074,
+          "max_absolute_excursion_from_median": 0.1334526373380811
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 7.0,
+            "width_mode": "shared"
+          },
+          "n": 3,
+          "minimum": 17.938918397491424,
+          "maximum": 18.091185586865713,
+          "median": 18.05880937742004,
+          "mean": 18.02963778725906,
+          "full_range": 0.15226718937428885,
+          "descriptive_sample_sd": 0.0802157122662174,
+          "max_absolute_excursion_from_median": 0.1198909799286163
+        }
+      ],
+      "by_level": {
+        "0": {
+          "n": 6,
+          "minimum": 17.92222252972972,
+          "maximum": 17.96811056960554,
+          "median": 17.94178802875699,
+          "mean": 17.942278807828774,
+          "full_range": 0.045888039875819686,
+          "descriptive_sample_sd": 0.01612649166881829,
+          "max_absolute_excursion_from_median": 0.026322540848550346
+        },
+        "1": {
+          "n": 6,
+          "minimum": 18.04520009354869,
+          "maximum": 18.0739806716211,
+          "median": 18.05724227224392,
+          "mean": 18.057664634694955,
+          "full_range": 0.028780578072410634,
+          "descriptive_sample_sd": 0.011356208750328636,
+          "max_absolute_excursion_from_median": 0.016738399377182134
+        },
+        "2": {
+          "n": 6,
+          "minimum": 18.063737400660802,
+          "maximum": 18.13090493378874,
+          "median": 18.09550708310964,
+          "mean": 18.09623029413431,
+          "full_range": 0.06716753312793955,
+          "descriptive_sample_sd": 0.028913599499071175,
+          "max_absolute_excursion_from_median": 0.03539785067910017
+        }
+      }
+    },
+    "window": {
+      "paired_full_range_summary": {
+        "n": 6,
+        "minimum": 0.020661596552105976,
+        "maximum": 0.06716753312793955,
+        "median": 0.02898637509326285,
+        "mean": 0.034695165519404846,
+        "full_range": 0.04650593657583357,
+        "descriptive_sample_sd": 0.01652481710781574,
+        "max_absolute_excursion_from_median": 0.0381811580346767
+      },
+      "paired_strata": [
+        {
+          "fixed_dimensions": {
+            "background_order": 0,
+            "width_mode": "per_block"
+          },
+          "n": 3,
+          "minimum": 17.92222252972972,
+          "maximum": 17.949940232199705,
+          "median": 17.929823457923714,
+          "mean": 17.93399540661771,
+          "full_range": 0.027717702469985284,
+          "descriptive_sample_sd": 0.01432206774466156,
+          "max_absolute_excursion_from_median": 0.02011677427599068
+        },
+        {
+          "fixed_dimensions": {
+            "background_order": 0,
+            "width_mode": "shared"
+          },
+          "n": 3,
+          "minimum": 17.938918397491424,
+          "maximum": 17.96811056960554,
+          "median": 17.94465766002255,
+          "mean": 17.950562209039834,
+          "full_range": 0.029192172114115067,
+          "descriptive_sample_sd": 0.015465881885886584,
+          "max_absolute_excursion_from_median": 0.02345290958298918
+        },
+        {
+          "fixed_dimensions": {
+            "background_order": 1,
+            "width_mode": "per_block"
+          },
+          "n": 3,
+          "minimum": 18.04520009354869,
+          "maximum": 18.0739806716211,
+          "median": 18.0556751670678,
+          "mean": 18.058285310745863,
+          "full_range": 0.028780578072410634,
+          "descriptive_sample_sd": 0.014566744868385361,
+          "max_absolute_excursion_from_median": 0.018305504553300267
+        },
+        {
+          "fixed_dimensions": {
+            "background_order": 1,
+            "width_mode": "shared"
+          },
+          "n": 3,
+          "minimum": 18.045830450980002,
+          "maximum": 18.06649204753211,
+          "median": 18.05880937742004,
+          "mean": 18.05704395864405,
+          "full_range": 0.020661596552105976,
+          "descriptive_sample_sd": 0.010443319424946402,
+          "max_absolute_excursion_from_median": 0.012978926440037952
+        },
+        {
+          "fixed_dimensions": {
+            "background_order": 2,
+            "width_mode": "per_block"
+          },
+          "n": 3,
+          "minimum": 18.063737400660802,
+          "maximum": 18.13090493378874,
+          "median": 18.126548095563336,
+          "mean": 18.10706347667096,
+          "full_range": 0.06716753312793955,
+          "descriptive_sample_sd": 0.037584666509882445,
+          "max_absolute_excursion_from_median": 0.06281069490253444
+        },
+        {
+          "fixed_dimensions": {
+            "background_order": 2,
+            "width_mode": "shared"
+          },
+          "n": 3,
+          "minimum": 18.065177168573697,
+          "maximum": 18.09982857935357,
+          "median": 18.091185586865713,
+          "mean": 18.08539711159766,
+          "full_range": 0.03465141077987255,
+          "descriptive_sample_sd": 0.01803634945618181,
+          "max_absolute_excursion_from_median": 0.02600841829201528
+        }
+      ],
+      "by_level": {
+        "5.0": {
+          "n": 6,
+          "minimum": 17.949940232199705,
+          "maximum": 18.0739806716211,
+          "median": 18.064457284617248,
+          "mean": 18.031239681698825,
+          "full_range": 0.12404043942139609,
+          "descriptive_sample_sd": 0.05634227817907293,
+          "max_absolute_excursion_from_median": 0.1145170524175434
+        },
+        "6.0": {
+          "n": 6,
+          "minimum": 17.929823457923714,
+          "maximum": 18.13090493378874,
+          "median": 18.045515272264346,
+          "mean": 18.032707529269544,
+          "full_range": 0.20108147586502767,
+          "descriptive_sample_sd": 0.08101129855308246,
+          "max_absolute_excursion_from_median": 0.11569181434063225
+        },
+        "7.0": {
+          "n": 6,
+          "minimum": 17.92222252972972,
+          "maximum": 18.126548095563336,
+          "median": 18.05724227224392,
+          "mean": 18.032226525689673,
+          "full_range": 0.20432556583361716,
+          "descriptive_sample_sd": 0.08298976098508717,
+          "max_absolute_excursion_from_median": 0.13501974251419924
+        }
+      }
+    },
+    "width": {
+      "paired_full_range_summary": {
+        "n": 9,
+        "minimum": 0.000630357431312234,
+        "maximum": 0.035362508697623696,
+        "median": 0.014834202098835902,
+        "mean": 0.014314692242734454,
+        "full_range": 0.03473215126631146,
+        "descriptive_sample_sd": 0.012596591113332696,
+        "max_absolute_excursion_from_median": 0.020528306598787793
+      },
+      "paired_strata": [
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 5.0,
+            "background_order": 0
+          },
+          "n": 2,
+          "minimum": 17.949940232199705,
+          "maximum": 17.96811056960554,
+          "median": 17.959025400902622,
+          "mean": 17.959025400902622,
+          "full_range": 0.018170337405834402,
+          "descriptive_sample_sd": 0.012848368796113088,
+          "max_absolute_excursion_from_median": 0.009085168702917201
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 5.0,
+            "background_order": 1
+          },
+          "n": 2,
+          "minimum": 18.06649204753211,
+          "maximum": 18.0739806716211,
+          "median": 18.070236359576604,
+          "mean": 18.070236359576604,
+          "full_range": 0.007488624088992424,
+          "descriptive_sample_sd": 0.005295256875083474,
+          "max_absolute_excursion_from_median": 0.003744312044496212
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 5.0,
+            "background_order": 2
+          },
+          "n": 2,
+          "minimum": 18.063737400660802,
+          "maximum": 18.065177168573697,
+          "median": 18.064457284617248,
+          "mean": 18.064457284617248,
+          "full_range": 0.0014397679128954621,
+          "descriptive_sample_sd": 0.0010180696545431837,
+          "max_absolute_excursion_from_median": 0.0007198839564495074
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 6.0,
+            "background_order": 0
+          },
+          "n": 2,
+          "minimum": 17.929823457923714,
+          "maximum": 17.94465766002255,
+          "median": 17.93724055897313,
+          "mean": 17.93724055897313,
+          "full_range": 0.014834202098835902,
+          "descriptive_sample_sd": 0.010489364897578582,
+          "max_absolute_excursion_from_median": 0.007417101049419728
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 6.0,
+            "background_order": 1
+          },
+          "n": 2,
+          "minimum": 18.04520009354869,
+          "maximum": 18.045830450980002,
+          "median": 18.045515272264346,
+          "mean": 18.045515272264346,
+          "full_range": 0.000630357431312234,
+          "descriptive_sample_sd": 0.000445730014252214,
+          "max_absolute_excursion_from_median": 0.000315178715656117
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 6.0,
+            "background_order": 2
+          },
+          "n": 2,
+          "minimum": 18.09982857935357,
+          "maximum": 18.13090493378874,
+          "median": 18.115366756571156,
+          "mean": 18.115366756571156,
+          "full_range": 0.031076354435171538,
+          "descriptive_sample_sd": 0.021974300955666437,
+          "max_absolute_excursion_from_median": 0.015538177217585769
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 7.0,
+            "background_order": 0
+          },
+          "n": 2,
+          "minimum": 17.92222252972972,
+          "maximum": 17.938918397491424,
+          "median": 17.93057046361057,
+          "mean": 17.93057046361057,
+          "full_range": 0.01669586776170462,
+          "descriptive_sample_sd": 0.0118057613120952,
+          "max_absolute_excursion_from_median": 0.00834793388085231
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 7.0,
+            "background_order": 1
+          },
+          "n": 2,
+          "minimum": 18.0556751670678,
+          "maximum": 18.05880937742004,
+          "median": 18.05724227224392,
+          "mean": 18.05724227224392,
+          "full_range": 0.003134210352239819,
+          "descriptive_sample_sd": 0.0022162213937338537,
+          "max_absolute_excursion_from_median": 0.0015671051761216859
+        },
+        {
+          "fixed_dimensions": {
+            "half_window_meV": 7.0,
+            "background_order": 2
+          },
+          "n": 2,
+          "minimum": 18.091185586865713,
+          "maximum": 18.126548095563336,
+          "median": 18.108866841214525,
+          "mean": 18.108866841214525,
+          "full_range": 0.035362508697623696,
+          "descriptive_sample_sd": 0.025005069699857982,
+          "max_absolute_excursion_from_median": 0.017681254348811848
+        }
+      ],
+      "by_level": {
+        "per_block": {
+          "n": 9,
+          "minimum": 17.92222252972972,
+          "maximum": 18.13090493378874,
+          "median": 18.0556751670678,
+          "mean": 18.03311473134485,
+          "full_range": 0.20868240405902228,
+          "descriptive_sample_sd": 0.08018703471070132,
+          "max_absolute_excursion_from_median": 0.1334526373380811
+        },
+        "shared": {
+          "n": 9,
+          "minimum": 17.938918397491424,
+          "maximum": 18.09982857935357,
+          "median": 18.05880937742004,
+          "mean": 18.031001093093852,
+          "full_range": 0.16091018186214612,
+          "descriptive_sample_sd": 0.06291844709484341,
+          "max_absolute_excursion_from_median": 0.1198909799286163
+        }
+      }
+    }
+  },
+  "multimodality": "Order-0 centroids form a lower band separated from orders 1/2. This reflects discrete analysis choices, not evidence for multiple physical peaks or a posterior mode probability.",
+  "block_assessment": "BLOCK_DEPENDENCE_UNRESOLVED",
+  "block_summaries": {
+    "inst_4615972084": {
+      "centroid_meV": {
+        "n": 9,
+        "minimum": 17.802471617584313,
+        "maximum": 18.121740717081202,
+        "median": 18.056174164158488,
+        "mean": 17.995037359559696,
+        "full_range": 0.3192690994968892,
+        "descriptive_sample_sd": 0.1391840274251828,
+        "max_absolute_excursion_from_median": 0.2537025465741749
+      },
+      "sigma_meV": {
+        "n": 9,
+        "minimum": 0.09860404481170074,
+        "maximum": 0.14545126333345515,
+        "median": 0.12146538359556167,
+        "mean": 0.11993588656190364,
+        "full_range": 0.046847218521754413,
+        "descriptive_sample_sd": 0.015766657259793617,
+        "max_absolute_excursion_from_median": 0.023985879737893484
+      }
+    },
+    "inst_f4703b6bd8": {
+      "centroid_meV": {
+        "n": 9,
+        "minimum": 17.934085726266087,
+        "maximum": 18.23511741604134,
+        "median": 18.146823346642467,
+        "mean": 18.11176511441642,
+        "full_range": 0.30103168977525385,
+        "descriptive_sample_sd": 0.09693064602718009,
+        "max_absolute_excursion_from_median": 0.21273762037638022
+      },
+      "sigma_meV": {
+        "n": 9,
+        "minimum": 0.14452132231432432,
+        "maximum": 0.1683123214210058,
+        "median": 0.15786256091771325,
+        "mean": 0.15639836436311955,
+        "full_range": 0.023790999106681476,
+        "descriptive_sample_sd": 0.00694790294932465,
+        "max_absolute_excursion_from_median": 0.013341238603388927
+      }
+    }
+  },
+  "block_difference_meV": {
+    "n": 9,
+    "minimum": -0.41004436237209774,
+    "maximum": 0.16789289506878546,
+    "median": -0.062083231907745784,
+    "mean": -0.1167352615082488,
+    "full_range": 0.5779372574408832,
+    "descriptive_sample_sd": 0.20447919060118208,
+    "max_absolute_excursion_from_median": 0.34796113046435195
+  },
+  "block_difference_sigma_meV": {
+    "n": 9,
+    "minimum": 0.17745925829754527,
+    "maximum": 0.23312788506899987,
+    "median": 0.19796506576170822,
+    "mean": 0.20205790714322253,
+    "full_range": 0.055668626771454593,
+    "descriptive_sample_sd": 0.01836020812068107,
+    "max_absolute_excursion_from_median": 0.03516281930729165
+  },
+  "block_difference_approx95_envelope": [
+    -0.8389720009600969,
+    0.5157130413319742
+  ],
+  "block_lrt_p_range": [
+    0.06067724926946348,
+    0.9942762829345833
+  ],
+  "block_caveat": "LRT chi-square calibration is approximate with active nonnegative areas and excess deviance; failure to reject is not equivalence. The fits cannot identify calibration offsets separately from background/geometry/physical shifts.",
+  "absolute_energy_calibration_systematic_meV": null,
+  "absolute_energy_calibration_status": "UNAVAILABLE_NOT_ZERO",
+  "recommended_W03_energy_likelihood": {
+    "representation": "FINITE_VARIANTS_NO_SINGLE_CENTROID_ADMISSION",
+    "joint_variant_count": 18,
+    "single_block_stress_variant_count": 18,
+    "per_variant_term": "q_m(theta)=(DeltaE_CEF(theta)-E_m)^2/s_m^2, approximate conditional Gaussian; keep m fixed for the complete run",
+    "rule": "Use all 18 common-centroid variants as separately labelled ENERGY_ONLY sensitivity runs with the same frozen CEF settings, assignment policy and budgets. Run all 18 single-block variants as labelled stress tests of the unresolved block assumption. Do not sum them as independent observations, choose a comparator-favoured variant, or minimize over m to select one final Hamiltonian.",
+    "propagation": "Report distributions/supports separately by m; publish both union (compatibility with at least one variant) and intersection (compatibility with all variants) using identical per-variant thresholds. Only claims stable across the variants and block stress tests may be called robust. Empty intersection is reported, not repaired by dropping variants. No posterior model weights inferred from grid frequency.",
+    "scope": "Diagnostic ENERGY_ONLY PCM/Cs15 model-sensitivity propagation; does not authorize a production run or manuscript-grade scalar likelihood. Recorded energy scale remains conditional on unavailable absolute calibration.",
+    "systematic_treatment": "Keep background/window/width/block effects explicit; they interact and are not independent Gaussian errors. No quadrature total is assigned."
+  },
+  "temperature_status": "UNKNOWN",
+  "temperature_centroid_blocker": false,
+  "temperature_reason": "The fitted positional model has no temperature term and every profile amplitude is free. Unknown sensor binding does not invalidate this conditional position fit, but absence of physical temperature shifts/blends is not proven. No claim about general Cs15 ground population.",
+  "Q_status": "VERIFIED_HKL_AND_Q (inherited V2 checks for these 45 scans)",
+  "observables_updated": false,
+  "source_scan_count": 45,
+  "profile_count": 30,
+  "source_scan_ids": [
+    "SCAN-02R-059bd02c78268a2b",
+    "SCAN-02R-074afad5a6b92ea4",
+    "SCAN-02R-0e6d00a831c04e8d",
+    "SCAN-02R-26c5588a4a75efc2",
+    "SCAN-02R-2a0e91f43e0fe127",
+    "SCAN-02R-2f690557cfd20bec",
+    "SCAN-02R-306a96179bd778b6",
+    "SCAN-02R-43979cdff2eef525",
+    "SCAN-02R-45d1daf515e218b6",
+    "SCAN-02R-4ad1398a663b7933",
+    "SCAN-02R-4d54ea7698000638",
+    "SCAN-02R-4eb3495e2e32dd73",
+    "SCAN-02R-4f5e09d1864ac832",
+    "SCAN-02R-51f6ed2eb7632349",
+    "SCAN-02R-5e52d7e5fbefbc05",
+    "SCAN-02R-68a1fdbd8955d9a4",
+    "SCAN-02R-6fded6b51e0642a8",
+    "SCAN-02R-708cf4d83a29d78f",
+    "SCAN-02R-7118d0dce593edea",
+    "SCAN-02R-731f452fb62a55bd",
+    "SCAN-02R-762111064d108c6d",
+    "SCAN-02R-774f62fc1777bc6b",
+    "SCAN-02R-77b71bd09c7eb4b4",
+    "SCAN-02R-79e659b84aa4786d",
+    "SCAN-02R-7acd4c14a0007418",
+    "SCAN-02R-8345a5938afc1084",
+    "SCAN-02R-8641a638f4880175",
+    "SCAN-02R-89614c0503a95275",
+    "SCAN-02R-8ca6316615b8cbae",
+    "SCAN-02R-8dcd5041a8a4e044",
+    "SCAN-02R-8e62e3b1b9deee81",
+    "SCAN-02R-91de8f7a5ce6984b",
+    "SCAN-02R-91f840c137c7a43c",
+    "SCAN-02R-abcd8030795bc9cb",
+    "SCAN-02R-ae86f327e3ed5623",
+    "SCAN-02R-b704f6a14f738619",
+    "SCAN-02R-c7a73b4824a01210",
+    "SCAN-02R-d2b7e9ee069bd20e",
+    "SCAN-02R-ebc55d8b20e3cec0",
+    "SCAN-02R-eea1fadd4abbd144",
+    "SCAN-02R-f380a5a0600b447a",
+    "SCAN-02R-f56f915bc229d6aa",
+    "SCAN-02R-f71173d3ec0c732c",
+    "SCAN-02R-f87c8c3cd06321c2",
+    "SCAN-02R-fb62d31e5c3c1dbf"
+  ],
+  "holdout_accessed": false,
+  "holdout_detector_access_count": 0,
+  "intensity_rows_admitted": 0,
+  "censored_rows_admitted": 0,
+  "CEF_fitting_executed": false,
+  "numerical_grid_rerun": false,
+  "feature_existence_scope": "A finite fitted near-18-meV component persists across the saved grid; no new null-model test, significance, or separate-excitation claim is made."
+}
