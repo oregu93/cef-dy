@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 
 from cef_fit.cef_model import CEFModel
@@ -21,8 +23,17 @@ def test_gauge_fixed_partner_uses_time_reversal(r7_bundle):
 
 def test_wavefunction_export_contains_projectors_and_gauge_fixed_states(r7_bundle, tmp_path):
     system = CEFModel.from_coefficients(r7_bundle["parameters"], DIRECT_LM).eigensystem()
-    npz_path, json_path = export_wavefunctions(tmp_path / "R7", tuple(system.pair(i) for i in range(8)))
+    npz_path, json_path = export_wavefunctions(
+        tmp_path / "R7.variant",
+        tuple(system.pair(i) for i in range(8)),
+        metadata={"scientific_labels": ["TEST_LABEL"]},
+    )
     archive = np.load(npz_path)
     assert archive["projectors"].shape == (8, 16, 16)
     assert archive["plus"].shape == (8, 16)
+    assert json.loads(str(archive["metadata_json"]))["scientific_labels"] == ["TEST_LABEL"]
+    assert npz_path.name == "R7.variant.npz"
+    assert json_path.name == "R7.variant.json"
     assert json_path.exists()
+    payload = json.loads(json_path.read_text(encoding="utf-8"))
+    assert payload["metadata"]["scientific_labels"] == ["TEST_LABEL"]

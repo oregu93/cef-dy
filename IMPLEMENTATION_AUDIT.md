@@ -34,8 +34,10 @@ code was copied from an unavailable mid-refactor artifact.
 
 ## Known technical debt
 
-- Exact scan-level TAIPAN relative-intensity rows and grouping provenance are
-  missing; the W02-Lin V2 intensity-admission result is still pending.
+- The W02 energy result is adjudicated as model-dependent: 18 primary joint
+  variants and 18 single-block stress variants are admitted only to the
+  separate conditional-analysis class. No scalar energy or relative-intensity
+  constraint is admitted to the existing production likelihood.
 - The admitted low-temperature structural input needed to rebuild formal PCM
   from coordinates is absent from the manuscript table; current PCM smoke uses
   the reviewed legacy formal O8 seed and labels it accordingly.
@@ -51,9 +53,10 @@ code was copied from an unavailable mid-refactor artifact.
 These are recorded only and are not implemented by the bounded review
 correction:
 
-1. a real CFE/CMA-ES multistart production adapter;
+1. a reviewed production optimizer/backend adapter (the conditional workflow
+   uses seeded CMA-ES only as a diagnostic landscape search);
 2. a representative McPhase numerical cross-check;
-3. the W02-Lin V2 intensity-admission result.
+3. a reviewed W02 relative-intensity admission result.
 
 Production remains disabled in configuration pending independent review and
 closure of the applicable input gate.

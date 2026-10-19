@@ -9,7 +9,8 @@ g tensors, and frozen-CEF magnetization.
 Scientific boundaries are enforced in code and configuration:
 
 - exchange is off;
-- 18.247178 +/- 0.119021 meV is the current TAIPAN candidate;
+- no single scalar TAIPAN energy is admitted: the W02 result is represented by
+  18 primary joint conditional variants plus 18 single-block stress variants;
 - 6.447 and 27.896 meV are historical context only;
 - about 44.4 meV is an ambiguous diagnostic only;
 - Stage03R sensitivity near 38 meV is not a physical transition-strength limit;
@@ -61,11 +62,14 @@ renamed to a hard-coded token.
 
 An aggregate energy may omit a single temperature and Q only when its
 aggregation status, exact source artifact, and source scan set (directly or by
-provenance manifest) are explicit. The current 18.247178-meV table row does not
-invent the still-missing source scan set, so `audit-inputs` remains
-`INPUT_INVALID` and production remains blocked. This does not block code tests,
-PCM smoke, energy-only Cs15 diagnostics, wavefunction/g calculations, or
-magnetization code.
+provenance manifest) are explicit. The former 18.247178-meV scalar row is now
+explicitly excluded from the scalar energy likelihood and retained only as
+superseded provenance. The reviewed W02 artifact is consumed by the separate
+`MODEL_DEPENDENT_ENERGY_CONDITIONAL` workflow in
+`configs/model_dependent_energy_conditional_v1.yaml`; its variants are evaluated
+independently and are never summed into a likelihood. This conditional workflow
+does not enable the existing production configuration and makes no unique
+Hamiltonian, intensity, or exchange claim.
 
 ## Publication-frame regression gate
 

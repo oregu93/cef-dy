@@ -120,12 +120,13 @@ def test_aggregate_energy_and_detected_rows_need_no_fake_single_temperature_or_q
     assert audit.admitted_energy_count == 1
 
 
-def test_current_table_keeps_missing_aggregate_scan_set_visible():
+def test_current_table_has_no_admitted_scalar_energy_after_w02_adjudication():
     rows = load_observations(Path("data/manuscript_v1/manuscript_observables.csv"))
     audit = audit_observations(rows)
     assert audit.status == "INPUT_INVALID"
     assert not audit.production_ready
-    assert "TAIPAN-18P247-ENERGY:MISSING_AGGREGATE_SOURCE_SCAN_SET" in audit.blockers
+    assert audit.admitted_energy_count == 0
+    assert "NO_ADMITTED_ENERGY_CANDIDATE" in audit.blockers
 
 
 def test_production_profile_remains_disabled():

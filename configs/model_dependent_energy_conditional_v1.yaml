@@ -1,0 +1,52 @@
+schema_version: 1
+execution_class: MODEL_DEPENDENT_ENERGY_CONDITIONAL
+implementation_base: 33fd9ddccb77df5e0abe1f24f08d3e439aae921a
+scientific_labels:
+  - MODEL_DEPENDENT_ENERGY
+  - NO_UNIQUE_HAMILTONIAN_CLAIM
+  - NO_INTENSITY_CONSTRAINT
+  - NO_EXCHANGE
+
+manuscript_config: configs/manuscript_fit_v1.yaml
+w02_source:
+  commit: aedd07489065f3d8dad5b32ce25c314d3a35ac3d
+  branch: work/manuscript-taipan-input-recovery-v1
+  variants_path: data/manuscript_v1/energy_admission_v1/w03_energy_variants.csv
+  summary_path: data/manuscript_v1/energy_admission_v1/energy_admission_summary.yaml
+  source_scans_path: data/manuscript_v1/energy_admission_v1/source_scans.csv
+  sha256:
+    variants: b6a809e5e25b733383a6c9fc9daea15ec2d872451480c8eef96051ab50167f63
+    summary: 523ab9768f62edf6a7b7825f941fc287b3936748a13082cbf48b5f238b84a05a
+    source_scans: 86621a54df13609a27ca433871c4784babd199884968abb39ff3b5efba2d890c
+  expected_primary_variants: 18
+  expected_stress_variants: 18
+
+assignments: [1, 2, 3, 4, 5, 6, 7]
+
+pcm:
+  model_id: MOD-PCM-M0
+  scale_bounds: [0.25, 2.0]
+  source: manuscript_config.pcm.formal_parameters_meV
+
+cs15:
+  model_id: MOD-CEF-CS15
+  selection_rule: PRIMARY_ENERGY_EXTREMA_PLUS_METADATA_MEDOID__STRESS_PER_BLOCK_ENERGY_EXTREMA
+  h_bounds_meV: [-8.0, 8.0]
+  sigma0_meV: 2.5
+  max_cma_evaluations: 320
+  max_polish_evaluations: 120
+  fixed_restart_seeds: [20261020, 20261021, 20261022, 20261023]
+  fit_acceptance_q_max: 1.0
+  parameter_family_rms_fraction: 0.08
+
+historical_bundles:
+  - 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R3.yaml
+  - 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R5.yaml
+  - 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R7.yaml
+
+magnetization:
+  status: SKIP_IF_NO_REVIEWED_TEMPERATURES
+  prediction_label: PREDICTION_ONLY__LITERATURE_NOT_YET_USED
+
+outputs:
+  root: 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1

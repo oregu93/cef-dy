@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 from pathlib import Path
+from typing import Mapping
 
 import numpy as np
 from numpy.typing import NDArray
@@ -95,6 +96,7 @@ def export_wavefunctions(
     doublet_pairs: tuple[NDArray[np.complex128], ...],
     j: float = 7.5,
     g_j: float = 4.0 / 3.0,
+    metadata: Mapping[str, object] | None = None,
 ) -> tuple[Path, Path]:
     """Save projector-primary and gauge-fixed representations as NPZ + JSON."""
     stem = Path(path_stem)
@@ -104,8 +106,9 @@ def export_wavefunctions(
     plus = np.stack([item.plus for item in fixed])
     minus = np.stack([item.minus for item in fixed])
     axes = np.stack([item.gauge_axis for item in fixed])
-    npz_path = stem.with_suffix(".npz")
-    json_path = stem.with_suffix(".json")
+    npz_path = Path(str(stem) + ".npz")
+    json_path = Path(str(stem) + ".json")
+    metadata_payload = dict(metadata or {})
     np.savez_compressed(
         npz_path,
         m_j=np.arange(-j, j + 1.0, 1.0),
@@ -114,8 +117,10 @@ def export_wavefunctions(
         minus=minus,
         gauge_axes=axes,
         gauge_axis_degenerate=np.array([item.axis_degenerate for item in fixed], dtype=bool),
+        metadata_json=np.array(json.dumps(metadata_payload, sort_keys=True)),
     )
     payload = {
+        "metadata": metadata_payload,
         "basis": {"J": j, "order": "ascending_mJ", "m_j": np.arange(-j, j + 1.0, 1.0).tolist()},
         "doublets": [
             {

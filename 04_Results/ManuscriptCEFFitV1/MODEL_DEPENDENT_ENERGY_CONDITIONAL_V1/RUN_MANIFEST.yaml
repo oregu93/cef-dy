@@ -1,0 +1,533 @@
+schema_version: 1
+execution_class: MODEL_DEPENDENT_ENERGY_CONDITIONAL
+scientific_labels:
+- MODEL_DEPENDENT_ENERGY
+- NO_UNIQUE_HAMILTONIAN_CLAIM
+- NO_INTENSITY_CONSTRAINT
+- NO_EXCHANGE
+implementation_base: 33fd9ddccb77df5e0abe1f24f08d3e439aae921a
+git_at_execution:
+  head: 33fd9ddccb77df5e0abe1f24f08d3e439aae921a
+  tree: 1e013f6c5bc611835472fbe14fbc1fc1e04a62ea
+  branch: work/manuscript-cef-fit-v1
+  status_porcelain: 'A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/RUN_MANIFEST.yaml
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/SCIENTIFIC_SUMMARY.md
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/cs15_all_solutions.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/cs15_family_summary.csv
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/cs15_variant_selection.yaml
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/energy_variants_used.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/historical_R3_R5_R7_variant_evaluation.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/pcm_conditional_results.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/pcm_robustness_summary.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/representative_g_tensors.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/representative_levels.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/representative_transition_strengths.csv
+
+    AM 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/robustness_matrix.csv
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15-HIST-B2-R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15-HIST-B2-R5.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15-HIST-B2-R7.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w6.0_b2__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_4615972084_w7.0_b0__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b0__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__block_inst_f4703b6bd8_w5.0_b2__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b1_per_block__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w6.0_b2_per_block__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D1__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D1__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D1__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D1__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D2__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D2__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D2__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D2__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D3__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D3__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D3__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D3__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D4__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D4__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D4__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D4__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D5__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D5__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D5__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D5__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D6__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D6__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D6__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D6__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D7__R1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D7__R2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D7__R3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/CS15__joint_w7.0_b0_per_block__D7__R4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D1.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D2.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D3.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D4.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D5.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D6.json
+
+    A  04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/wavefunctions/PCM-M0__joint_w6.0_b1_per_block__D7.json
+
+    M  IMPLEMENTATION_AUDIT.md
+
+    M  MANUSCRIPT_CEF_FIT_V1.md
+
+    AM cef_fit/conditional_energy.py
+
+    M  cef_fit/wavefunctions.py
+
+    A  configs/model_dependent_energy_conditional_v1.yaml
+
+    A  data/manuscript_v1/energy_admission_v1/energy_admission_summary.yaml
+
+    A  data/manuscript_v1/energy_admission_v1/source_scans.csv
+
+    A  data/manuscript_v1/energy_admission_v1/w03_energy_variants.csv
+
+    M  data/manuscript_v1/manuscript_observables.csv
+
+    A  tests/cef_fit/test_conditional_energy.py
+
+    A  tests/cef_fit/test_conditional_result_bundle.py
+
+    M  tests/cef_fit/test_input_audit.py
+
+    M  tests/cef_fit/test_wavefunction_gauge.py'
+pre_execution_validation:
+  full_tests: PASS
+  w02_artifact_identity:
+    variants:
+      path: data/manuscript_v1/energy_admission_v1/w03_energy_variants.csv
+      sha256: b6a809e5e25b733383a6c9fc9daea15ec2d872451480c8eef96051ab50167f63
+    summary:
+      path: data/manuscript_v1/energy_admission_v1/energy_admission_summary.yaml
+      sha256: 523ab9768f62edf6a7b7825f941fc287b3936748a13082cbf48b5f238b84a05a
+    source_scans:
+      path: data/manuscript_v1/energy_admission_v1/source_scans.csv
+      sha256: 86621a54df13609a27ca433871c4784babd199884968abb39ff3b5efba2d890c
+  w02_energy_adjudication: MODEL_DEPENDENT_ENERGY
+  scalar_energy_admitted: false
+  normal_production_profile_enabled: false
+  exchange_enabled: false
+  forbidden_historical_or_aggregate_likelihood_rows: []
+w02_source_commit: aedd07489065f3d8dad5b32ce25c314d3a35ac3d
+variant_counts:
+  primary: 18
+  stress: 18
+pcm:
+  runs: 252
+  variants_are_separate_runs: true
+  variant_objectives_summed: false
+cs15:
+  status: DIAGNOSTIC_LANDSCAPE_ONLY
+  selected_variant_count: 7
+  restarts_per_variant_assignment: 4
+  solution_count: 196
+  accepted_solution_count: 196
+  operational_parameter_family_count: 196
+  project_owned_forward_kernel_reevaluation: true
+historical:
+  mode: FROZEN_NO_REFIT
+  parameter_sets:
+  - PB-CS15-HIST-B2-R3
+  - PB-CS15-HIST-B2-R5
+  - PB-CS15-HIST-B2-R7
+  evaluation_rows: 378
+magnetization:
+  status: SKIPPED__NO_REVIEWED_TEMPERATURE_LIST
+  reviewed_temperatures: []
+  literature_used_for_selection: false
+artifact_sha256:
+  energy_variants_used.csv: bb22982090b0a085ea6302b2cb5b57a744152ab8aa7da8429aa09cc80d1fdc8f
+  pcm_conditional_results.csv: 2396ba2c35ee107822f389d861af7a0a328dbf87fd8a167a174149e457cfa095
+  pcm_robustness_summary.csv: 317f75c8a1aa312e2b4343133da46825f34994a5c2758443691319b36cdcd8da
+  cs15_variant_selection.yaml: ffaa90a4e96a9fa9a0e0b1a7d4aca801baa0e26f1be4430a9f2a3962c675de25
+  cs15_all_solutions.csv: 5ddc514c4abad74e6543ccb800ccd4a57f371ace48186bd03a1973614cbb1d0d
+  cs15_family_summary.csv: 9979effe12d4fc8065e9c7370fdaa1d7bc7a0818ef3f5d845b11c5adea0826af
+  historical_R3_R5_R7_variant_evaluation.csv: a98b1f9b647fa533fef9a3828484dedc70eff0e1c24e30c851365fc535d1690b
+  representative_levels.csv: d2b309204b4ed26a8fcbef97b86cd0120d4f0d3e4782e4e48233736982e0d102
+  representative_transition_strengths.csv: 71653e30453f917e76e10e4957ae5e996d8d61be155dcca1d8f03ac43f0520e5
+  representative_g_tensors.csv: bd73d7bd4eb304c0482f9e047c3d90e1cbd28861c57c1c2ef603780bee0e8062
+  robustness_matrix.csv: d512623768f6b48c8b3c5e3dc67cbb956383505276c08325ee38b8334ca6166f
+  SCIENTIFIC_SUMMARY.md: 6c8951d20e825d138d56b8146733fb4b0f0f033a16b9e6b19d9bda58f447a712
+wavefunction_artifact_count: 618
