@@ -1,0 +1,84 @@
+schema_version: 1
+project: DyFeO3
+design_id: MANUSCRIPT_CEF_FIT_V1
+scientific_scope:
+  ion: Dy3+
+  J: 7.5
+  gJ: 1.3333333333333333
+  exchange_enabled: false
+  unique_hamiltonian_claim_allowed: false
+
+conventions:
+  coefficient_units: meV
+  internal_basis: direct_positive_q
+  internal_axes: [b, c, a]
+  external_basis: canonical_Cs15
+  external_axes: [b, -a, c]
+  active_rotation: +90_deg_about_x_parallel_b
+  publication_gate: regression_required
+
+inputs:
+  observables: data/manuscript_v1/manuscript_observables.csv
+  literature_magnetization: data/manuscript_v1/literature_magnetization.csv
+  required_production_provenance: REVIEWED
+
+assignment:
+  strategy: explicit_branch_enumeration
+  allowed_final_doublets: [1, 2, 3, 4, 5, 6, 7]
+
+pcm:
+  formal_model_id: MOD-PCM-FORMAL-LEGACY-O8
+  provenance_status: REVIEWED_LEGACY_SEED
+  parameter_basis: direct_positive_q
+  formal_parameters_meV:
+    B20: 0.1285087570267
+    B21: -1.129034462883
+    B22: -0.2201173965902
+    B40: 0.0002539804667970
+    B41: 0.009255467282875
+    B42: -0.001046948325456
+    B43: 0.003624988663850
+    B44: 0.002620149629519
+    B60: 0.000002173632262699
+    B61: -0.0000005165309894613
+    B62: 0.000006323321739774
+    B63: 0.000004389120488447
+    B64: -0.000009905617327743
+    B65: 0.00001238963374618
+    B66: 0.000008413698085317
+  A1_scale_bounds: [0.25, 2.0]
+  M1:
+    implemented_interface: true
+    enabled: false
+    status: DEFERRED_PENDING_REBASELINE
+
+cs15:
+  parameter_basis: direct_positive_q
+  h_bounds_meV: [-8.0, 8.0]
+  boundary_fraction: 0.02
+  seed_bundle: 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R7.yaml
+  seed_role: HISTORICAL_EXPLORATORY_ONLY
+  nuisance_log_scale_bounds: [-10.0, 10.0]
+
+profiles:
+  smoke:
+    label: SMOKE_ONLY
+    pcm_restarts: 1
+    cs15_restarts_per_assignment: 1
+    cs15_max_evaluations: 400
+    random_seed: 20261019
+  production:
+    enabled: false
+    requires_independent_review: true
+    requires_input_status: MANUSCRIPT_PRODUCTION_READY
+
+magnetization:
+  field_T: {start: 0.0, stop: 14.0, step: 0.1}
+  directions_abc:
+    a: [1.0, 0.0, 0.0]
+    b: [0.0, 1.0, 0.0]
+    c: [0.0, 0.0, 1.0]
+  temperatures_source: data/manuscript_v1/literature_magnetization.csv
+
+outputs:
+  root: results/manuscript_fit_v1

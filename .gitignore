@@ -18,6 +18,9 @@ env/
 .mypy_cache/
 .ruff_cache/
 .ipynb_checkpoints/
+build/
+dist/
+*.egg-info/
 
 # IDE transient
 .vscode/
@@ -46,6 +49,10 @@ env/
 # Local/private data
 CEF_Dy_Data/
 data/
+!data/
+data/*
+!data/manuscript_v1/
+!data/manuscript_v1/*.csv
 local_data/
 private/
 secrets/
@@ -69,6 +76,9 @@ backups/
 
 # Logs generated locally
 *.log
+
+# Local manuscript fitting runs (reviewed checkpoints are materialized separately)
+results/
 
 # Generated local validation output
 VALIDATION_REPORT.json

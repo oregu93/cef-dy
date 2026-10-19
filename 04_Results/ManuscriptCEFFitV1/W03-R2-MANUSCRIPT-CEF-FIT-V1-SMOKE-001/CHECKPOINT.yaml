@@ -1,0 +1,86 @@
+job_id: W03-R2-MANUSCRIPT-CEF-FIT-V1-SMOKE-001
+design_id: MANUSCRIPT_CEF_FIT_V1
+status: PASS_READY_FOR_IMPLEMENTATION_REVIEW
+scientific_interpretation_status: SMOKE_ONLY__NO_PRODUCTION_FIT__NO_UNIQUE_HAMILTONIAN_CLAIM
+
+parent_checkpoint:
+  canonical_baseline: c65cfb1daa8edf4ce85684b5093869c0f287d269
+  note: clean implementation branch; existing local main was not modified
+
+model_ids:
+  - MOD-PCM-FORMAL-LEGACY-O8
+  - MOD-PCM-M0
+  - MOD-CEF-CS15
+
+input_ids:
+  - TAIPAN-18P247-ENERGY
+  - PB-CS15-HIST-B2-R7
+  - STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
+
+configuration: configs/manuscript_fit_v1.yaml
+input_audit_status: DRAFT_PROVENANCE_INCOMPLETE
+production_intensity_fit_blocked: true
+production_profile_enabled: false
+exchange_enabled: false
+
+commands:
+  - python -m pytest tests/cef_fit -q
+  - python -m cef_fit.cli audit-inputs --config configs/manuscript_fit_v1.yaml
+  - python -m cef_fit.cli fit-pcm --config configs/manuscript_fit_v1.yaml --profile smoke
+  - python -m cef_fit.cli fit-cs15 --config configs/manuscript_fit_v1.yaml --profile smoke
+
+tests:
+  total: 28
+  passed: 28
+  failed: 0
+  backend_crosschecks:
+    numpy_vs_PyCrystalField_H_max_abs_meV: 3.552713678800501e-15
+    numpy_vs_CrysFieldExplorer_H_max_abs_meV: 6.217248937900877e-15
+  frozen_R7_regression:
+    max_abs_level_error_meV: 1.4210854715202004e-14
+    max_abs_transition_strength_error: 1.4654943925052066e-14
+
+pcm_smoke:
+  profile: SMOKE_ONLY
+  branches_enumerated: [D0->D1, D0->D2, D0->D3, D0->D4, D0->D5, D0->D6, D0->D7]
+  formal_levels_regression: PASS
+  formal_D1_meV: 19.878753240439973
+  constrained_by_scale_boundary: [D0->D6, D0->D7]
+  interpretation: code validation and structural-family diagnostic only
+
+cs15_smoke:
+  profile: SMOKE_ONLY
+  restarts_per_assignment: 1
+  max_evaluations_per_assignment: 400
+  fixed_seed: 20261019
+  assignments_enumerated: [D0->D1, D0->D2, D0->D3, D0->D4, D0->D5, D0->D6, D0->D7]
+  optimizer_termination: all seven branches converged within smoke budget
+  search_boundary_occupied: [D0->D1, D0->D2, D0->D3, D0->D4]
+  interpretation: energy-only landscape infrastructure; underidentified by construction
+
+derived_observables:
+  doublet_projector_export: PASS
+  gauge_fixed_wavefunction_export: PASS
+  g_tensor: PASS
+  transition_tensor: PASS
+  frozen_CEF_magnetization: PASS
+  magnetization_literature_comparison: NOT_RUN__NO_REVIEWED_TEMPERATURE_ROWS
+
+outputs:
+  committed:
+    - IMPLEMENTATION_AUDIT.md
+    - MANUSCRIPT_CEF_FIT_V1.md
+    - configs/manuscript_fit_v1.yaml
+    - data/manuscript_v1/manuscript_observables.csv
+    - data/manuscript_v1/literature_magnetization.csv
+    - notebooks/DyFeO3_manuscript_fit_v1.ipynb
+  generated_local_ignored:
+    - results/manuscript_fit_v1/pcm_smoke.json
+    - results/manuscript_fit_v1/cs15_smoke.json
+    - results/manuscript_fit_v1/wavefunctions/*.json
+    - results/manuscript_fit_v1/wavefunctions/*.npz
+
+stop_condition:
+  production_fitting_executed: false
+  ready_for_implementation_review: true
+  terminal_marker: READY_FOR_IMPLEMENTATION_REVIEW

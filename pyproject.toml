@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dyfeo3-cef-fit"
+version = "0.1.0"
+description = "Visible, reproducible DyFeO3 single-ion CEF fitting workflow"
+readme = "MANUSCRIPT_CEF_FIT_V1.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+cef = [
+  "cma>=4.0",
+  "pandas>=2.0",
+  "PyCrystalField>=2.3.11",
+  "nbformat>=5.9",
+  "pytest>=8.0",
+]
+
+[project.scripts]
+cef-fit = "cef_fit.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["cef_fit*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/cef_fit"]
+addopts = "-ra"
+filterwarnings = [
+  "ignore:the matrix subclass is not the recommended way.*:PendingDeprecationWarning",
+]
