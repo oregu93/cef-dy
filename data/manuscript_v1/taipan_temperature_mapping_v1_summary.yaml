@@ -1,0 +1,341 @@
+schema_version: taipan_temperature_mapping_v1
+generated_on: '2026-10-21'
+temperature_mapping_status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+sample_environment_status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+sample_environment: tc1/T1 cryostat and sample-stick configuration; exact configSICS hardware profile unresolved
+controller_status: T1_controller_verified_hardware_model_unresolved
+sample_temperature_channel: T1 channel A
+exported_column: T1_Sensor1
+exported_column_mapping_status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+exported_column_mapping:
+  T1_Sensor1:
+    controller_channel: A
+    role: physical sample temperature
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+  T1_Sensor2:
+    controller_channel: B
+    role: inactive_zero_in_all_discovery_scans
+    status: ROLE_UNRESOLVED
+  T1_Sensor3:
+    controller_channel: C
+    role: auxiliary_tfloat_temperature
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+  T1_Sensor4:
+    controller_channel: D
+    role: inactive_zero_in_all_discovery_scans
+    status: ROLE_UNRESOLVED
+  T1_Setpoint1:
+    controller_loop: 1
+    experiment_script_role: cryostat temperature
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+  T1_Setpoint2:
+    controller_loop: 2
+    experiment_script_role: sample-stick temperature
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+unit: K
+limitation: No experiment-1296 configSICS snapshot or controller hardware log was found. The mapping is therefore not promoted
+  to fully verified hardware provenance.
+evidence:
+  manual:
+    title: TAIPAN User Manual v14
+    date: '2017-02-20'
+    url: https://www.ansto.gov.au/media/1429/download?inline=
+    sha256: dfd8c60e6da82dedc0b86d39b3985c08333d237f3af7ac63d95630691c977579
+    semantics:
+    - Gumtree writes configured sample-environment temperature to exported .dat files.
+    - For the ordinary CF1/tc1 setup, tc1_driveable2 reads sample channel A.
+    - Temperature-controller values are in K.
+  official_taipan_scripts:
+    repository: https://github.com/Gumtree/Taipan_scripts
+    commit: 43ebed46af51167c9439358af2b350d951b76e79
+    files_sha256:
+      Experiment/lib/export.py: aecd9059aead28aebb37eeccff69d91696d465954f6e9bfa2504e9c8eda01cd7
+      Experiment/config.py: 57f9eda766eb50e085e32dd2c71687880bffe7d9ec64ed3a6a4bc03ff16d7b8a
+      Experiment/path_table: 207ed6548acbbede977f028c0755f5f0afdd6a9f8722a862c0f0482935626fc8
+      New_scripts/Martin/2023/August/dfo03.tcl: 2a9176a30a6674b152c65b81dbfaca1c9a52cccf9c8de1d6048d59a4036ae0bc
+      New_scripts/Martin/2023/August/dfo09.tcl: 726a7f602f5cf5d1bac74179a446ec50e49a5e80c87bd7dffcb39219cdce17d6
+      New_scripts/Martin/2023/August/dfo10.tcl: 18e98e7de7d392d385e8870ebfe8555f6aeabafc7ab4664cc80170ffed5febc1
+    semantics:
+    - Experiment/path_table maps tc1 sensor A-D and controller-loop values to NeXus paths.
+    - Experiment/config.py maps temp to ctrlLp1_value and tfloat to sensorValueC.
+    - Experiment/lib/export.py emits sample-target NeXus items and converts T1S1 to T1_Sensor1.
+    - dfo03.tcl labels setpoint1 as cryostat temperature and setpoint2 as sample-stick temperature.
+    - dfo09.tcl and dfo10.tcl identify the corresponding experiment sequence as T=10 K.
+  pointwise_cross_checks:
+    all_57_discovery_scans: true
+    temp_matches_T1_Sensor1_within_K: 0.00051
+    maximum_observed_abs_difference_K: 0.0005
+    tfloat_equals_T1_Sensor3_exactly: true
+    T1_Sensor2_all_zero: true
+    T1_Sensor4_all_zero: true
+canonical_sources:
+  repository: https://github.com/oregu93/cef-dy
+  repository_relative_source_paths: true
+  raw_source_locator: operator-supplied directory; filenames and SHA-256 values are fixed by A002 scan_inventory.csv
+  source_hashes:
+    04_Results/Stage02R/W02-02R-B-001/scan_selection.csv: 0aa57b2e214c9b7dc8dc00ce50b4dcabd75bd03e545fa36dc7c223818aeab96f
+    04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  mapping_csv_sha256: 4e98e1d90cea4cde203440f0cfa5b1320a60619276733cebb3d54041a130e4bc
+counts:
+  B001_discovery_scans: 57
+  temperature_mapped: 57
+  unresolved: 0
+  holdout_detector_access_count: 0
+priority_scans:
+  '104095':
+    scan_record_id: SCAN-02R-8dcd5041a8a4e044
+    source_field: T1_Sensor1
+    controller_channel: T1 channel A (reconstructed)
+    unit: K
+    points: 25
+    mean_K: 3.766532
+    median_K: 3.7761
+    minimum_K: 3.7145
+    maximum_K: 3.7929
+    point_to_point_range_K: 0.0784
+    setpoint1_K: 300.0
+    setpoint2_K: 300.0
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    limitation: The exact experiment-1296 configSICS hardware selection was not recovered; the T1 channel-A mapping is reconstructed
+      from official export/schema code, the experiment scripts, and pointwise cross-checks. Both exported setpoints are 300
+      K and are stale or inactive for this scan; they are reported but not used as the physical sample temperature.
+  '104098':
+    scan_record_id: SCAN-02R-731f452fb62a55bd
+    source_field: T1_Sensor1
+    controller_channel: T1 channel A (reconstructed)
+    unit: K
+    points: 25
+    mean_K: 3.717848
+    median_K: 3.7193
+    minimum_K: 3.7052
+    maximum_K: 3.7316
+    point_to_point_range_K: 0.0264
+    setpoint1_K: 300.0
+    setpoint2_K: 300.0
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    limitation: The exact experiment-1296 configSICS hardware selection was not recovered; the T1 channel-A mapping is reconstructed
+      from official export/schema code, the experiment scripts, and pointwise cross-checks. Both exported setpoints are 300
+      K and are stale or inactive for this scan; they are reported but not used as the physical sample temperature.
+  '104099':
+    scan_record_id: SCAN-02R-8641a638f4880175
+    source_field: T1_Sensor1
+    controller_channel: T1 channel A (reconstructed)
+    unit: K
+    points: 25
+    mean_K: 3.724544
+    median_K: 3.7227
+    minimum_K: 3.7122
+    maximum_K: 3.7426
+    point_to_point_range_K: 0.0304
+    setpoint1_K: 300.0
+    setpoint2_K: 300.0
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    limitation: The exact experiment-1296 configSICS hardware selection was not recovered; the T1 channel-A mapping is reconstructed
+      from official export/schema code, the experiment scripts, and pointwise cross-checks. Both exported setpoints are 300
+      K and are stale or inactive for this scan; they are reported but not used as the physical sample temperature.
+  '104215':
+    scan_record_id: SCAN-02R-75faa4a614a8f130
+    source_field: T1_Sensor1
+    controller_channel: T1 channel A (reconstructed)
+    unit: K
+    points: 26
+    mean_K: 10.004592
+    median_K: 10.00565
+    minimum_K: 9.9947
+    maximum_K: 10.0106
+    point_to_point_range_K: 0.0159
+    setpoint1_K: 10.0
+    setpoint2_K: 10.0
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    limitation: The exact experiment-1296 configSICS hardware selection was not recovered; the T1 channel-A mapping is reconstructed
+      from official export/schema code, the experiment scripts, and pointwise cross-checks. Both exported setpoints are 10
+      K and agree with the measured block.
+  '104225':
+    scan_record_id: SCAN-02R-f56f915bc229d6aa
+    source_field: T1_Sensor1
+    controller_channel: T1 channel A (reconstructed)
+    unit: K
+    points: 26
+    mean_K: 9.990681
+    median_K: 9.99045
+    minimum_K: 9.9836
+    maximum_K: 10.0003
+    point_to_point_range_K: 0.0167
+    setpoint1_K: 10.0
+    setpoint2_K: 10.0
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    limitation: The exact experiment-1296 configSICS hardware selection was not recovered; the T1 channel-A mapping is reconstructed
+      from official export/schema code, the experiment scripts, and pointwise cross-checks. Both exported setpoints are 10
+      K and agree with the measured block.
+classification:
+  basis: two dominant adjacent gaps in sorted T1_Sensor1 scan means; the smaller separator exceeds five times the next-largest
+    gap; no scan chronology used
+  low_other_boundary_K: 3.594277
+  low_other_gap_K: 0.247142
+  other_ten_boundary_K: 6.888633
+  other_ten_gap_K: 6.194409
+  next_largest_within_cluster_gap_K: 0.022992
+  second_to_third_gap_ratio: 10.749
+  ten_K:
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    scan_count: 20
+    scan_mean_temperature_min_K: 9.985838
+    scan_mean_temperature_max_K: 10.008646
+    mean_of_scan_means_K: 9.998965
+    median_of_scan_medians_K: 9.9984
+    maximum_within_scan_point_to_point_range_K: 0.0296
+    scan_record_ids:
+    - SCAN-02R-75faa4a614a8f130
+    - SCAN-02R-8e62e3b1b9deee81
+    - SCAN-02R-f380a5a0600b447a
+    - SCAN-02R-f36bb8e354cf21b7
+    - SCAN-02R-c5843105fb81b54c
+    - SCAN-02R-45d1daf515e218b6
+    - SCAN-02R-89614c0503a95275
+    - SCAN-02R-f56f915bc229d6aa
+    - SCAN-02R-f87c8c3cd06321c2
+    - SCAN-02R-0e6d00a831c04e8d
+    - SCAN-02R-3f903a520f921d83
+    - SCAN-02R-ae86f327e3ed5623
+    - SCAN-02R-eea1fadd4abbd144
+    - SCAN-02R-957a8834d758202b
+    - SCAN-02R-8345a5938afc1084
+    - SCAN-02R-059bd02c78268a2b
+    - SCAN-02R-fede66c26a275769
+    - SCAN-02R-6fded6b51e0642a8
+    - SCAN-02R-708cf4d83a29d78f
+    - SCAN-02R-2f690557cfd20bec
+    raw_scan_ids:
+    - 104215
+    - 104217
+    - 104218
+    - 104219
+    - 104220
+    - 104222
+    - 104223
+    - 104225
+    - 104226
+    - 104227
+    - 104229
+    - 104230
+    - 104231
+    - 104234
+    - 104235
+    - 104236
+    - 104237
+    - 104238
+    - 104239
+    - 104240
+  low_temperature:
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    scan_count: 29
+    scan_mean_temperature_min_K: 3.414884
+    scan_mean_temperature_max_K: 3.470706
+    mean_of_scan_means_K: 3.448152
+    median_of_scan_medians_K: 3.44895
+    maximum_within_scan_point_to_point_range_K: 0.0886
+    scan_record_ids:
+    - SCAN-02R-432159a75d80f2b3
+    - SCAN-02R-f71173d3ec0c732c
+    - SCAN-02R-ef6a11424f751d3f
+    - SCAN-02R-79e659b84aa4786d
+    - SCAN-02R-1e5b02c69224108d
+    - SCAN-02R-2a0e91f43e0fe127
+    - SCAN-02R-d2b7e9ee069bd20e
+    - SCAN-02R-762111064d108c6d
+    - SCAN-02R-074afad5a6b92ea4
+    - SCAN-02R-4f5e09d1864ac832
+    - SCAN-02R-b704f6a14f738619
+    - SCAN-02R-5e52d7e5fbefbc05
+    - SCAN-02R-4d54ea7698000638
+    - SCAN-02R-fb62d31e5c3c1dbf
+    - SCAN-02R-c7a73b4824a01210
+    - SCAN-02R-5215f80c458dc1c4
+    - SCAN-02R-4eb3495e2e32dd73
+    - SCAN-02R-c3dcce6e5bc72678
+    - SCAN-02R-abcd8030795bc9cb
+    - SCAN-02R-26c5588a4a75efc2
+    - SCAN-02R-ebc55d8b20e3cec0
+    - SCAN-02R-77b71bd09c7eb4b4
+    - SCAN-02R-7118d0dce593edea
+    - SCAN-02R-306a96179bd778b6
+    - SCAN-02R-68a1fdbd8955d9a4
+    - SCAN-02R-7acd4c14a0007418
+    - SCAN-02R-51f6ed2eb7632349
+    - SCAN-02R-91f840c137c7a43c
+    - SCAN-02R-4ad1398a663b7933
+    raw_scan_ids:
+    - 104147
+    - 104148
+    - 104149
+    - 104150
+    - 104151
+    - 104152
+    - 104153
+    - 104154
+    - 104163
+    - 104166
+    - 104168
+    - 104170
+    - 104171
+    - 104172
+    - 104173
+    - 104174
+    - 104175
+    - 104179
+    - 104200
+    - 104201
+    - 104202
+    - 104204
+    - 104205
+    - 104206
+    - 104208
+    - 104209
+    - 104210
+    - 104211
+    - 104212
+  other_temperature:
+    status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+    scan_count: 8
+    scan_mean_temperature_min_K: 3.717848
+    scan_mean_temperature_max_K: 3.791429
+    mean_of_scan_means_K: 3.754426
+    median_of_scan_medians_K: 3.75985
+    maximum_within_scan_point_to_point_range_K: 0.0784
+    scan_record_ids:
+    - SCAN-02R-4fb9fc6716a3e65a
+    - SCAN-02R-8ca6316615b8cbae
+    - SCAN-02R-43979cdff2eef525
+    - SCAN-02R-8dcd5041a8a4e044
+    - SCAN-02R-91de8f7a5ce6984b
+    - SCAN-02R-731f452fb62a55bd
+    - SCAN-02R-8641a638f4880175
+    - SCAN-02R-774f62fc1777bc6b
+    raw_scan_ids:
+    - 104062
+    - 104093
+    - 104094
+    - 104095
+    - 104097
+    - 104098
+    - 104099
+    - 104101
+stability:
+  observed_ten_K_scan_mean_range_K:
+  - 9.985838
+  - 10.008646
+  observed_ten_K_maximum_within_scan_range_K: 0.0296
+  proposed_review_tolerance:
+    scan_mean_K:
+    - 9.95
+    - 10.05
+    maximum_within_scan_range_K: 0.05
+    basis: Rounded envelope wider than the observed scan-mean deviations and the observed maximum within-scan range; requires
+      Project Control acceptance.
+    current_ten_K_scans_passing: 20
+safety_boundaries:
+  detector_fields_read: false
+  detector_reanalysis_performed: false
+  spectral_fit_performed: false
+  cef_analysis_performed: false
+  holdout_detector_access_count: 0
