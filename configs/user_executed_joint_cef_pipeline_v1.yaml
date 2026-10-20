@@ -1,0 +1,157 @@
+schema_version: 1
+pipeline_id: USER_EXECUTED_JOINT_CEF_PIPELINE_V1
+scientific_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
+scientific_scope:
+  ion: Dy3+
+  J: 7.5
+  gJ: 1.3333333333333333
+  internal_parameter_basis: direct_positive_q
+  internal_axes: [b, c, a]
+  publication_parameter_basis: canonical_Cs15
+  publication_axes: [b, -a, c]
+  exchange_enabled: false
+  unique_hamiltonian_claim_allowed: false
+
+switches:
+  RUN_EXPLORATORY_SEARCH: false
+  ENABLE_JOINT_MH_FIT: false
+  ENABLE_MANUSCRIPT_OBJECTIVE: false
+
+inputs:
+  taipan_eq_dataset: local_data/taipan_eq_map_exploratory_v1.csv
+  taipan_schema: schemas/taipan-eq-map-v1.schema.yaml
+  taipan_mask_definition: configs/taipan_masks_exploratory_v1.yaml
+  intensity_domain: LINEAR_PRE_DISPLAY
+  normalization_description: >-
+    Preserve the prepared dataset normalization exactly; no scan-dependent
+    rescaling is introduced. One explicit multiplicative nuisance scale is
+    profiled per declared instrument_block_id.
+  uncertainties_statistically_calibrated: false
+  literature_magnetization: data/manuscript_v1/literature_magnetization.csv
+  literature_magnetization_inventory: data/manuscript_v1/literature_magnetization_curve_inventory.csv
+  literature_magnetization_source_commit: 2c17955c405ef9698781dfd5364ef7be0245ba15
+  historical_seed_bundle: 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R7.yaml
+  historical_seed_role: INITIALIZATION_ONLY_NOT_CURRENT_RESULT
+
+objective:
+  mode: EQ_MAP_EXPLORATORY_OBJECTIVE
+  allowed_modes: [FEATURE_OBJECTIVE, EQ_MAP_EXPLORATORY_OBJECTIVE, MANUSCRIPT_OBJECTIVE]
+  scientific_label: EXPLORATORY_TAIPAN_SPECTRUM_FIT
+  residual_classes:
+    - ENERGY_CONSTRAINT
+    - SPECTRAL_SHAPE_CONSTRAINT
+    - EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT
+  nuisance_scale_bounds: [0.000001, 1000000.0]
+  uncertainties_statistically_calibrated: false
+  manuscript_intensity_gate: FAIL_CLEANLY
+  exploratory_eq_map_use: AUTHORIZED
+  historical_energies_are_targets: false
+
+forward_model:
+  transition_model: PROJECT_CEF_KERNEL
+  form_factor: DY3_J0_DIPOLE_APPROXIMATION
+  q_direction_policy: PER_POINT_DIRECT_QHAT_OR_POWDER_AVERAGE
+  resolution:
+    model: GAUSSIAN_FIXED_FWHM
+    fwhm_meV: 1.0
+    fitted: false
+  background:
+    model: LINEAR_ENERGY
+    fitted: false
+    clip_nonnegative: true
+    coefficients:
+      constant: 0.0
+      energy_reference_meV: 18.0
+      energy_slope: 0.0
+  normalization_nuisance:
+    grouping_column: instrument_block_id
+    one_scale_per_block: true
+    scan_dependent_rescaling_allowed: false
+
+assignments:
+  strategy: EXPLICIT_SEPARATE_BRANCHES
+  final_doublets: [1, 2, 3, 4, 5, 6, 7]
+
+pcm:
+  A0_status: RETAINED_FORMAL_BASELINE
+  A1_status: RETAINED_UNIFORM_SCALE_BASELINE
+  A2_status: DEFERRED_NOT_AUTHORIZED
+
+search:
+  backend: CMA_ES
+  run_exploratory_search: false
+  assignment_branches: [1, 2, 3, 4, 5, 6, 7]
+  h_bounds_meV: [-8.0, 8.0]
+  sigma0_meV: 2.5
+  population: 32
+  restarts_per_assignment: 16
+  max_evaluations_per_restart: 50000
+  base_seed: 20261020
+  retention_loss_threshold: 1000000.0
+  maximum_retained_candidates: 10000
+  checkpoint_every_generation: true
+  resume_policy: RESTART_INCOMPLETE_RESTART_FROM_FIXED_SEED
+  project_owned_kernel_reevaluation: true
+  boundary_fraction: 0.02
+
+ensemble:
+  retain_secondary_minima: true
+  select_single_best: false
+  compatibility_loss_threshold: 1000000.0
+  require_no_nuisance_boundary: false
+
+magnetization:
+  stage_role: FROZEN_SINGLE_ION_VALIDATION_ONLY
+  axes: [a, b]
+  temperatures_K: [10, 20]
+  use_exact_experimental_field_points: true
+  experimental_quantity: TOTAL_BULK_MAGNETIZATION
+  calculated_quantity: SINGLE_ION_DY_CEF_CONTRIBUTION
+  formal_chi_square_ranking_enabled: false
+  c_axis_status: AMBIGUOUS_CURVE_IDENTITY
+  blm_refit_enabled: false
+
+joint_mh:
+  enabled: false
+  lambda_M: null
+  accepted_bulk_contribution_model: null
+  arbitrary_offset_allowed: false
+  arbitrary_normalization_allowed: false
+
+clustering:
+  method: average
+  distance_threshold: 1.0
+  weights:
+    parameter: 0.10
+    energy: 0.25
+    projector: 0.25
+    neutron: 0.20
+    g_tensor: 0.10
+    magnetization: 0.10
+  scales:
+    parameter_meV: 1.0
+    energy_meV: 1.0
+    transition_strength: 1.0
+    g_value: 1.0
+    magnetization_muB: 1.0
+
+mcphase:
+  execution_enabled: false
+  export_enabled: true
+  mismatch_triggers_refit: false
+  level_tolerance_meV: 0.000001
+
+outputs:
+  root: results/user_executed_joint_cef_pipeline_v1
+  audit: 01_data_audit/audit_report.json
+  forward: 02_cef_forward/forward_sanity.json
+  objective: 03_ins_objective/objective_sanity.json
+  search: 04_global_search
+  ensemble: 05_build_ins_ensemble/ins_ensemble.json
+  mh: 06_calculate_mh/frozen_mh.json
+  mh_comparison: 07_compare_mh/mh_diagnostics.json
+  joint_interface: 08_joint_objective/interface_status.json
+  clustering: 09_cluster_solutions/clusters.json
+  wavefunctions: 10_export_wavefunctions
+  mcphase: 11_export_mcphase
+  mcphase_validation: 12_validate_mcphase/validation.json

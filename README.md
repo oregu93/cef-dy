@@ -213,6 +213,7 @@ DECISION_REGISTER
 | Проверить Scientific Understanding schema | [SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0](03_Protocols/SCIENTIFIC_UNDERSTANDING_SCHEMA_V1_0.md) |
 | Восстановить рабочую инфраструктуру на другой машине | [RESEARCH_INFRASTRUCTURE_GUIDE](03_Protocols/RESEARCH_INFRASTRUCTURE_GUIDE.md) |
 | Проверить data contracts | [DATA_CONTRACTS](03_Protocols/DATA_CONTRACTS.md) |
+| Запустить пользовательский exploratory CEF pipeline | [USER_EXECUTED_CEF_PIPELINE_V1](docs/USER_EXECUTED_CEF_PIPELINE_V1.md) |
 | Восстановить роли project chats | [CHAT_BOOTSTRAPS](03_Protocols/CHAT_BOOTSTRAPS.md) |
 
 

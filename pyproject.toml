@@ -17,6 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 cef = [
   "cma>=4.0",
+  "matplotlib>=3.8",
   "pandas>=2.0",
   "PyCrystalField>=2.3.11",
   "nbformat>=5.9",
@@ -25,6 +26,7 @@ cef = [
 
 [project.scripts]
 cef-fit = "cef_fit.cli:main"
+cef-fit-user = "cef_fit.user_pipeline:main"
 
 [tool.setuptools.packages.find]
 include = ["cef_fit*"]

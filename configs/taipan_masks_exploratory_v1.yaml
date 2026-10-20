@@ -1,0 +1,56 @@
+schema_version: 1
+mask_id: TAIPAN_EXPLORATORY_MASK_V1
+immutable_during_optimization: true
+review_before_search: true
+rules:
+  - rule_id: ELASTIC_LINE
+    kind: ENERGY_RANGE
+    reason: EXCLUDE_ELASTIC_LINE
+    enabled: true
+    min_meV: -1.0
+    max_meV: 1.0
+  - rule_id: OBVIOUS_PHONON_REGIONS
+    kind: RECTANGLE
+    reason: USER_REVIEWED_PHONON_MASK_PLACEHOLDER
+    enabled: false
+    energy_min_meV: 0.0
+    energy_max_meV: 0.0
+    q_min_Ainv: 0.0
+    q_max_Ainv: 0.0
+  - rule_id: OBVIOUS_MAGNON_OR_COLLECTIVE_REGIONS
+    kind: RECTANGLE
+    reason: USER_REVIEWED_COLLECTIVE_MASK_PLACEHOLDER
+    enabled: false
+    energy_min_meV: 0.0
+    energy_max_meV: 0.0
+    q_min_Ainv: 0.0
+    q_max_Ainv: 0.0
+  - rule_id: DETECTOR_ARTIFACTS
+    kind: RECTANGLE
+    reason: USER_REVIEWED_DETECTOR_MASK_PLACEHOLDER
+    enabled: false
+    energy_min_meV: 0.0
+    energy_max_meV: 0.0
+    q_min_Ainv: 0.0
+    q_max_Ainv: 0.0
+  - rule_id: POORLY_COVERED_MAP_EDGES
+    kind: RECTANGLE
+    reason: USER_REVIEWED_EDGE_MASK_PLACEHOLDER
+    enabled: false
+    energy_min_meV: 0.0
+    energy_max_meV: 0.0
+    q_min_Ainv: 0.0
+    q_max_Ainv: 0.0
+  - rule_id: INVALID_NORMALIZATION_ROWS
+    kind: MASK_STATUS
+    reason: EXCLUDE_DATASET_DECLARED_INVALID_NORMALIZATION
+    enabled: true
+    values: [EXCLUDE_INVALID_NORMALIZATION]
+  - rule_id: OPTIONAL_CEF_CANDIDATE_WINDOW
+    kind: RECTANGLE
+    reason: USER_REVIEWED_CEF_WINDOW_PLACEHOLDER
+    enabled: false
+    energy_min_meV: 0.0
+    energy_max_meV: 0.0
+    q_min_Ainv: 0.0
+    q_max_Ainv: 0.0

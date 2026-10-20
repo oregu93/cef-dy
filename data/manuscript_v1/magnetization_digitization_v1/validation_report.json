@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "passed": 19,
+  "failed": 0,
+  "failed_checks": [],
+  "checks": {
+    "schema_exact": true,
+    "point_count_135": true,
+    "four_numeric_curves": true,
+    "no_c_axis_numeric_points": true,
+    "branch_frozen": true,
+    "source_identity": true,
+    "panel_axis_not_swapped": true,
+    "only_10_and_20_K": true,
+    "published_units_retained": true,
+    "conversion_exact": true,
+    "field_in_published_range": true,
+    "near_zero_not_interpolated": true,
+    "field_strictly_monotonic": true,
+    "total_bulk_only": true,
+    "digitization_status_only": true,
+    "positive_graphical_uncertainties": true,
+    "inventory_six_rows": true,
+    "inventory_four_plus_two": true,
+    "ambiguous_have_no_numbers": true
+  },
+  "sha256": {
+    "literature_magnetization.csv": "2909ad44b4abc150dae603c89a5e9b5b08a182d99009e111055d942a1d6da4ea",
+    "literature_magnetization_curve_inventory.csv": "403951d723731eba7f0eac84511ce765bccdd5537c5530ee809e90ae1af146f1"
+  },
+  "scientific_guards": {
+    "cef_calculation_performed": false,
+    "fe_subtraction_performed": false,
+    "normalization_performed": false,
+    "interpolation_used": false
+  }
+}

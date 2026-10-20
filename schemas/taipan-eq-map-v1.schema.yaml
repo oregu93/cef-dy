@@ -1,0 +1,43 @@
+schema_version: 1
+schema_id: TAIPAN_PREPARED_NUMERICAL_EQ_MAP_V1
+scientific_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
+intensity_domain: LINEAR_PRE_DISPLAY
+forbidden_sources: [PNG, JPEG, RENDERED_COLOUR_MAP, LOG_DISPLAY_VALUES]
+required_columns:
+  point_id: {type: string, constraint: unique_nonempty}
+  energy_meV: {type: finite_float, units: meV}
+  Q_Ainv: {type: positive_finite_float, units: inverse_angstrom}
+  normalized_intensity: {type: finite_float, domain: linear_pre_display}
+  instrument_block_id: {type: string, role: nuisance_scale_group}
+  scan_id: {type: string, role: provenance}
+  mask_status: {type: string, include_value: INCLUDE}
+  normalization_metadata: {type: string, role: exact_preparation_description}
+optional_columns:
+  normalized_intensity_sigma: {type: positive_finite_float, completeness: all_or_none}
+  monitor_counts: {type: positive_finite_float}
+  exposure_s: {type: positive_finite_float, units: s}
+  h_pbnm: {type: finite_float}
+  k_pbnm: {type: finite_float}
+  l_pbnm: {type: finite_float}
+  qhat_direct_x: {type: finite_float, frame: direct_b_c_a, completeness: xyz_all_or_none}
+  qhat_direct_y: {type: finite_float, frame: direct_b_c_a, completeness: xyz_all_or_none}
+  qhat_direct_z: {type: finite_float, frame: direct_b_c_a, completeness: xyz_all_or_none}
+  background_metadata: {type: string}
+  constraint_class:
+    type: enum
+    values:
+      - ENERGY_CONSTRAINT
+      - SPECTRAL_SHAPE_CONSTRAINT
+      - EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT
+forbidden_columns:
+  - log_intensity
+  - log10_intensity
+  - display_intensity
+  - colour_value
+  - color_value
+  - pixel_value
+notes:
+  - A missing qhat_direct triplet invokes the explicit powder-average polarization model.
+  - Statistical chi-square language is forbidden unless uncertainty calibration is separately reviewed.
+  - Scan-dependent optimizer rescaling is forbidden; use declared instrument blocks only.
+  - At least one included ENERGY_CONSTRAINT row is required before the explicit D0-to-D1..D7 search branches can run.

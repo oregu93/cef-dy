@@ -19,6 +19,12 @@ Scientific boundaries are enforced in code and configuration:
 - production fitting is disabled until the provenance gate and independent
   review are both satisfied.
 
+The separate user-executed exploratory E-Q pipeline is documented in
+`docs/USER_EXECUTED_CEF_PIPELINE_V1.md`. Its numerical-map use is authorized
+for model discovery, while its intensity objective remains
+`EXPLORATORY_NOT_MANUSCRIPT_ADMITTED`. Global search is off by default and all
+scientifically meaningful fitting must be launched visibly by the user.
+
 ## Local Windows workflow
 
 ```bat
