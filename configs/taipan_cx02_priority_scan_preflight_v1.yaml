@@ -1,0 +1,110 @@
+schema_version: 1
+preflight_id: TAIPAN_CX02_PRIORITY_SCAN_PREFLIGHT_V1
+status: METADATA_AUDIT_COMPLETE__TEMPERATURE_UNRESOLVED__NO_NEW_FIT
+scope:
+  complex_id: CX-02
+  frozen_union_meV: [17.49800, 20.49835]
+  source_bf_ids: [BF-004, BF-005]
+  raw_scan_ids: [104095, 104098, 104099, 104215, 104225]
+  detector_reanalysis_performed: false
+  fit_performed: false
+sources:
+  scan_inventory:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+    sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+  scan_points:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+    sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+  semantic_verification:
+    path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+    sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+  scan_classification:
+    path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+    sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
+  blind_split:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_split.csv
+    sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+  blind_feature_catalogue:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+    sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+shared_classification:
+  discovery_holdout_role: discovery
+  b001_runtime_status: discovery_usable
+  count_control_mode: monitor_controlled
+  instrument_config_id: INSTCFG-02R-d3a276575fd49dd8
+  normalization_compatibility_group_id: NORMCOMP-02R-26ed32e42105dda7
+  temperature_status: NOT_YET_ESTABLISHED
+  temperature_summary_K: null
+  temperature_semantics: no_unique_sensor_or_unit_selected
+q_trajectory_contract:
+  source: A002 per-point h_raw/k_raw/l_raw plus each scan's lattice_state_id
+  setting: Pbnm
+  output_frame: direct_b_c_a
+  chronology_used_for_temperature_assignment: false
+scans:
+  - raw_scan_id: 104095
+    scan_record_id: SCAN-02R-8dcd5041a8a4e044
+    source_file: TAIPAN_exp1296_scan104095.dat
+    source_checksum: e9f45e9e884b3286ce7f6aa5544db960d6f66241ad4723161bff4d3e2af4da18
+    point_count: 25
+    energy_range_meV: [0.9986, 24.9983]
+    q_range_Ainv: [3.0342355444, 3.0345151545]
+    trajectory_start: {energy_meV: 24.9983, Q_Ainv: 3.0345151545}
+    trajectory_end: {energy_meV: 0.9986, Q_Ainv: 3.0343212946}
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+    acquisition_state_id: ACQSTATE-02R-76ff5c324efb0d8a
+    b001_support: {feature_id: BF-004, reproducibility_tier: tier_1}
+  - raw_scan_id: 104098
+    scan_record_id: SCAN-02R-731f452fb62a55bd
+    source_file: TAIPAN_exp1296_scan104098.dat
+    source_checksum: e9a7d473e49ef245ff36e61c6c0a9d93de55b77f92f4c71246c7799423e21e90
+    point_count: 25
+    energy_range_meV: [0.9984, 24.9983]
+    q_range_Ainv: [3.3597703444, 3.3600083191]
+    trajectory_start: {energy_meV: 24.9983, Q_Ainv: 3.3599881325}
+    trajectory_end: {energy_meV: 0.9984, Q_Ainv: 3.3597905324}
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+    acquisition_state_id: ACQSTATE-02R-76ff5c324efb0d8a
+    b001_support: {feature_id: BF-004, reproducibility_tier: tier_1}
+  - raw_scan_id: 104099
+    scan_record_id: SCAN-02R-8641a638f4880175
+    source_file: TAIPAN_exp1296_scan104099.dat
+    source_checksum: 9e4d8fc6071df1db8feb34105250c26e121dd9402deda18c6c91d6475d3026cf
+    point_count: 25
+    energy_range_meV: [0.9986, 24.9983]
+    q_range_Ainv: [2.9802001312, 2.9804387828]
+    trajectory_start: {energy_meV: 24.9983, Q_Ainv: 2.9803932700}
+    trajectory_end: {energy_meV: 0.9986, Q_Ainv: 2.9803308364}
+    lattice_state_id: LAT-02R-ae4c74e47a033f66
+    UB_state_id: UB-02R-1d710a6baa059bbb
+    acquisition_state_id: ACQSTATE-02R-76ff5c324efb0d8a
+    b001_support: {feature_id: BF-004, reproducibility_tier: tier_1}
+  - raw_scan_id: 104215
+    scan_record_id: SCAN-02R-75faa4a614a8f130
+    source_file: TAIPAN_exp1296_scan104215.dat
+    source_checksum: 7d43e888fbbcdd5429ba8b856b69e4a6fa77a31aeaf6da3220e3da2f7c684951
+    point_count: 26
+    energy_range_meV: [-0.0014, 24.9982]
+    q_range_Ainv: [3.2437127246, 3.2439760499]
+    trajectory_start: {energy_meV: 24.9982, Q_Ainv: 3.2439760499}
+    trajectory_end: {energy_meV: -0.0014, Q_Ainv: 3.2438214696}
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+    acquisition_state_id: ACQSTATE-02R-896f06c2a7c231ec
+    b001_support: {feature_id: BF-005, reproducibility_tier: tier_1}
+  - raw_scan_id: 104225
+    scan_record_id: SCAN-02R-f56f915bc229d6aa
+    source_file: TAIPAN_exp1296_scan104225.dat
+    source_checksum: cece350be1b77532dae927a124ee6a2d3c0d610a9e246767ce14c2eb0b755ff9
+    point_count: 26
+    energy_range_meV: [-0.0007, 24.9983]
+    q_range_Ainv: [3.6257009775, 3.6259574950]
+    trajectory_start: {energy_meV: 24.9983, Q_Ainv: 3.6259199630}
+    trajectory_end: {energy_meV: -0.0007, Q_Ainv: 3.6258667725}
+    lattice_state_id: LAT-02R-517a9644e4f59287
+    UB_state_id: UB-02R-c7cdba07fed2dfd7
+    acquisition_state_id: ACQSTATE-02R-896f06c2a7c231ec
+    b001_support: {feature_id: BF-005, reproducibility_tier: tier_1}
+terminal_status: BLOCKED_BY_UNVERIFIED_SAMPLE_TEMPERATURE_MAPPING

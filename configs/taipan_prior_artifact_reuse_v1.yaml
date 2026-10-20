@@ -1,0 +1,202 @@
+schema_version: 1
+reuse_map_id: TAIPAN_PRIOR_ARTIFACT_REUSE_V1
+public_scientific_authority: oregu93/cef-dy
+public_main: c65cfb1daa8edf4ce85684b5093869c0f287d269
+w03_base: 691d1b42088f2b25d006af16f18863ab7bfc8817
+w02_source_head: 2c17955c405ef9698781dfd5364ef7be0245ba15
+private_repository:
+  repository: oregu93/cef-dy-private
+  main: afdc059c29144b0ee547b585fd11cf68ede6cb11
+  taipan_status: KNOWN_BUT_NOT_LOCATED__UNVERIFIED__NOT_A_SCIENTIFIC_STATE_SOURCE
+
+source_commits:
+  A002: 68bd7eb7958e9f35e26525b8f4e80cb968f458d9
+  A003: 4b470c6ec70d75ac360b330f599bc74a7b97e037
+  B001: 21506b7df9eb8dc4b340aa6e19eb720e07329e8d
+  C001_v1_1: 122691ae7e69e40458509feec0dd2135aeb4108f
+  literature_magnetization: 2c17955c405ef9698781dfd5364ef7be0245ba15
+
+reuse_decisions:
+  stage02r_a002:
+    classification: REUSE_DIRECTLY
+    role: acquisition_geometry_and_scan_provenance
+  stage02r_a003:
+    classification: REUSE_DIRECTLY
+    role: acquisition_and_normalization_classification
+  stage02r_b001:
+    classification: REUSE_DIRECTLY
+    role: sealed_discovery_only_point_representation
+  stage02r_c001:
+    classification: REUSE_FOR_VALIDATION_ONLY
+    role: resolution_background_and_context_diagnostics
+  elastic_scan_104062:
+    classification: REUSE_AS_EXPLORATORY_ANCHOR
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/resolution_evidence.yaml
+    sha256: a9cee3ad43aff8312fb72e63178c304c4eb5698e565d23a8f3f8cd57a6be1b77
+    role: empirical_elastic_width_anchor_not_full_tas_resolution
+  legacy_44p4_q_diagnostic:
+    classification: REUSE_FOR_VALIDATION_ONLY
+    path: 04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md
+    sha256: ea5eb8c331827aa651d7a82b709a168d4e1ec198c9be0a8e7b826cbe923b9d4c
+    role: diagnostic_or_possibly_mixed_not_mandatory_cef_level
+  modern_w02_energy_result:
+    classification: REUSE_FOR_VALIDATION_ONLY
+    path: data/manuscript_v1/energy_admission_v1/energy_admission_summary.yaml
+    sha256: 523ab9768f62edf6a7b7825f941fc287b3936748a13082cbf48b5f238b84a05a
+    status: MODEL_DEPENDENT_ENERGY
+    admitted_energy_meV: null
+  legacy_scalar_energy_hypotheses:
+    classification: SUPERSEDED
+    path: data/manuscript_v1/manuscript_observables.csv
+    sha256: 6e4894fd1f2c3bf4f46d3ad261a1cc622f6c13bdbe2e644c23d70ef06168dc6b
+    role: context_only_not_fit_targets
+  w02_literature_magnetization:
+    classification: REUSE_FOR_VALIDATION_ONLY
+    points_path: data/manuscript_v1/literature_magnetization.csv
+    points_sha256: 2909ad44b4abc150dae603c89a5e9b5b08a182d99009e111055d942a1d6da4ea
+    inventory_path: data/manuscript_v1/literature_magnetization_curve_inventory.csv
+    inventory_sha256: 403951d723731eba7f0eac84511ce765bccdd5537c5530ee809e90ae1af146f1
+    role: frozen_downstream_validation_only
+  private_repository_taipan_entry:
+    classification: NOT_APPLICABLE_TO_CURRENT_OBJECTIVE
+    repository: oregu93/cef-dy-private
+    main: afdc059c29144b0ee547b585fd11cf68ede6cb11
+    role: known_but_not_located_unverified_no_scientific_state_authority
+
+artifacts:
+  a002_scan_points:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_points.csv
+    sha256: 1a3f437bed663de03384cf109d37c39ef90b89f0ff0d8e06a1defab564c6cb39
+    classification: REUSE_DIRECTLY
+  a002_scan_inventory:
+    path: 04_Results/Stage02R/W02-02R-A-002/scan_inventory.csv
+    sha256: 42be23df84a44874ec8ed73719a2e8e51a22bd1ccab2b6ca8cd042c75452243f
+    classification: REUSE_DIRECTLY
+  a002_lattice_states:
+    path: 04_Results/Stage02R/W02-02R-A-002/lattice_states.yaml
+    sha256: 4a0acd20b37019a5fed4336d62fdab780ac00a290dcd0d7f93864d6e0271b5cd
+    classification: REUSE_DIRECTLY
+  a002_ub_states:
+    path: 04_Results/Stage02R/W02-02R-A-002/UB_states.yaml
+    sha256: 1cdb5e0e4aa137eaeb4ef88528314932044e82203bfd84cfe1075242a6847a80
+    classification: REUSE_DIRECTLY
+  a002_provenance:
+    path: 04_Results/Stage02R/W02-02R-A-002/provenance_manifest.yaml
+    sha256: 79f0e63dafd8fc1468c26ed09716fb633976c6461cd61f6b22d967d34ebcd237
+    classification: REUSE_DIRECTLY
+  a002_semantics:
+    path: 04_Results/Stage02R/W02-02R-A-002/semantic_verification_report.yaml
+    sha256: d01a778c890e24dc70e6818d366369a13dc609d3d2cdfc96402aee41d33101e1
+    classification: REUSE_DIRECTLY
+  a003_scan_classification:
+    path: 04_Results/Stage02R/W02-02R-A-003/scan_classification.csv
+    sha256: c21c4f1f6594f130cda329344b2e850b08a3299d600e736cfb3ab4af78957d08
+    classification: REUSE_DIRECTLY
+  a003_acquisition_states:
+    path: 04_Results/Stage02R/W02-02R-A-003/acquisition_states.yaml
+    sha256: d982e7271a40b79c7332ba7b10f5a6d8006e4495311fde5e29a2411e66638439
+    classification: REUSE_DIRECTLY
+  a003_instrument_configs:
+    path: 04_Results/Stage02R/W02-02R-A-003/instrument_configs.yaml
+    sha256: 3e71224b264a1f926868cb1b4b80a21092d0af58a1813d9b311170893eb96441
+    classification: REUSE_DIRECTLY
+  a003_normalization_groups:
+    path: 04_Results/Stage02R/W02-02R-A-003/normalization_compatibility_groups.yaml
+    sha256: cbc1907a38e8fdd23ab3f72fd22b8412c561ebff8ebad58ee80928b9e27b51e9
+    classification: REUSE_DIRECTLY
+  b001_blind_split:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_split.csv
+    sha256: a7e1fc9979fefa781d393f352acb824dc2da7c205f08961c210afb1a2c0ee670
+    classification: REUSE_DIRECTLY
+  b001_discovery_points:
+    path: 04_Results/Stage02R/W02-02R-B-001/discovery_point_representation.csv
+    sha256: e8f1f0298df74b1948804614ac43ec4580f333d87ad8c68b610acc3933c97b21
+    classification: REUSE_DIRECTLY
+  b001_feature_catalogue:
+    path: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+    sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+    classification: REUSE_AS_EXPLORATORY_ANCHOR
+  b001_feature_reproducibility:
+    path: 04_Results/Stage02R/W02-02R-B-001/feature_reproducibility.csv
+    sha256: f27cc18f011fce62ad056089b61995edad6b19beb3056b43b38f6b4fb069614e
+    classification: REUSE_AS_EXPLORATORY_ANCHOR
+  b001_scientific_review:
+    path: 04_Results/Stage02R/W02-02R-B-001/SCIENTIFIC_REVIEW.md
+    sha256: ea5eb8c331827aa651d7a82b709a168d4e1ec198c9be0a8e7b826cbe923b9d4c
+    classification: REUSE_FOR_VALIDATION_ONLY
+  c001_resolution_evidence:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/resolution_evidence.yaml
+    sha256: a9cee3ad43aff8312fb72e63178c304c4eb5698e565d23a8f3f8cd57a6be1b77
+    classification: REUSE_AS_EXPLORATORY_ANCHOR
+  c001_resolution_status:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/resolution_status.csv
+    sha256: bb44c947701c7018110ef547f8fae7b15a548b089bd4b5712d73e111db776621
+    classification: REUSE_FOR_VALIDATION_ONLY
+  c001_background_sensitivity:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/background_sensitivity.csv
+    sha256: caf27259c2fad2efe82dba4c597d3b92e124daf0ee695c41762c1dd52de33e0c
+    classification: REUSE_AS_EXPLORATORY_ANCHOR
+  c001_discovery_final_fits:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/discovery_final_fits.csv
+    sha256: 87c412055e69768ca4cfb07e4c47db2b617b7c96a138cd9c7917fd031e630090
+    classification: REUSE_FOR_VALIDATION_ONLY
+  c001_parameter_uncertainty:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/parameter_uncertainty.csv
+    sha256: de5842b098b1252eb19da3fd8ffe36a7048ff65dd7fdbacd11ce7b093d97d8b0
+    classification: REUSE_FOR_VALIDATION_ONLY
+  c001_experimental_context:
+    path: 04_Results/Stage02R/W02-02R-C-001-v1.1/experimental_context_assessment.yaml
+    sha256: 9fe71a59f9649aaca8d77bfeca7dcb97b4e64791ddddf64f6bf639d10d7eb3d7
+    classification: REUSE_FOR_VALIDATION_ONLY
+
+materialization:
+  output: local_data/taipan_eq_map_exploratory_v1.csv
+  selection: B001_DISCOVERY_POINT_REPRESENTATION_ONLY
+  intensity_definition: detector_counts / monitor
+  intensity_units: counts_per_monitor
+  intensity_multiplier: 1.0
+  preferred_count_control_mode: monitor_controlled
+  holdout_detector_access_allowed: false
+  diagnostic_mixed_feature_ids: [BF-006, BF-007, BF-008]
+  source_artifact_label: STAGE02R_A002_A003_B001_BRIDGE_V1
+
+temperature_mapping:
+  ten_k_block_status: NOT_YET_ESTABLISHED
+  ten_k_scan_record_ids: []
+  ten_k_temperature_K: null
+  ten_k_scan_ids_source: NONE__NO_REVIEWED_DETERMINISTIC_SCAN_TO_TEMPERATURE_MAPPING
+  limitation: >-
+    A002 records no unique verified temperature channel or unit for any scan.
+    Legacy summaries identify approximate 3.4-3.5 K and 10 K blocks but do
+    not preserve an exact reviewed scan membership, so chronology is not used.
+
+priority_scan_preflight:
+  status: METADATA_AUDIT_COMPLETE__TEMPERATURE_UNRESOLVED__NO_NEW_FIT
+  path: configs/taipan_cx02_priority_scan_preflight_v1.yaml
+  raw_scan_ids: [104095, 104098, 104099, 104215, 104225]
+  complex_id: CX-02
+  terminal_status: BLOCKED_BY_UNVERIFIED_SAMPLE_TEMPERATURE_MAPPING
+
+resolution:
+  status: EMPIRICAL_ELASTIC_ANCHOR_AVAILABLE__FULL_TAS_RESOLUTION_NOT_ESTABLISHED
+  source_scan_raw_id: 104062
+  source_Q_Ainv: 2.26
+  baseline_fwhm_meV: 0.894
+  fit_uncertainty_fwhm_meV: 0.025
+  transfer_limitation: >-
+    The elastic width is an approximate exploratory baseline only. Transfer
+    to the inelastic regime and the full TAS resolution ellipsoid are not
+    established; the 0.025 meV fit uncertainty does not represent that
+    transfer systematic.
+
+background:
+  selected_semantics: LOCAL_LINEAR_BACKGROUND
+  source_status: >-
+    The A002/B001 point representation is not background-subtracted. B001
+    local smooth/log-linear nuisance trends and C001 sensitivity fits are
+    exploratory anchors, not a unique physical background.
+
+feature_policy:
+  mandatory_cef_assignments_from_b001: []
+  feature_windows_role: DISCOVERY_FEATURE_WINDOWS
+  feature_44_meV_status: DIAGNOSTIC_OR_POSSIBLY_MIXED

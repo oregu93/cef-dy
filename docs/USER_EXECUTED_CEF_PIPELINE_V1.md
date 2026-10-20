@@ -27,9 +27,12 @@ are context only and are not hidden objective targets.
 ## Inputs
 
 The fitter consumes numerical linear intensities, never PNG/JPEG pixels,
-rendered colours, or logarithmic display values. The expected CSV schema is
+rendered colours, or logarithmic display values. Stage `01_data_audit`
+deterministically materializes the user table from reviewed Stage02R A002/A003
+plus the sealed B001 discovery representation; the user does not construct it
+manually. The expected CSV schema is
 [`schemas/taipan-eq-map-v1.schema.yaml`](../schemas/taipan-eq-map-v1.schema.yaml).
-Place the prepared file at:
+The generated local file is:
 
 ```text
 local_data/taipan_eq_map_exploratory_v1.csv
@@ -40,9 +43,26 @@ and normalization in every row. The audit records its SHA-256. If statistical
 uncertainties are not calibrated, the reported objective is explicitly an
 exploratory weighted loss, not chi-square.
 
-At least one included numerical row/window must be explicitly classified as
-`ENERGY_CONSTRAINT`; otherwise the audit blocks search because the seven
-`D0 -> D1...D7` hypotheses would not be distinct assignment branches.
+The current temperature audit is fail-closed:
+
+```text
+TEN_K_BLOCK_STATUS = NOT_YET_ESTABLISHED
+```
+
+A002 does not select a uniquely verified sample-temperature channel, while
+the legacy summary does not preserve exact 10-K scan membership. The bridge
+therefore materializes 1,796 monitor-controlled discovery points for provenance review with
+temperature-unresolved masks, but reports `NOT_READY`. No scan is classified
+as 10 K from chronology. Update the reviewed mapping in
+[`configs/taipan_prior_artifact_reuse_v1.yaml`](../configs/taipan_prior_artifact_reuse_v1.yaml)
+only after deterministic evidence exists.
+The exact evidence requirement and the CX-02 priority-scan metadata audit are
+recorded in
+[`docs/TAIPAN_TEMPERATURE_MAPPING_BLOCKER_V1.md`](TAIPAN_TEMPERATURE_MAPPING_BLOCKER_V1.md).
+
+Before search, explicit feature-to-transition hypotheses must also be added.
+B001 windows remain overlapping discovery regions and are not converted into
+mandatory levels or assigned by nearest calculated energy.
 
 Review [`configs/taipan_masks_exploratory_v1.yaml`](../configs/taipan_masks_exploratory_v1.yaml)
 before search. Only the elastic mask and rows explicitly marked invalid are
@@ -66,10 +86,19 @@ the calculation is separately labelled `SINGLE_ION_DY_CEF_CONTRIBUTION` in
   residual classes.
 - `MANUSCRIPT_OBJECTIVE`: reserved and disabled until provenance review.
 
-The visible E-Q forward model is the sum of project-owned CEF transitions,
-the Dy3+ dipole form factor, magnetic polarization, Gaussian energy
-resolution, explicit background, and one positive nuisance scale per declared
-instrument block. No per-scan optimizer rescaling is created.
+The visible E-Q forward model is the sum of all positive-energy transitions
+from thermally populated CEF doublets, the explicit TAS `kf/ki` factor, Dy3+
+dipole form factor, single-crystal magnetic polarization, the 0.894-meV
+empirical elastic-width baseline, a local linear nuisance background, and one
+positive nuisance scale per declared A003 block. There is no silent powder
+average and no per-scan optimizer rescaling. The elastic width is not a full
+TAS resolution function and is not used to infer intrinsic linewidths.
+
+The polarization tensor is explicitly transported and summed over the four
+Pbnm Dy(4c) positions using the accepted Stage03R tensor contract. All four
+sites share one reference-site CEF Hamiltonian; there are no independently
+fitted site parameters. This is the reviewed localized independent-site sum,
+not a coherent collective-mode calculation.
 
 ## VS Code setup
 
@@ -95,7 +124,11 @@ python -m cef_fit.user_pipeline STAGE --config configs/user_executed_joint_cef_p
 
 ## Copyable stage sequence
 
-1. Audit the prepared dataset and obtain `READY_FOR_EXPLORATORY_SEARCH`:
+1. Materialize and audit the Stage02R bridge. It currently returns `NOT_READY`
+   with the exact 10-K mapping blocker; after that provenance is reviewed it
+   will return `READY_FOR_EXPLORATORY_SANITY_RUN`. The current command also
+   writes a dataset-only diagnostic figure labelled temperature-unresolved,
+   with no CEF overlay and no optimization:
 
    ```bash
    python -m cef_fit.user_pipeline 01_data_audit --config configs/user_executed_joint_cef_pipeline_v1.yaml
@@ -107,13 +140,18 @@ python -m cef_fit.user_pipeline STAGE --config configs/user_executed_joint_cef_p
    python -m cef_fit.user_pipeline 02_cef_forward --config configs/user_executed_joint_cef_pipeline_v1.yaml
    ```
 
+   This real experimental stage is intentionally blocked until the reviewed
+   temperature mapping is present. Synthetic forward-model tests remain safe.
+
 3. Inspect the objective decomposition (no optimization):
 
    ```bash
    python -m cef_fit.user_pipeline 03_ins_objective --config configs/user_executed_joint_cef_pipeline_v1.yaml
    ```
 
-4. Only after inspecting the dataset, masks, forward model, and objective,
+4. This step is blocked now. Only after the temperature mapping is reviewed,
+   and after inspecting the dataset, masks, forward model, objective, and
+   explicit feature assignments,
    explicitly set both `switches.RUN_EXPLORATORY_SEARCH` and
    `search.run_exploratory_search` to `true` in the configuration. Then start
    the user-executed search:

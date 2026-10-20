@@ -7,6 +7,7 @@ configuration authorization and an explicit command-line flag.
 from __future__ import annotations
 
 import argparse
+import csv
 from dataclasses import asdict
 import json
 from pathlib import Path
@@ -25,7 +26,7 @@ from .conventions import (
 from .eq_data import EQDataset, AppliedMask, apply_masks, audit_eq_dataset, load_eq_dataset, load_mask_definition
 from .fit_cs15 import parameters_to_h
 from .g_tensor import g_tensor
-from .global_search import SearchIdentity, run_cmaes_multistart
+from .global_search import SearchIdentity, deterministic_initialization_plan, run_cmaes_multistart
 from .ins_forward import predict_eq_map
 from .ins_objective import eq_map_exploratory_objective, joint_mh_interface, require_objective_mode
 from .literature_compare import (
@@ -36,6 +37,7 @@ from .literature_compare import (
 )
 from .provenance import git_provenance, sha256_file, write_json
 from .solution_clustering import SolutionObservables, cluster_observable_distances, observable_distance_matrix
+from .taipan_materializer import MaterializationReport, materialize_taipan_eq_dataset
 from .wavefunctions import export_wavefunctions
 
 
@@ -83,11 +85,60 @@ def _load_seed(config: Mapping[str, Any], repository: Path) -> dict[str, float]:
     return parameters
 
 
+def _initialization_plan(config: Mapping[str, Any], repository: Path) -> tuple[dict[str, object], ...]:
+    formal_config = yaml.safe_load(
+        (repository / "configs/manuscript_fit_v1.yaml").read_text(encoding="utf-8")
+    )
+    formal = {
+        str(key): float(value)
+        for key, value in formal_config["pcm"]["formal_parameters_meV"].items()
+    }
+    seeds: dict[str, np.ndarray] = {
+        "PCM_FORMAL": parameters_to_h(formal),
+    }
+    m0_path = repository / (
+        "04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/"
+        "pcm_conditional_results.csv"
+    )
+    with m0_path.open(newline="", encoding="utf-8") as handle:
+        m0_rows = {
+            row["solution_id"]: row for row in csv.DictReader(handle)
+        }
+    m0_id = "PCM-M0__joint_w6.0_b1_per_block__D1"
+    seeds["PCM_M0"] = parameters_to_h(
+        {name: value * float(m0_rows[m0_id]["scale"]) for name, value in formal.items()}
+    )
+    bundle_root = repository / (
+        "04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001"
+    )
+    for label in ("R3", "R5", "R7"):
+        payload = yaml.safe_load(
+            (bundle_root / f"PB-CS15-HIST-B2-{label}.yaml").read_text(encoding="utf-8")
+        )
+        seeds[f"HISTORICAL_{label}"] = parameters_to_h(
+            {str(key): float(value) for key, value in payload["parameters"].items()}
+        )
+    search = config["search"]
+    lower, upper = map(float, search["h_bounds_meV"])
+    return deterministic_initialization_plan(
+        seeds,
+        restart_count=int(search["restarts_per_assignment"]),
+        lower=lower,
+        upper=upper,
+        base_seed=int(search["base_seed"]),
+    )
+
+
 def _load_ready_dataset(
     config: Mapping[str, Any], repository: Path
 ) -> tuple[EQDataset, AppliedMask, dict[str, object]]:
-    audit = audit_eq_dataset(config, repository)
-    if audit["status"] != "READY_FOR_EXPLORATORY_SEARCH":
+    materialization = _materialize_if_configured(config, repository)
+    audit = audit_eq_dataset(
+        config,
+        repository,
+        materialization.as_dict() if materialization is not None else None,
+    )
+    if audit["status"] != "READY_FOR_EXPLORATORY_SANITY_RUN":
         raise RuntimeError(f"TAIPAN dataset is not ready: {audit.get('blockers', [])}")
     inputs = config["inputs"]
     dataset = load_eq_dataset(
@@ -99,6 +150,17 @@ def _load_ready_dataset(
         load_mask_definition(_resolve(repository, str(inputs["taipan_mask_definition"]))),
     )
     return dataset, mask, audit
+
+
+def _materialize_if_configured(
+    config: Mapping[str, Any], repository: Path
+) -> MaterializationReport | None:
+    inputs = config["inputs"]
+    if not bool(inputs.get("auto_materialize_stage02r", False)):
+        return None
+    reuse_path = _resolve(repository, str(inputs["taipan_reuse_map"]))
+    output_path = _resolve(repository, str(inputs["taipan_eq_dataset"]))
+    return materialize_taipan_eq_dataset(reuse_path, repository, output_path)
 
 
 def _load_json(path: Path) -> dict[str, Any]:
@@ -120,9 +182,160 @@ def _parameters(candidate: Mapping[str, object]) -> dict[str, float]:
     return {str(key): float(value) for key, value in raw.items()}
 
 
+def _write_dataset_diagnostic_figure(
+    dataset: EQDataset,
+    mask: AppliedMask,
+    audit: Mapping[str, object],
+    destination: Path,
+) -> Path:
+    """Plot the materialized dataset without a temperature or model claim."""
+
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as error:
+        raise RuntimeError(
+            "Install the optional 'cef' dependencies to create the dataset diagnostic figure"
+        ) from error
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    figure, axis = plt.subplots(figsize=(10, 6))
+    plotted = axis.scatter(
+        dataset.q_ainv,
+        dataset.energy_meV,
+        c=dataset.intensity,
+        s=15,
+        cmap="viridis",
+        label="materialized discovery points",
+    )
+    excluded = ~np.asarray(mask.include, dtype=bool)
+    if np.any(excluded):
+        axis.scatter(
+            dataset.q_ainv[excluded],
+            dataset.energy_meV[excluded],
+            facecolors="none",
+            edgecolors="0.45",
+            linewidths=0.35,
+            s=25,
+            label="excluded from model use",
+        )
+    diagnostic_44 = np.asarray(
+        [
+            bool({"BF-006", "BF-007", "BF-008"}.intersection(identifiers))
+            for identifiers in dataset.feature_ids
+        ],
+        dtype=bool,
+    )
+    if np.any(diagnostic_44):
+        axis.scatter(
+            dataset.q_ainv[diagnostic_44],
+            dataset.energy_meV[diagnostic_44],
+            marker="x",
+            s=18,
+            color="tab:red",
+            linewidths=0.6,
+            label="44 meV diagnostic / possibly mixed",
+        )
+    for window in audit.get("blind_feature_windows", []):
+        if not isinstance(window, Mapping):
+            continue
+        feature_id = str(window["feature_id"])
+        axis.axhspan(
+            float(window["energy_min_meV"]),
+            float(window["energy_max_meV"]),
+            color=(
+                "tab:gray"
+                if feature_id in {"BF-006", "BF-007", "BF-008"}
+                else "tab:orange"
+            ),
+            alpha=0.055,
+        )
+    axis.text(
+        0.01,
+        0.99,
+        "Temperature unresolved; no model overlay; no fitting",
+        transform=axis.transAxes,
+        ha="left",
+        va="top",
+        fontsize=9,
+        bbox={"facecolor": "white", "alpha": 0.8, "edgecolor": "0.8"},
+    )
+    axis.set_xlabel(r"$|Q|$ ($\AA^{-1}$)")
+    axis.set_ylabel("Energy transfer (meV)")
+    axis.set_title("TAIPAN discovery-only materialized dataset diagnostic")
+    axis.legend(loc="best")
+    figure.colorbar(plotted, ax=axis, label="detector / monitor (linear)")
+    figure.tight_layout()
+    figure.savefig(destination, dpi=180)
+    plt.close(figure)
+    return destination
+
+
 def stage_01_data_audit(config: dict[str, Any], config_path: Path, repository: Path, args: argparse.Namespace) -> dict[str, object]:
+    materialization = _materialize_if_configured(config, repository)
+    audit = audit_eq_dataset(
+        config,
+        repository,
+        materialization.as_dict() if materialization is not None else None,
+    )
+    dataset_figure: str | None = None
+    dataset_path = _resolve(repository, str(config["inputs"]["taipan_eq_dataset"]))
+    mask_path = _resolve(repository, str(config["inputs"]["taipan_mask_definition"]))
+    if dataset_path.exists() and mask_path.exists():
+        dataset = load_eq_dataset(dataset_path, str(config["inputs"]["intensity_domain"]))
+        mask = apply_masks(dataset, load_mask_definition(mask_path))
+        dataset_figure = str(
+            _write_dataset_diagnostic_figure(
+                dataset,
+                mask,
+                audit,
+                _output(config, repository, "dataset_diagnostic_figure"),
+            )
+        )
     report = {
-        **audit_eq_dataset(config, repository),
+        **audit,
+        "materialization": materialization.as_dict() if materialization is not None else None,
+        "data_materialization_status": (
+            "PASS"
+            if materialization is not None and materialization.output_rows > 0
+            else "NOT_MATERIALIZED"
+        ),
+        "scientific_search_readiness": audit["status"],
+        "q_geometry_status": (
+            "PASS"
+            if audit.get("q_direction_status") == "PER_POINT_DIRECT_B_C_A"
+            else "BLOCKED"
+        ),
+        "discovery_holdout_status": (
+            "PASS"
+            if audit.get("holdout_points_used") == 0
+            and audit.get("holdout_detector_access_count") == 0
+            else "FAIL"
+        ),
+        "temperature_mapping_status": (
+            "PASS"
+            if audit.get("ten_k_block_status")
+            in {"VERIFIED", "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"}
+            else "BLOCKED"
+        ),
+        "exploratory_search_status": (
+            "READY"
+            if audit["status"] == "READY_FOR_EXPLORATORY_SANITY_RUN"
+            and not audit.get("search_blockers")
+            else "NOT_READY"
+        ),
+        "feature_44p4_status": (
+            "VISIBLE_DIAGNOSTIC__DIAGNOSTIC_OR_POSSIBLY_MIXED__OBJECTIVE_EXCLUDED"
+        ),
+        "primary_count_control_mode": "monitor_controlled",
+        "mandatory_cef_assignments_from_b001": [],
+        "dataset_diagnostic_figure": dataset_figure,
+        "model_overlay_generated": False,
+        "pre_search_diagnostic_figure": (
+            "PENDING_02_CEF_FORWARD"
+            if audit["status"] == "READY_FOR_EXPLORATORY_SANITY_RUN"
+            else "BLOCKED_BY_TEMPERATURE_MAPPING"
+        ),
+        "RUN_EXPLORATORY_SEARCH": False,
+        "NEW_BLM_RESULT_GENERATED": False,
         "config_path": str(config_path),
         "config_hash": sha256_file(config_path),
         "git": git_provenance(repository),
@@ -130,6 +343,62 @@ def stage_01_data_audit(config: dict[str, Any], config_path: Path, repository: P
     destination = _output(config, repository, "audit")
     write_json(destination, report)
     return {**report, "report_path": str(destination)}
+
+
+def _write_pre_search_figure(
+    dataset: EQDataset,
+    mask: AppliedMask,
+    prediction,
+    audit: Mapping[str, object],
+    destination: Path,
+) -> Path:
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError as error:
+        raise RuntimeError("Install the optional 'cef' dependencies to create the diagnostic figure") from error
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    figure, axis = plt.subplots(figsize=(10, 6))
+    included = np.asarray(mask.include, dtype=bool)
+    plotted = axis.scatter(
+        dataset.q_ainv[included],
+        dataset.energy_meV[included],
+        c=dataset.intensity[included],
+        s=13,
+        cmap="viridis",
+        label="verified-temperature discovery points",
+    )
+    excluded = ~included
+    if np.any(excluded):
+        axis.scatter(
+            dataset.q_ainv[excluded],
+            dataset.energy_meV[excluded],
+            marker="x",
+            s=12,
+            color="0.65",
+            alpha=0.6,
+            label="excluded / diagnostic",
+        )
+    windows = audit.get("blind_feature_windows", [])
+    for window in windows:
+        if isinstance(window, Mapping):
+            feature_id = str(window["feature_id"])
+            axis.axhspan(
+                float(window["energy_min_meV"]),
+                float(window["energy_max_meV"]),
+                color="tab:gray" if feature_id in {"BF-006", "BF-007", "BF-008"} else "tab:orange",
+                alpha=0.07,
+            )
+    for energy in prediction.transitions.transition_energies_meV:
+        axis.axhline(float(energy), color="tab:red", linewidth=0.7, alpha=0.5)
+    axis.set_xlabel(r"$|Q|$ ($\AA^{-1}$)")
+    axis.set_ylabel("Energy transfer (meV)")
+    axis.set_title("TAIPAN verified-temperature review; frozen seed, no fitted Blm")
+    axis.legend(loc="best")
+    figure.colorbar(plotted, ax=axis, label="detector / monitor (linear)")
+    figure.tight_layout()
+    figure.savefig(destination, dpi=180)
+    plt.close(figure)
+    return destination
 
 
 def stage_02_cef_forward(config: dict[str, Any], config_path: Path, repository: Path, args: argparse.Namespace) -> dict[str, object]:
@@ -149,14 +418,34 @@ def stage_02_cef_forward(config: dict[str, Any], config_path: Path, repository: 
         "dataset_hash": dataset.sha256,
         "included_points": int(np.count_nonzero(mask.include)),
         "doublet_energies_meV": prediction.transitions.doublet_energies_meV.tolist(),
+        "population_mode": prediction.transitions.population_mode,
+        "temperature_K": prediction.transitions.temperature_K,
+        "thermal_populations": prediction.transitions.doublet_populations.tolist(),
+        "transition_initial_doublets": prediction.transitions.initial_doublets.tolist(),
+        "transition_final_doublets": prediction.transitions.final_doublets.tolist(),
         "transition_energies_meV": prediction.transitions.transition_energies_meV.tolist(),
         "powder_transition_strengths": prediction.transitions.powder_strengths.tolist(),
+        "transition_population_factors": prediction.transitions.transition_population_factors.tolist(),
+        "kf_over_ki_range": [float(np.min(prediction.kf_over_ki)), float(np.max(prediction.kf_over_ki))],
+        "ki_Ainv_range": [float(np.min(prediction.ki_Ainv)), float(np.max(prediction.ki_Ainv))],
+        "kf_Ainv_range": [float(np.min(prediction.kf_Ainv)), float(np.max(prediction.kf_Ainv))],
+        "q_polarization_status": audit["q_direction_status"],
+        "resolution_settings": config["forward_model"]["resolution"],
+        "background_settings": config["forward_model"]["background"],
         "calculated_signal_range": [float(np.min(prediction.signal)), float(np.max(prediction.signal))],
         "background_range": [float(np.min(prediction.background)), float(np.max(prediction.background))],
         "fit_executed": False,
         "audit_status": audit["status"],
         "provenance": _provenance(config_path, repository),
     }
+    figure_path = _write_pre_search_figure(
+        dataset,
+        mask,
+        prediction,
+        audit,
+        _output(config, repository, "pre_search_figure"),
+    )
+    payload["pre_search_diagnostic_figure"] = str(figure_path)
     destination = _output(config, repository, "forward")
     write_json(destination, payload)
     return {**payload, "output": str(destination)}
@@ -171,7 +460,11 @@ def stage_03_ins_objective(config: dict[str, Any], config_path: Path, repository
     parameters = _load_seed(config, repository)
     prediction = predict_eq_map(parameters, dataset, config["forward_model"])
     objective = eq_map_exploratory_objective(
-        dataset, mask.include, prediction.total_unscaled, config["objective"]
+        dataset,
+        mask.include,
+        prediction.signal,
+        config["objective"],
+        background_config=config["forward_model"]["background"],
     )
     payload = {
         "status": "OBJECTIVE_SANITY_COMPLETE__NO_OPTIMIZATION",
@@ -187,23 +480,54 @@ def stage_03_ins_objective(config: dict[str, Any], config_path: Path, repository
     return {**payload, "output": str(destination)}
 
 
-def _energy_branch_penalty(
+def _explicit_feature_energy_penalty(
     dataset: EQDataset,
     mask: AppliedMask,
-    doublet_energies_meV: np.ndarray,
-    branch: int,
-    tolerance_meV: float,
-) -> tuple[float, float | None]:
-    classes = np.asarray(dataset.constraint_classes, dtype=str)
-    selected = mask.include & (classes == "ENERGY_CONSTRAINT")
-    if not np.any(selected):
-        return 0.0, None
-    weights = np.maximum(dataset.intensity[selected], 0.0)
-    if float(np.sum(weights)) <= 0:
-        weights = np.ones(np.count_nonzero(selected))
-    centroid = float(np.average(dataset.energy_meV[selected], weights=weights))
-    penalty = float(((doublet_energies_meV[branch] - centroid) / tolerance_meV) ** 2)
-    return penalty, centroid
+    transitions,
+    hypothesis: Mapping[str, object],
+) -> tuple[float, list[dict[str, object]]]:
+    mappings = hypothesis.get("mappings", [])
+    if not isinstance(mappings, list) or not mappings:
+        raise ValueError("Each assignment hypothesis requires explicit feature mappings")
+    diagnostics: list[dict[str, object]] = []
+    losses: list[float] = []
+    for mapping in mappings:
+        if not isinstance(mapping, Mapping):
+            raise ValueError("Feature assignment mapping must be a mapping")
+        feature_id = str(mapping["feature_id"])
+        initial = int(mapping["initial_doublet"])
+        final = int(mapping["final_doublet"])
+        sigma = float(mapping["sigma_meV"])
+        if sigma <= 0:
+            raise ValueError("Explicit feature energy sigma must be positive")
+        selected = mask.include & np.asarray(
+            [feature_id in identifiers for identifiers in dataset.feature_ids], dtype=bool
+        )
+        if not np.any(selected):
+            raise ValueError(f"Assigned feature {feature_id} has no included measured points")
+        weights = np.maximum(dataset.intensity[selected], 0.0)
+        if float(np.sum(weights)) <= 0:
+            weights = np.ones(np.count_nonzero(selected))
+        observed = float(np.average(dataset.energy_meV[selected], weights=weights))
+        transition_match = np.flatnonzero(
+            (transitions.initial_doublets == initial) & (transitions.final_doublets == final)
+        )
+        if transition_match.size != 1:
+            raise ValueError(f"Calculated transition D{initial}->D{final} is unavailable")
+        predicted = float(transitions.transition_energies_meV[int(transition_match[0])])
+        loss = float(((predicted - observed) / sigma) ** 2)
+        losses.append(loss)
+        diagnostics.append(
+            {
+                "feature_id": feature_id,
+                "assignment": f"D{initial}->D{final}",
+                "observed_centroid_meV": observed,
+                "predicted_transition_meV": predicted,
+                "sigma_meV": sigma,
+                "loss": loss,
+            }
+        )
+    return float(np.mean(losses)), diagnostics
 
 
 def stage_04_global_search(config: dict[str, Any], config_path: Path, repository: Path, args: argparse.Namespace) -> dict[str, object]:
@@ -223,26 +547,39 @@ def stage_04_global_search(config: dict[str, Any], config_path: Path, repository
         objective_mode=mode.value,
         code_commit=code_commit,
     )
+    hypotheses = config["assignments"].get("feature_assignment_hypotheses", [])
+    if not isinstance(hypotheses, list) or not hypotheses:
+        raise ValueError(
+            "No explicit observed-feature to calculated-transition hypotheses are configured"
+        )
+    if len(hypotheses) > 7:
+        raise ValueError("At most seven explicit assignment hypotheses are supported")
 
     def evaluator(parameters: Mapping[str, float], branch: int) -> Mapping[str, object]:
         prediction = predict_eq_map(parameters, dataset, config["forward_model"])
         result = eq_map_exploratory_objective(
-            dataset, mask.include, prediction.total_unscaled, config["objective"]
+            dataset,
+            mask.include,
+            prediction.signal,
+            config["objective"],
+            background_config=config["forward_model"]["background"],
         ).as_dict()
-        penalty, centroid = _energy_branch_penalty(
+        penalty, diagnostics = _explicit_feature_energy_penalty(
             dataset,
             mask,
-            prediction.transitions.doublet_energies_meV,
-            branch,
-            float(config["objective"].get("assignment_energy_tolerance_meV", 1.0)),
+            prediction.transitions,
+            hypotheses[branch - 1],
         )
         result["energy_constraint"] = float(result["energy_constraint"]) + penalty
         result["total"] = float(result["total"]) + penalty
-        result["assignment_branch"] = f"D0->D{branch}"
-        result["dataset_energy_centroid_meV"] = centroid
+        result["assignment_hypothesis"] = hypotheses[branch - 1].get(
+            "hypothesis_id", f"HYPOTHESIS_{branch}"
+        )
+        result["explicit_feature_assignments"] = diagnostics
         return result
 
     search_config = dict(config["search"])
+    search_config["assignment_branches"] = list(range(1, len(hypotheses) + 1))
     search_config["run_exploratory_search"] = bool(
         config["switches"]["RUN_EXPLORATORY_SEARCH"]
         and search_config.get("run_exploratory_search", False)
@@ -254,6 +591,7 @@ def stage_04_global_search(config: dict[str, Any], config_path: Path, repository
         repository=repository,
         output_directory=_output(config, repository, "search"),
         evaluator=evaluator,
+        initialization_plan=_initialization_plan(config, repository),
         explicit_cli_enable=bool(args.enable_exploratory_search),
         resume=bool(args.resume),
         j=float(config["scientific_scope"]["J"]),
@@ -265,15 +603,15 @@ def stage_05_build_ins_ensemble(config: dict[str, Any], config_path: Path, repos
     if not candidates_path.exists():
         raise FileNotFoundError("Run user stage 04_global_search first")
     candidates = [json.loads(line) for line in candidates_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    threshold = float(config["ensemble"]["compatibility_loss_threshold"])
     by_id: dict[str, dict[str, object]] = {}
     for candidate in candidates:
-        if float(candidate["loss"]) <= threshold:
+        if candidate.get("candidate_status") == "SEARCH_RETAINED_CANDIDATE":
             by_id[str(candidate["candidate_id"])] = candidate
     retained = sorted(by_id.values(), key=lambda row: (str(row["assignment"]), float(row["loss"])))
     payload = {
-        "status": "INS_COMPATIBLE_ENSEMBLE_BUILT",
+        "status": "SEARCH_RETAINED_ENSEMBLE_PENDING_SCIENTIFIC_REVIEW",
         "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
+        "scientific_compatibility_status": "NOT_ASSESSED",
         "single_best_selected": False,
         "secondary_minima_retained": True,
         "source_candidates_hash": sha256_file(candidates_path),

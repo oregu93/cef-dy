@@ -9,6 +9,7 @@ from typing import Mapping, Sequence
 import numpy as np
 from numpy.typing import ArrayLike
 
+from .background_model import BACKGROUND_SEMANTICS, profile_signal_and_background
 from .eq_data import CONSTRAINT_CLASSES, EQDataset
 from .normalization_nuisance import profile_block_scales
 from .objectives import energy_deviance
@@ -29,8 +30,15 @@ class INSObjectiveResult:
     total: float
     loss_interpretation: str
     block_scales: dict[str, float]
+    background_parameters: dict[str, tuple[float, ...]]
     nuisance_boundary_blocks: tuple[str, ...]
+    raw_components: dict[str, float]
+    normalized_components: dict[str, float]
+    component_weights: dict[str, float]
+    included_points_by_class: dict[str, int]
+    included_points_by_feature: dict[str, int]
     residuals: tuple[float, ...]
+    normalized_residuals: tuple[float, ...]
 
     def as_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -54,8 +62,15 @@ def feature_objective(
         total=value,
         loss_interpretation="FEATURE_LEVEL_DEVIANCE",
         block_scales={},
+        background_parameters={},
         nuisance_boundary_blocks=(),
+        raw_components={"L_energy": value, "L_shape": 0.0, "L_relative_intensity": 0.0},
+        normalized_components={"L_energy": value, "L_shape": 0.0, "L_relative_intensity": 0.0},
+        component_weights={"energy": 1.0, "shape": 0.0, "relative_intensity": 0.0},
+        included_points_by_class={"ENERGY_CONSTRAINT": len(residuals)},
+        included_points_by_feature={},
         residuals=tuple(map(float, residuals)),
+        normalized_residuals=tuple(map(float, residuals)),
     )
 
 
@@ -64,6 +79,8 @@ def eq_map_exploratory_objective(
     include_mask: ArrayLike,
     calculated_unscaled: ArrayLike,
     config: Mapping[str, object],
+    *,
+    background_config: Mapping[str, object] | None = None,
 ) -> INSObjectiveResult:
     """Evaluate linear prepared intensities without claiming calibrated chi-square."""
 
@@ -76,23 +93,92 @@ def eq_map_exploratory_objective(
     use_sigma = bool(config.get("uncertainties_statistically_calibrated", False))
     sigma = dataset.sigma if use_sigma else None
     bounds = tuple(map(float, config.get("nuisance_scale_bounds", [1.0e-6, 1.0e6])))
-    scales = profile_block_scales(
-        calculated,
-        dataset.intensity,
-        dataset.blocks,
-        include,
-        sigma=sigma,
-        bounds=(bounds[0], bounds[1]),
-    )
+    background_parameters: dict[str, tuple[float, ...]] = {}
+    if background_config is not None and str(background_config.get("model")) in BACKGROUND_SEMANTICS:
+        profiled = profile_signal_and_background(
+            dataset.intensity,
+            calculated,
+            dataset.energy_meV,
+            dataset.q_ainv,
+            dataset.blocks,
+            include,
+            background_config,
+            sigma=sigma,
+            scale_bounds=(bounds[0], bounds[1]),
+        )
+        fitted = profiled.fitted
+        block_scales = profiled.signal_scales
+        boundary_blocks = profiled.nuisance_boundary_blocks
+        background_parameters = profiled.background_parameters
+    else:
+        scales = profile_block_scales(
+            calculated,
+            dataset.intensity,
+            dataset.blocks,
+            include,
+            sigma=sigma,
+            bounds=(bounds[0], bounds[1]),
+        )
+        fitted = scales.fitted
+        block_scales = scales.scales
+        boundary_blocks = scales.boundary_blocks
     denominator = dataset.sigma if use_sigma and dataset.sigma is not None else np.ones(dataset.size)
-    residual = (dataset.intensity - scales.fitted) / denominator
+    residual = (dataset.intensity - fitted) / denominator
     residual = np.where(include, residual, 0.0)
-    components: dict[str, float] = {name: 0.0 for name in CONSTRAINT_CLASSES}
+    raw_by_class: dict[str, float] = {name: 0.0 for name in CONSTRAINT_CLASSES}
+    normalized_by_class: dict[str, float] = {name: 0.0 for name in CONSTRAINT_CLASSES}
+    counts: dict[str, int] = {name: 0 for name in CONSTRAINT_CLASSES}
+    normalized_residual = np.zeros(dataset.size, dtype=float)
     classes = np.asarray(dataset.constraint_classes, dtype=str)
     for name in CONSTRAINT_CLASSES:
         selected = include & (classes == name)
-        components[name] = float(np.sum(np.square(residual[selected])))
-    total = float(sum(components.values()))
+        count = int(np.count_nonzero(selected))
+        counts[name] = count
+        if count == 0:
+            continue
+        raw_by_class[name] = float(np.sum(np.square(residual[selected])))
+        if use_sigma and dataset.sigma is not None:
+            scale = 1.0
+        else:
+            scale = max(float(np.sqrt(np.mean(np.square(dataset.intensity[selected])))), 1.0e-15)
+        normalized_residual[selected] = residual[selected] / scale
+        normalized_by_class[name] = float(np.mean(np.square(normalized_residual[selected])))
+    labels = {
+        "ENERGY_CONSTRAINT": "L_energy",
+        "SPECTRAL_SHAPE_CONSTRAINT": "L_shape",
+        "EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT": "L_relative_intensity",
+    }
+    raw_components = {labels[name]: raw_by_class[name] for name in labels}
+    normalized_components = {labels[name]: normalized_by_class[name] for name in labels}
+    configured_weights = config.get("component_weights", {})
+    if not isinstance(configured_weights, Mapping):
+        raise ValueError("objective.component_weights must be a mapping")
+    weight_to_component = {
+        "energy": "L_energy",
+        "shape": "L_shape",
+        "relative_intensity": "L_relative_intensity",
+    }
+    unknown_weights = sorted(set(configured_weights) - set(weight_to_component))
+    if unknown_weights:
+        raise ValueError(f"Unknown objective component weights: {unknown_weights}")
+    component_weights = {
+        name: float(configured_weights.get(name, 1.0)) for name in weight_to_component
+    }
+    if any(not np.isfinite(value) or value < 0 for value in component_weights.values()):
+        raise ValueError("Objective component weights must be finite and non-negative")
+    total = float(
+        sum(
+            component_weights[weight]
+            * normalized_components[component]
+            for weight, component in weight_to_component.items()
+        )
+    )
+    feature_counts: dict[str, int] = {}
+    for index, identifiers in enumerate(dataset.feature_ids):
+        if not include[index]:
+            continue
+        for identifier in identifiers:
+            feature_counts[identifier] = feature_counts.get(identifier, 0) + 1
     interpretation = (
         "CALIBRATED_GAUSSIAN_CHI_SQUARE"
         if use_sigma and dataset.sigma is not None
@@ -100,16 +186,21 @@ def eq_map_exploratory_objective(
     )
     return INSObjectiveResult(
         mode=INSObjectiveMode.EQ_MAP_EXPLORATORY_OBJECTIVE.value,
-        energy_constraint=components["ENERGY_CONSTRAINT"],
-        spectral_shape_constraint=components["SPECTRAL_SHAPE_CONSTRAINT"],
-        exploratory_relative_intensity_constraint=components[
-            "EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT"
-        ],
+        energy_constraint=normalized_components["L_energy"],
+        spectral_shape_constraint=normalized_components["L_shape"],
+        exploratory_relative_intensity_constraint=normalized_components["L_relative_intensity"],
         total=total,
         loss_interpretation=interpretation,
-        block_scales=scales.scales,
-        nuisance_boundary_blocks=scales.boundary_blocks,
+        block_scales=block_scales,
+        background_parameters=background_parameters,
+        nuisance_boundary_blocks=boundary_blocks,
+        raw_components=raw_components,
+        normalized_components=normalized_components,
+        component_weights=component_weights,
+        included_points_by_class=counts,
+        included_points_by_feature=dict(sorted(feature_counts.items())),
         residuals=tuple(map(float, residual)),
+        normalized_residuals=tuple(map(float, normalized_residual)),
     )
 
 

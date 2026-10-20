@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
 import numpy as np
+from numpy.typing import ArrayLike
 
 from .fit_cs15 import h_to_parameters, parameters_to_h
 from .provenance import git_provenance, write_json
@@ -49,6 +50,59 @@ def deterministic_restart_seed(base_seed: int, assignment_branch: int, restart_n
     if assignment_branch not in range(1, 8) or restart_number < 1:
         raise ValueError("assignment must be D1..D7 and restart_number must be positive")
     return int(base_seed + 1009 * assignment_branch + 104729 * restart_number)
+
+
+def deterministic_initialization_plan(
+    seed_families: Mapping[str, ArrayLike],
+    *,
+    restart_count: int,
+    lower: float,
+    upper: float,
+    base_seed: int,
+) -> tuple[dict[str, object], ...]:
+    """Mix reviewed seed families with deterministic space-filling points."""
+
+    if restart_count < 1 or not lower < upper:
+        raise ValueError("restart_count must be positive and lower < upper")
+    converted: list[tuple[str, np.ndarray]] = []
+    dimension: int | None = None
+    for family, raw in seed_families.items():
+        vector = np.asarray(raw, dtype=float)
+        if vector.ndim != 1 or np.any(~np.isfinite(vector)):
+            raise ValueError(f"Initialization family {family} must be a finite vector")
+        if dimension is None:
+            dimension = vector.size
+        elif vector.size != dimension:
+            raise ValueError("Initialization families must have the same dimension")
+        converted.append((str(family), np.clip(vector, lower, upper)))
+    if dimension is None:
+        raise ValueError("At least one reviewed initialization family is required")
+    plan: list[dict[str, object]] = []
+    for family, vector in converted[:restart_count]:
+        plan.append(
+            {
+                "initialization_family": family,
+                "initial_mean_h": vector.tolist(),
+                "source_role": "INITIALIZATION_ONLY",
+            }
+        )
+    generator = np.random.default_rng(int(base_seed))
+    remaining = restart_count - len(plan)
+    latin = np.empty((remaining, dimension), dtype=float)
+    for coordinate in range(dimension):
+        latin[:, coordinate] = (
+            generator.permutation(remaining) + generator.random(remaining)
+        ) / remaining
+    for index, unit_point in enumerate(latin):
+        point = lower + (upper - lower) * unit_point
+        plan.append(
+            {
+                "initialization_family": f"LATIN_HYPERCUBE_{index + 1:03d}",
+                "initial_mean_h": point.tolist(),
+                "source_role": "INITIALIZATION_ONLY",
+            }
+        )
+    return tuple(plan)
 
 
 def load_checkpoint(path: str | Path) -> SearchCheckpoint:
@@ -113,6 +167,7 @@ def run_cmaes_multistart(
     repository: str | Path,
     output_directory: str | Path,
     evaluator: Callable[[Mapping[str, float], int], Mapping[str, object]],
+    initialization_plan: Sequence[Mapping[str, object]] | None = None,
     explicit_cli_enable: bool,
     resume: bool = False,
     j: float = 7.5,
@@ -152,6 +207,8 @@ def run_cmaes_multistart(
         raise FileExistsError("Checkpoint exists; use --resume or choose a new output directory")
 
     assignments = tuple(int(value) for value in search_config["assignment_branches"])
+    if not assignments:
+        raise ValueError("No explicit feature-to-transition assignment hypotheses are configured")
     if set(assignments) - set(range(1, 8)):
         raise ValueError("assignment_branches must be a subset of 1..7")
     restart_count = int(search_config["restarts_per_assignment"])
@@ -160,9 +217,11 @@ def run_cmaes_multistart(
     base_seed = int(search_config["base_seed"])
     lower, upper = map(float, search_config["h_bounds_meV"])
     sigma0 = float(search_config["sigma0_meV"])
-    threshold = float(search_config.get("retention_loss_threshold", np.inf))
     maximum_retained = int(search_config.get("maximum_retained_candidates", 10000))
     initial_h = np.clip(parameters_to_h(seed_parameters, j=j), lower, upper)
+    plan = tuple(initialization_plan or ())
+    if plan and len(plan) != restart_count:
+        raise ValueError("initialization_plan must contain exactly one entry per restart")
     provenance = git_provenance(repository)
 
     def save_checkpoint(
@@ -192,6 +251,18 @@ def run_cmaes_multistart(
             if key in completed:
                 continue
             seed = deterministic_restart_seed(base_seed, assignment, restart)
+            initialization = (
+                plan[restart - 1]
+                if plan
+                else {
+                    "initialization_family": "LEGACY_SINGLE_SEED",
+                    "initial_mean_h": initial_h.tolist(),
+                    "source_role": "INITIALIZATION_ONLY",
+                }
+            )
+            restart_initial_h = np.asarray(initialization["initial_mean_h"], dtype=float)
+            if restart_initial_h.shape != initial_h.shape:
+                raise ValueError("initial_mean_h shape does not match the Cs15 dimension")
             options = {
                 "bounds": [lower, upper],
                 "seed": seed,
@@ -200,8 +271,9 @@ def run_cmaes_multistart(
                 "verb_disp": 0,
                 "verbose": -9,
             }
-            strategy = cma.CMAEvolutionStrategy(initial_h.tolist(), sigma0, options)
+            strategy = cma.CMAEvolutionStrategy(restart_initial_h.tolist(), sigma0, options)
             restart_evaluations = 0
+            restart_best: dict[str, object] | None = None
             while not strategy.stop() and restart_evaluations < max_evaluations:
                 proposed = strategy.ask()
                 evaluated: list[tuple[float, dict[str, object], np.ndarray]] = []
@@ -217,36 +289,33 @@ def run_cmaes_multistart(
                 total_evaluations += len(evaluated)
                 restart_evaluations += len(evaluated)
                 for loss, diagnostics, h in evaluated:
-                    if loss <= threshold:
+                    if restart_best is None or loss < float(restart_best["loss"]):
                         width = upper - lower
                         boundary = bool(
                             np.any(np.minimum(h - lower, upper - h) <= 0.02 * width)
                         )
-                        retained.append(
-                            {
-                                "candidate_id": (
-                                    f"D{assignment}-R{restart}-"
-                                    + hashlib.sha256(
-                                        np.asarray(h, dtype="<f8").tobytes()
-                                    ).hexdigest()[:16]
-                                ),
-                                "candidate_status": "RETAINED_UNCLUSTERED_EXPLORATORY",
-                                "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
-                                "assignment": f"D0->D{assignment}",
-                                "assignment_final_doublet": assignment,
-                                "restart": restart,
-                                "seed": seed,
-                                "loss": loss,
-                                "objective": diagnostics,
-                                "direct_parameters_meV": h_to_parameters(h, j=j),
-                                "h_coordinates_meV": h.tolist(),
-                                "search_boundary_occupied": boundary,
-                                "project_owned_kernel_reevaluated": True,
-                            }
-                        )
-                        retained[:] = sorted(retained, key=lambda row: float(row["loss"]))[
-                            :maximum_retained
-                        ]
+                        restart_best = {
+                            "candidate_id": (
+                                f"D{assignment}-R{restart}-"
+                                + hashlib.sha256(np.asarray(h, dtype="<f8").tobytes()).hexdigest()[:16]
+                            ),
+                            "candidate_status": "SEARCH_RETAINED_CANDIDATE",
+                            "scientific_compatibility_status": "NOT_ASSESSED",
+                            "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
+                            "assignment": f"EXPLICIT_HYPOTHESIS_{assignment}",
+                            "assignment_hypothesis_index": assignment,
+                            "restart": restart,
+                            "seed": seed,
+                            "initialization_family": initialization["initialization_family"],
+                            "initial_mean_h": restart_initial_h.tolist(),
+                            "bounds_h_meV": [lower, upper],
+                            "loss": loss,
+                            "objective": diagnostics,
+                            "direct_parameters_meV": h_to_parameters(h, j=j),
+                            "h_coordinates_meV": h.tolist(),
+                            "search_boundary_occupied": boundary,
+                            "project_owned_kernel_reevaluated": True,
+                        }
                 save_checkpoint(
                     assignment,
                     restart,
@@ -257,8 +326,16 @@ def run_cmaes_multistart(
                         "sigma_meV": float(strategy.sigma),
                         "covariance": np.asarray(strategy.sm.C, dtype=float).tolist(),
                         "resume_semantics": "INSPECTION_ONLY__INCOMPLETE_RESTART_REPEATED_FROM_SEED",
+                        "initialization_family": initialization["initialization_family"],
+                        "initial_mean_h": restart_initial_h.tolist(),
+                        "bounds_h_meV": [lower, upper],
                     },
                 )
+            if restart_best is not None:
+                retained.append(restart_best)
+                retained[:] = sorted(retained, key=lambda row: float(row["loss"]))[
+                    :maximum_retained
+                ]
             completed.add(key)
             save_checkpoint(None, None, None)
 
@@ -268,6 +345,8 @@ def run_cmaes_multistart(
     summary = {
         "status": "USER_EXECUTED_EXPLORATORY_SEARCH_COMPLETE",
         "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
+        "retention_status": "SEARCH_RETAINED_CANDIDATE",
+        "scientific_compatibility_status": "NOT_ASSESSED",
         "unique_solution_claim": False,
         "physical_clusters_selected": False,
         "identity": asdict(identity),

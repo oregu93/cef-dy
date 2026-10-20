@@ -35,13 +35,26 @@ def _write_dataset(path: Path, *, include_log_column: bool = False) -> None:
         "normalization_metadata",
         "normalized_intensity_sigma",
         "constraint_class",
+        "Ei_meV",
+        "Ef_meV",
+        "qhat_direct_x",
+        "qhat_direct_y",
+        "qhat_direct_z",
+        "temperature_status",
+        "temperature_K_if_verified",
+        "discovery_holdout_role",
+        "count_control_mode",
+        "normalization_compatibility_group_id",
+        "lattice_state_id",
+        "UB_state_id",
+        "feature_id",
     ]
     if include_log_column:
         columns.append("log_intensity")
     rows = [
-        ["p0", "0.0", "1.0", "1.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "SPECTRAL_SHAPE_CONSTRAINT"],
-        ["p1", "6.0", "1.5", "2.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "ENERGY_CONSTRAINT"],
-        ["p2", "18.0", "2.0", "3.0", "B", "s2", "EXCLUDE_DETECTOR_ARTIFACT", "monitor_norm_v1", "0.3", "EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT"],
+        ["p0", "0.0", "1.0", "1.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "SPECTRAL_SHAPE_CONSTRAINT", "14.87", "14.87", "1", "0", "0", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", ""],
+        ["p1", "6.0", "1.5", "2.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "ENERGY_CONSTRAINT", "20.87", "14.87", "0", "1", "0", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", "BF-003"],
+        ["p2", "18.0", "2.0", "3.0", "B", "s2", "EXCLUDE_DETECTOR_ARTIFACT", "monitor_norm_v1", "0.3", "EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT", "32.87", "14.87", "0", "0", "1", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", "BF-004"],
     ]
     if include_log_column:
         for row in rows:
@@ -101,6 +114,7 @@ def test_log_or_display_intensity_fails_closed(tmp_path):
 
 def test_audit_reports_ready_and_missing_states(tmp_path):
     config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    config["inputs"]["taipan_eq_dataset"] = str(tmp_path / "missing.csv")
     missing = audit_eq_dataset(config, REPOSITORY)
     assert missing["status"] == "NOT_READY"
     assert missing["manuscript_intensity_gate"] == "FAIL_CLEANLY"
@@ -113,7 +127,7 @@ def test_audit_reports_ready_and_missing_states(tmp_path):
     config["inputs"]["taipan_eq_dataset"] = str(dataset_path)
     config["inputs"]["taipan_mask_definition"] = str(mask_path)
     ready = audit_eq_dataset(config, REPOSITORY)
-    assert ready["status"] == "READY_FOR_EXPLORATORY_SEARCH"
+    assert ready["status"] == "READY_FOR_EXPLORATORY_SANITY_RUN"
     assert ready["number_of_points"] == 3
     assert ready["included_points"] == 1
     assert ready["number_of_instrument_blocks"] == 2
@@ -179,5 +193,6 @@ def test_forward_model_is_finite_bounded_sanity_only(r7_bundle, tmp_path):
     prediction = predict_eq_map(r7_bundle["parameters"], dataset, config["forward_model"])
     assert prediction.signal.shape == (3,)
     assert np.isfinite(prediction.total_unscaled).all()
-    assert prediction.transitions.transition_tensors.shape == (7, 3, 3)
+    assert prediction.transitions.transition_tensors.shape == (28, 3, 3)
+    assert np.all(prediction.kf_over_ki <= 1.0)
     assert len(prediction.transitions.doublet_energies_meV) == 8

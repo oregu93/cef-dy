@@ -18,14 +18,17 @@ switches:
   ENABLE_MANUSCRIPT_OBJECTIVE: false
 
 inputs:
+  taipan_reuse_map: configs/taipan_prior_artifact_reuse_v1.yaml
+  auto_materialize_stage02r: true
   taipan_eq_dataset: local_data/taipan_eq_map_exploratory_v1.csv
   taipan_schema: schemas/taipan-eq-map-v1.schema.yaml
   taipan_mask_definition: configs/taipan_masks_exploratory_v1.yaml
+  cx02_priority_scan_preflight: configs/taipan_cx02_priority_scan_preflight_v1.yaml
   intensity_domain: LINEAR_PRE_DISPLAY
   normalization_description: >-
-    Preserve the prepared dataset normalization exactly; no scan-dependent
-    rescaling is introduced. One explicit multiplicative nuisance scale is
-    profiled per declared instrument_block_id.
+    Linear detector_counts / monitor with multiplier 1.0, preserving original
+    detector and monitor values. No scan-dependent rescaling is introduced.
+    One nuisance scale is profiled per A003 instrument/normalization block.
   uncertainties_statistically_calibrated: false
   literature_magnetization: data/manuscript_v1/literature_magnetization.csv
   literature_magnetization_inventory: data/manuscript_v1/literature_magnetization_curve_inventory.csv
@@ -41,7 +44,15 @@ objective:
     - ENERGY_CONSTRAINT
     - SPECTRAL_SHAPE_CONSTRAINT
     - EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT
-  nuisance_scale_bounds: [0.000001, 1000000.0]
+  nuisance_scale_bounds: [0.0001, 10000.0]
+  component_definitions:
+    L_energy: mean dimensionless residual loss for explicitly assigned feature energies
+    L_shape: mean dimensionless residual loss in discovery feature windows
+    L_relative_intensity: mean dimensionless residual loss outside feature windows
+  component_weights:
+    energy: 1.0
+    shape: 1.0
+    relative_intensity: 1.0
   uncertainties_statistically_calibrated: false
   manuscript_intensity_gate: FAIL_CLEANLY
   exploratory_eq_map_use: AUTHORIZED
@@ -50,19 +61,39 @@ objective:
 forward_model:
   transition_model: PROJECT_CEF_KERNEL
   form_factor: DY3_J0_DIPOLE_APPROXIMATION
-  q_direction_policy: PER_POINT_DIRECT_QHAT_OR_POWDER_AVERAGE
+  q_direction_policy: PER_POINT_DIRECT_QHAT_REQUIRED__NO_POWDER_FALLBACK
+  dy_site_intensity:
+    status: IMPLEMENTED_AND_TESTED
+    contract_id: STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
+    contract_path: 04_Results/Stage03R/STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001/CONVENTION_CONTRACT.yaml
+    contract_sha256: a83d8250e37318ce6b4a883c8edc3a7508d76fad15cae6ddf2c4f6f4e49bd7b3
+    frame: direct_b_c_a
+    combination: INDEPENDENT_LOCALIZED_SITE_SUM
+    site_order: [Dy1, Dy2, Dy3, Dy4]
+    inter_site_dynamical_cross_correlations: false
+  kinematic_factor:
+    model: TAS_KF_OVER_KI
+    require_measured_ei_ef: true
+  population:
+    mode: BOLTZMANN_ALL_CEF_STATES
+    temperature_source: PREPARED_DATASET_VERIFIED_SAMPLE_TEMPERATURE
+    exchange_enabled: false
   resolution:
     model: GAUSSIAN_FIXED_FWHM
-    fwhm_meV: 1.0
+    fwhm_meV: 0.894
+    source_scan_raw_id: 104062
+    source_Q_Ainv: 2.26
+    fit_uncertainty_fwhm_meV: 0.025
+    status: EMPIRICAL_ELASTIC_ANCHOR_AVAILABLE__FULL_TAS_RESOLUTION_NOT_ESTABLISHED
+    transfer_systematic_represented: false
     fitted: false
   background:
-    model: LINEAR_ENERGY
-    fitted: false
-    clip_nonnegative: true
-    coefficients:
-      constant: 0.0
-      energy_reference_meV: 18.0
-      energy_slope: 0.0
+    model: LOCAL_LINEAR_BACKGROUND
+    source_semantics: B001_C001_EXPLORATORY_NUISANCE_ANCHOR
+    dataset_already_background_subtracted: false
+    profile_in_objective: true
+    fitted: true
+    clip_nonnegative: false
   normalization_nuisance:
     grouping_column: instrument_block_id
     one_scale_per_block: true
@@ -71,6 +102,9 @@ forward_model:
 assignments:
   strategy: EXPLICIT_SEPARATE_BRANCHES
   final_doublets: [1, 2, 3, 4, 5, 6, 7]
+  feature_assignment_hypotheses: []
+  automatic_nearest_level_assignment: false
+  b001_features_are_mandatory_levels: false
 
 pcm:
   A0_status: RETAINED_FORMAL_BASELINE
@@ -80,24 +114,45 @@ pcm:
 search:
   backend: CMA_ES
   run_exploratory_search: false
-  assignment_branches: [1, 2, 3, 4, 5, 6, 7]
+  assignment_branches: []
   h_bounds_meV: [-8.0, 8.0]
   sigma0_meV: 2.5
   population: 32
   restarts_per_assignment: 16
   max_evaluations_per_restart: 50000
   base_seed: 20261020
-  retention_loss_threshold: 1000000.0
-  maximum_retained_candidates: 10000
+  best_candidates_per_restart: 1
+  maximum_retained_candidates: 112
   checkpoint_every_generation: true
   resume_policy: RESTART_INCOMPLETE_RESTART_FROM_FIXED_SEED
   project_owned_kernel_reevaluation: true
   boundary_fraction: 0.02
+  initialization_families:
+    - family: PCM_FORMAL
+      source: configs/manuscript_fit_v1.yaml#pcm.formal_parameters_meV
+      role: INITIALIZATION_ONLY
+    - family: PCM_M0
+      source: 04_Results/ManuscriptCEFFitV1/MODEL_DEPENDENT_ENERGY_CONDITIONAL_V1/pcm_conditional_results.csv
+      solution_id: PCM-M0__joint_w6.0_b1_per_block__D1
+      role: INITIALIZATION_ONLY
+    - family: HISTORICAL_R3
+      source: 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R3.yaml
+      role: INITIALIZATION_ONLY
+    - family: HISTORICAL_R5
+      source: 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R5.yaml
+      role: INITIALIZATION_ONLY
+    - family: HISTORICAL_R7
+      source: 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R7.yaml
+      role: INITIALIZATION_ONLY
+    - family: LATIN_HYPERCUBE
+      source: DETERMINISTIC_SPACE_FILLING
+      role: INITIALIZATION_ONLY
 
 ensemble:
   retain_secondary_minima: true
   select_single_best: false
-  compatibility_loss_threshold: 1000000.0
+  retention_status: SEARCH_RETAINED_CANDIDATE
+  scientific_compatibility_status: NOT_ASSESSED
   require_no_nuisance_boundary: false
 
 magnetization:
@@ -144,7 +199,9 @@ mcphase:
 outputs:
   root: results/user_executed_joint_cef_pipeline_v1
   audit: 01_data_audit/audit_report.json
+  dataset_diagnostic_figure: 01_data_audit/dataset_diagnostic.png
   forward: 02_cef_forward/forward_sanity.json
+  pre_search_figure: 02_cef_forward/pre_search_diagnostic.png
   objective: 03_ins_objective/objective_sanity.json
   search: 04_global_search
   ensemble: 05_build_ins_ensemble/ins_ensemble.json
