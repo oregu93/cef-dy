@@ -1,0 +1,57 @@
+task: DYFEO3_MH_DIGITIZATION_V1
+status: READY_FOR_MH_DIGITIZATION_REVIEW
+source:
+  authors: "Y.-J. Ke; X.-Q. Zhang; H. Ge; Y. Ma; Z.-H. Cheng"
+  title: "Low field induced giant anisotropic magnetocaloric effect in DyFeO3 single crystal"
+  journal: "Chinese Physics B 24, 037501 (2015)"
+  doi: "10.1088/1674-1056/24/3/037501"
+  figure: 2
+  figure_source: PRIMARY_PUBLISHER_PNG
+  figure_url: "https://cpb.iphy.ac.cn/fileCPB/journal/article/cpb/html/2015/cpb_24_3_037501/cpb142550f2_online.png"
+  figure_pixel_size: [983, 1102]
+  figure_sha256: "16960903a70d2172d3b280e92007344929417c82f4fef2b68b0001e0cccd1584"
+panel_mapping:
+  a: "H || a"
+  b: "H || b"
+  c: "H || c"
+curve_identity:
+  10_K: BLUE_CYAN_FILLED_DIAMOND
+  20_K: PURPLE_PENTAGON
+counts:
+  requested: 6
+  accounted_for: 6
+  digitized: 4
+  ambiguous: 2
+  numerical_points: 135
+curves:
+  - {axis: a, panel: a, temperature_K: 10, status: DIGITIZED, points: 34, branch: SINGLE_VISIBLE_BRANCH}
+  - {axis: a, panel: a, temperature_K: 20, status: DIGITIZED, points: 34, branch: SINGLE_VISIBLE_BRANCH}
+  - {axis: b, panel: b, temperature_K: 10, status: DIGITIZED, points: 34, branch: SINGLE_VISIBLE_BRANCH}
+  - {axis: b, panel: b, temperature_K: 20, status: DIGITIZED, points: 33, branch: SINGLE_VISIBLE_BRANCH}
+  - {axis: c, panel: c, temperature_K: 10, status: AMBIGUOUS_CURVE_IDENTITY, points: 0, w03_status: NO_RELIABLE_DIGITIZED_COMPARATOR_FROM_THIS_FIGURE}
+  - {axis: c, panel: c, temperature_K: 20, status: AMBIGUOUS_CURVE_IDENTITY, points: 0, w03_status: NO_RELIABLE_DIGITIZED_COMPARATOR_FROM_THIS_FIGURE}
+ambiguity_reason: "Overlapping panel-c traces prevent unique reconstruction; blue/cyan is also used for 32 K and the 20 K trace is obscured by neighbouring curves."
+extraction:
+  method: NATIVE_PIXEL_TRACE_WITH_LINEAR_AXIS_CALIBRATION
+  near_zero_excluded: true
+  interpolation_used: false
+  normalization_used: false
+  graphical_resolution_pixels: 3
+digitization_uncertainty:
+  sigma_H_digitization_kOe: 0.27450980392156865
+  sigma_M_digitization_emu_per_g:
+    panel_a: 1.170351105331599
+    panel_b: 2.0270270270270263
+  interpretation: GRAPHICAL_EXTRACTION_SCALE_NOT_EXPERIMENTAL_UNCERTAINTY
+conversion:
+  H_T_per_H_kOe: 0.1
+  M_muB_per_fu_per_M_emu_per_g: 0.04768
+  source_type: TOTAL_BULK_MAGNETIZATION
+  dy_only_label_used: false
+qa_overlay:
+  status: VERIFIED_LOCAL_QA_ONLY_NOT_COMMITTED
+scientific_operations:
+  cef_calculation: false
+  fe_subtraction: false
+  exchange_modelling: false
+  w03_comparison: false
