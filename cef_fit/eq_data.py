@@ -12,7 +12,11 @@ from numpy.typing import NDArray
 import yaml
 
 from .provenance import sha256_file
-from .feature_assignments import enumerate_assignment_hypotheses, load_feature_table
+from .feature_assignments import (
+    FeatureDefinition,
+    enumerate_assignment_hypotheses,
+    load_feature_table,
+)
 
 
 REQUIRED_COLUMNS = (
@@ -328,6 +332,31 @@ def apply_masks(dataset: EQDataset, definition: MaskDefinition) -> AppliedMask:
     return AppliedMask(include, excluded_by_rule, dataset_excluded)
 
 
+def apply_feature_roles(
+    dataset: EQDataset,
+    applied: AppliedMask,
+    features: Sequence[FeatureDefinition],
+) -> AppliedMask:
+    """Remove diagnostic-only feature regions from the primary fit objective."""
+
+    roles = {feature.feature_id: feature.fit_role for feature in features}
+    admitted = {"ACTIVE_CEF_FEATURE", "SHAPE_ONLY", "RELATIVE_INTENSITY_ONLY"}
+    diagnostic_only = np.asarray(
+        [
+            bool(identifiers)
+            and not any(roles.get(identifier) in admitted for identifier in identifiers)
+            for identifiers in dataset.feature_ids
+        ],
+        dtype=bool,
+    )
+    include = np.asarray(applied.include, dtype=bool).copy()
+    newly_excluded = include & diagnostic_only
+    include[newly_excluded] = False
+    counts = dict(applied.excluded_by_rule)
+    counts["FEATURE_ROLE_DIAGNOSTIC_ONLY"] = int(np.count_nonzero(newly_excluded))
+    return AppliedMask(_readonly(include), counts, applied.dataset_status_excluded)
+
+
 def _resolve(repository: Path, value: str) -> Path:
     candidate = Path(value).expanduser()
     return candidate if candidate.is_absolute() else repository / candidate
@@ -403,6 +432,14 @@ def audit_eq_dataset(
             "terminal_status": "NOT_READY",
             "blockers": [str(error)],
         }
+    feature_table_path = _resolve(repository_path, str(inputs.get("feature_table", "")))
+    features: tuple[FeatureDefinition, ...] = ()
+    feature_error: Exception | None = None
+    try:
+        features = load_feature_table(feature_table_path)
+        applied = apply_feature_roles(dataset, applied, features)
+    except (OSError, ValueError, KeyError) as error:
+        feature_error = error
     total = dataset.size
     included = int(np.count_nonzero(applied.include))
     uncertainty_status = "AVAILABLE_FOR_ALL_POINTS" if dataset.sigma is not None else "UNAVAILABLE"
@@ -442,18 +479,18 @@ def audit_eq_dataset(
     if len(normalization_values) != 1:
         blockers.append("NORMALIZATION_METADATA_NOT_UNIFORM_OR_EXPLICIT")
     search_blockers: list[str] = []
-    feature_table_path = _resolve(repository_path, str(inputs.get("feature_table", "")))
     assignment_branch_count = 0
-    try:
-        features = load_feature_table(feature_table_path)
+    if feature_error is None:
         assignment_branch_count = len(
             enumerate_assignment_hypotheses(
                 features,
                 final_doublets=tuple(map(int, config["assignments"]["final_doublets"])),
             )
         )
-    except (OSError, ValueError, KeyError) as error:
-        search_blockers.append(f"FEATURE_ASSIGNMENT_CONFIGURATION_INVALID: {error}")
+    else:
+        search_blockers.append(
+            f"FEATURE_ASSIGNMENT_CONFIGURATION_INVALID: {feature_error}"
+        )
     feature_ids = sorted({feature for row in dataset.feature_ids for feature in row})
     selected_temperature_scans = sorted(
         {

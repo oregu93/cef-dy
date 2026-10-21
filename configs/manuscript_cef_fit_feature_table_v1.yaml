@@ -36,45 +36,46 @@ policy:
   literature_18p2257_meV_is_target: false
   mandatory_6p45_or_27p90_meV_levels: false
   feature_44p4_meV_status: DIAGNOSTIC_ONLY_POSSIBLY_MIXED
-  energy_reference_semantics: B001_DISCOVERY_LOCATION_NOT_CONFIRMATORY_CENTROID
-  energy_scale_semantics: HALF_B001_DISCOVERY_WINDOW__NOT_STATISTICAL_SIGMA
+  energy_loss_semantics: DISCOVERY_WINDOW_CONTAINMENT_PENALTY
+  midpoint_preference: false
+  penalty_scale_semantics: HALF_B001_DISCOVERY_WINDOW__NOT_STATISTICAL_SIGMA
 features:
   - feature_id: BF-001
-    fit_role: ACTIVE_CEF_FEATURE
+    fit_role: DIAGNOSTIC_ONLY
     point_count: 20
     ten_k_scan_count: 20
     ten_k_scan_record_ids: *accepted_scans
     catalogue_supporting_10k_scan_count: 4
     energy_range_meV: [2.9985, 2.9992]
     q_range_Ainv: [3.24386342247667, 3.70253543631543]
-    representative_energy_meV: 2.998675
-    energy_scale_meV: 0.499975
+    discovery_window_meV: [2.4987, 3.49865]
+    window_penalty_scale_meV: 0.499975
     overlaps: [BF-002]
-    rationale: Tier-1 feature with direct 10-K catalogue support; used as one explicit energy assignment.
+    rationale: Reproducible low-energy weight is not admitted as single-ion Dy CEF signal in the primary objective.
   - feature_id: BF-002
-    fit_role: SHAPE_ONLY
+    fit_role: DIAGNOSTIC_ONLY
     point_count: 60
     ten_k_scan_count: 20
     ten_k_scan_record_ids: *accepted_scans
     catalogue_supporting_10k_scan_count: 1
     energy_range_meV: [2.9985, 4.9992]
     q_range_Ainv: [3.24382146956874, 3.70253543631543]
-    representative_energy_meV: 3.99875
-    energy_scale_meV: 1.49975
+    discovery_window_meV: [2.499, 5.4985]
+    window_penalty_scale_meV: 1.49975
     overlaps: [BF-001, BF-003]
-    rationale: Overlapping window; not forced to be a separate excitation.
+    rationale: Overlapping low-energy window is preserved diagnostically and excluded from the primary objective.
   - feature_id: BF-003
-    fit_role: SHAPE_ONLY
+    fit_role: DIAGNOSTIC_ONLY
     point_count: 46
     ten_k_scan_count: 20
     ten_k_scan_record_ids: *accepted_scans
     catalogue_supporting_10k_scan_count: 0
     energy_range_meV: [4.9986, 6.9986]
     q_range_Ainv: [3.24384244504171, 3.70253543631543]
-    representative_energy_meV: 5.998625
-    energy_scale_meV: 1.000025
+    discovery_window_meV: [4.9986, 6.99865]
+    window_penalty_scale_meV: 1.000025
     overlaps: [BF-002]
-    rationale: Shape information only; 6.45 meV is not imposed as a level.
+    rationale: Low-energy region may be collective; 6.45 meV is not imposed as a CEF level or shape target.
   - feature_id: BF-004
     fit_role: SHAPE_ONLY
     point_count: 20
@@ -83,8 +84,8 @@ features:
     catalogue_supporting_10k_scan_count: 0
     energy_range_meV: [17.9976, 17.9988]
     q_range_Ainv: [3.24384244504171, 3.70251705758982]
-    representative_energy_meV: 17.998075
-    energy_scale_meV: 0.500075
+    discovery_window_meV: [17.498, 18.49815]
+    window_penalty_scale_meV: 0.500075
     overlaps: [BF-005]
     rationale: Overlaps BF-005 and has no direct 10-K catalogue support; no independent energy target.
   - feature_id: BF-005
@@ -95,10 +96,10 @@ features:
     catalogue_supporting_10k_scan_count: 2
     energy_range_meV: [17.9976, 19.9985]
     q_range_Ainv: [3.24384244504171, 3.70262667228265]
-    representative_energy_meV: 18.998325
-    energy_scale_meV: 1.500025
+    discovery_window_meV: [17.4983, 20.49835]
+    window_penalty_scale_meV: 1.500025
     overlaps: [BF-004]
-    rationale: Tier-1 feature with direct 10-K catalogue support; legacy/literature scalar energies are not substituted.
+    rationale: Sole active first-run CEF feature; its frozen discovery window is used without any scalar midpoint target.
   - feature_id: BF-006
     fit_role: DIAGNOSTIC_ONLY
     point_count: 0
@@ -107,8 +108,8 @@ features:
     catalogue_supporting_10k_scan_count: 0
     energy_range_meV: null
     q_range_Ainv: null
-    representative_energy_meV: 42.498325
-    energy_scale_meV: 1.999975
+    discovery_window_meV: [40.49835, 44.4983]
+    window_penalty_scale_meV: 1.999975
     overlaps: [BF-007]
     rationale: Approximately 44.4 meV region is possibly mixed and absent from the accepted 10-K subset.
   - feature_id: BF-007
@@ -119,8 +120,8 @@ features:
     catalogue_supporting_10k_scan_count: 0
     energy_range_meV: null
     q_range_Ainv: null
-    representative_energy_meV: 44.9973
-    energy_scale_meV: 1.50045
+    discovery_window_meV: [43.49685, 46.49775]
+    window_penalty_scale_meV: 1.50045
     overlaps: [BF-006, BF-008]
     rationale: Approximately 44.4 meV region is possibly mixed and absent from the accepted 10-K subset.
   - feature_id: BF-008
@@ -131,7 +132,7 @@ features:
     catalogue_supporting_10k_scan_count: 0
     energy_range_meV: null
     q_range_Ainv: null
-    representative_energy_meV: 45.996775
-    energy_scale_meV: 0.500325
+    discovery_window_meV: [45.49645, 46.4971]
+    window_penalty_scale_meV: 0.500325
     overlaps: [BF-007]
     rationale: Approximately 44.4 meV region is possibly mixed and absent from the accepted 10-K subset.

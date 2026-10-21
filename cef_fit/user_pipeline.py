@@ -24,9 +24,18 @@ from .conventions import (
     direct_parameters_to_canonical,
     rotate_direct_hamiltonian_to_canonical,
 )
-from .eq_data import EQDataset, AppliedMask, apply_masks, audit_eq_dataset, load_eq_dataset, load_mask_definition
+from .eq_data import (
+    EQDataset,
+    AppliedMask,
+    apply_feature_roles,
+    apply_masks,
+    audit_eq_dataset,
+    load_eq_dataset,
+    load_mask_definition,
+)
 from .fit_cs15 import parameters_to_h
 from .feature_assignments import (
+    discovery_window_containment_penalty,
     enumerate_assignment_hypotheses,
     feature_table_identity,
     load_feature_table,
@@ -194,6 +203,11 @@ def _load_ready_dataset(
         dataset,
         load_mask_definition(_resolve(repository, str(inputs["taipan_mask_definition"]))),
     )
+    mask = apply_feature_roles(
+        dataset,
+        mask,
+        load_feature_table(_feature_table_path(config, repository)),
+    )
     return dataset, mask, audit
 
 
@@ -358,6 +372,11 @@ def stage_01_data_audit(config: dict[str, Any], config_path: Path, repository: P
     if dataset_path.exists() and mask_path.exists():
         dataset = load_eq_dataset(dataset_path, str(config["inputs"]["intensity_domain"]))
         mask = apply_masks(dataset, load_mask_definition(mask_path))
+        mask = apply_feature_roles(
+            dataset,
+            mask,
+            load_feature_table(_feature_table_path(config, repository)),
+        )
         dataset_figure = str(
             _write_dataset_diagnostic_figure(
                 dataset,
@@ -600,31 +619,38 @@ def _explicit_feature_energy_penalty(
         feature_id = str(mapping["feature_id"])
         initial = int(mapping["initial_doublet"])
         final = int(mapping["final_doublet"])
-        sigma = float(mapping["sigma_meV"])
-        if sigma <= 0:
-            raise ValueError("Explicit feature energy sigma must be positive")
+        lower = float(mapping["energy_window_min_meV"])
+        upper = float(mapping["energy_window_max_meV"])
+        penalty_scale = float(mapping["penalty_scale_meV"])
         selected = mask.include & np.asarray(
             [feature_id in identifiers for identifiers in dataset.feature_ids], dtype=bool
         )
         if not np.any(selected):
             raise ValueError(f"Assigned feature {feature_id} has no included measured points")
-        observed = float(mapping["observed_energy_meV"])
         transition_match = np.flatnonzero(
             (transitions.initial_doublets == initial) & (transitions.final_doublets == final)
         )
         if transition_match.size != 1:
             raise ValueError(f"Calculated transition D{initial}->D{final} is unavailable")
         predicted = float(transitions.transition_energies_meV[int(transition_match[0])])
-        loss = float(((predicted - observed) / sigma) ** 2)
+        loss, outside_distance = discovery_window_containment_penalty(
+            predicted,
+            lower,
+            upper,
+            penalty_scale,
+        )
         losses.append(loss)
         diagnostics.append(
             {
                 "feature_id": feature_id,
                 "assignment": f"D{initial}->D{final}",
-                "observed_feature_reference_meV": observed,
+                "discovery_window_meV": [lower, upper],
                 "predicted_transition_meV": predicted,
-                "sigma_meV": sigma,
-                "sigma_semantics": "EXPLORATORY_FEATURE_WINDOW_SCALE_NOT_STATISTICAL_SIGMA",
+                "inside_discovery_window": outside_distance == 0.0,
+                "outside_window_distance_meV": outside_distance,
+                "penalty_scale_meV": penalty_scale,
+                "penalty_semantics": "DISCOVERY_WINDOW_CONTAINMENT_PENALTY",
+                "loss_interpretation": "NOT_STATISTICAL_CENTROID_DEVIANCE",
                 "support_point_count": int(np.count_nonzero(selected)),
                 "loss": loss,
             }

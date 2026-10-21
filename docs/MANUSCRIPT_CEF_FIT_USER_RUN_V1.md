@@ -16,10 +16,11 @@ within-scan range at most 0.05 K. Exact scan temperatures remain in the table;
 the block forward model uses 9.998965 K. Holdout detector access is zero.
 
 The reviewed feature table is
-`configs/manuscript_cef_fit_feature_table_v1.yaml`. BF-001 and BF-005 are the
-first-run active energy features. BF-002, BF-003, and BF-004 constrain shape only.
-BF-006–BF-008 are diagnostic only and are absent from this 10-K subset. Overlapping
-windows are not automatically separate excitations.
+`configs/manuscript_cef_fit_feature_table_v1.yaml`. BF-005 is the sole first-run
+active CEF feature and BF-004 constrains shape in the same overlapping approximately
+18-meV region; they are not two independent excitations. BF-001–BF-003 are preserved
+diagnostically but excluded from every primary objective component because the
+2.5–7 meV weight may be collective. BF-006–BF-008 remain diagnostic only.
 
 ## Physics and varied parameters
 
@@ -45,15 +46,17 @@ inserted as mandatory targets.
 The exploratory loss is
 `L_total = w_E L_energy + w_S L_shape + w_I L_relative_intensity` with first-run
 neutral weights 1,1,1. These weights are not physically calibrated and the loss is
-not a statistical chi-square. Shape losses are normalized within features and then
-averaged; relative-intensity losses are normalized within accepted normalization
-blocks. One signal scale and local background parameters are profiled per block,
-never per scan. Nuisance values and boundary flags are saved.
+not a statistical chi-square. The BF-005 energy term is zero anywhere inside its
+frozen B001 discovery window [17.4983, 20.49835] meV and rises continuously outside
+the nearest edge, normalized by the half-window only as a penalty scale. There is no
+midpoint/centroid preference. Shape losses are normalized within admitted features
+and then averaged; relative-intensity losses are normalized within accepted
+normalization blocks. One signal scale and local background parameters are profiled
+per block, never per scan. Nuisance values and boundary flags are saved.
 
-An assignment branch fixes every active observed feature to a particular `D0->Dj`
-transition for the entire optimization. With two ordered active features, all 21
-one-to-one ordered combinations from D1…D7 are generated deterministically. There
-is no nearest-level matching or hidden reassignment.
+An assignment branch fixes BF-005 to one particular `D0->Dj` transition for the
+entire optimization. Exactly seven branches, D0→D1 through D0→D7, are generated
+deterministically. There is no nearest-level matching or hidden reassignment.
 
 A restart is one independently seeded CMA-ES trajectory for one fixed assignment.
 Every candidate is rescored by the repository's own forward model and objective.

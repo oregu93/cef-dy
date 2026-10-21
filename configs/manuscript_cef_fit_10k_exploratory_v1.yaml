@@ -44,8 +44,8 @@ objective:
   calibration_status: NOT_PHYSICALLY_CALIBRATED
   component_weights: {energy: 1.0, shape: 1.0, relative_intensity: 1.0}
   component_definitions:
-    L_energy: Mean dimensionless residual for explicit ACTIVE_CEF_FEATURE assignments only.
-    L_shape: Mean of normalized within-feature spectral-shape losses.
+    L_energy: Mean dimensionless discovery-window containment penalty for explicit ACTIVE_CEF_FEATURE assignments only.
+    L_shape: Mean of normalized spectral-shape losses within explicitly admitted CEF feature regions only.
     L_relative_intensity: Mean of normalized losses within accepted normalization blocks.
   nuisance_scale_bounds: [0.0001, 10000.0]
   uncertainties_statistically_calibrated: false
@@ -123,19 +123,19 @@ search:
       population: 4
       restarts_per_assignment: 1
       max_evaluations_per_restart: 8
-      maximum_retained_candidates: 21
+      maximum_retained_candidates: 7
     FIRST_EXPLORATORY_SEARCH:
       output_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
       population: 32
       restarts_per_assignment: 8
       max_evaluations_per_restart: 20000
-      maximum_retained_candidates: 168
+      maximum_retained_candidates: 56
     EXTENDED_SEARCH:
       output_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
       population: 32
       restarts_per_assignment: 16
       max_evaluations_per_restart: 50000
-      maximum_retained_candidates: 336
+      maximum_retained_candidates: 112
   retention:
     best_candidate_per_restart: true
     additional_near_best_per_restart: 0

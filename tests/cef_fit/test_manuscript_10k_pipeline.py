@@ -5,6 +5,7 @@ import pytest
 import yaml
 
 from cef_fit.feature_assignments import (
+    discovery_window_containment_penalty,
     enumerate_assignment_hypotheses,
     load_feature_table,
 )
@@ -16,7 +17,13 @@ from cef_fit.global_search import (
     validate_checkpoint_identity,
 )
 from cef_fit.ins_forward import predict_eq_map
-from cef_fit.eq_data import load_eq_dataset
+from cef_fit.eq_data import (
+    apply_feature_roles,
+    apply_masks,
+    load_eq_dataset,
+    load_mask_definition,
+)
+from cef_fit.ins_objective import eq_map_exploratory_objective
 from cef_fit.taipan_materializer import materialize_taipan_eq_dataset
 from cef_fit.user_pipeline import STAGES, _resolved_search_config, load_pipeline_config
 
@@ -29,19 +36,97 @@ REUSE_PATH = REPOSITORY / "configs/taipan_prior_artifact_reuse_v1.yaml"
 
 def test_feature_table_roles_and_explicit_ordered_assignments():
     features = load_feature_table(FEATURE_PATH)
-    assert [row.feature_id for row in features if row.fit_role == "ACTIVE_CEF_FEATURE"] == [
-        "BF-001",
-        "BF-005",
-    ]
+    assert {row.feature_id: row.fit_role for row in features} == {
+        "BF-001": "DIAGNOSTIC_ONLY",
+        "BF-002": "DIAGNOSTIC_ONLY",
+        "BF-003": "DIAGNOSTIC_ONLY",
+        "BF-004": "SHAPE_ONLY",
+        "BF-005": "ACTIVE_CEF_FEATURE",
+        "BF-006": "DIAGNOSTIC_ONLY",
+        "BF-007": "DIAGNOSTIC_ONLY",
+        "BF-008": "DIAGNOSTIC_ONLY",
+    }
     hypotheses = enumerate_assignment_hypotheses(features)
-    assert len(hypotheses) == 21
-    assert hypotheses[0].assignment_id == "ASSIGN__BF001_D0-D1__BF005_D0-D2"
-    assert hypotheses[-1].assignment_id == "ASSIGN__BF001_D0-D6__BF005_D0-D7"
+    assert len(hypotheses) == 7
+    assert hypotheses[0].assignment_id == "ASSIGN__BF005_D0-D1"
+    assert hypotheses[-1].assignment_id == "ASSIGN__BF005_D0-D7"
     for hypothesis in hypotheses:
+        assert len(hypothesis.mappings) == 1
+        assert hypothesis.mappings[0]["feature_id"] == "BF-005"
         finals = [int(row["final_doublet"]) for row in hypothesis.mappings]
         assert finals == sorted(finals)
         assert len(finals) == len(set(finals))
         assert all(int(row["initial_doublet"]) == 0 for row in hypothesis.mappings)
+        assert "observed_energy_meV" not in hypothesis.mappings[0]
+        assert "sigma_meV" not in hypothesis.mappings[0]
+
+
+def test_bf005_energy_penalty_is_flat_inside_frozen_discovery_window():
+    lower, upper, scale = 17.4983, 20.49835, 1.500025
+    for energy in (lower, 18.0, (lower + upper) / 2.0, 20.0, upper):
+        loss, distance = discovery_window_containment_penalty(
+            energy, lower, upper, scale
+        )
+        assert loss == 0.0
+        assert distance == 0.0
+    epsilon = 1.0e-6
+    below, below_distance = discovery_window_containment_penalty(
+        lower - epsilon, lower, upper, scale
+    )
+    above, above_distance = discovery_window_containment_penalty(
+        upper + epsilon, lower, upper, scale
+    )
+    assert below == pytest.approx((epsilon / scale) ** 2)
+    assert above == pytest.approx((epsilon / scale) ** 2)
+    assert below_distance == pytest.approx(epsilon)
+    assert above_distance == pytest.approx(epsilon)
+
+
+def test_low_energy_diagnostic_features_cannot_leak_into_primary_losses(tmp_path):
+    output = tmp_path / "ten_k.csv"
+    materialize_taipan_eq_dataset(REUSE_PATH, REPOSITORY, output)
+    dataset = load_eq_dataset(output, "LINEAR_PRE_DISPLAY")
+    config = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    base_mask = apply_masks(
+        dataset,
+        load_mask_definition(REPOSITORY / config["inputs"]["taipan_mask_definition"]),
+    )
+    mask = apply_feature_roles(dataset, base_mask, load_feature_table(FEATURE_PATH))
+    low_energy = np.asarray(
+        [
+            bool({"BF-001", "BF-002", "BF-003"}.intersection(identifiers))
+            for identifiers in dataset.feature_ids
+        ],
+        dtype=bool,
+    )
+    frozen_low_energy_region = (
+        (dataset.energy_meV >= 2.4987) & (dataset.energy_meV <= 6.99865)
+    )
+    assert np.any(low_energy)
+    assert np.array_equal(low_energy, frozen_low_energy_region)
+    assert not np.any(mask.include & low_energy)
+    assert not np.any(mask.include & frozen_low_energy_region)
+    result = eq_map_exploratory_objective(
+        dataset,
+        mask.include,
+        np.zeros(dataset.size),
+        config["objective"],
+    )
+    assert not {"BF-001", "BF-002", "BF-003"}.intersection(
+        result.included_points_by_feature
+    )
+    assert result.included_points_by_class["ENERGY_CONSTRAINT"] == 0
+
+
+def test_historical_scalar_energies_are_absent_from_primary_likelihood_contract():
+    config_text = CONFIG_PATH.read_text(encoding="utf-8")
+    feature_text = FEATURE_PATH.read_text(encoding="utf-8")
+    assignments = yaml.safe_dump(
+        [row.as_dict() for row in enumerate_assignment_hypotheses(load_feature_table(FEATURE_PATH))]
+    )
+    primary_contract = config_text + feature_text + assignments
+    assert "18.247178" not in primary_contract
+    assert "18.2257" not in primary_contract
 
 
 def test_primary_cli_stages_and_search_profiles_are_frozen():
@@ -75,6 +160,11 @@ def test_primary_cli_stages_and_search_profiles_are_frozen():
         16,
         50000,
     )
+    assert (
+        smoke["maximum_retained_candidates"],
+        first["maximum_retained_candidates"],
+        extended["maximum_retained_candidates"],
+    ) == (7, 56, 112)
     assert config["switches"]["RUN_EXPLORATORY_SEARCH"] is False
     assert config["search"]["run_exploratory_search"] is False
 
@@ -105,7 +195,7 @@ def test_checkpoint_identity_binds_feature_assignment_and_model_variants():
         "RESTART_INCOMPLETE_RESTART_FROM_FIXED_SEED",
         {},
         {},
-        "ASSIGN__BF001_D0-D1__BF005_D0-D4",
+        "ASSIGN__BF005_D0-D4",
         "HISTORICAL_R3",
     )
     validate_checkpoint_identity(checkpoint, identity)

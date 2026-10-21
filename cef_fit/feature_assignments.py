@@ -27,8 +27,9 @@ ALLOWED_FIT_ROLES = frozenset(
 class FeatureDefinition:
     feature_id: str
     fit_role: str
-    representative_energy_meV: float
-    energy_scale_meV: float
+    energy_min_meV: float
+    energy_max_meV: float
+    penalty_scale_meV: float
     point_count: int
     ten_k_scan_record_ids: tuple[str, ...]
 
@@ -61,8 +62,10 @@ def load_feature_table(path: str | Path) -> tuple[FeatureDefinition, ...]:
         role = str(row["fit_role"])
         if role not in ALLOWED_FIT_ROLES:
             raise ValueError(f"Unsupported feature fit role: {role}")
-        energy = float(row["representative_energy_meV"])
-        scale = float(row["energy_scale_meV"])
+        window = tuple(map(float, row["discovery_window_meV"]))
+        if len(window) != 2 or not window[0] < window[1]:
+            raise ValueError("Feature discovery_window_meV must satisfy min < max")
+        scale = float(row["window_penalty_scale_meV"])
         count = int(row["point_count"])
         if scale <= 0 or count < 0:
             raise ValueError("Feature energy scale must be positive and point count non-negative")
@@ -70,8 +73,9 @@ def load_feature_table(path: str | Path) -> tuple[FeatureDefinition, ...]:
             FeatureDefinition(
                 feature_id=str(row["feature_id"]),
                 fit_role=role,
-                representative_energy_meV=energy,
-                energy_scale_meV=scale,
+                energy_min_meV=window[0],
+                energy_max_meV=window[1],
+                penalty_scale_meV=scale,
                 point_count=count,
                 ten_k_scan_record_ids=tuple(map(str, row.get("ten_k_scan_record_ids", ()))),
             )
@@ -94,7 +98,10 @@ def enumerate_assignment_hypotheses(
 
     active = sorted(
         (feature for feature in features if feature.fit_role == "ACTIVE_CEF_FEATURE"),
-        key=lambda feature: (feature.representative_energy_meV, feature.feature_id),
+        key=lambda feature: (
+            0.5 * (feature.energy_min_meV + feature.energy_max_meV),
+            feature.feature_id,
+        ),
     )
     if not active:
         raise ValueError("Feature table contains no ACTIVE_CEF_FEATURE")
@@ -110,8 +117,10 @@ def enumerate_assignment_hypotheses(
                 "feature_id": feature.feature_id,
                 "initial_doublet": 0,
                 "final_doublet": final,
-                "observed_energy_meV": feature.representative_energy_meV,
-                "sigma_meV": feature.energy_scale_meV,
+                "energy_window_min_meV": feature.energy_min_meV,
+                "energy_window_max_meV": feature.energy_max_meV,
+                "penalty_scale_meV": feature.penalty_scale_meV,
+                "penalty_semantics": "DISCOVERY_WINDOW_CONTAINMENT_PENALTY",
             }
             for feature, final in zip(active, selected, strict=True)
         )
@@ -126,3 +135,26 @@ def enumerate_assignment_hypotheses(
 def feature_table_identity(path: str | Path) -> dict[str, str]:
     source = Path(path).expanduser().resolve()
     return {"path": str(source), "sha256": sha256_file(source)}
+
+
+def discovery_window_containment_penalty(
+    calculated_energy_meV: float,
+    energy_min_meV: float,
+    energy_max_meV: float,
+    penalty_scale_meV: float,
+) -> tuple[float, float]:
+    """Return a continuous outside-window loss and distance to the window."""
+
+    calculated = float(calculated_energy_meV)
+    lower = float(energy_min_meV)
+    upper = float(energy_max_meV)
+    scale = float(penalty_scale_meV)
+    if not lower < upper or scale <= 0:
+        raise ValueError("Window must satisfy min < max and penalty scale must be positive")
+    if calculated < lower:
+        distance = lower - calculated
+    elif calculated > upper:
+        distance = calculated - upper
+    else:
+        distance = 0.0
+    return (distance / scale) ** 2, distance

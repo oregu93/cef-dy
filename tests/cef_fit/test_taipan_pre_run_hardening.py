@@ -79,7 +79,7 @@ def test_stage02r_materializer_is_reproducible_discovery_only_and_holdout_clean(
     assert audit["status"] == "READY_FOR_EXPLORATORY_SANITY_RUN"
     assert audit["blockers"] == []
     assert audit["search_blockers"] == []
-    assert audit["assignment_branch_count"] == 21
+    assert audit["assignment_branch_count"] == 7
     assert audit["holdout_detector_access_count"] == 0
     assert audit["four_dy_site_intensity"]["status"] == "IMPLEMENTED_AND_TESTED"
 

@@ -53,7 +53,7 @@ def _write_dataset(path: Path, *, include_log_column: bool = False) -> None:
         columns.append("log_intensity")
     rows = [
         ["p0", "0.0", "1.0", "1.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "SPECTRAL_SHAPE_CONSTRAINT", "14.87", "14.87", "1", "0", "0", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", ""],
-        ["p1", "6.0", "1.5", "2.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "ENERGY_CONSTRAINT", "20.87", "14.87", "0", "1", "0", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", "BF-003"],
+        ["p1", "18.0", "1.5", "2.0", "A", "s1", "INCLUDE", "monitor_norm_v1", "0.2", "ENERGY_CONSTRAINT", "32.87", "14.87", "0", "1", "0", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", "BF-005"],
         ["p2", "18.0", "2.0", "3.0", "B", "s2", "EXCLUDE_DETECTOR_ARTIFACT", "monitor_norm_v1", "0.3", "EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT", "32.87", "14.87", "0", "0", "1", "VERIFIED", "10", "discovery", "monitor_controlled", "N1", "L1", "U1", "BF-004"],
     ]
     if include_log_column:
