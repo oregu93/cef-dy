@@ -671,6 +671,8 @@ def stage_04_global_search(config: dict[str, Any], config_path: Path, repository
     hypotheses = _assignment_hypotheses(config, repository)
     feature_path = _feature_table_path(config, repository)
     search_config = _resolved_search_config(config, args.search_profile)
+    if getattr(args, "workers", None) is not None:
+        search_config["workers"] = int(args.workers)
     assignment_set_hash = hashlib.sha256(
         json.dumps(hypotheses, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
@@ -1145,6 +1147,11 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("SMOKE_SEARCH", "FIRST_EXPLORATORY_SEARCH", "EXTENDED_SEARCH"),
     )
     parser.add_argument("--enable-exploratory-search", action="store_true")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        help="Complete assignment/restart trajectories to run concurrently (default: config, 1)",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--mcphase-levels")
     return parser

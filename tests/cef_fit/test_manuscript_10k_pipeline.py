@@ -146,6 +146,7 @@ def test_primary_cli_stages_and_search_profiles_are_frozen():
     smoke = _resolved_search_config(config, "SMOKE_SEARCH")
     first = _resolved_search_config(config, "FIRST_EXPLORATORY_SEARCH")
     extended = _resolved_search_config(config, "EXTENDED_SEARCH")
+    assert smoke["workers"] == first["workers"] == extended["workers"] == 1
     assert (smoke["population"], smoke["restarts_per_assignment"], smoke["output_status"]) == (
         4,
         1,

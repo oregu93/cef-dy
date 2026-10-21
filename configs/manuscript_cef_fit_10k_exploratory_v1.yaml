@@ -111,6 +111,7 @@ parameterization:
 search:
   backend: CMA_ES
   run_exploratory_search: false
+  workers: 1
   active_profile: FIRST_EXPLORATORY_SEARCH
   base_seed: 20261020
   sigma0_meV: 2.5

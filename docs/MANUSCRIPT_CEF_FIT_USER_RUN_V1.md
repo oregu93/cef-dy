@@ -84,8 +84,17 @@ or reviewed config commit and set both `switches.RUN_EXPLORATORY_SEARCH` and
 ```bash
 python -m cef_fit.user_pipeline 04_global_search \
   --search-profile FIRST_EXPLORATORY_SEARCH \
+  --workers 4 \
   --enable-exploratory-search
 ```
+
+The checked-in default is `workers: 1`, which preserves the serial execution path.
+On a six-core local machine, `--workers 4` is the recommended production setting.
+Parallelism is only across complete independent `(assignment, restart)` trajectories;
+population size, CMA-ES generations, deterministic restart seeds, bounds, objective,
+and retained-candidate scientific fields are unchanged. Each worker owns a separate
+atomic restart checkpoint under `04_global_search/restart_checkpoints`, while one
+coordinator alone writes the merged checkpoint and candidate list.
 
 Profiles are qualitative compute choices:
 
@@ -97,7 +106,8 @@ Profiles are qualitative compute choices:
   50,000 evaluations; potentially days.
 
 Stop with Ctrl-C. Checkpoints are written during generations. Resume the identical
-run with the same command plus `--resume`. Resume fails closed if the commit, config,
+run with the same command plus `--resume` (the worker count may be changed). Resume
+fails closed if the commit, config,
 dataset, feature table, assignment set, parameter convention, resolution/background
 variant, or search profile differs. An interrupted restart repeats from its recorded
 deterministic seed.
