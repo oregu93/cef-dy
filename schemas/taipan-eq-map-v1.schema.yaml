@@ -29,6 +29,12 @@ required_columns:
   UB_state_id: {type: string}
   temperature_status: {type: enum, values: [VERIFIED, RECONSTRUCTED_WITH_EXPLICIT_LIMITATION, NOT_YET_ESTABLISHED]}
   temperature_K_if_verified: {type: positive_finite_float_or_empty, units: K}
+  temperature_scan_mean_K: {type: positive_finite_float, units: K}
+  temperature_scan_min_K: {type: positive_finite_float, units: K}
+  temperature_scan_max_K: {type: positive_finite_float, units: K}
+  temperature_source_field: {type: string}
+  temperature_controller_channel: {type: string}
+  temperature_unit: {type: enum, values: [K]}
   discovery_holdout_role: {type: enum, values: [discovery]}
   intensity_linear: {type: finite_float, domain: linear_pre_display}
   intensity_units: {type: string}
@@ -64,4 +70,4 @@ notes:
   - Multiple overlapping feature IDs are preserved and are not mandatory CEF-level assignments.
   - Statistical chi-square language is forbidden unless uncertainty calibration is separately reviewed.
   - Scan-dependent optimizer rescaling is forbidden; use declared instrument blocks only.
-  - At least one included ENERGY_CONSTRAINT row is required before the explicit D0-to-D1..D7 search branches can run.
+  - Feature-level energy constraints come only from ACTIVE_CEF_FEATURE rows in the reviewed feature table, not point rows or nearest-level matching.

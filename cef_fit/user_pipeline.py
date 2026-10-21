@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import csv
 from dataclasses import asdict
+import hashlib
 import json
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -25,6 +26,11 @@ from .conventions import (
 )
 from .eq_data import EQDataset, AppliedMask, apply_masks, audit_eq_dataset, load_eq_dataset, load_mask_definition
 from .fit_cs15 import parameters_to_h
+from .feature_assignments import (
+    enumerate_assignment_hypotheses,
+    feature_table_identity,
+    load_feature_table,
+)
 from .g_tensor import g_tensor
 from .global_search import SearchIdentity, deterministic_initialization_plan, run_cmaes_multistart
 from .ins_forward import predict_eq_map
@@ -42,19 +48,19 @@ from .wavefunctions import export_wavefunctions
 
 
 STAGES = (
+    "00_materialize_10k",
     "01_data_audit",
-    "02_cef_forward",
-    "03_ins_objective",
+    "02_forward_review",
+    "03_objective_review",
     "04_global_search",
-    "05_build_ins_ensemble",
-    "06_calculate_mh",
-    "07_compare_mh",
-    "08_joint_objective",
-    "09_cluster_solutions",
-    "10_export_wavefunctions",
-    "11_export_mcphase",
-    "12_validate_mcphase",
+    "05_ensemble_summary",
+    "06_frozen_mh_screen",
+    "07_cluster",
+    "08_wavefunctions",
+    "09_mcphase_export",
 )
+
+DEFAULT_CONFIG = "configs/manuscript_cef_fit_10k_exploratory_v1.yaml"
 
 
 def load_pipeline_config(path: str | Path) -> tuple[dict[str, Any], Path, Path]:
@@ -78,6 +84,44 @@ def _output(config: Mapping[str, Any], repository: Path, key: str) -> Path:
     return root / str(config["outputs"][key])
 
 
+def _feature_table_path(config: Mapping[str, Any], repository: Path) -> Path:
+    return _resolve(repository, str(config["inputs"]["feature_table"]))
+
+
+def _assignment_hypotheses(
+    config: Mapping[str, Any], repository: Path
+) -> tuple[dict[str, object], ...]:
+    features = load_feature_table(_feature_table_path(config, repository))
+    final_doublets = tuple(map(int, config["assignments"]["final_doublets"]))
+    return tuple(
+        hypothesis.as_dict()
+        for hypothesis in enumerate_assignment_hypotheses(
+            features, final_doublets=final_doublets
+        )
+    )
+
+
+def _resolved_search_config(
+    config: Mapping[str, Any], profile_override: str | None = None
+) -> dict[str, object]:
+    raw = config["search"]
+    profile = str(profile_override or raw["active_profile"])
+    profiles = raw["profiles"]
+    if profile not in profiles:
+        raise ValueError(f"Unknown search profile {profile}")
+    resolved = {
+        key: value
+        for key, value in raw.items()
+        if key not in {"profiles", "active_profile", "retention"}
+    }
+    resolved.update(dict(profiles[profile]))
+    resolved.update(dict(raw.get("retention", {})))
+    resolved["profile_id"] = profile
+    resolved["h_bounds_meV"] = list(config["parameterization"]["bounds_h_meV"])
+    resolved["boundary_fraction"] = float(config["parameterization"]["boundary_fraction"])
+    return resolved
+
+
 def _load_seed(config: Mapping[str, Any], repository: Path) -> dict[str, float]:
     path = _resolve(repository, str(config["inputs"]["historical_seed_bundle"]))
     payload = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -85,7 +129,9 @@ def _load_seed(config: Mapping[str, Any], repository: Path) -> dict[str, float]:
     return parameters
 
 
-def _initialization_plan(config: Mapping[str, Any], repository: Path) -> tuple[dict[str, object], ...]:
+def _initialization_plan(
+    config: Mapping[str, Any], repository: Path, search: Mapping[str, object]
+) -> tuple[dict[str, object], ...]:
     formal_config = yaml.safe_load(
         (repository / "configs/manuscript_fit_v1.yaml").read_text(encoding="utf-8")
     )
@@ -118,7 +164,6 @@ def _initialization_plan(config: Mapping[str, Any], repository: Path) -> tuple[d
         seeds[f"HISTORICAL_{label}"] = parameters_to_h(
             {str(key): float(value) for key, value in payload["parameters"].items()}
         )
-    search = config["search"]
     lower, upper = map(float, search["h_bounds_meV"])
     return deterministic_initialization_plan(
         seeds,
@@ -267,6 +312,37 @@ def _write_dataset_diagnostic_figure(
     figure.savefig(destination, dpi=180)
     plt.close(figure)
     return destination
+
+
+def stage_00_materialize_10k(
+    config: dict[str, Any], config_path: Path, repository: Path, args: argparse.Namespace
+) -> dict[str, object]:
+    """Materialize only the accepted discovery 10-K block; never touch holdout detectors."""
+
+    report = materialize_taipan_eq_dataset(
+        _resolve(repository, str(config["inputs"]["taipan_reuse_map"])),
+        repository,
+        _resolve(repository, str(config["inputs"]["taipan_eq_dataset"])),
+    )
+    if report.ten_k_scan_count != 20 or report.holdout_detector_access_count != 0:
+        raise RuntimeError("10-K materialization identity or holdout safety check failed")
+    table_path = _feature_table_path(config, repository)
+    table_payload = yaml.safe_load(table_path.read_text(encoding="utf-8"))
+    if str(table_payload["source_dataset_sha256"]) != report.output_sha256:
+        raise RuntimeError("Feature table is not bound to the materialized 10-K dataset")
+    hypotheses = _assignment_hypotheses(config, repository)
+    payload = {
+        **report.as_dict(),
+        "DISCOVERY_ONLY": True,
+        "HOLDOUT_DETECTOR_ACCESS_COUNT": 0,
+        "feature_table": feature_table_identity(table_path),
+        "assignment_branch_count": len(hypotheses),
+        "real_scientific_optimization_executed": False,
+        "provenance": _provenance(config_path, repository),
+    }
+    destination = _output(config, repository, "materialization")
+    write_json(destination, payload)
+    return {**payload, "report_path": str(destination)}
 
 
 def stage_01_data_audit(config: dict[str, Any], config_path: Path, repository: Path, args: argparse.Namespace) -> dict[str, object]:
@@ -466,11 +542,38 @@ def stage_03_ins_objective(config: dict[str, Any], config_path: Path, repository
         config["objective"],
         background_config=config["forward_model"]["background"],
     )
+    hypotheses = _assignment_hypotheses(config, repository)
+    branch_reviews = []
+    for hypothesis in hypotheses:
+        energy, diagnostics = _explicit_feature_energy_penalty(
+            dataset, mask, prediction.transitions, hypothesis
+        )
+        weights = objective.component_weights
+        total = (
+            weights["energy"] * energy
+            + weights["shape"] * objective.spectral_shape_constraint
+            + weights["relative_intensity"]
+            * objective.exploratory_relative_intensity_constraint
+        )
+        branch_reviews.append(
+            {
+                "assignment_id": hypothesis["assignment_id"],
+                "L_energy": energy,
+                "L_shape": objective.spectral_shape_constraint,
+                "L_relative_intensity": objective.exploratory_relative_intensity_constraint,
+                "L_total": float(total),
+                "feature_residuals": diagnostics,
+            }
+        )
     payload = {
         "status": "OBJECTIVE_SANITY_COMPLETE__NO_OPTIMIZATION",
         "mode": mode.value,
         "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
         "objective": objective.as_dict(),
+        "weight_policy": config["objective"]["weight_policy"],
+        "calibration_status": config["objective"]["calibration_status"],
+        "assignment_branch_count": len(hypotheses),
+        "assignment_branch_reviews": branch_reviews,
         "mask_hash": audit_eq_dataset(config, repository)["mask_hash"],
         "optimizer_executed": False,
         "provenance": _provenance(config_path, repository),
@@ -487,7 +590,7 @@ def _explicit_feature_energy_penalty(
     hypothesis: Mapping[str, object],
 ) -> tuple[float, list[dict[str, object]]]:
     mappings = hypothesis.get("mappings", [])
-    if not isinstance(mappings, list) or not mappings:
+    if not isinstance(mappings, (list, tuple)) or not mappings:
         raise ValueError("Each assignment hypothesis requires explicit feature mappings")
     diagnostics: list[dict[str, object]] = []
     losses: list[float] = []
@@ -505,10 +608,7 @@ def _explicit_feature_energy_penalty(
         )
         if not np.any(selected):
             raise ValueError(f"Assigned feature {feature_id} has no included measured points")
-        weights = np.maximum(dataset.intensity[selected], 0.0)
-        if float(np.sum(weights)) <= 0:
-            weights = np.ones(np.count_nonzero(selected))
-        observed = float(np.average(dataset.energy_meV[selected], weights=weights))
+        observed = float(mapping["observed_energy_meV"])
         transition_match = np.flatnonzero(
             (transitions.initial_doublets == initial) & (transitions.final_doublets == final)
         )
@@ -521,9 +621,11 @@ def _explicit_feature_energy_penalty(
             {
                 "feature_id": feature_id,
                 "assignment": f"D{initial}->D{final}",
-                "observed_centroid_meV": observed,
+                "observed_feature_reference_meV": observed,
                 "predicted_transition_meV": predicted,
                 "sigma_meV": sigma,
+                "sigma_semantics": "EXPLORATORY_FEATURE_WINDOW_SCALE_NOT_STATISTICAL_SIGMA",
+                "support_point_count": int(np.count_nonzero(selected)),
                 "loss": loss,
             }
         )
@@ -540,20 +642,25 @@ def stage_04_global_search(config: dict[str, Any], config_path: Path, repository
     dataset, mask, audit = _load_ready_dataset(config, repository)
     mask_hash = str(audit["mask_hash"])
     code_commit = str(git_provenance(repository)["head"])
+    hypotheses = _assignment_hypotheses(config, repository)
+    feature_path = _feature_table_path(config, repository)
+    search_config = _resolved_search_config(config, args.search_profile)
+    assignment_set_hash = hashlib.sha256(
+        json.dumps(hypotheses, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
     identity = SearchIdentity(
         config_hash=sha256_file(config_path),
         dataset_hash=dataset.sha256,
         mask_hash=mask_hash,
         objective_mode=mode.value,
         code_commit=code_commit,
+        feature_table_hash=sha256_file(feature_path),
+        assignment_set_hash=assignment_set_hash,
+        parameter_convention=str(config["parameterization"]["search_coordinates"]),
+        resolution_variant=str(config["forward_model"]["resolution"]["variant_id"]),
+        background_variant=str(config["forward_model"]["background"]["variant_id"]),
+        search_profile=str(search_config["profile_id"]),
     )
-    hypotheses = config["assignments"].get("feature_assignment_hypotheses", [])
-    if not isinstance(hypotheses, list) or not hypotheses:
-        raise ValueError(
-            "No explicit observed-feature to calculated-transition hypotheses are configured"
-        )
-    if len(hypotheses) > 7:
-        raise ValueError("At most seven explicit assignment hypotheses are supported")
 
     def evaluator(parameters: Mapping[str, float], branch: int) -> Mapping[str, object]:
         prediction = predict_eq_map(parameters, dataset, config["forward_model"])
@@ -570,16 +677,43 @@ def stage_04_global_search(config: dict[str, Any], config_path: Path, repository
             prediction.transitions,
             hypotheses[branch - 1],
         )
-        result["energy_constraint"] = float(result["energy_constraint"]) + penalty
-        result["total"] = float(result["total"]) + penalty
-        result["assignment_hypothesis"] = hypotheses[branch - 1].get(
-            "hypothesis_id", f"HYPOTHESIS_{branch}"
+        weight = float(result["component_weights"]["energy"])
+        result["energy_constraint"] = penalty
+        result["raw_components"]["L_energy"] = float(
+            sum(float(row["loss"]) for row in diagnostics)
         )
+        result["normalized_components"]["L_energy"] = penalty
+        result["total"] = float(result["total"]) + weight * penalty
+        result["assignment_hypothesis"] = hypotheses[branch - 1]["assignment_id"]
         result["explicit_feature_assignments"] = diagnostics
+        result["doublet_energies_meV"] = prediction.transitions.doublet_energies_meV.tolist()
+        result["transition_list"] = [
+            {
+                "initial_doublet": int(initial),
+                "final_doublet": int(final),
+                "energy_meV": float(energy),
+                "initial_population": float(
+                    prediction.transitions.doublet_populations[int(initial)]
+                ),
+                "population_factor": float(population),
+                "predicted_powder_strength": float(strength),
+            }
+            for initial, final, energy, population, strength in zip(
+                prediction.transitions.initial_doublets,
+                prediction.transitions.final_doublets,
+                prediction.transitions.transition_energies_meV,
+                prediction.transitions.transition_population_factors,
+                prediction.transitions.powder_strengths,
+                strict=True,
+            )
+        ]
         return result
 
-    search_config = dict(config["search"])
     search_config["assignment_branches"] = list(range(1, len(hypotheses) + 1))
+    search_config["assignment_ids"] = {
+        str(index): hypothesis["assignment_id"]
+        for index, hypothesis in enumerate(hypotheses, start=1)
+    }
     search_config["run_exploratory_search"] = bool(
         config["switches"]["RUN_EXPLORATORY_SEARCH"]
         and search_config.get("run_exploratory_search", False)
@@ -591,7 +725,7 @@ def stage_04_global_search(config: dict[str, Any], config_path: Path, repository
         repository=repository,
         output_directory=_output(config, repository, "search"),
         evaluator=evaluator,
-        initialization_plan=_initialization_plan(config, repository),
+        initialization_plan=_initialization_plan(config, repository, search_config),
         explicit_cli_enable=bool(args.enable_exploratory_search),
         resume=bool(args.resume),
         j=float(config["scientific_scope"]["J"]),
@@ -762,6 +896,23 @@ def stage_09_cluster_solutions(config: dict[str, Any], config_path: Path, reposi
         distances,
         float(clustering["distance_threshold"]),
         str(clustering["method"]),
+        (
+            int(clustering["cluster_count"])
+            if clustering.get("cluster_count") is not None
+            else None
+        ),
+    )
+    physical_weights = {
+        name: float(weight)
+        for name, weight in clustering["weights"].items()
+        if name != "parameter"
+    }
+    physical_norm = max(sum(physical_weights.values()), np.finfo(float).eps)
+    physical_distances = np.sqrt(
+        sum(
+            (weight / physical_norm) * np.square(components[name])
+            for name, weight in physical_weights.items()
+        )
     )
     clusters = []
     for cluster_id in sorted(set(map(int, labels))):
@@ -783,7 +934,18 @@ def stage_09_cluster_solutions(config: dict[str, Any], config_path: Path, reposi
         "weights": clustering["weights"],
         "solution_ids": [solution.solution_id for solution in solutions],
         "distance_matrix": distances.tolist(),
+        "parameter_similarity_distance_matrix": components["parameter"].tolist(),
+        "physical_observable_similarity_distance_matrix": physical_distances.tolist(),
         "component_distance_matrices": {key: value.tolist() for key, value in components.items()},
+        "feature_standardization": {
+            "enabled": bool(clustering.get("standardize_features", True)),
+            "method": "DECLARED_PHYSICAL_SCALES",
+            "scales": clustering["scales"],
+        },
+        "cluster_selection": {
+            "distance_threshold": clustering["distance_threshold"],
+            "cluster_count": clustering.get("cluster_count"),
+        },
         "clusters": clusters,
         "physical_family_review_required": True,
         "input_hashes": {
@@ -874,6 +1036,8 @@ def stage_11_export_mcphase(config: dict[str, Any], config_path: Path, repositor
         exports.append({"candidate_id": candidate_id, "parameters": str(parameter_path), "metadata": str(metadata_path)})
     manifest = {
         "status": "MCPHASE_EXPORT_COMPLETE__VALIDATION_NOT_RUN",
+        "mismatch_status": "VALIDATION_BLOCKER",
+        "automatic_blm_modification_allowed": False,
         "count": len(exports),
         "exports": exports,
         "input_clustering_hash": sha256_file(_output(config, repository, "clustering")),
@@ -918,26 +1082,42 @@ def stage_12_validate_mcphase(config: dict[str, Any], config_path: Path, reposit
     return {**payload, "output": str(destination)}
 
 
+def stage_06_frozen_mh_screen(
+    config: dict[str, Any], config_path: Path, repository: Path, args: argparse.Namespace
+) -> dict[str, object]:
+    calculated = stage_06_calculate_mh(config, config_path, repository, args)
+    compared = stage_07_compare_mh(config, config_path, repository, args)
+    return {
+        "status": "INDEPENDENT_FROZEN_CANDIDATE_SCREEN_COMPLETE",
+        "blm_refit_performed": False,
+        "joint_mh_fit_enabled": False,
+        "calculation": calculated,
+        "diagnostics": compared,
+    }
+
+
 STAGE_FUNCTIONS: dict[str, Callable[[dict[str, Any], Path, Path, argparse.Namespace], dict[str, object]]] = {
+    "00_materialize_10k": stage_00_materialize_10k,
     "01_data_audit": stage_01_data_audit,
-    "02_cef_forward": stage_02_cef_forward,
-    "03_ins_objective": stage_03_ins_objective,
+    "02_forward_review": stage_02_cef_forward,
+    "03_objective_review": stage_03_ins_objective,
     "04_global_search": stage_04_global_search,
-    "05_build_ins_ensemble": stage_05_build_ins_ensemble,
-    "06_calculate_mh": stage_06_calculate_mh,
-    "07_compare_mh": stage_07_compare_mh,
-    "08_joint_objective": stage_08_joint_objective,
-    "09_cluster_solutions": stage_09_cluster_solutions,
-    "10_export_wavefunctions": stage_10_export_wavefunctions,
-    "11_export_mcphase": stage_11_export_mcphase,
-    "12_validate_mcphase": stage_12_validate_mcphase,
+    "05_ensemble_summary": stage_05_build_ins_ensemble,
+    "06_frozen_mh_screen": stage_06_frozen_mh_screen,
+    "07_cluster": stage_09_cluster_solutions,
+    "08_wavefunctions": stage_10_export_wavefunctions,
+    "09_mcphase_export": stage_11_export_mcphase,
 }
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m cef_fit.user_pipeline")
     parser.add_argument("stage", choices=STAGES)
-    parser.add_argument("--config", required=True)
+    parser.add_argument("--config", default=DEFAULT_CONFIG)
+    parser.add_argument(
+        "--search-profile",
+        choices=("SMOKE_SEARCH", "FIRST_EXPLORATORY_SEARCH", "EXTENDED_SEARCH"),
+    )
     parser.add_argument("--enable-exploratory-search", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--mcphase-levels")

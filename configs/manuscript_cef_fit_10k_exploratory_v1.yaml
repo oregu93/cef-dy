@@ -1,0 +1,198 @@
+schema_version: 1
+pipeline_id: USER_EXECUTED_JOINT_CEF_PIPELINE_V1
+run_id: MANUSCRIPT_CEF_FIT_10K_EXPLORATORY_V1
+scientific_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
+scientific_scope:
+  ion: Dy3+
+  J: 7.5
+  gJ: 1.3333333333333333
+  internal_parameter_basis: direct_positive_q
+  internal_axes: [b, c, a]
+  publication_parameter_basis: canonical_Cs15
+  publication_axes: [b, -a, c]
+  exchange_enabled: false
+  unique_hamiltonian_claim_allowed: false
+
+switches:
+  RUN_EXPLORATORY_SEARCH: false
+  ENABLE_JOINT_MH_FIT: false
+  ENABLE_MANUSCRIPT_OBJECTIVE: false
+
+inputs:
+  taipan_reuse_map: configs/taipan_prior_artifact_reuse_v1.yaml
+  auto_materialize_stage02r: true
+  taipan_eq_dataset: local_data/taipan_eq_map_exploratory_10K_v1.csv
+  taipan_schema: schemas/taipan-eq-map-v1.schema.yaml
+  taipan_mask_definition: configs/taipan_masks_exploratory_v1.yaml
+  cx02_priority_scan_preflight: configs/taipan_cx02_priority_scan_preflight_v1.yaml
+  feature_table: configs/manuscript_cef_fit_feature_table_v1.yaml
+  intensity_domain: LINEAR_PRE_DISPLAY
+  normalization_description: >-
+    Linear detector_counts/monitor, preserving source detector and monitor values.
+    One signal scale and local background are profiled per accepted normalization block;
+    no scan-dependent rescaling is allowed.
+  uncertainties_statistically_calibrated: false
+  literature_magnetization: data/manuscript_v1/literature_magnetization.csv
+  literature_magnetization_inventory: data/manuscript_v1/literature_magnetization_curve_inventory.csv
+  literature_magnetization_source_commit: 2c17955c405ef9698781dfd5364ef7be0245ba15
+  historical_seed_bundle: 04_Results/Stage03R/STAGE03R-CS15-PREDICTION-BUNDLE-MATERIALIZATION-001/PB-CS15-HIST-B2-R7.yaml
+  historical_seed_role: INITIALIZATION_ONLY_NOT_CURRENT_RESULT
+
+objective:
+  mode: EQ_MAP_EXPLORATORY_OBJECTIVE
+  weight_policy: FIRST_RUN_NEUTRAL_WEIGHTS
+  calibration_status: NOT_PHYSICALLY_CALIBRATED
+  component_weights: {energy: 1.0, shape: 1.0, relative_intensity: 1.0}
+  component_definitions:
+    L_energy: Mean dimensionless residual for explicit ACTIVE_CEF_FEATURE assignments only.
+    L_shape: Mean of normalized within-feature spectral-shape losses.
+    L_relative_intensity: Mean of normalized losses within accepted normalization blocks.
+  nuisance_scale_bounds: [0.0001, 10000.0]
+  uncertainties_statistically_calibrated: false
+  manuscript_intensity_gate: FAIL_CLEANLY
+  absolute_cross_section_claim: false
+
+forward_model:
+  transition_model: PROJECT_CEF_KERNEL
+  form_factor: DY3_J0_DIPOLE_APPROXIMATION
+  q_direction_policy: PER_POINT_DIRECT_QHAT_REQUIRED__NO_POWDER_FALLBACK
+  dy_site_intensity:
+    status: IMPLEMENTED_AND_TESTED
+    contract_id: STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001
+    contract_path: 04_Results/Stage03R/STAGE03R-DY-SITE-TENSOR-TRANSFORM-CONTRACT-001/CONVENTION_CONTRACT.yaml
+    contract_sha256: a83d8250e37318ce6b4a883c8edc3a7508d76fad15cae6ddf2c4f6f4e49bd7b3
+    frame: direct_b_c_a
+    combination: INDEPENDENT_LOCALIZED_SITE_SUM
+    site_order: [Dy1, Dy2, Dy3, Dy4]
+    inter_site_dynamical_cross_correlations: false
+  kinematic_factor: {model: TAS_KF_OVER_KI, require_measured_ei_ef: true}
+  population:
+    mode: BOLTZMANN_ALL_CEF_STATES
+    temperature_K: 9.998965
+    exact_scan_temperatures_preserved_in_dataset: true
+    maximum_block_temperature_range_K: 0.1
+    exchange_enabled: false
+  resolution:
+    variant_id: BASELINE_0P894_MEV
+    model: GAUSSIAN_FIXED_FWHM
+    fwhm_meV: 0.894
+    status: EMPIRICAL_ELASTIC_ANCHOR__NOT_FULL_TAS_RESOLUTION
+    alternatives:
+      - {variant_id: USER_EDITABLE_FIXED_GAUSSIAN, model: GAUSSIAN_FIXED_FWHM, fwhm_meV: 0.894}
+      - {variant_id: USER_EDITABLE_QUADRATURE, model: GAUSSIAN_QUADRATURE_FWHM, fwhm_intercept_meV: 0.894, fwhm_slope_sqrt_meV: 0.0}
+  background:
+    variant_id: LOCAL_LINEAR_BASELINE
+    model: LOCAL_LINEAR_BACKGROUND
+    dataset_already_background_subtracted: false
+    profile_in_objective: true
+    clip_nonnegative: false
+    alternatives:
+      - {variant_id: LOCAL_SMOOTH, model: LOCAL_SMOOTH_BACKGROUND, profile_in_objective: true, clip_nonnegative: false}
+  normalization_nuisance:
+    grouping_column: instrument_block_id
+    one_scale_per_block: true
+    scan_dependent_rescaling_allowed: false
+
+assignments:
+  source: FEATURE_TABLE_ACTIVE_ROWS
+  strategy: EXPLICIT_ORDERED_ONE_TO_ONE_BRANCHES
+  final_doublets: [1, 2, 3, 4, 5, 6, 7]
+  automatic_nearest_level_assignment: false
+  duplicated_final_doublet_allowed: false
+  preserve_energy_ordering: true
+
+parameterization:
+  representation: DIRECT_CS15
+  search_coordinates: h_i_EQUALS_kappa_i_TIMES_B_i
+  bounds_h_meV: [-8.0, 8.0]
+  bounds_are_physical_priors: false
+  boundary_fraction: 0.02
+
+search:
+  backend: CMA_ES
+  run_exploratory_search: false
+  active_profile: FIRST_EXPLORATORY_SEARCH
+  base_seed: 20261020
+  sigma0_meV: 2.5
+  checkpoint_every_generation: true
+  resume_policy: RESTART_INCOMPLETE_RESTART_FROM_FIXED_SEED
+  project_owned_kernel_reevaluation: true
+  profiles:
+    SMOKE_SEARCH:
+      output_status: SMOKE_ONLY
+      population: 4
+      restarts_per_assignment: 1
+      max_evaluations_per_restart: 8
+      maximum_retained_candidates: 21
+    FIRST_EXPLORATORY_SEARCH:
+      output_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
+      population: 32
+      restarts_per_assignment: 8
+      max_evaluations_per_restart: 20000
+      maximum_retained_candidates: 168
+    EXTENDED_SEARCH:
+      output_status: EXPLORATORY_NOT_MANUSCRIPT_ADMITTED
+      population: 32
+      restarts_per_assignment: 16
+      max_evaluations_per_restart: 50000
+      maximum_retained_candidates: 336
+  retention:
+    best_candidate_per_restart: true
+    additional_near_best_per_restart: 0
+    arbitrary_objective_cutoff: null
+  initialization_families: [PCM_FORMAL, PCM_M0, HISTORICAL_R3, HISTORICAL_R5, HISTORICAL_R7, LATIN_HYPERCUBE]
+
+ensemble:
+  retain_secondary_minima: true
+  select_single_best: false
+  retention_status: SEARCH_RETAINED_CANDIDATE
+  scientific_compatibility_status: NOT_ASSESSED
+
+magnetization:
+  enabled: true
+  stage_role: INDEPENDENT_FROZEN_CANDIDATE_SCREEN
+  axes: [a, b]
+  temperatures_K: [10, 20]
+  experimental_quantity: TOTAL_BULK_MAGNETIZATION
+  calculated_quantity: SINGLE_ION_DY_CEF_MAGNETIZATION
+  formal_chi_square_ranking_enabled: false
+  blm_refit_enabled: false
+
+joint_mh:
+  enabled: false
+  lambda_M: null
+  accepted_bulk_contribution_model: null
+  arbitrary_offset_allowed: false
+  arbitrary_normalization_allowed: false
+
+clustering:
+  method: average
+  distance_threshold: 1.0
+  cluster_count: null
+  standardize_features: true
+  distinguish_parameter_and_physical_similarity: true
+  weights: {parameter: 0.10, energy: 0.25, projector: 0.25, neutron: 0.20, g_tensor: 0.10, magnetization: 0.10}
+  scales: {parameter_meV: 1.0, energy_meV: 1.0, transition_strength: 1.0, g_value: 1.0, magnetization_muB: 1.0}
+
+mcphase:
+  export_enabled: true
+  execution_enabled: false
+  mismatch_status: VALIDATION_BLOCKER
+  mismatch_triggers_refit: false
+  level_tolerance_meV: 0.000001
+
+outputs:
+  root: results/manuscript_cef_fit_10k_exploratory_v1
+  materialization: 00_materialize_10k/materialization_report.json
+  audit: 01_data_audit/audit_report.json
+  dataset_diagnostic_figure: 01_data_audit/dataset_diagnostic.png
+  forward: 02_forward_review/forward_review.json
+  pre_search_figure: 02_forward_review/pre_search_diagnostic.png
+  objective: 03_objective_review/objective_review.json
+  search: 04_global_search
+  ensemble: 05_ensemble_summary/ins_ensemble.json
+  mh: 06_frozen_mh_screen/frozen_mh.json
+  mh_comparison: 06_frozen_mh_screen/mh_diagnostics.json
+  clustering: 07_cluster/clusters.json
+  wavefunctions: 08_wavefunctions
+  mcphase: 09_mcphase_export

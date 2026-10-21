@@ -1,4 +1,8 @@
-# TAIPAN prior-artifact reuse map v1
+# TAIPAN prior-artifact reuse map v1 (historical pre-integration review)
+
+> The temperature status in this review was superseded on 2026-10-21 by the
+> accepted `taipan_temperature_mapping_v1` reconstruction. The executable current
+> contract is `configs/taipan_prior_artifact_reuse_v1.yaml`.
 
 This map freezes the pre-run boundary for the user-executed exploratory CEF
 pipeline. The scientific authority is the public `oregu93/cef-dy` repository.

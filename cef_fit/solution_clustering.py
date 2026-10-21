@@ -119,6 +119,7 @@ def cluster_observable_distances(
     distance_matrix: NDArray[np.float64],
     distance_threshold: float,
     method: str = "average",
+    cluster_count: int | None = None,
 ) -> NDArray[np.int64]:
     matrix = np.asarray(distance_matrix, dtype=float)
     if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1] or matrix.shape[0] < 2:
@@ -126,6 +127,12 @@ def cluster_observable_distances(
     if not np.allclose(matrix, matrix.T) or np.any(matrix < 0):
         raise ValueError("distance_matrix must be symmetric and non-negative")
     hierarchy = linkage(squareform(matrix, checks=True), method=method)
+    if cluster_count is not None:
+        if cluster_count < 1 or cluster_count > matrix.shape[0]:
+            raise ValueError("cluster_count must be between 1 and the number of solutions")
+        return np.asarray(
+            fcluster(hierarchy, int(cluster_count), criterion="maxclust"), dtype=np.int64
+        )
     return np.asarray(
         fcluster(hierarchy, distance_threshold, criterion="distance"), dtype=np.int64
     )

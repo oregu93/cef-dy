@@ -143,6 +143,50 @@ def eq_map_exploratory_objective(
             scale = max(float(np.sqrt(np.mean(np.square(dataset.intensity[selected])))), 1.0e-15)
         normalized_residual[selected] = residual[selected] / scale
         normalized_by_class[name] = float(np.mean(np.square(normalized_residual[selected])))
+    # Shape is normalized inside each represented feature, then averaged across
+    # features. This prevents broad windows or dense scans from dominating only
+    # because they contain more points. Overlapping reviewed windows remain
+    # visible as separate shape diagnostics but are not treated as energy levels.
+    shape_feature_losses: list[float] = []
+    shape_raw = 0.0
+    shape_selected = include & (classes == "SPECTRAL_SHAPE_CONSTRAINT")
+    represented = sorted(
+        {
+            feature
+            for index, identifiers in enumerate(dataset.feature_ids)
+            if shape_selected[index]
+            for feature in identifiers
+        }
+    )
+    for feature in represented:
+        selected = shape_selected & np.asarray(
+            [feature in identifiers for identifiers in dataset.feature_ids], dtype=bool
+        )
+        if not np.any(selected):
+            continue
+        scale = max(float(np.sqrt(np.mean(np.square(dataset.intensity[selected])))), 1.0e-15)
+        values = residual[selected] / scale
+        shape_raw += float(np.sum(np.square(residual[selected])))
+        shape_feature_losses.append(float(np.mean(np.square(values))))
+    if shape_feature_losses:
+        raw_by_class["SPECTRAL_SHAPE_CONSTRAINT"] = shape_raw
+        normalized_by_class["SPECTRAL_SHAPE_CONSTRAINT"] = float(
+            np.mean(shape_feature_losses)
+        )
+    # Relative spectral weight is normalized within accepted normalization
+    # blocks and averaged over blocks, never with a free scale per scan.
+    relative_selected = include & (
+        classes == "EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT"
+    )
+    relative_block_losses: list[float] = []
+    for block in sorted(set(np.asarray(dataset.blocks, dtype=str)[relative_selected])):
+        selected = relative_selected & (np.asarray(dataset.blocks, dtype=str) == block)
+        scale = max(float(np.sqrt(np.mean(np.square(dataset.intensity[selected])))), 1.0e-15)
+        relative_block_losses.append(float(np.mean(np.square(residual[selected] / scale))))
+    if relative_block_losses:
+        normalized_by_class["EXPLORATORY_RELATIVE_INTENSITY_CONSTRAINT"] = float(
+            np.mean(relative_block_losses)
+        )
     labels = {
         "ENERGY_CONSTRAINT": "L_energy",
         "SPECTRAL_SHAPE_CONSTRAINT": "L_shape",

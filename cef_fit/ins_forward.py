@@ -68,12 +68,14 @@ def predict_eq_map(
     mode = str(population.get("mode", "GROUND_DOUBLET_ONLY"))
     temperature: float | None = None
     if mode == "BOLTZMANN_ALL_CEF_STATES":
-        if dataset.temperature_K is not None:
-            if not np.allclose(dataset.temperature_K, dataset.temperature_K[0], atol=1e-9):
-                raise ValueError("Forward model requires one temperature block at a time")
-            temperature = float(dataset.temperature_K[0])
-        elif population.get("temperature_K") is not None:
+        if population.get("temperature_K") is not None:
             temperature = float(population["temperature_K"])
+        elif dataset.temperature_K is not None:
+            if float(np.ptp(dataset.temperature_K)) > float(
+                population.get("maximum_block_temperature_range_K", 0.1)
+            ):
+                raise ValueError("Forward model requires one temperature block at a time")
+            temperature = float(np.mean(dataset.temperature_K))
         else:
             raise ValueError("Boltzmann forward model requires a verified sample temperature")
     transitions = calculate_cef_transitions(

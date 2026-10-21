@@ -40,6 +40,12 @@ OUTPUT_COLUMNS = (
     "UB_state_id",
     "temperature_status",
     "temperature_K_if_verified",
+    "temperature_scan_mean_K",
+    "temperature_scan_min_K",
+    "temperature_scan_max_K",
+    "temperature_source_field",
+    "temperature_controller_channel",
+    "temperature_unit",
     "discovery_holdout_role",
     "intensity_linear",
     "intensity_units",
@@ -68,6 +74,8 @@ class MaterializationReport:
     ten_k_block_status: str
     ten_k_scan_record_ids: tuple[str, ...]
     ten_k_scan_ids_source: str
+    ten_k_scan_count: int
+    effective_temperature_K: float | None
     discovery_points: int
     holdout_points_used: int
     holdout_detector_access_count: int
@@ -190,6 +198,41 @@ def _atomic_write_csv(destination: Path, rows: list[dict[str, object]]) -> None:
             temporary.unlink()
 
 
+def _temperature_rows(
+    reuse: Mapping[str, Any], repository: Path
+) -> tuple[dict[str, dict[str, str]], tuple[str, ...], float]:
+    """Load and verify the accepted scan-temperature mapping and 10-K rule."""
+
+    temperature = reuse["temperature_mapping"]
+    mapping_path = _resolve(repository, str(temperature["mapping_csv"]))
+    summary_path = _resolve(repository, str(temperature["summary_yaml"]))
+    if sha256_file(mapping_path) != str(temperature["mapping_csv_sha256"]):
+        raise ValueError("Accepted temperature mapping CSV identity mismatch")
+    if sha256_file(summary_path) != str(temperature["summary_yaml_sha256"]):
+        raise ValueError("Accepted temperature mapping summary identity mismatch")
+    rows = {row["scan_record_id"]: row for row in _read_csv(mapping_path)}
+    summary = yaml.safe_load(summary_path.read_text(encoding="utf-8"))
+    summary_ids = tuple(map(str, summary["classification"]["ten_K"]["scan_record_ids"]))
+    configured_ids = tuple(map(str, temperature["ten_k_scan_record_ids"]))
+    if configured_ids != summary_ids:
+        raise ValueError("Configured and accepted-summary 10-K scan identities differ")
+    mean_bounds = tuple(map(float, temperature["accepted_scan_mean_K"]))
+    maximum_range = float(temperature["accepted_maximum_within_scan_range_K"])
+    accepted: list[str] = []
+    for scan_id in configured_ids:
+        row = rows[scan_id]
+        mean = float(row["temperature_K"])
+        observed_range = float(row["temperature_max_K"]) - float(row["temperature_min_K"])
+        if mean_bounds[0] <= mean <= mean_bounds[1] and observed_range <= maximum_range:
+            accepted.append(scan_id)
+    if tuple(accepted) != configured_ids or len(accepted) != 20:
+        raise ValueError("Accepted 10-K operational rule did not reproduce exactly 20 scans")
+    effective = float(temperature["effective_temperature_K"])
+    if abs(effective - float(summary["classification"]["ten_K"]["mean_of_scan_means_K"])) > 5e-7:
+        raise ValueError("Configured effective temperature disagrees with accepted summary")
+    return rows, configured_ids, effective
+
+
 def materialize_taipan_eq_dataset(
     reuse_config_path: str | Path,
     repository: str | Path,
@@ -264,13 +307,27 @@ def materialize_taipan_eq_dataset(
     diagnostic_features = {str(value) for value in materialization["diagnostic_mixed_feature_ids"]}
     temperature = reuse["temperature_mapping"]
     temperature_status = str(temperature["ten_k_block_status"])
-    selected_ten_k_scans = tuple(sorted(map(str, temperature["ten_k_scan_record_ids"])))
+    temperature_by_scan, selected_ten_k_scans, effective_temperature = _temperature_rows(
+        reuse, repository_path
+    )
+    temperature_identities = (
+        {
+            "artifact_id": "taipan_temperature_mapping_v1",
+            "path": str(temperature["mapping_csv"]),
+            "sha256": str(temperature["mapping_csv_sha256"]),
+            "classification": "REUSE_DIRECTLY",
+        },
+        {
+            "artifact_id": "taipan_temperature_mapping_v1_summary",
+            "path": str(temperature["summary_yaml"]),
+            "sha256": str(temperature["summary_yaml_sha256"]),
+            "classification": "REUSE_DIRECTLY",
+        },
+    )
     if temperature_status in {"VERIFIED", "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"} and not selected_ten_k_scans:
         raise ValueError("Established 10-K status requires explicit scan_record_ids")
-    if temperature_status in {"VERIFIED", "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"} and temperature.get(
-        "ten_k_temperature_K"
-    ) is None:
-        raise ValueError("Established 10-K status requires an explicit temperature_K value")
+    if temperature_status not in {"VERIFIED", "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"}:
+        raise ValueError("Primary materializer requires the accepted 10-K mapping")
     if temperature_status == "NOT_YET_ESTABLISHED" and selected_ten_k_scans:
         raise ValueError("Unestablished 10-K status cannot contain scan_record_ids")
     selected_set = set(selected_ten_k_scans)
@@ -330,10 +387,16 @@ def materialize_taipan_eq_dataset(
         )
         source_commits = reuse["source_commits"]
         source_commit = ";".join(
-            [str(source_commits["A002"]), str(source_commits["A003"]), str(source_commits["B001"])]
+            [
+                str(source_commits["A002"]),
+                str(source_commits["A003"]),
+                str(source_commits["B001"]),
+                str(source_commits["temperature_mapping"]),
+            ]
         )
         normalization_group = classification["normalization_compatibility_group_id"]
         instrument_block = f"{classification['instrument_config_id']}__{normalization_group}"
+        scan_temperature = temperature_by_scan[scan]
         output_rows.append(
             {
                 "point_id": f"{scan}:{int(discovery['point_index'])}",
@@ -361,10 +424,18 @@ def materialize_taipan_eq_dataset(
                 "UB_state_id": classification["UB_state_id"],
                 "temperature_status": temperature_status,
                 "temperature_K_if_verified": (
-                    format(float(temperature["ten_k_temperature_K"]), ".15g")
+                    format(float(scan_temperature["temperature_K"]), ".15g")
                     if selected_set
                     else ""
                 ),
+                "temperature_scan_mean_K": scan_temperature["temperature_K"],
+                "temperature_scan_min_K": scan_temperature["temperature_min_K"],
+                "temperature_scan_max_K": scan_temperature["temperature_max_K"],
+                "temperature_source_field": scan_temperature["temperature_source_field"],
+                "temperature_controller_channel": scan_temperature[
+                    "temperature_controller_channel"
+                ],
+                "temperature_unit": scan_temperature["temperature_unit"],
                 "discovery_holdout_role": "discovery",
                 "intensity_linear": format(intensity, ".15g"),
                 "intensity_units": materialization["intensity_units"],
@@ -402,10 +473,12 @@ def materialize_taipan_eq_dataset(
         output_path=str(destination),
         output_sha256=sha256_file(destination),
         output_rows=len(output_rows),
-        source_artifacts=identities,
+        source_artifacts=identities + temperature_identities,
         ten_k_block_status=temperature_status,
         ten_k_scan_record_ids=selected_ten_k_scans,
         ten_k_scan_ids_source=str(temperature["ten_k_scan_ids_source"]),
+        ten_k_scan_count=len(selected_ten_k_scans),
+        effective_temperature_K=effective_temperature,
         discovery_points=len(output_rows),
         holdout_points_used=0,
         holdout_detector_access_count=0,

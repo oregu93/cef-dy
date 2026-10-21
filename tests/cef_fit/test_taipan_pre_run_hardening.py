@@ -22,7 +22,7 @@ from cef_fit.taipan_materializer import materialize_taipan_eq_dataset
 
 REPOSITORY = Path(__file__).resolve().parents[2]
 REUSE_CONFIG = REPOSITORY / "configs/taipan_prior_artifact_reuse_v1.yaml"
-PIPELINE_CONFIG = REPOSITORY / "configs/user_executed_joint_cef_pipeline_v1.yaml"
+PIPELINE_CONFIG = REPOSITORY / "configs/manuscript_cef_fit_10k_exploratory_v1.yaml"
 
 
 def test_stage02r_materializer_is_reproducible_discovery_only_and_holdout_clean(tmp_path):
@@ -31,11 +31,12 @@ def test_stage02r_materializer_is_reproducible_discovery_only_and_holdout_clean(
     first = materialize_taipan_eq_dataset(REUSE_CONFIG, REPOSITORY, first_path)
     second = materialize_taipan_eq_dataset(REUSE_CONFIG, REPOSITORY, second_path)
     assert first.output_sha256 == second.output_sha256
-    assert first.output_rows == first.discovery_points == 1796
+    assert first.output_rows == first.discovery_points == 520
     assert first.holdout_points_used == 0
     assert first.holdout_detector_access_count == 0
-    assert first.ten_k_block_status == "NOT_YET_ESTABLISHED"
-    assert first.ten_k_scan_record_ids == ()
+    assert first.ten_k_block_status == "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"
+    assert first.ten_k_scan_count == len(first.ten_k_scan_record_ids) == 20
+    assert first.effective_temperature_K == pytest.approx(9.998965)
     assert first.count_control_modes == ("monitor_controlled",)
     assert first.q_direction_unavailable_points == 0
     assert first.mandatory_cef_assignments_from_b001 == ()
@@ -45,12 +46,19 @@ def test_stage02r_materializer_is_reproducible_discovery_only_and_holdout_clean(
     with first_path.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     assert {row["discovery_holdout_role"] for row in rows} == {"discovery"}
-    assert {row["temperature_status"] for row in rows} == {"NOT_YET_ESTABLISHED"}
-    assert {row["temperature_K_if_verified"] for row in rows} == {""}
-    assert all(row["mask_status"] != "INCLUDE" for row in rows)
+    assert {row["temperature_status"] for row in rows} == {
+        "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"
+    }
+    assert all(9.95 <= float(row["temperature_K_if_verified"]) <= 10.05 for row in rows)
+    assert all(
+        float(row["temperature_scan_max_K"]) - float(row["temperature_scan_min_K"])
+        <= 0.05
+        for row in rows
+    )
+    assert {row["temperature_source_field"] for row in rows} == {"T1_Sensor1"}
     assert all(np.isclose(float(row["intensity_linear"]), float(row["detector_counts"]) / float(row["monitor"])) for row in rows)
     assert any(";" in row["feature_id"] for row in rows)
-    assert any(
+    assert not any(
         "DIAGNOSTIC_OR_POSSIBLY_MIXED_44_MEV_REGION" in row["mask_flags"]
         for row in rows
     )
@@ -68,12 +76,10 @@ def test_stage02r_materializer_is_reproducible_discovery_only_and_holdout_clean(
     config = yaml.safe_load(PIPELINE_CONFIG.read_text(encoding="utf-8"))
     config["inputs"]["taipan_eq_dataset"] = str(first_path)
     audit = audit_eq_dataset(config, REPOSITORY, first.as_dict())
-    assert audit["status"] == "NOT_READY"
-    assert audit["blockers"] == [
-        "TEN_K_BLOCK_NOT_REPRODUCIBLY_ESTABLISHED",
-        "VERIFIED_SAMPLE_TEMPERATURE_VALUES_UNAVAILABLE",
-    ]
-    assert audit["search_blockers"] == ["NO_EXPLICIT_FEATURE_ENERGY_ASSIGNMENTS"]
+    assert audit["status"] == "READY_FOR_EXPLORATORY_SANITY_RUN"
+    assert audit["blockers"] == []
+    assert audit["search_blockers"] == []
+    assert audit["assignment_branch_count"] == 21
     assert audit["holdout_detector_access_count"] == 0
     assert audit["four_dy_site_intensity"]["status"] == "IMPLEMENTED_AND_TESTED"
 
@@ -175,7 +181,7 @@ def test_deterministic_initializations_are_diverse_and_not_scientific_acceptance
     assert "compatibility_loss_threshold" not in config["ensemble"]
     assert "retention_loss_threshold" not in config["search"]
     assert config["assignments"]["automatic_nearest_level_assignment"] is False
-    assert config["assignments"]["feature_assignment_hypotheses"] == []
+    assert config["assignments"]["automatic_nearest_level_assignment"] is False
 
 
 def test_objective_components_are_dimensionless_means_not_point_count_sums(tmp_path):
@@ -234,8 +240,11 @@ def test_objective_components_are_dimensionless_means_not_point_count_sums(tmp_p
 def test_resolution_background_and_temperature_provenance_are_explicit():
     reuse = yaml.safe_load(REUSE_CONFIG.read_text(encoding="utf-8"))
     pipeline = yaml.safe_load(PIPELINE_CONFIG.read_text(encoding="utf-8"))
-    assert reuse["temperature_mapping"]["ten_k_block_status"] == "NOT_YET_ESTABLISHED"
-    assert reuse["temperature_mapping"]["ten_k_scan_record_ids"] == []
+    assert reuse["temperature_mapping"]["ten_k_block_status"] == (
+        "RECONSTRUCTED_WITH_EXPLICIT_LIMITATION"
+    )
+    assert len(reuse["temperature_mapping"]["ten_k_scan_record_ids"]) == 20
+    assert reuse["temperature_mapping"]["effective_temperature_K"] == pytest.approx(9.998965)
     assert reuse["resolution"]["baseline_fwhm_meV"] == pytest.approx(0.894)
     assert reuse["resolution"]["fit_uncertainty_fwhm_meV"] == pytest.approx(0.025)
     decisions = reuse["reuse_decisions"]
@@ -248,7 +257,7 @@ def test_resolution_background_and_temperature_provenance_are_explicit():
         "NOT_APPLICABLE_TO_CURRENT_OBJECTIVE"
     )
     assert pipeline["forward_model"]["resolution"]["status"] == (
-        "EMPIRICAL_ELASTIC_ANCHOR_AVAILABLE__FULL_TAS_RESOLUTION_NOT_ESTABLISHED"
+        "EMPIRICAL_ELASTIC_ANCHOR__NOT_FULL_TAS_RESOLUTION"
     )
     assert pipeline["forward_model"]["background"]["model"] == "LOCAL_LINEAR_BACKGROUND"
     assert pipeline["forward_model"]["background"]["dataset_already_background_subtracted"] is False

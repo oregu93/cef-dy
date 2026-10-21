@@ -32,7 +32,7 @@ from cef_fit.provenance import sha256_file
 
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-CONFIG_PATH = REPOSITORY / "configs/user_executed_joint_cef_pipeline_v1.yaml"
+CONFIG_PATH = REPOSITORY / "configs/manuscript_cef_fit_10k_exploratory_v1.yaml"
 
 
 def _objective_dataset(tmp_path: Path):

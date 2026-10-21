@@ -24,6 +24,12 @@ class SearchIdentity:
     mask_hash: str
     objective_mode: str
     code_commit: str
+    feature_table_hash: str = "NOT_BOUND"
+    assignment_set_hash: str = "NOT_BOUND"
+    parameter_convention: str = "DIRECT_CS15_H_EQUALS_KAPPA_B"
+    resolution_variant: str = "NOT_BOUND"
+    background_variant: str = "NOT_BOUND"
+    search_profile: str = "NOT_BOUND"
 
 
 @dataclass(frozen=True)
@@ -39,6 +45,8 @@ class SearchCheckpoint:
     optimizer_state_policy: str
     optimizer_state: dict[str, object]
     environment: dict[str, str]
+    assignment_id: str | None = None
+    initialization_family: str | None = None
 
     def as_dict(self) -> dict[str, object]:
         payload = asdict(self)
@@ -47,8 +55,8 @@ class SearchCheckpoint:
 
 
 def deterministic_restart_seed(base_seed: int, assignment_branch: int, restart_number: int) -> int:
-    if assignment_branch not in range(1, 8) or restart_number < 1:
-        raise ValueError("assignment must be D1..D7 and restart_number must be positive")
+    if assignment_branch < 1 or restart_number < 1:
+        raise ValueError("assignment_branch and restart_number must be positive")
     return int(base_seed + 1009 * assignment_branch + 104729 * restart_number)
 
 
@@ -120,6 +128,8 @@ def load_checkpoint(path: str | Path) -> SearchCheckpoint:
         optimizer_state_policy=str(payload["optimizer_state_policy"]),
         optimizer_state=dict(payload.get("optimizer_state", {})),
         environment=dict(payload.get("environment", {})),
+        assignment_id=payload.get("assignment_id"),
+        initialization_family=payload.get("initialization_family"),
     )
 
 
@@ -143,6 +153,31 @@ def require_search_authorization(config_enabled: bool, explicit_cli_enable: bool
         raise PermissionError("RUN_EXPLORATORY_SEARCH is false in configuration")
     if not explicit_cli_enable:
         raise PermissionError("Pass --enable-exploratory-search for an explicit user execution")
+
+
+def boundary_diagnostics(
+    h_coordinates: ArrayLike,
+    lower: float,
+    upper: float,
+    boundary_fraction: float,
+) -> dict[str, object]:
+    h = np.asarray(h_coordinates, dtype=float)
+    if h.ndim != 1 or np.any(~np.isfinite(h)) or not lower < upper:
+        raise ValueError("Finite 1-D coordinates and lower < upper are required")
+    if not 0.0 <= boundary_fraction < 0.5:
+        raise ValueError("boundary_fraction must be in [0, 0.5)")
+    distances = np.minimum(h - lower, upper - h)
+    occupied = bool(np.any(distances <= boundary_fraction * (upper - lower)))
+    return {
+        "boundary_distances_h_meV": distances.tolist(),
+        "minimum_boundary_distance_h_meV": float(np.min(distances)),
+        "search_boundary_occupied": occupied,
+        "boundary_status": (
+            "SEARCH_DOMAIN_SENSITIVITY_REVIEW_REQUIRED"
+            if occupied
+            else "WITHIN_SEARCH_DOMAIN_INTERIOR"
+        ),
+    }
 
 
 def _environment() -> dict[str, str]:
@@ -209,8 +244,8 @@ def run_cmaes_multistart(
     assignments = tuple(int(value) for value in search_config["assignment_branches"])
     if not assignments:
         raise ValueError("No explicit feature-to-transition assignment hypotheses are configured")
-    if set(assignments) - set(range(1, 8)):
-        raise ValueError("assignment_branches must be a subset of 1..7")
+    if any(value < 1 for value in assignments) or len(assignments) != len(set(assignments)):
+        raise ValueError("assignment_branches must be unique positive indices")
     restart_count = int(search_config["restarts_per_assignment"])
     population = int(search_config["population"])
     max_evaluations = int(search_config["max_evaluations_per_restart"])
@@ -218,6 +253,17 @@ def run_cmaes_multistart(
     lower, upper = map(float, search_config["h_bounds_meV"])
     sigma0 = float(search_config["sigma0_meV"])
     maximum_retained = int(search_config.get("maximum_retained_candidates", 10000))
+    additional_near_best = int(search_config.get("additional_near_best_per_restart", 0))
+    if additional_near_best < 0:
+        raise ValueError("additional_near_best_per_restart must be non-negative")
+    retained_per_restart = 1 + additional_near_best
+    if maximum_retained < len(assignments) * restart_count * retained_per_restart:
+        raise ValueError(
+            "maximum_retained_candidates is too small for the configured per-restart retention"
+        )
+    boundary_fraction = float(search_config.get("boundary_fraction", 0.02))
+    if not 0.0 <= boundary_fraction < 0.5:
+        raise ValueError("boundary_fraction must be in [0, 0.5)")
     initial_h = np.clip(parameters_to_h(seed_parameters, j=j), lower, upper)
     plan = tuple(initialization_plan or ())
     if plan and len(plan) != restart_count:
@@ -228,6 +274,8 @@ def run_cmaes_multistart(
         assignment: int | None,
         restart: int | None,
         seed: int | None,
+        assignment_id: str | None = None,
+        initialization_family: str | None = None,
         optimizer_state: Mapping[str, object] | None = None,
     ) -> None:
         checkpoint = SearchCheckpoint(
@@ -242,6 +290,8 @@ def run_cmaes_multistart(
             optimizer_state_policy="RESTART_INCOMPLETE_RESTART_FROM_FIXED_SEED",
             optimizer_state=dict(optimizer_state or {}),
             environment=_environment(),
+            assignment_id=assignment_id,
+            initialization_family=initialization_family,
         )
         write_json(checkpoint_path, checkpoint.as_dict())
 
@@ -273,7 +323,13 @@ def run_cmaes_multistart(
             }
             strategy = cma.CMAEvolutionStrategy(restart_initial_h.tolist(), sigma0, options)
             restart_evaluations = 0
-            restart_best: dict[str, object] | None = None
+            restart_candidates: list[dict[str, object]] = []
+            assignment_ids = search_config.get("assignment_ids", {})
+            if not isinstance(assignment_ids, Mapping):
+                raise ValueError("assignment_ids must map branch indices to stable IDs")
+            assignment_id = str(
+                assignment_ids.get(str(assignment), f"EXPLICIT_HYPOTHESIS_{assignment}")
+            )
             while not strategy.stop() and restart_evaluations < max_evaluations:
                 proposed = strategy.ask()
                 evaluated: list[tuple[float, dict[str, object], np.ndarray]] = []
@@ -289,12 +345,14 @@ def run_cmaes_multistart(
                 total_evaluations += len(evaluated)
                 restart_evaluations += len(evaluated)
                 for loss, diagnostics, h in evaluated:
-                    if restart_best is None or loss < float(restart_best["loss"]):
-                        width = upper - lower
-                        boundary = bool(
-                            np.any(np.minimum(h - lower, upper - h) <= 0.02 * width)
+                    if (
+                        len(restart_candidates) < retained_per_restart
+                        or loss < float(restart_candidates[-1]["loss"])
+                    ):
+                        boundary_report = boundary_diagnostics(
+                            h, lower, upper, boundary_fraction
                         )
-                        restart_best = {
+                        candidate = {
                             "candidate_id": (
                                 f"D{assignment}-R{restart}-"
                                 + hashlib.sha256(np.asarray(h, dtype="<f8").tobytes()).hexdigest()[:16]
@@ -302,7 +360,8 @@ def run_cmaes_multistart(
                             "candidate_status": "SEARCH_RETAINED_CANDIDATE",
                             "scientific_compatibility_status": "NOT_ASSESSED",
                             "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
-                            "assignment": f"EXPLICIT_HYPOTHESIS_{assignment}",
+                            "assignment": assignment_id,
+                            "assignment_id": assignment_id,
                             "assignment_hypothesis_index": assignment,
                             "restart": restart,
                             "seed": seed,
@@ -310,16 +369,39 @@ def run_cmaes_multistart(
                             "initial_mean_h": restart_initial_h.tolist(),
                             "bounds_h_meV": [lower, upper],
                             "loss": loss,
+                            "objective_total": loss,
                             "objective": diagnostics,
+                            "L_energy": diagnostics.get("energy_constraint"),
+                            "L_shape": diagnostics.get("spectral_shape_constraint"),
+                            "L_relative_intensity": diagnostics.get(
+                                "exploratory_relative_intensity_constraint"
+                            ),
+                            "raw_component_diagnostics": diagnostics.get("raw_components"),
+                            "nuisance_signal_scales": diagnostics.get("block_scales"),
+                            "background_parameters": diagnostics.get("background_parameters"),
+                            "feature_wise_residuals": diagnostics.get(
+                                "explicit_feature_assignments"
+                            ),
+                            "doublet_energies_meV": diagnostics.get("doublet_energies_meV"),
+                            "transition_list": diagnostics.get("transition_list"),
                             "direct_parameters_meV": h_to_parameters(h, j=j),
                             "h_coordinates_meV": h.tolist(),
-                            "search_boundary_occupied": boundary,
+                            **boundary_report,
+                            "search_budget": {
+                                "population": population,
+                                "max_evaluations_per_restart": max_evaluations,
+                            },
                             "project_owned_kernel_reevaluated": True,
                         }
+                        restart_candidates.append(candidate)
+                        restart_candidates.sort(key=lambda row: float(row["loss"]))
+                        del restart_candidates[retained_per_restart:]
                 save_checkpoint(
                     assignment,
                     restart,
                     seed,
+                    assignment_id,
+                    str(initialization["initialization_family"]),
                     {
                         "generation": int(strategy.countiter),
                         "mean_h_coordinates_meV": np.asarray(strategy.mean, dtype=float).tolist(),
@@ -329,21 +411,33 @@ def run_cmaes_multistart(
                         "initialization_family": initialization["initialization_family"],
                         "initial_mean_h": restart_initial_h.tolist(),
                         "bounds_h_meV": [lower, upper],
+                        "current_restart_best_candidates": restart_candidates,
                     },
                 )
-            if restart_best is not None:
-                retained.append(restart_best)
+            if restart_candidates:
+                for rank, candidate in enumerate(restart_candidates, start=1):
+                    candidate["retention_rank_within_restart"] = rank
+                retained.extend(restart_candidates)
                 retained[:] = sorted(retained, key=lambda row: float(row["loss"]))[
                     :maximum_retained
                 ]
             completed.add(key)
-            save_checkpoint(None, None, None)
+            save_checkpoint(
+                assignment,
+                restart,
+                seed,
+                assignment_id,
+                str(initialization["initialization_family"]),
+                {"restart_complete": True, "restart_key": key},
+            )
 
     with candidates_path.open("w", encoding="utf-8", newline="\n") as handle:
         for candidate in retained:
             handle.write(json.dumps(candidate, sort_keys=True) + "\n")
     summary = {
-        "status": "USER_EXECUTED_EXPLORATORY_SEARCH_COMPLETE",
+        "status": str(
+            search_config.get("output_status", "USER_EXECUTED_EXPLORATORY_SEARCH_COMPLETE")
+        ),
         "scientific_status": "EXPLORATORY_NOT_MANUSCRIPT_ADMITTED",
         "retention_status": "SEARCH_RETAINED_CANDIDATE",
         "scientific_compatibility_status": "NOT_ASSESSED",

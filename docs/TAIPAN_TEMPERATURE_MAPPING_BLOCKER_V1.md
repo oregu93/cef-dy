@@ -1,4 +1,8 @@
-# TAIPAN temperature-mapping blocker v1
+# TAIPAN temperature-mapping blocker v1 (historical)
+
+> Superseded on 2026-10-21 by the accepted
+> `taipan_temperature_mapping_v1` reconstruction. See
+> `MANUSCRIPT_CEF_FIT_USER_RUN_V1.md` for the runnable 10-K workflow.
 
 ## Decision
 

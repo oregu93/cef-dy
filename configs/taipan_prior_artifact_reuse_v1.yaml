@@ -15,6 +15,7 @@ source_commits:
   B001: 21506b7df9eb8dc4b340aa6e19eb720e07329e8d
   C001_v1_1: 122691ae7e69e40458509feec0dd2135aeb4108f
   literature_magnetization: 2c17955c405ef9698781dfd5364ef7be0245ba15
+  temperature_mapping: 8fca61eb8a741faebba1df9faf52cf2101a7d8df
 
 reuse_decisions:
   stage02r_a002:
@@ -150,8 +151,8 @@ artifacts:
     classification: REUSE_FOR_VALIDATION_ONLY
 
 materialization:
-  output: local_data/taipan_eq_map_exploratory_v1.csv
-  selection: B001_DISCOVERY_POINT_REPRESENTATION_ONLY
+  output: local_data/taipan_eq_map_exploratory_10K_v1.csv
+  selection: B001_DISCOVERY_POINT_REPRESENTATION__ACCEPTED_10K_ONLY
   intensity_definition: detector_counts / monitor
   intensity_units: counts_per_monitor
   intensity_multiplier: 1.0
@@ -161,21 +162,49 @@ materialization:
   source_artifact_label: STAGE02R_A002_A003_B001_BRIDGE_V1
 
 temperature_mapping:
-  ten_k_block_status: NOT_YET_ESTABLISHED
-  ten_k_scan_record_ids: []
-  ten_k_temperature_K: null
-  ten_k_scan_ids_source: NONE__NO_REVIEWED_DETERMINISTIC_SCAN_TO_TEMPERATURE_MAPPING
+  ten_k_block_status: RECONSTRUCTED_WITH_EXPLICIT_LIMITATION
+  scientific_use_status: SUFFICIENT_FOR_EXPLORATORY_10K_CEF_ANALYSIS
+  mapping_csv: data/manuscript_v1/taipan_temperature_mapping_v1.csv
+  mapping_csv_sha256: 4e98e1d90cea4cde203440f0cfa5b1320a60619276733cebb3d54041a130e4bc
+  summary_yaml: data/manuscript_v1/taipan_temperature_mapping_v1_summary.yaml
+  summary_yaml_sha256: 63c99501e0153585129acca79aa796b1030bc58656e3b3895b875e7987597ec3
+  accepted_scan_mean_K: [9.95, 10.05]
+  accepted_maximum_within_scan_range_K: 0.05
+  effective_temperature_K: 9.998965
+  ten_k_scan_record_ids:
+    - SCAN-02R-75faa4a614a8f130
+    - SCAN-02R-8e62e3b1b9deee81
+    - SCAN-02R-f380a5a0600b447a
+    - SCAN-02R-f36bb8e354cf21b7
+    - SCAN-02R-c5843105fb81b54c
+    - SCAN-02R-45d1daf515e218b6
+    - SCAN-02R-89614c0503a95275
+    - SCAN-02R-f56f915bc229d6aa
+    - SCAN-02R-f87c8c3cd06321c2
+    - SCAN-02R-0e6d00a831c04e8d
+    - SCAN-02R-3f903a520f921d83
+    - SCAN-02R-ae86f327e3ed5623
+    - SCAN-02R-eea1fadd4abbd144
+    - SCAN-02R-957a8834d758202b
+    - SCAN-02R-8345a5938afc1084
+    - SCAN-02R-059bd02c78268a2b
+    - SCAN-02R-fede66c26a275769
+    - SCAN-02R-6fded6b51e0642a8
+    - SCAN-02R-708cf4d83a29d78f
+    - SCAN-02R-2f690557cfd20bec
+  ten_k_scan_ids_source: data/manuscript_v1/taipan_temperature_mapping_v1_summary.yaml#classification.ten_K
   limitation: >-
-    A002 records no unique verified temperature channel or unit for any scan.
-    Legacy summaries identify approximate 3.4-3.5 K and 10 K blocks but do
-    not preserve an exact reviewed scan membership, so chronology is not used.
+    The exact experiment-1296 configSICS hardware selection was not recovered;
+    the T1 channel-A mapping is reconstructed from official export/schema code,
+    experiment scripts, and pointwise cross-checks. This limitation is accepted
+    for the first exploratory 10-K CEF analysis.
 
 priority_scan_preflight:
-  status: METADATA_AUDIT_COMPLETE__TEMPERATURE_UNRESOLVED__NO_NEW_FIT
+  status: TEMPERATURE_MAPPING_ACCEPTED__NO_NEW_FIT
   path: configs/taipan_cx02_priority_scan_preflight_v1.yaml
   raw_scan_ids: [104095, 104098, 104099, 104215, 104225]
   complex_id: CX-02
-  terminal_status: BLOCKED_BY_UNVERIFIED_SAMPLE_TEMPERATURE_MAPPING
+  terminal_status: SUFFICIENT_FOR_EXPLORATORY_10K_CEF_ANALYSIS
 
 resolution:
   status: EMPIRICAL_ELASTIC_ANCHOR_AVAILABLE__FULL_TAS_RESOLUTION_NOT_ESTABLISHED

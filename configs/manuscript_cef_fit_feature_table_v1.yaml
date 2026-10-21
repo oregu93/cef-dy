@@ -1,0 +1,137 @@
+schema_version: 1
+feature_table_id: MANUSCRIPT_CEF_FIT_FEATURE_TABLE_V1
+scientific_status: EXPLORATORY_HUMAN_REVIEW_REQUIRED
+source_dataset: local_data/taipan_eq_map_exploratory_10K_v1.csv
+source_dataset_sha256: 5b23dc5076bc7a09e8d3b2450ae493c1bb4654d6edc027dc57497b0077163f63
+source_catalogue: 04_Results/Stage02R/W02-02R-B-001/blind_feature_catalogue.yaml
+source_catalogue_sha256: f428ddc47b00c23cbbf8829ea2a5db5ef582af5ef68e3447b7fa3dd05535fcd5
+temperature_K: 9.998965
+accepted_scan_count: 20
+accepted_scan_record_ids: &accepted_scans
+  - SCAN-02R-75faa4a614a8f130
+  - SCAN-02R-8e62e3b1b9deee81
+  - SCAN-02R-f380a5a0600b447a
+  - SCAN-02R-f36bb8e354cf21b7
+  - SCAN-02R-c5843105fb81b54c
+  - SCAN-02R-45d1daf515e218b6
+  - SCAN-02R-89614c0503a95275
+  - SCAN-02R-f56f915bc229d6aa
+  - SCAN-02R-f87c8c3cd06321c2
+  - SCAN-02R-0e6d00a831c04e8d
+  - SCAN-02R-3f903a520f921d83
+  - SCAN-02R-ae86f327e3ed5623
+  - SCAN-02R-eea1fadd4abbd144
+  - SCAN-02R-957a8834d758202b
+  - SCAN-02R-8345a5938afc1084
+  - SCAN-02R-059bd02c78268a2b
+  - SCAN-02R-fede66c26a275769
+  - SCAN-02R-6fded6b51e0642a8
+  - SCAN-02R-708cf4d83a29d78f
+  - SCAN-02R-2f690557cfd20bec
+policy:
+  automatic_nearest_level_assignment: false
+  duplicated_final_doublet_allowed: false
+  preserve_energy_ordering: true
+  old_18p247178_meV_is_target: false
+  literature_18p2257_meV_is_target: false
+  mandatory_6p45_or_27p90_meV_levels: false
+  feature_44p4_meV_status: DIAGNOSTIC_ONLY_POSSIBLY_MIXED
+  energy_reference_semantics: B001_DISCOVERY_LOCATION_NOT_CONFIRMATORY_CENTROID
+  energy_scale_semantics: HALF_B001_DISCOVERY_WINDOW__NOT_STATISTICAL_SIGMA
+features:
+  - feature_id: BF-001
+    fit_role: ACTIVE_CEF_FEATURE
+    point_count: 20
+    ten_k_scan_count: 20
+    ten_k_scan_record_ids: *accepted_scans
+    catalogue_supporting_10k_scan_count: 4
+    energy_range_meV: [2.9985, 2.9992]
+    q_range_Ainv: [3.24386342247667, 3.70253543631543]
+    representative_energy_meV: 2.998675
+    energy_scale_meV: 0.499975
+    overlaps: [BF-002]
+    rationale: Tier-1 feature with direct 10-K catalogue support; used as one explicit energy assignment.
+  - feature_id: BF-002
+    fit_role: SHAPE_ONLY
+    point_count: 60
+    ten_k_scan_count: 20
+    ten_k_scan_record_ids: *accepted_scans
+    catalogue_supporting_10k_scan_count: 1
+    energy_range_meV: [2.9985, 4.9992]
+    q_range_Ainv: [3.24382146956874, 3.70253543631543]
+    representative_energy_meV: 3.99875
+    energy_scale_meV: 1.49975
+    overlaps: [BF-001, BF-003]
+    rationale: Overlapping window; not forced to be a separate excitation.
+  - feature_id: BF-003
+    fit_role: SHAPE_ONLY
+    point_count: 46
+    ten_k_scan_count: 20
+    ten_k_scan_record_ids: *accepted_scans
+    catalogue_supporting_10k_scan_count: 0
+    energy_range_meV: [4.9986, 6.9986]
+    q_range_Ainv: [3.24384244504171, 3.70253543631543]
+    representative_energy_meV: 5.998625
+    energy_scale_meV: 1.000025
+    overlaps: [BF-002]
+    rationale: Shape information only; 6.45 meV is not imposed as a level.
+  - feature_id: BF-004
+    fit_role: SHAPE_ONLY
+    point_count: 20
+    ten_k_scan_count: 20
+    ten_k_scan_record_ids: *accepted_scans
+    catalogue_supporting_10k_scan_count: 0
+    energy_range_meV: [17.9976, 17.9988]
+    q_range_Ainv: [3.24384244504171, 3.70251705758982]
+    representative_energy_meV: 17.998075
+    energy_scale_meV: 0.500075
+    overlaps: [BF-005]
+    rationale: Overlaps BF-005 and has no direct 10-K catalogue support; no independent energy target.
+  - feature_id: BF-005
+    fit_role: ACTIVE_CEF_FEATURE
+    point_count: 60
+    ten_k_scan_count: 20
+    ten_k_scan_record_ids: *accepted_scans
+    catalogue_supporting_10k_scan_count: 2
+    energy_range_meV: [17.9976, 19.9985]
+    q_range_Ainv: [3.24384244504171, 3.70262667228265]
+    representative_energy_meV: 18.998325
+    energy_scale_meV: 1.500025
+    overlaps: [BF-004]
+    rationale: Tier-1 feature with direct 10-K catalogue support; legacy/literature scalar energies are not substituted.
+  - feature_id: BF-006
+    fit_role: DIAGNOSTIC_ONLY
+    point_count: 0
+    ten_k_scan_count: 0
+    ten_k_scan_record_ids: []
+    catalogue_supporting_10k_scan_count: 0
+    energy_range_meV: null
+    q_range_Ainv: null
+    representative_energy_meV: 42.498325
+    energy_scale_meV: 1.999975
+    overlaps: [BF-007]
+    rationale: Approximately 44.4 meV region is possibly mixed and absent from the accepted 10-K subset.
+  - feature_id: BF-007
+    fit_role: DIAGNOSTIC_ONLY
+    point_count: 0
+    ten_k_scan_count: 0
+    ten_k_scan_record_ids: []
+    catalogue_supporting_10k_scan_count: 0
+    energy_range_meV: null
+    q_range_Ainv: null
+    representative_energy_meV: 44.9973
+    energy_scale_meV: 1.50045
+    overlaps: [BF-006, BF-008]
+    rationale: Approximately 44.4 meV region is possibly mixed and absent from the accepted 10-K subset.
+  - feature_id: BF-008
+    fit_role: DIAGNOSTIC_ONLY
+    point_count: 0
+    ten_k_scan_count: 0
+    ten_k_scan_record_ids: []
+    catalogue_supporting_10k_scan_count: 0
+    energy_range_meV: null
+    q_range_Ainv: null
+    representative_energy_meV: 45.996775
+    energy_scale_meV: 0.500325
+    overlaps: [BF-007]
+    rationale: Approximately 44.4 meV region is possibly mixed and absent from the accepted 10-K subset.

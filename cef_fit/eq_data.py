@@ -12,6 +12,7 @@ from numpy.typing import NDArray
 import yaml
 
 from .provenance import sha256_file
+from .feature_assignments import enumerate_assignment_hypotheses, load_feature_table
 
 
 REQUIRED_COLUMNS = (
@@ -441,8 +442,18 @@ def audit_eq_dataset(
     if len(normalization_values) != 1:
         blockers.append("NORMALIZATION_METADATA_NOT_UNIFORM_OR_EXPLICIT")
     search_blockers: list[str] = []
-    if included_constraint_counts["ENERGY_CONSTRAINT"] == 0:
-        search_blockers.append("NO_EXPLICIT_FEATURE_ENERGY_ASSIGNMENTS")
+    feature_table_path = _resolve(repository_path, str(inputs.get("feature_table", "")))
+    assignment_branch_count = 0
+    try:
+        features = load_feature_table(feature_table_path)
+        assignment_branch_count = len(
+            enumerate_assignment_hypotheses(
+                features,
+                final_doublets=tuple(map(int, config["assignments"]["final_doublets"])),
+            )
+        )
+    except (OSError, ValueError, KeyError) as error:
+        search_blockers.append(f"FEATURE_ASSIGNMENT_CONFIGURATION_INVALID: {error}")
     feature_ids = sorted({feature for row in dataset.feature_ids for feature in row})
     selected_temperature_scans = sorted(
         {
@@ -507,4 +518,7 @@ def audit_eq_dataset(
             if materialization_report is not None
             else []
         ),
+        "feature_table_path": str(feature_table_path),
+        "feature_table_hash": sha256_file(feature_table_path) if feature_table_path.is_file() else None,
+        "assignment_branch_count": assignment_branch_count,
     }

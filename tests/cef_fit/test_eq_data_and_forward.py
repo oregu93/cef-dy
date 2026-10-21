@@ -20,7 +20,7 @@ from cef_fit.resolution_model import FWHM_TO_SIGMA, gaussian_line_shape, resolut
 
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-CONFIG_PATH = REPOSITORY / "configs/user_executed_joint_cef_pipeline_v1.yaml"
+CONFIG_PATH = REPOSITORY / "configs/manuscript_cef_fit_10k_exploratory_v1.yaml"
 
 
 def _write_dataset(path: Path, *, include_log_column: bool = False) -> None:
